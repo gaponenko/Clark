@@ -1,0 +1,62 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Anthony Hillairet, April 2008
+///
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Include de C++
+#include <math.h>
+// using namespace std;
+
+// Include Program
+#include "TreeClass.h"
+
+// Modules
+#include "TCAPm12widthCut.C"
+#include "EventTypeCut.C"
+#include "MuLastPCut.C"
+#include "MuUVCut.C"
+#include "DkWinTimeCut.C"
+#include "NtracksCut.C"
+#include "IerrorCut.C"
+#include "StartStopCut.C"
+#include "ChargeCut.C"
+#include "PairMatchingCut.C"
+#include "DistToTargetSel.C"
+#include "Mu_eVertexSel.C"
+#include "DkFitTimeCut.C"
+#include "PACTCut.C"
+
+#include "AsymmetryPlots.C"
+
+#include "MichelSpectrum.C"
+#include "FiducialCut.C"
+
+#include "GlobalHistograms.C"
+
+void LoadAnalysisClasses( TreeClass *AnaObj)
+{
+	AnaObj->Register( new TCAPm12widthCut());
+	AnaObj->Register( new EventTypeCut());
+	AnaObj->Register( new MuLastPCut());
+	AnaObj->Register( new MuUVCut());
+	AnaObj->Register( new DkWinTimeCut());
+	AnaObj->Register( new NtracksCut());
+	AnaObj->Register( new IerrorCut());
+	AnaObj->Register( new StartStopCut());
+	AnaObj->Register( new ChargeCut());
+	AnaObj->Register( new PairMatchingCut());
+	AnaObj->Register( new DistToTargetSel());
+	AnaObj->Register( new Mu_eVertexSel());
+	AnaObj->Register( new DkFitTimeCut());
+	AnaObj->Register( new PACTCut());
+
+	AnaObj->Register( new AsymmetryPlots());
+
+	AnaObj->Register( new MichelSpectrum("Selected", "of the selected events"));
+
+	AnaObj->Register( new FiducialCut());
+	AnaObj->Register( new MichelSpectrum("Fiducial", "after the fiducial cut"));
+
+	AnaObj->Register( new GlobalHistograms());
+}
