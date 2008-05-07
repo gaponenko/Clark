@@ -42,6 +42,8 @@ class TreeClass {
 		void CloseTree() { TreeFile->Close();};
 		void LoopTree();
 		void Register( ModuleClass *Class);
+		bool ReadMofiaLog( string Filename);
+		void StoreExtraValues();
 	private :
 		TTree*	Tree;
 		TFile*	TreeFile;
@@ -52,6 +54,12 @@ class TreeClass {
 
 		int FirstEntry;
 		int LastEntry;
+
+		bool FirstInitTree;
+		bool CheckLog;
+		vector<string> nthrown;
+		vector<string> reqnum;
+		vector<string> MofiaLogs;
 };
 
 inline void TreeClass::Register( ModuleClass *Class)

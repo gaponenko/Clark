@@ -25,9 +25,9 @@ AR = ar  -rc
 RANLIB = ranlib
 
 
-LIBS		+= $(ROOTLIBS) -L/twist/local/lib -llog4cpp -L/usr/lib -lgsl -lgslcblas -lm
+LIBS		+= $(ROOTLIBS) -L/twist/local/lib -llog4cpp -L/usr/lib -lgsl -lgslcblas -lm -lboost_regex
 
-OBJ = CommandLine.o ConfigFile.o EventClass.o HistogramFactory.o TreeClass.o Users.o FuncLib.o EventLib.o DefaultConfig.o Clark.o
+OBJ = CommandLine.o ConfigFile.o DetectorGeo.o EventClass.o HistogramFactory.o TreeClass.o Users.o FuncLib.o EventLib.o DefaultConfig.o Clark.o
 EXE = Clark
 
 all : link

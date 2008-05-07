@@ -1,5 +1,16 @@
 #include "FuncLib.h"
 
+// template<class T>
+// string IntToStr( const T& t )
+string IntToStr( int &t )
+{
+	// Convert from a T to a string
+	// Type T must support << operator
+	std::ostringstream ost;
+	ost << t;
+	return ost.str();
+}
+
 vector<int> StrToIntVect(string In, char sep)
 {
 	vector<int>	Output;
@@ -34,4 +45,19 @@ vector<string> StrToStrVect(string In, char sep)
 	Output.push_back(In);
 
 	return Output;
+}
+
+string ReadParam( string Regexp, string InStr)
+{
+ 	boost::regex e(Regexp);
+	boost::smatch what;
+	if(boost::regex_search(InStr, what, e, boost::match_default))
+	{
+		string Tmp = what[1];
+		return Tmp;
+	}
+	else
+	{
+		return "";
+	}
 }

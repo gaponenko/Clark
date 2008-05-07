@@ -32,10 +32,12 @@
 #include "MichelSpectrum.C"
 #include "FiducialCut.C"
 
+#include "StatusHistograms.C"
 #include "GlobalHistograms.C"
 
 void LoadAnalysisClasses( TreeClass *AnaObj)
 {
+	AnaObj->Register( new StatusHistograms("Beginning",	"at the beginning of the treesumming"));
 	AnaObj->Register( new TCAPm12widthCut());
 	AnaObj->Register( new EventTypeCut());
 	AnaObj->Register( new MuLastPCut());
@@ -54,9 +56,11 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new AsymmetryPlots());
 
 	AnaObj->Register( new MichelSpectrum("Selected", "of the selected events"));
+	AnaObj->Register( new StatusHistograms("InSpectrum",	"of the events in the spectrum"));
 
 	AnaObj->Register( new FiducialCut());
 	AnaObj->Register( new MichelSpectrum("Fiducial", "after the fiducial cut"));
+	AnaObj->Register( new StatusHistograms("InFiducial",	"of the events in the fiducial"));
 
 	AnaObj->Register( new GlobalHistograms());
 }

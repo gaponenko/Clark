@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	}
 
 	// Save the configuration.
-	LogAll << log4cpp::Priority::INFO << Conf;
+	LogAll << log4cpp::Priority::INFO <<"\n"<< Conf;
 
 	for(vector<string>::iterator F=TreeFiles.begin(); F != TreeFiles.end(); F++)
 	{
@@ -129,10 +129,12 @@ int main(int argc, char **argv)
 		AnaObj.CloseTree();
 	}
 
+	// This is for the total nthrown and similar values stored in the output root file
+	AnaObj.StoreExtraValues();
+
 	AnaObj.SaveHistos();
 
 	// clean up and flush all appenders
-	LogAll.warn("\nDone!");
 	LogAll.shutdown();
 	cout<<"Done!"<<endl;
 	return 0;

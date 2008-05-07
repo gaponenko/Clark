@@ -84,6 +84,9 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PACTCut/region_21", "1.634, -5.428, -61.26, 642.3");
 	SetKey(Conf, "PACTCut/region_22", "1.634, -5.428, -61.26, 642.3");
 	
+	//	StatusHistograms
+	SetKey(Conf, "StatusHistograms/PerWindowType", false);
+
 	// ==================== Special Analyses ======================== //
 	
 	// AsymmetryPlots
@@ -101,6 +104,10 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "AsymmetryPlots/Weighting", 2.718);
 
 	
+	// ================== Detector Parameters ======================== //
+	SetKey(Conf, "Detector/BField",	2.0);
+	SetKey(Conf, "Detector/GeometryFile",	"");
+
 	// ================== General Parameters ======================== //
 	// Kinematic end point
 	SetKey(Conf, "Parameters/KinematicPmax",		 	52.828);
@@ -113,4 +120,13 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "Parameters/NXBinsMichel", 110);
 	SetKey(Conf, "Parameters/XMinMichel", 0.0);
 	SetKey(Conf, "Parameters/XMaxMichel", 55.0);
+
+	SetKey(Conf, "Parameters/MuonWinType",	1);
+
+	SetKey(Conf, "Parameters/UpDkWinType",		"2,7,9,14");
+	SetKey(Conf, "Parameters/DownDkWinType",	"3,8,10,15");
+	SetKey(Conf, "Parameters/DCplanes",		"5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52");
+	SetKey(Conf, "Parameters/PCplanes",		"1, 2, 3, 4, 27, 28, 29, 30, 53, 54, 55, 56");
+	SetKey(Conf, "Parameters/PlaneType",	"PC,PC,PC,PC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,PC,PC,PC,PC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,PC,PC,PC,PC");
+	SetKey(Conf, "Parameters/DCzposition",	"-49.7924,-49.3923,-48.9923,-48.5922,-48.1921,-47.7921,-47.3920,-46.9919,-42.1920,-41.7921,-36.9923,-36.5924,-29.7941,-29.3941,-22.5960,-22.1961,-15.3980,-14.9981,-10.1987, -9.7988, -4.9995, -4.5995,  4.5998,  4.9998,  9.7994, 10.1993, 14.9976, 15.3976, 22.1960, 22.5959, 29.3943, 29.7942, 36.5927, 36.9926, 41.7924, 42.1924, 46.9924, 47.3923, 47.7922, 48.1922, 48.5922, 48.9922, 49.3922, 49.7922");
 }

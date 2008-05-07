@@ -13,6 +13,7 @@ bool HistogramFactory::Init(log4cpp::Category *TmpLog, const char* Filename)
 	return true;
 }
 
+// =============================== definition section ================================== \\
 
 void HistogramFactory::DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax)
 {
@@ -38,6 +39,15 @@ void HistogramFactory::DefineTH2D(string Path, string Name, string Title, int xB
 	H2D[Name]	= new TH2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax);
 	Store( Name, Path, "TH2D");
 }
+
+void HistogramFactory::DefineArrayOfStr(string Path, string Name)
+{
+	ObjArray[Name]	= new TObjArray();
+	ObjArray[Name]->SetName(Name.c_str());
+	Store( Name, Path, "TObjArray");
+}
+
+
 
 void HistogramFactory::AddCut(string InCut)
 {
@@ -75,6 +85,8 @@ void HistogramFactory::Store( string Name, string Path, string TmpType)
 }
 
 
+// ================================= Fill section ====================================== \\
+
 void HistogramFactory::Fill( string Name, double Val)
 {
 	if ( Type[Name] == "TH1D" )
@@ -102,6 +114,27 @@ void HistogramFactory::Fill( string Name, double Val1, double Val2, double Val3)
 		H2D[Name]->Fill(Val1, Val2, Val3);
 }
 
+void HistogramFactory::ListToTObjArr( string GlobArr, vector<string> List)
+{
+	TObjArray *TmpObjA	= new TObjArray();
+	for(vector<string>::iterator N = List.begin(); N != List.end(); N++)
+	{
+		TmpObjA->Add(new TObjString((*N).c_str()));
+	}
+	ObjArray[GlobArr]->Add(TmpObjA);
+}
+
+void HistogramFactory::AddStrToArray( string Name, string InStr)
+{
+	ObjArray[Name]->Add(new TObjString(InStr.c_str()));
+}
+
+void HistogramFactory::AddObjToArray( string Name, TObject *Obj)
+{
+	ObjArray[Name]->Add(Obj);
+}
+
+
 void	HistogramFactory::CutApplied(string LastCut)
 { 
 	map<string,TH1D*>::iterator Before = H1D.find("EventsBeforeCut");
@@ -125,6 +158,9 @@ void	HistogramFactory::NbCandidateTracks(string ComingCut, EventClass &E)
 		Fill("NbExtraTracksPerCut",Cuts[ComingCut], E.seltrack.size()-1);
 	}
 }
+
+
+// ============================= File saving section =================================== \\
 
 void HistogramFactory::DoDirectory( string FilePath)
 {
@@ -186,10 +222,10 @@ void HistogramFactory::Save()
 				H1D[*N]->Write();
 			else if (Type[*N] == "TH2D")
 				H2D[*N]->Write();
-			// else if (Type[*N] == "TObjArray")
-			// 	H[N].Write(N, Dummy.kSingleKey)
-			// else:
-			// 	self.H[N].Write()
+			else if (Type[*N] == "TObjArray")
+				ObjArray[*N]->Write((*N).c_str(), Dummy->kSingleKey);
+			else
+				Log->error("The object %s cannot be saved. Its type is not supported by HistogramFactory");
 			File->cd();
 		}
 	}
