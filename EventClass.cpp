@@ -3,7 +3,19 @@
 void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 {
 	Log	= L;
+	//__________ Extract the energy calibration parameters ___________//
 	DoEcalib	= false;
+	if (C.read<string>("CommandLine/EcalFile") != "")
+	{
+		if (GetEcalib(C.read<string>("CommandLine/EcalFile"), C.read<string>("CommandLine/EcalArray")))
+			DoEcalib	= true;
+		else
+		{
+			Log->error("The energy calibration cannot be performed. Exit now.");
+			exit(1);
+		}
+	}
+
 
 	MuonWinType	=	C.read<int>( "Parameters/MuonWinType");
 
@@ -36,8 +48,8 @@ bool EventClass::InitGeometry(ConfigFile &C)
 	Tmp			=	C.read<string>( "Parameters/PlaneType");
 	PlaneType	= StrToStrVect(Tmp);
 
-	Tmp			=	C.read<string>( "Parameters/DCzposition");
-	DCzposition	= StrToFloatVect(Tmp);
+	// Tmp			=	C.read<string>( "Parameters/DCzposition");
+	// DCzposition	= StrToFloatVect(Tmp);
 
 	char TmpFile[256];
 	if (C.read<string>( "Detector/GeometryFile") != "")
@@ -139,11 +151,11 @@ bool EventClass::Load( )
 		{
 			// Upstream
 			if (costh[t] < 0.0) 
-				ptot[t] = hefit_ptot[t] + ( EC_au / fabs(costh[t]) ) - EC_bu;
+				ptot[t] = hefit_ptot[t] + ( Ecal_au / fabs(costh[t]) ) - Ecal_bu;
 
 			// Downstream
 			if (costh[t] > 0.0)
-				ptot[t] = hefit_ptot[t] + ( EC_ad / fabs(costh[t]) ) - EC_bd;
+				ptot[t] = hefit_ptot[t] + ( Ecal_ad / fabs(costh[t]) ) - Ecal_bd;
 
 			pz[t]	= costh[t] * ptot[t];
 
@@ -502,7 +514,70 @@ bool EventClass::CheckBranchLeaf( TTree* T, const char* Leaf)
 	return true;
 }
 
-// void EventClass::rmTrack( vector<int>::iterator t)
-// {
-// 
-// }
+
+bool EventClass::GetEcalib(string EcalibFile, string EcalibArray)
+{
+	TFile *File	= new TFile(EcalibFile.c_str());
+	if (File->IsZombie())
+	{
+		Log->error("The energy calibration file %s is not opened correctly.",EcalibFile.c_str());
+		return false;
+	}
+
+	Ecal_au	= -999.9;
+	Ecal_ad	= -999.9;
+	Ecal_bu	= -999.9;
+	Ecal_bd	= -999.9;
+
+	TObjArray *Array	= (TObjArray*)File->Get(EcalibArray.c_str());
+	if (Array == NULL)
+	{
+		Log->error("The array %s was not found in the energy calibration file %s.", EcalibArray.c_str(), EcalibFile.c_str());
+		return false;
+	}
+	TObjArray *SubArr		= (TObjArray*) Array->At(0);
+	TVectorT<double> *Vect	= (TVectorT<double>*) Array->At(1);
+	// vector<string> ParName;
+	// vector<double> ParVal;
+	TObjString *Tmp;
+	string Name;
+	double Val;
+
+	// Let's convert the ugly TObjArray/TObjString/TVector organisation into something more convenient
+	for ( int i = 0; i < SubArr->GetEntries(); i++)
+	{
+		// ParName.push_back(SubArr->At(i)->GetString()->Data());
+		// ParVal.push_back(Vect->GetMatrixArray()[i]);
+		Tmp		= (TObjString*)SubArr->At(i);
+		Name	= Tmp->GetString().Data();
+		Val		= Vect->GetMatrixArray()[i];
+
+		if (Name == "au" or Name == "upstslope")
+			Ecal_au	= Val;
+		if (Name == "ad" or Name == "dnstslope")
+			Ecal_ad	= Val;
+		if (Name == "beta")
+		{
+			Ecal_bu	= Val;
+			Ecal_bd	= Val;
+		}
+		if (Name == "upstintercept")
+			Ecal_bu	= Val;
+		if (Name == "dnstintercept")
+			Ecal_bd	= Val;
+	}
+
+
+	File->Close();
+	if ( -999.9 == Ecal_au || -999.9 == Ecal_bu || -999.9 == Ecal_ad || -999.9 == Ecal_bd)
+	{
+		Log->error("The array %s does not contain the good parameters.", EcalibArray.c_str());
+		return false;
+	}
+
+	// TODO : Output the details of the energy calibration
+	Log->info("The energy calibration will be applied.");
+
+	return true;
+}
+

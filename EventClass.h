@@ -20,7 +20,10 @@ using namespace std;
 #include "TTree.h"
 #include "TLeaf.h"
 #include "TBranch.h"
-#include "TMath.h"
+// #include "TMath.h"
+#include "TObjArray.h"
+#include "TVectorT.h"
+#include "TObjString.h"
 
 // Include Program
 #include "log4cpp/Category.hh"
@@ -48,6 +51,7 @@ class EventClass{
 		void GetVar( TTree* T, const char* Branch, const char* Leaf, Int_t* V);
 		void GetVar( TTree* T, const char* Branch, const char* Leaf, Float_t* V);
 		bool Load( );
+		bool GetEcalib(string EcalibFile, string EcalibArray);
 
 		bool Exists( const char* Name)	{return ExistList[Name];}
 
@@ -71,7 +75,14 @@ class EventClass{
 		map<int, int> GlobToDC;
 		map<int, int> GlobToPC;
 		vector<string> PlaneType;
-		vector<float> DCzposition;
+		// vector<float> DCzposition;
+		
+		//________________________ Energy calibration ___________________//
+
+		double	Ecal_au;		// upstream slope from energy calibration
+		double	Ecal_ad;		// downstream slope from energy calibration
+		double	Ecal_bu;		// upstream intercept from energy calibration
+		double	Ecal_bd;		// downstream intercept from energy calibration
 
 		//__________________________ EVID branch _________________________//
 
@@ -320,11 +331,6 @@ class EventClass{
 		float		muon_ulast;			// Muon last U position
 		float		muon_vlast;			// Muon last V position
 		float		muon_radius;		// Muon last position radius
-
-		float		EC_au;				// upstream slope from energy calibration
-		float		EC_ad;				// downstream slope from energy calibration
-		float		EC_bu;				// upstream intercept from energy calibration
-		float		EC_bd;				// downstream intercept from energy calibration
 
 		vector<int>	seltrack;			// Selected track at a given point in the analysis
 		vector<int>	dkwintrack;			// All good tracks (ierror==0) in the decay window
