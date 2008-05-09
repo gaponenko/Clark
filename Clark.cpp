@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 	for(vector<string>::iterator F=TreeFiles.begin(); F != TreeFiles.end(); F++)
 	{
 		LogAll.info("Processing tree %s",(*F).c_str());
-		if (not AnaObj.InitTree(*F))
+		if (not AnaObj.InitTree(*F, Conf))
 		{
 			LogAll.warn("Skip this run");
 			continue;

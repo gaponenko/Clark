@@ -38,11 +38,11 @@ class TreeClass {
 		void SaveHistos()	{Hist.Save();};
 
 		bool InitAll( string Treename, ConfigFile &Conf, log4cpp::Category *TmpLog);
-		bool InitTree( string Treename);
+		bool InitTree( string Treename, ConfigFile &Conf);
 		void CloseTree() { TreeFile->Close();};
 		void LoopTree();
 		void Register( ModuleClass *Class);
-		bool ReadMofiaLog( string Filename);
+		bool ReadMofiaLog( string Filename, ConfigFile &Conf);
 		void StoreExtraValues();
 	private :
 		TTree*	Tree;

@@ -1,27 +1,31 @@
 #include "EventClass.h"
 
-void EventClass::Init( ConfigFile *C, log4cpp::Category *L )
+void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 {
 	Log	= L;
 	DoEcalib	= false;
 
-	BField		=	C->read<double>( "Detector/BField");
-	MuonWinType	=	C->read<int>( "Parameters/MuonWinType");
-
+	MuonWinType	=	C.read<int>( "Parameters/MuonWinType");
 
 	// TODO: code the parsing of the ranges for the window types
 	string Tmp;
-	Tmp			=	C->read<string>( "Parameters/UpDkWinType");
+	Tmp			=	C.read<string>( "Parameters/UpDkWinType");
 	UpDkWinType		= StrToIntVect(Tmp);
-	Tmp			=	C->read<string>( "Parameters/DownDkWinType");
+	Tmp			=	C.read<string>( "Parameters/DownDkWinType");
 	DownDkWinType	= StrToIntVect(Tmp);
+}
+
+bool EventClass::InitGeometry(ConfigFile &C)
+{
+	BField		=	C.read<double>( "Detector/BField");
 
 	vector<int> TmpVect;
-	Tmp			=	C->read<string>( "Parameters/DCplanes");
+	string Tmp;
+	Tmp			=	C.read<string>( "Parameters/DCplanes");
 	TmpVect		= StrToIntVect(Tmp);
 	for (int i = 0; i < TmpVect.size(); i++)
 		GlobToDC[TmpVect[i]]	= i;
-	Tmp			=	C->read<string>( "Parameters/PCplanes");
+	Tmp			=	C.read<string>( "Parameters/PCplanes");
 	TmpVect		= StrToIntVect(Tmp);
 	for (int i = 0; i < Tmp.size(); i++)
 		GlobToPC[Tmp[i]]	= i;
@@ -29,12 +33,25 @@ void EventClass::Init( ConfigFile *C, log4cpp::Category *L )
 	NumDC	= GlobToDC.size();
 	NumPC	= GlobToPC.size();
 
-	Tmp			=	C->read<string>( "Parameters/PlaneType");
+	Tmp			=	C.read<string>( "Parameters/PlaneType");
 	PlaneType	= StrToStrVect(Tmp);
 
-	Tmp			=	C->read<string>( "Parameters/DCzposition");
+	Tmp			=	C.read<string>( "Parameters/DCzposition");
 	DCzposition	= StrToFloatVect(Tmp);
 
+	char TmpFile[256];
+	if (C.read<string>( "Detector/GeometryFile") != "")
+	{
+		int GeoNum = atoi(C.read<string>( "Detector/GeometryFile").c_str());
+		sprintf(TmpFile,"%s/dt_geo.%05d",getenv("CAL_DB"),GeoNum);
+		geo = new DetectorGeo();
+		return geo->ReadGeometry( TmpFile, Log);
+	}
+	else
+	{
+		Log->warn("No geometry file given. The geometry of the detector is not set. Do not use any geo->* variable from the EventClass");
+		return true;
+	}
 }
 
 bool EventClass::Load( )

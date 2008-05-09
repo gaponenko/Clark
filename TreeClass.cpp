@@ -4,18 +4,25 @@ bool TreeClass::InitAll( string Treename, ConfigFile &Conf, log4cpp::Category *T
 {
 	Log		= TmpLog;
 
-	// Initialization of the analyses
-	Evt.Init(&Conf, Log);
+	// Initialization of the EventClass
+	Evt.Init(Conf, Log);
 
 	CheckLog		= true;
 	FirstInitTree	= true;
 	// Load the first tree to check the available variables in the tree.
-	if ( not InitTree(Treename) )
+	if ( not InitTree(Treename, Conf) )
 	{
 		Log->error("Something is wrong with the first tree of the list");
 		return false;
 	}
 	FirstInitTree	= false;
+
+	// Read the geometry file only
+	if ( not Evt.InitGeometry(Conf) )
+	{
+		Log->error("Something is wrong with the first tree of the list");
+		return false;
+	}
 
 	string HistFile;
 	// Initialization of the analyses
@@ -53,7 +60,7 @@ bool TreeClass::InitAll( string Treename, ConfigFile &Conf, log4cpp::Category *T
 	return true;
 }
 
-bool TreeClass::InitTree( string Treename)
+bool TreeClass::InitTree( string Treename, ConfigFile &Conf)
 {
 	string Filename, RunLog;
 
@@ -91,7 +98,7 @@ bool TreeClass::InitTree( string Treename)
 	// Check only if we decided to.
 	if (CheckLog && (RunLog != ""))
 	{
-		if ( ! (ReadMofiaLog(RunLog)))
+		if ( ! (ReadMofiaLog(RunLog, Conf)))
 		{
 			if (FirstInitTree)
 			{
@@ -174,21 +181,25 @@ void TreeClass::LoopTree()
 // --------------------------------------------------------------------------------- \\
 
 
-bool TreeClass::ReadMofiaLog( string Filename)
+bool TreeClass::ReadMofiaLog( string Filename, ConfigFile &Conf)
 {
 	std::ifstream File(Filename.c_str());
+	if (FirstInitTree)
+		Log->info("Reading log file %s",Filename.c_str());
 
 	int Nbnthrown = 0;	// Number of nthrown found in this file
  	vector<string> Tmpreqnum;
 	if(!File)
 	{
-		std::cerr << "Failed to open geometry file\n"<<endl;
+		Log->warn("Failed to open log file\n");
 		return false;
 	}
 
 	string Tmp;
 	string Tmpnthrown;
 	string Line;
+	double BField;
+	string GeoFileNum;
 	while ( getline( File, Line ) )
 	{
  		// Search for the nthrown
@@ -213,19 +224,54 @@ bool TreeClass::ReadMofiaLog( string Filename)
 			// Store all the reqnum found
  			Tmpreqnum.push_back(Tmp);
 		}
+
+		// Search for the BField value
+		Tmp = ReadParam( "magnet_mod: Field at origin is\\s+([0-9.]+)", Line);
+ 		if ( Tmp != "")
+		{
+			// Store the BField found
+ 			BField = atof(Tmp.c_str());
+		}
+
+		// Search for the BField value
+		Tmp = ReadParam( "Reading geometry file:.*dt_geo.000(\\d+)", Line);
+ 		if ( Tmp != "")
+		{
+			// Store the BField found
+ 			GeoFileNum = Tmp.c_str();
+		}
+	}
+
+	File.close();
+
+	// This tree and runlog will be checked again.
+	if (FirstInitTree)
+	{
+		// BField
+		if ( Conf.read<double>("Detector/BField") == 2.0)
+		{
+			Log->warn(" The BField is at the default value therefore we will use the value from the log file = %2.6f",BField);
+			Conf.add("Detector/BField", BField);
+		}
+		// Geometry file
+		if ( Conf.read<string>("Detector/GeometryFile") == "")
+		{
+			Log->warn(" No geometry file number given in the configuration file. We will use the CFM number from the log file = %s",GeoFileNum.c_str());
+			Conf.add("Detector/GeometryFile", GeoFileNum);
+		}
+
 	}
  
+	// No nthrown means data run.
+	// Return false means at the FirstInitTree that the log files won't be checked again.
 	if (Nbnthrown == 0)
 	{
 		Log->info("No nthrown found.");
 		return false;
 	}
 
-	File.close();
-
-	// This is the check on the first tree. Do not save the values.
-	// This tree and runlog will be checked again.
-	if (FirstInitTree)
+	// This is the check on the first tree. Don't save everything.
+	if ( FirstInitTree)
 		return true;
 
 	nthrown.push_back(Tmpnthrown);

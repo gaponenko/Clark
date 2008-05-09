@@ -26,6 +26,7 @@ using namespace std;
 #include "log4cpp/Category.hh"
 #include "ConfigFile.h"
 #include "FuncLib.h"
+#include "DetectorGeo.h"
 
 #define MAXWIN			21
 #define MAXTECHITS		384
@@ -36,12 +37,13 @@ using namespace std;
 #define MAX_WIRES_P		160		// Max number of hits in PsPACT planes (?)
 #define MAXMICHELDDKS	32		// Max number of Michel decay from micheld server.
 
-class EventClass {
+class EventClass{
 	public :
 		EventClass()	{};
 		~EventClass()	{};
 
-		void Init( ConfigFile *C, log4cpp::Category *L );
+		void Init( ConfigFile &C, log4cpp::Category *L );
+		bool InitGeometry(ConfigFile &C);
 		void InitVar( TTree* T);
 		void GetVar( TTree* T, const char* Branch, const char* Leaf, Int_t* V);
 		void GetVar( TTree* T, const char* Branch, const char* Leaf, Float_t* V);
@@ -50,6 +52,8 @@ class EventClass {
 		bool Exists( const char* Name)	{return ExistList[Name];}
 
 		log4cpp::Category *Log;
+		// Geometry class of the TWIST detector
+		DetectorGeo *geo;
 
 		//__________________________ Config _________________________//
 		bool DoEcalib;

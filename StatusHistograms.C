@@ -28,11 +28,11 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	Log	= TmpLog;
 	Log->info( "Register Status Histograms");
 
-	// if (not Conf.read<bool>("StatusHistograms/Do", 1))
-	// {
-	// 	Log->info( " turned OFF");
-	// 	return false ;
-	// }
+	if (not Conf.read<bool>("StatusHistograms/Do", 1))
+	{
+		Log->info( "StatusHistograms %s turned OFF",Title.c_str());
+		return false ;
+	}
 
 	string N = Name;
 	string T = Title;

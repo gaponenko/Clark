@@ -85,6 +85,7 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PACTCut/region_22", "1.634, -5.428, -61.26, 642.3");
 	
 	//	StatusHistograms
+	SetKey(Conf, "StatusHistograms/Do", false);
 	SetKey(Conf, "StatusHistograms/PerWindowType", false);
 
 	// ==================== Special Analyses ======================== //
@@ -106,7 +107,7 @@ void SetDefault(ConfigFile &Conf)
 	
 	// ================== Detector Parameters ======================== //
 	SetKey(Conf, "Detector/BField",	2.0);
-	SetKey(Conf, "Detector/GeometryFile",	"");
+	SetKey(Conf, "Detector/GeometryFile",	"");	// CFM number of the file
 
 	// ================== General Parameters ======================== //
 	// Kinematic end point
