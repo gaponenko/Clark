@@ -89,28 +89,19 @@ void HistogramFactory::Store( string Name, string Path, string TmpType)
 
 void HistogramFactory::Fill( string Name, double Val)
 {
-	if ( Type[Name] == "TH1D" )
 		H1D[Name]->Fill(Val);
-	
-	if ( Type[Name] == "TH2D" )
-		Log->error(" Ouch ! You try to put one value in %s but it is a TH2D.",Name.c_str());
 }
 
 void HistogramFactory::Fill( string Name, double Val1, double Val2)
 {
-	if ( Type[Name] == "TH1D" )
-		H1D[Name]->Fill(Val1, Val2);
-	
 	if ( Type[Name] == "TH2D" )
 		H2D[Name]->Fill(Val1, Val2);
+	else
+		H1D[Name]->Fill(Val1, Val2);
 }
 
 void HistogramFactory::Fill( string Name, double Val1, double Val2, double Val3)
 {
-	if ( Type[Name] == "TH1D" )
-		Log->error(" Ouch ! You try to put three values in %s but it is a TH1D.",Name.c_str());
-	
-	if ( Type[Name] == "TH2D" )
 		H2D[Name]->Fill(Val1, Val2, Val3);
 }
 
@@ -137,14 +128,12 @@ void HistogramFactory::AddObjToArray( string Name, TObject *Obj)
 
 void	HistogramFactory::CutApplied(string LastCut)
 { 
-	map<string,TH1D*>::iterator Before = H1D.find("EventsBeforeCut");
-	map<string,TH1D*>::iterator Reject = H1D.find("EventsRejectedByCut");
-	if( Before != H1D.end() ) 
+	if( H1D.find("EventsBeforeCut") != H1D.end() ) 
 		for ( int i = 0; i < Cuts[LastCut]+1; i++)
 		{
 			Fill("EventsBeforeCut",i);
 		}
-	if( Reject != H1D.end() ) 
+	if( H1D.find("EventsRejectedByCut") != H1D.end() ) 
 	{
 		Fill("EventsRejectedByCut",Cuts[LastCut]);
 	}
@@ -152,8 +141,7 @@ void	HistogramFactory::CutApplied(string LastCut)
 
 void	HistogramFactory::NbCandidateTracks(string ComingCut, EventClass &E)
 {
-	map<string,TH2D*>::iterator NbTracks = H2D.find("NbExtraTracksPerCut");
-	if( NbTracks != H2D.end() ) 
+	if( H2D.find("NbExtraTracksPerCut") != H2D.end() ) 
 	{
 		Fill("NbExtraTracksPerCut",Cuts[ComingCut], E.seltrack.size()-1);
 	}
