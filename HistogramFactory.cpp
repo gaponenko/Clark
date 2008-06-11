@@ -40,6 +40,18 @@ void HistogramFactory::DefineTH2D(string Path, string Name, string Title, int xB
 	Store( Name, Path, "TH2D");
 }
 
+void HistogramFactory::DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect)
+{
+	double *ybins = new double[yBinVect.size()];
+	for ( int i = 0; i < yBinVect.size(); i++)
+	{
+		ybins[i]	= yBinVect[i];
+	}	
+	H2D[Name]	= new TH2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBinVect.size()-1, ybins);
+	H2D[Name]->Sumw2();			// use sqrt(sum of weights) instead of sqrt(entries)
+	Store( Name, Path, "TH2D");
+}
+
 void HistogramFactory::DefineArrayOfStr(string Path, string Name)
 {
 	ObjArray[Name]	= new TObjArray();

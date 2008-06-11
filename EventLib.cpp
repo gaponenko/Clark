@@ -30,7 +30,7 @@ void Get_uv_at( const EventClass *E, int Trk, double z, double &uu, double &vv)
 	vv	= v0 + E->radius[Trk] * sin(2.0 * M_PI * ( z - z0 ) / E->wavelen[Trk]);
 }
 
-double MichelWeight(unsigned accflag) {
+int MichelWeight(unsigned accflag) {
   switch(accflag) {
   case 0x1: case 0x4: case 0x10: case 0x40: case 0x100: case 0x400: case 0x1000:
     return +1; 

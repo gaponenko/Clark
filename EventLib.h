@@ -18,7 +18,7 @@ using namespace std;
 
 int DistanceToTarget( EventClass &E, int T);
 void Get_uv_at( const EventClass *E, int Trk, double z, double &uu, double &vv);
-double MichelWeight( unsigned accflag);
+int MichelWeight( unsigned accflag);
 
 #endif
 

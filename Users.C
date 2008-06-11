@@ -30,6 +30,7 @@
 #include "AsymmetryPlots.C"
 
 #include "MichelSpectrum.C"
+#include "ECalibHistograms.C"
 #include "FiducialCut.C"
 
 #include "StatusHistograms.C"
@@ -56,6 +57,7 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new AsymmetryPlots());
 
 	AnaObj->Register( new MichelSpectrum("Selected", "of the selected events"));
+	AnaObj->Register( new ECalibHistograms());
 	AnaObj->Register( new StatusHistograms("InSpectrum",	"of the events in the spectrum"));
 
 	AnaObj->Register( new FiducialCut());

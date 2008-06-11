@@ -107,7 +107,7 @@ void SetDefault(ConfigFile &Conf)
 	
 	// ================== Detector Parameters ======================== //
 	SetKey(Conf, "Detector/BField",	2.0);
-	SetKey(Conf, "Detector/GeometryFile",	"");	// CFM number of the file
+	SetKey(Conf, "Detector/GeometryFile",	-57);	// CFM number of the file
 
 	// ================== General Parameters ======================== //
 	// Kinematic end point
@@ -121,6 +121,15 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "Parameters/NXBinsMichel", 110);
 	SetKey(Conf, "Parameters/XMinMichel", 0.0);
 	SetKey(Conf, "Parameters/XMaxMichel", 55.0);
+
+	// Energy Calibration histograms
+	SetKey(Conf, "Parameters/NCBins_EC",	360);
+	SetKey(Conf, "Parameters/NCBins_ECinvc",72);
+	SetKey(Conf, "Parameters/NXBins_EC",	4000);
+	SetKey(Conf, "Parameters/XMin_EC",		30.0);
+	SetKey(Conf, "Parameters/XMax_EC",		70.0);
+	SetKey(Conf, "Parameters/CosMin_EC",	0.3);
+	SetKey(Conf, "Parameters/CosMax_EC",	0.95);
 
 	SetKey(Conf, "Parameters/MuonWinType",	1);
 

@@ -69,7 +69,7 @@ bool MichelSpectrum::Process(EventClass &E, HistogramFactory &H)
 		}
 		catch( const char* Msg)
 		{
-			Log->crit("%s = 0x%x",Msg,E.micheld_accflag[0]);
+			Log->crit("MichelSpectrum: %s = 0x%x",Msg,E.micheld_accflag[0]);
 			exit(1);
 		}
 		

@@ -52,11 +52,15 @@ bool EventClass::InitGeometry(ConfigFile &C)
 	// DCzposition	= StrToFloatVect(Tmp);
 
 	char TmpFile[256];
-	if (C.read<string>( "Detector/GeometryFile") != "")
+	if (C.read<int>( "Detector/GeometryFile") != 0)
 	{
-		int GeoNum = atoi(C.read<string>( "Detector/GeometryFile").c_str());
+		int GeoNum = C.read<int>( "Detector/GeometryFile");
+		if ( GeoNum < 0)
+			Log->warn("Using the default geometry file number %d",abs(GeoNum));
+		GeoNum = abs(GeoNum);
 		sprintf(TmpFile,"%s/dt_geo.%05d",getenv("CAL_DB"),GeoNum);
 		geo = new DetectorGeo();
+		Log->info("Reading geometry file %s",TmpFile);
 		return geo->ReadGeometry( TmpFile, Log);
 	}
 	else

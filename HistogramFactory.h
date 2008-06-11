@@ -40,6 +40,7 @@ class HistogramFactory {
 		void	DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax);
 		void	DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax);
 		void	DefineTH1D_varwidth(string Path, string Name, string Title, vector<double> BinVect);
+		void	DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect);
 		void	DefineArrayOfStr(string Path, string Name);
 		void	AddCut(string InCut);
 		void	DefineEventsBeforeCut(const char* Path, const char* Title);
