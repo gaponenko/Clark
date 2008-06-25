@@ -93,10 +93,10 @@ int main(int argc, char **argv)
 		Capp->setThreshold(log4cpp::Priority::INFO);
 	// PROBLEM: can't use that ... Clark crashes at the end.
 	// Must be commented for now.
-	//	LogAll.addAppender(Capp);
+	// LogAll.addAppender(Capp);
 
 
-	LogAll.info("######## Starting treesumming with %s ########\n", argv[0]);
+	LogAll.info("Starting treesumming with %s \n", argv[0]);
 
 	// ================ TREE ANALYSIS ===================== //
 
@@ -134,8 +134,9 @@ int main(int argc, char **argv)
 
 	AnaObj.SaveHistos();
 
+	LogAll.info("\nDone!");
+
 	// clean up and flush all appenders
 	LogAll.shutdown();
-	cout<<"Done!"<<endl;
 	return 0;
 }

@@ -19,13 +19,14 @@ int CommandLine::Init(int argc, char **argv)
 	string	TmpStr;
 	int		nb_option = -1;
 	// Short option definition "-h -o ARG"
-	const char* const short_options = "hl:e:";
+	const char* const short_options = "hl:e:o:";
 	// Long options are like : "--help --output=ARG"
 	// 0 means no ARG and 1 means need an ARG
 	const struct option long_options[] = {
 		{ "help",			0, NULL, 'h'	},
 		{ "ecalib",			1, NULL, 'e'	},
 		{ "logfile",		1, NULL, 'l'	},
+		{ "outputfile",		1, NULL, 'o'	},
 		{ NULL,				0, NULL, 0		},
 	};
 
@@ -90,6 +91,7 @@ void	CommandLine::SaveToConfig(ConfigFile &Conf)
 {
 	Conf.add( "CommandLine/Debug",		Debug);
 	Conf.add( "CommandLine/LogFile",	LogFile);
+	Conf.add( "CommandLine/OutputFile",	OutputFile);
 	Conf.add( "CommandLine/EcalFile",	EcalFile);
 	Conf.add( "CommandLine/EcalArray",	EcalArray);
 }

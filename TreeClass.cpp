@@ -52,8 +52,6 @@ bool TreeClass::InitAll( string Treename, ConfigFile &Conf, log4cpp::Category *T
 		return false;
 	}
 
-	FirstEntry	= Conf.read<int>("FirstEntry", 0);
-	LastEntry	= Conf.read<int>("LastEntry", -1);
 
 	CloseTree();
 
@@ -133,6 +131,10 @@ bool TreeClass::InitTree( string Treename, ConfigFile &Conf)
 	}
 
 	Evt.InitVar(Tree);
+
+	// How many entries do we want to analyse ?
+	FirstEntry	= Conf.read<int>("FirstEntry", 0);
+	LastEntry	= Conf.read<int>("LastEntry", -1);
 
 	return true;
 }
