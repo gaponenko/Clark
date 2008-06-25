@@ -250,13 +250,13 @@ bool TreeClass::ReadMofiaLog( string Filename, ConfigFile &Conf)
 		// BField
 		if ( Conf.read<double>("Detector/BField") == 2.0)
 		{
-			Log->warn(" The BField was not set in the configuration file therefore we will use the value from the log file = %2.6f",BField);
+			Log->warn("The BField was not set in the configuration file. Use the value from the log file = %2.6f",BField);
 			Conf.add("Detector/BField", BField);
 		}
 		// Geometry file
-		if ( Conf.read<string>("Detector/GeometryFile") < 0)
+		if ( Conf.read<double>("Detector/GeometryFile") < 0.0 )
 		{
-			Log->warn(" No geometry file number given in the configuration file. We will use the CFM number from the log file = %s",GeoFileNum.c_str());
+			Log->warn("No geometry file number given in the configuration file. Use the CFM number from the log file = %s",GeoFileNum.c_str());
 			Conf.add("Detector/GeometryFile", GeoFileNum);
 		}
 
