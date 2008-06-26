@@ -114,7 +114,7 @@ bool PACTCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp
 	if (E.Exists("npc7") && E.Exists("npc8"))
 		H.DefineTH2D("PACT","pc8vs7","Pulse widths for PC7,8; PC7 width (ns); PC8 width(ns)",nb,0.,maxw,nb,0.,maxw);
 
-	vector<int> s;
+	vector<float> s;
 	//// (1 quadrant + (2*slope + 2*intercept))*4 histos = 20 parameters!
 	for (int i = 0; i < v56.size(); i++)
 	{
@@ -124,7 +124,7 @@ bool PACTCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp
 			Log->info("Bad quadrant. PACT Cut de-registered.");
 			return false;
 		}
-		s = StrToIntVect(Conf.read<string>("PACTCut/region_"+v56[i].n56));
+		s = StrToFloatVect(Conf.read<string>("PACTCut/region_"+v56[i].n56));
 		v56[i].slopea		= s[0];
 		v56[i].slopeb		= s[1];
 		v56[i].intercepta	= s[2];
