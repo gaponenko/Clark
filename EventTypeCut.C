@@ -39,8 +39,8 @@ bool EventTypeCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, lo
 	}
 	
 	//	 --------- Histograms initialization ---------		//
-	H.DefineTH1D( "EventTypeCut","EvtType_before",	"Event Type before the cut;Event Type",32, -0.5,31.5);
-	H.DefineTH1D( "EventTypeCut","EvtType_after",	"Event Type after the cut;Event Type",32, -0.5,31.5);
+	H.DefineTH1D( "EventTypeCut","EvtType_before",	"Event Type before the cut;Event Type",36, -0.5,35.5);
+	H.DefineTH1D( "EventTypeCut","EvtType_after",	"Event Type after the cut;Event Type",36, -0.5,35.5);
 
 	//	 --------- Parameters initialization ---------		//
 	TypeList	= StrToIntVect(Conf.read<string>("EventTypeCut/Types"));

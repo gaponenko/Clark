@@ -42,7 +42,7 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	
 	//	 --------- Histograms initialization ---------		//
 	//______________________ Event Branch __________________________ //
-	H.DefineTH1D( "Status",	"EvtType_"+N,	"Event Type "+T+";Event type",32, -0.5,31.5);
+	H.DefineTH1D( "Status",	"EvtType_"+N,	"Event Type "+T+";Event type",36, -0.5,35.5);
 	//// These two can be optained by projection of the 2D plot
 	// H.DefineTH1D( "Status",	"TCAP_"+N,		"TCAP "+T+";TCAP [ns]",200, 0,200);
 	// H.DefineTH1D( "Status",	"m12width_"+N,	"m12 width "+T+";m12 width [ns]",300, 0, 30000);
