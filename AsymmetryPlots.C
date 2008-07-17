@@ -63,8 +63,8 @@ bool AsymmetryPlots::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 
 	//	 __________ setup variable width bins  __________
 
-	// if (WeightedPlots)
-	// {
+	if (WeightedPlots)
+	{
 		vector<double> Vbins;
 		Vbins.push_back(0.0);
 		Vbins.push_back(t_min);
@@ -81,6 +81,7 @@ bool AsymmetryPlots::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 		}
 		Vbins[Vbins.size()-1] = 9000.;  // it's approximately 9000ns anyway
 		Vbins.push_back(10000.);
+
 	
 		//	 --------- Histograms initialization ---------		//
 		// first the bins that have constant stat widths
@@ -89,7 +90,7 @@ bool AsymmetryPlots::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_deriv1", "Deriv_1 vs Decay Time (ns)" ,Vbins);
 		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_deriv2", "Deriv_2 vs Decay Time (ns)" ,Vbins);
 		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt",        "Gn vs Decay Time (ns)"      ,Vbins);
-	// }
+	}
 
 	Log->info( "Register Asymmetry Plots");
 	return true;
@@ -101,7 +102,12 @@ bool AsymmetryPlots::Process(EventClass &E, HistogramFactory &H)
 	int trk = E.seltrack[0];
 	if (WeightedPlots)
 	{
-		if ( costh_min < fabs(E.costh[trk]) < costh_max and ptot_min < E.ptot[trk] < ptot_max and fabs(E.pz[trk]) > plong_min and E.pt[trk] < ptrans_max)
+		if ( costh_min < fabs(E.costh[trk]) &&
+			fabs(E.costh[trk])	< costh_max &&
+			ptot_min < E.ptot[trk] &&
+			E.ptot[trk] < ptot_max &&
+			fabs(E.pz[trk]) > plong_min &&
+			E.pt[trk] < ptrans_max)
 		{
 			double decay_time = E.hefit_time[trk];
 			double ai = E.costh[trk]*((E.ptot[trk]/kpmax)-0.5)/(1.5-(E.ptot[trk]/kpmax));
