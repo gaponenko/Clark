@@ -290,7 +290,7 @@ void TreeClass::StoreExtraValues()
 		return;
 	Hist.DefineArrayOfStr("", "logdata");
 
-	Hist.ListToTObjArr( "logdata", nthrown);
-	Hist.ListToTObjArr( "logdata", reqnum);
 	Hist.ListToTObjArr( "logdata", MofiaLogs);
+	Hist.ListToTObjArr( "logdata", reqnum);
+	Hist.ListToTObjArr( "logdata", nthrown);
 }

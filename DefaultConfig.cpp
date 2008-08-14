@@ -117,7 +117,7 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "Parameters/c",29.979245800);	// cm/ns
 
 	// Michel spectrum histogram
-	SetKey(Conf, "Parameters/NCosThBinsMichel", 110);
+	SetKey(Conf, "Parameters/NCosThBinsMichel", 100);
 	SetKey(Conf, "Parameters/NXBinsMichel", 110);
 	SetKey(Conf, "Parameters/XMinMichel", 0.0);
 	SetKey(Conf, "Parameters/XMaxMichel", 55.0);
