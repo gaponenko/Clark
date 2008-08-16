@@ -52,6 +52,12 @@ void HistogramFactory::DefineTH2D_Yvarwidth(string Path, string Name, string Tit
 	Store( Name, Path, "TH2D");
 }
 
+void HistogramFactory::DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax)
+{
+	H3D[Name]	= new TH3D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax, zBins, zMin, zMax);
+	Store( Name, Path, "TH3D");
+}
+
 void HistogramFactory::DefineArrayOfStr(string Path, string Name)
 {
 	ObjArray[Name]	= new TObjArray();
@@ -114,7 +120,10 @@ void HistogramFactory::Fill( string Name, double Val1, double Val2)
 
 void HistogramFactory::Fill( string Name, double Val1, double Val2, double Val3)
 {
+	if ( Type[Name] == "TH2D" )
 		H2D[Name]->Fill(Val1, Val2, Val3);
+	else
+		H3D[Name]->Fill(Val1, Val2, Val3);
 }
 
 void HistogramFactory::ListToTObjArr( string GlobArr, vector<string> List)
@@ -222,6 +231,8 @@ void HistogramFactory::Save()
 				H1D[*N]->Write();
 			else if (Type[*N] == "TH2D")
 				H2D[*N]->Write();
+			else if (Type[*N] == "TH3D")
+				H3D[*N]->Write();
 			else if (Type[*N] == "TObjArray")
 				ObjArray[*N]->Write((*N).c_str(), Dummy->kSingleKey);
 			else

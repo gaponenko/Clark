@@ -40,12 +40,14 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	//	 --------- Parameters initialization ---------		//
 	PerWindowType	= Conf.read<bool>("StatusHistograms/PerWindowType");
 	
+	int ncbins		= Conf.read<int>("Parameters/NCosThBinsMichel");
+	int nxbins		= Conf.read<int>("Parameters/NXBinsMichel");
+	double xmin		= Conf.read<double>("Parameters/XMinMichel");
+	double xmax		= Conf.read<double>("Parameters/XMaxMichel");
+
 	//	 --------- Histograms initialization ---------		//
 	//______________________ Event Branch __________________________ //
 	H.DefineTH1D( "Status",	"EvtType_"+N,	"Event Type "+T+";Event type",36, -0.5,35.5);
-	//// These two can be optained by projection of the 2D plot
-	// H.DefineTH1D( "Status",	"TCAP_"+N,		"TCAP "+T+";TCAP [ns]",200, 0,200);
-	// H.DefineTH1D( "Status",	"m12width_"+N,	"m12 width "+T+";m12 width [ns]",300, 0, 30000);
 
 	H.DefineTH2D( "Status",	"m12VsTCAP_"+N,	"m12 vs TCAP "+T+";TCAP [ns];m12 width [ns]",200, 0,200,300, 0, 30000);
 	H.DefineTH1D( "Status",	"NumWin_"+N,	"Number of windows "+T,11, -0.5,10.5);
@@ -71,22 +73,16 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	}
 
 	//___________________ Helix fit tracks ______________________ //
-	H.DefineTH1D( "Status",	"DkFitTime_AllTrks_"+N,	"Decay fit time for all the tracks "+T,1600, -6000.,10000.);
-	H.DefineTH1D( "Status",	"DkFitTime_SelTrks_"+N,	"Decay fit time for selected the tracks "+T,1000, 0.,10000.);
+	H.DefineTH1D( "Status",	"DkFitTime_"+N,	"Decay fit time for selected the tracks "+T,1000, 0.,10000.);
 
-	H.DefineTH1D( "Status",	"Chi2DkWinTrk_"+N,		"Reduced Chisquare of the tracks in the decay window "+T,1000, 0,10);
-	H.DefineTH1D( "Status",	"Chi2DkWinTrkFull_"+N,	"Reduced Chisquare of the tracks in the decay window "+T,1000, 0,1000);
+	H.DefineTH1D( "Status",	"Chi2_"+N,		"Reduced Chisquare of the selected tracks "+T,1000, 0,10);
+	H.DefineTH1D( "Status",	"Chi2Full_"+N,	"Reduced Chisquare of the selected tracks "+T,1000, 0,1000);
 	
-	H.DefineTH1D( "Status",	"Chi2SelTrk_"+N,		"Reduced Chisquare of the selected tracks "+T,1000, 0,10);
-	H.DefineTH1D( "Status",	"Chi2SelTrkFull_"+N,	"Reduced Chisquare of the selected tracks "+T,1000, 0,1000);
-	
-	H.DefineTH1D( "Status",	"NdofDkWinTrk_"+N,		"Number of degrees of freedom of the tracks in the decay window "+T,1000, 0,10);
-	H.DefineTH1D( "Status",	"NdofDkWinTrkFull_"+N,	"Number of degrees of freedom of the tracks in the decay window "+T,1000, 0,1000);
-	
-	H.DefineTH1D( "Status",	"NdofSelTrk_"+N,		"Number of degrees of freedom of the selected tracks "+T,1000, 0,10);
-	H.DefineTH1D( "Status",	"NdofSelTrkFull_"+N,	"Number of degrees of freedom of the selected tracks "+T,1000, 0,1000);
+	H.DefineTH1D( "Status",	"Ndof_"+N,		"Number of degrees of freedom of the selected tracks "+T,1000, 0,10);
+	H.DefineTH1D( "Status",	"NdofFull_"+N,	"Number of degrees of freedom of the selected tracks "+T,1000, 0,1000);
 
-
+	H.DefineTH3D( "Status", "Chi2vsCosTvsP_"+N,		"Reduced Chisquare distribution versus cos(theta) versus Momentum "+T,nxbins,xmin,xmax,ncbins, -1.0, 1.0, 1000, 0,10);
+	H.DefineTH3D( "Status", "Chi2vsCosTvsPFull_"+N,	"Reduced Chisquare distribution versus cos(theta) versus Momentum "+T,nxbins,xmin,xmax,ncbins, -1.0, 1.0, 1000, 0,1000);
 
 
 	return true;
@@ -94,60 +90,48 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 
 bool StatusHistograms::Process(EventClass &E, HistogramFactory &H)
 {
-	// ____ ____ //
-		//_________ Event Branch
-		H.Fill("EvtType_"+Name,E.type);
-		H.Fill("NumWin_"+Name,E.nwin);
-		H.Fill("NumTrk_"+Name,E.ntr);
-		// H.Fill("m12width_"+Name,E.m12width);
+	//_________ Event Branch ________//
+	H.Fill("EvtType_"+Name,E.type);
+	H.Fill("NumWin_"+Name,E.nwin);
+	H.Fill("NumTrk_"+Name,E.ntr);
 
-		for ( int i = 0; i < 3; i++)
-			// H.Fill("TCAP_"+Name,E.cptime[i]);
-			H.Fill("m12VsTCAP_"+Name,E.cptime[i], E.m12width);
+	for ( int i = 0; i < 3; i++)
+		H.Fill("m12VsTCAP_"+Name,E.cptime[i], E.m12width);
 
-		//_________ Windows
-		string wtstr;
-		for ( int w = 0; w < E.nwin; w++)
+	//_________ Windows ________//
+	string wtstr;
+	for ( int w = 0; w < E.nwin; w++)
+	{
+		wtstr	= E.win_type[w];
+		H.Fill("Win_Type_"+Name,E.win_type[w]);
+		H.Fill("Win_FlagVsType_"+Name,E.win_type[w],E.win_flag[w]);
+		H.Fill("Win_PCWidthAvg_"+Name,E.win_type[w],E.win_pcwidthavg[w]);
+		H.Fill("Win_PCtof_"+Name,E.win_type[w],E.win_pctof[w]);
+		H.Fill("Win_Time_Vs_WinType_"+Name,E.win_type[w],E.win_time[w]);
+		if (PerWindowType)
 		{
-			wtstr	= E.win_type[w];
-			H.Fill("Win_Type_"+Name,E.win_type[w]);
-			H.Fill("Win_FlagVsType_"+Name,E.win_type[w],E.win_flag[w]);
-			H.Fill("Win_PCWidthAvg_"+Name,E.win_type[w],E.win_pcwidthavg[w]);
-			H.Fill("Win_PCtof_"+Name,E.win_type[w],E.win_pctof[w]);
-			H.Fill("Win_Time_Vs_WinType_"+Name,E.win_type[w],E.win_time[w]);
-			if (PerWindowType)
-			{
-				H.Fill("Win_uvfirst_PerWinType_"+wtstr+"_"+Name,E.win_ufirst[w],E.win_vfirst[w]);
-				H.Fill("Win_uvlast_PerWinType_"+wtstr+"_"+Name,E.win_ulast[w],E.win_vlast[w]);
-				H.Fill("Win_pfirst_PerWinType_"+wtstr+"_"+Name,E.win_pfirst[w]);
-				H.Fill("Win_pupvlast_PerWinType_"+wtstr+"_"+Name,E.win_pulast[w],E.win_pvlast[w]);
-			}
+			H.Fill("Win_uvfirst_PerWinType_"+wtstr+"_"+Name,E.win_ufirst[w],E.win_vfirst[w]);
+			H.Fill("Win_uvlast_PerWinType_"+wtstr+"_"+Name,E.win_ulast[w],E.win_vlast[w]);
+			H.Fill("Win_pfirst_PerWinType_"+wtstr+"_"+Name,E.win_pfirst[w]);
+			H.Fill("Win_pupvlast_PerWinType_"+wtstr+"_"+Name,E.win_pulast[w],E.win_pvlast[w]);
 		}
+	}
 
-		//_________ Helix fit tracks
-		for(vector<int>::iterator t = E.dkwintrack.begin(); t != E.dkwintrack.end(); t++)
-		{
-			H.Fill("DkFitTime_AllTrks_"+Name, E.hefit_time[*t] );
-			if (E.hefit_ndof[*t] > 0)
-			{
-				H.Fill("Chi2DkWinTrk_"+Name,E.hefit_chi2[*t] / E.hefit_ndof[*t]);
-				H.Fill("Chi2DkWinTrkFull_"+Name,E.hefit_chi2[*t] / E.hefit_ndof[*t]);
-				H.Fill("NdofDkWinTrk_"+Name,E.hefit_ndof[*t]);
-				H.Fill("NdofDkWinTrkFull_"+Name,E.hefit_ndof[*t]);
-			}
-		}
+	//_________ Helix fit tracks ________//
 
-		for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
+	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
+	{
+		H.Fill("DkFitTime_"+Name, E.hefit_time[*t] );
+		if (E.hefit_ndof[*t] > 0)
 		{
-			H.Fill("DkFitTime_SelTrks_"+Name, E.hefit_time[*t] );
-			if (E.hefit_ndof[*t] > 0)
-			{
-				H.Fill("Chi2SelTrk_"+Name,E.hefit_chi2[*t] / E.hefit_ndof[*t]);
-				H.Fill("Chi2SelTrkFull_"+Name,E.hefit_chi2[*t] / E.hefit_ndof[*t]);
-				H.Fill("NdofSelTrk_"+Name,E.hefit_ndof[*t]);
-				H.Fill("NdofSelTrkFull_"+Name,E.hefit_ndof[*t]);
-			}
+			H.Fill("Chi2_"+Name,				E.hefit_chi2[*t] / E.hefit_ndof[*t]);
+			H.Fill("Chi2Full_"+Name,			E.hefit_chi2[*t] / E.hefit_ndof[*t]);
+			H.Fill("Ndof_"+Name,				E.hefit_ndof[*t]);
+			H.Fill("NdofFull_"+Name,			E.hefit_ndof[*t]);
+			H.Fill("Chi2vsCosTvsP_"+Name,		E.ptot[*t],E.costh[*t], E.hefit_chi2[*t] / E.hefit_ndof[*t]);
+			H.Fill("Chi2vsCosTvsPFull_"+Name,	E.ptot[*t],E.costh[*t], E.hefit_chi2[*t] / E.hefit_ndof[*t]);
 		}
+	}
 
 	return true;
 }

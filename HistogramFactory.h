@@ -23,6 +23,7 @@ using namespace std;
 #include "TKey.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TH3D.h"
 #include "TAxis.h"
 
 // Include Program
@@ -41,6 +42,7 @@ class HistogramFactory {
 		void	DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax);
 		void	DefineTH1D_varwidth(string Path, string Name, string Title, vector<double> BinVect);
 		void	DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect);
+		void	DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax);
 		void	DefineArrayOfStr(string Path, string Name);
 		void	AddCut(string InCut);
 		void	DefineEventsBeforeCut(const char* Path, const char* Title);
@@ -64,6 +66,7 @@ class HistogramFactory {
 	private :
 		map<string, TH1D*> H1D;
 		map<string, TH2D*> H2D;
+		map<string, TH3D*> H3D;
 		map<string, TObjArray*> ObjArray;
 		map<string, string> Type;
 		map<string, string> Dir;

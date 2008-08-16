@@ -20,10 +20,6 @@ class MichelSpectrum : public ModuleClass{
 		string Name;
 		string Title;
 
-		int ncbins;
-		int nxbins;
-		double xmin;
-		double xmax;
 };
 
 bool MichelSpectrum::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
@@ -33,13 +29,18 @@ bool MichelSpectrum::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 
 	string N = Name;
 	string T = Title;
+
+	int ncbins;
+	int nxbins;
+	double xmin;
+	double xmax;
 	
 	//	 --------- Parameters initialization ---------		//
 
-	ncbins		= Conf.read<int>("Parameters/NCosThBinsMichel", 110);
-	nxbins		= Conf.read<int>("Parameters/NXBinsMichel", 110);
-	xmin		= Conf.read<double>("Parameters/XMinMichel", 0.0);
-	xmax		= Conf.read<double>("Parameters/XMaxMichel", 55.0);
+	ncbins		= Conf.read<int>("Parameters/NCosThBinsMichel");
+	nxbins		= Conf.read<int>("Parameters/NXBinsMichel");
+	xmin		= Conf.read<double>("Parameters/XMinMichel");
+	xmax		= Conf.read<double>("Parameters/XMaxMichel");
 
 	//	 --------- Histograms initialization ---------		//
 	string HistName = "Spectrum_"+Name;
