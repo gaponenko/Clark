@@ -104,6 +104,10 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "AsymmetryPlots/Fiducial/trans_max", 	43.0);
 	SetKey(Conf, "AsymmetryPlots/Weighting", 2.718);
 
+	// ChiSquare
+	SetKey(Conf, "ChiSquare/Do", 0);				// default OFF
+	SetKey(Conf, "ChiSquare/RedChi2CutMin", -1.0);			// default OFF
+	SetKey(Conf, "ChiSquare/RedChi2CutMax", -1.0);			// default OFF
 	
 	// ================== Detector Parameters ======================== //
 	SetKey(Conf, "Detector/BField",	2.0);

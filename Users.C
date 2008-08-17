@@ -27,6 +27,8 @@
 #include "DkFitTimeCut.C"
 #include "PACTCut.C"
 
+#include "ChiSquare.C"
+
 #include "AsymmetryPlots.C"
 
 #include "MichelSpectrum.C"
@@ -53,6 +55,8 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new Mu_eVertexSel());
 	AnaObj->Register( new DkFitTimeCut());
 	AnaObj->Register( new PACTCut());
+
+	AnaObj->Register( new ChiSquare());
 
 	AnaObj->Register( new AsymmetryPlots());
 

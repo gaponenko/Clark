@@ -40,11 +40,6 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	//	 --------- Parameters initialization ---------		//
 	PerWindowType	= Conf.read<bool>("StatusHistograms/PerWindowType");
 	
-	int ncbins		= Conf.read<int>("Parameters/NCosThBinsMichel");
-	int nxbins		= Conf.read<int>("Parameters/NXBinsMichel");
-	double xmin		= Conf.read<double>("Parameters/XMinMichel");
-	double xmax		= Conf.read<double>("Parameters/XMaxMichel");
-
 	//	 --------- Histograms initialization ---------		//
 	//______________________ Event Branch __________________________ //
 	H.DefineTH1D( "Status",	"EvtType_"+N,	"Event Type "+T+";Event type",36, -0.5,35.5);
@@ -80,9 +75,6 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	
 	H.DefineTH1D( "Status",	"Ndof_"+N,		"Number of degrees of freedom of the selected tracks "+T,1000, 0,10);
 	H.DefineTH1D( "Status",	"NdofFull_"+N,	"Number of degrees of freedom of the selected tracks "+T,1000, 0,1000);
-
-	H.DefineTH3D( "Status", "Chi2vsCosTvsP_"+N,		"Reduced Chisquare distribution versus cos(theta) versus Momentum "+T,nxbins,xmin,xmax,ncbins, -1.0, 1.0, 1000, 0,10);
-	H.DefineTH3D( "Status", "Chi2vsCosTvsPFull_"+N,	"Reduced Chisquare distribution versus cos(theta) versus Momentum "+T,nxbins,xmin,xmax,ncbins, -1.0, 1.0, 1000, 0,1000);
 
 
 	return true;
@@ -128,8 +120,6 @@ bool StatusHistograms::Process(EventClass &E, HistogramFactory &H)
 			H.Fill("Chi2Full_"+Name,			E.hefit_chi2[*t] / E.hefit_ndof[*t]);
 			H.Fill("Ndof_"+Name,				E.hefit_ndof[*t]);
 			H.Fill("NdofFull_"+Name,			E.hefit_ndof[*t]);
-			H.Fill("Chi2vsCosTvsP_"+Name,		E.ptot[*t],E.costh[*t], E.hefit_chi2[*t] / E.hefit_ndof[*t]);
-			H.Fill("Chi2vsCosTvsPFull_"+Name,	E.ptot[*t],E.costh[*t], E.hefit_chi2[*t] / E.hefit_ndof[*t]);
 		}
 	}
 
