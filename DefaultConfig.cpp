@@ -15,10 +15,10 @@ void SetDefault(ConfigFile &Conf)
 
 	//	TCAPm12widthCut
 	SetKey(Conf, "TCAPm12widthCut/Do", true);
-	SetKey(Conf, "TCAPm12widthCut/TCAPMin", 0.0);
-	SetKey(Conf, "TCAPm12widthCut/TCAPMax", 200.0);
-	SetKey(Conf, "TCAPm12widthCut/m12widthMin", 0.0);
-	SetKey(Conf, "TCAPm12widthCut/m12widthMax", 20000.0);
+	SetKey(Conf, "TCAPm12widthCut/TCAPMin", -10000.0);
+	SetKey(Conf, "TCAPm12widthCut/TCAPMax", 10000.0);
+	SetKey(Conf, "TCAPm12widthCut/m12widthMin", -100000.0);
+	SetKey(Conf, "TCAPm12widthCut/m12widthMax", 100000.0);
 
 	//	EventTypeCut
 	SetKey(Conf, "EventTypeCut/Do", true);
@@ -90,12 +90,31 @@ void SetDefault(ConfigFile &Conf)
 
 	// ==================== Special Analyses ======================== //
 	
-	// AsymmetryPlots
-	SetKey(Conf, "AsymmetryPlots/WeightedPlots", 1); // default ON
-	SetKey(Conf, "AsymmetryPlots/UnweightedPlots", 0); // default OFF
-	SetKey(Conf, "AsymmetryPlots/tmu", 2197.03);			// ns
-	SetKey(Conf, "AsymmetryPlots/t_min", 245.28);		// ns
-	SetKey(Conf, "AsymmetryPlots/t_width_min", 68.435);	// ns
+	// Bias Plots
+	SetKey(Conf, "BiasPlots/Do",			true);
+	SetKey(Conf, "BiasPlots/Nptotbins",		8);
+	SetKey(Conf, "BiasPlots/minptot",		15.0);			// MeV
+	SetKey(Conf, "BiasPlots/maxptot",		55.0);			// MeV
+
+	SetKey(Conf, "BiasPlots/Nbinscosth",	100);			//
+	SetKey(Conf, "BiasPlots/mincosth",		0.3);			//
+	SetKey(Conf, "BiasPlots/maxcosth",		-0.3);			//
+
+	SetKey(Conf, "BiasPlots/Nbinsdp",		401);			//
+	SetKey(Conf, "BiasPlots/mindp",			-2.0);			// MeV
+	SetKey(Conf, "BiasPlots/maxdp",			2.0);			// MeV
+	
+	SetKey(Conf, "BiasPlots/Nbinsdcosth",	200);			//
+	SetKey(Conf, "BiasPlots/mindcosth",		-0.05);			//
+	SetKey(Conf, "BiasPlots/maxdcosth",		0.05);			//
+	
+
+	// Asymmetry Plots
+	SetKey(Conf, "AsymmetryPlots/WeightedPlots",	1); // default ON
+	SetKey(Conf, "AsymmetryPlots/UnweightedPlots",	0); // default OFF
+	SetKey(Conf, "AsymmetryPlots/tmu",				2197.03);			// ns
+	SetKey(Conf, "AsymmetryPlots/t_min",			245.28);		// ns
+	SetKey(Conf, "AsymmetryPlots/t_width_min",		68.435);	// ns
 	SetKey(Conf, "AsymmetryPlots/Fiducial/costh_min", 	0.50);
 	SetKey(Conf, "AsymmetryPlots/Fiducial/costh_max", 	0.94);
 	SetKey(Conf, "AsymmetryPlots/Fiducial/ptot_min", 	31.0);
@@ -114,6 +133,14 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "Detector/GeometryFile",	-57);	// CFM number of the file
 
 	// ================== General Parameters ======================== //
+	// Truth Bank
+	SetKey(Conf, "TruthBank/MuUVMaxRadius", 	4.0);	// 
+	SetKey(Conf, "TruthBank/TriggerTimeJitter", 100.0);	// 
+	SetKey(Conf, "TruthBank/MuZAroundTarget",	1.0);	// 
+	SetKey(Conf, "TruthBank/MueVertexEpsilon",	0.01);	// 
+	SetKey(Conf, "TruthBank/MinDkTimeAfterMu",	300.0);	// 
+	SetKey(Conf, "TruthBank/MaxDkTimeAfterMu",	9100.0);// 
+	
 	// Kinematic end point
 	SetKey(Conf, "Parameters/KinematicPmax",		 	52.828);
 

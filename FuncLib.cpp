@@ -2,7 +2,7 @@
 
 // template<class T>
 // string IntToStr( const T& t )
-string IntToStr( int &t )
+string IntToStr( int t )
 {
 	// Convert from a T to a string
 	// Type T must support << operator

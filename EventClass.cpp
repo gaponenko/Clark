@@ -21,10 +21,28 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 
 	// TODO: code the parsing of the ranges for the window types
 	string Tmp;
-	Tmp			=	C.read<string>( "Parameters/UpDkWinType");
+	Tmp				= C.read<string>( "Parameters/UpDkWinType");
 	UpDkWinType		= StrToIntVect(Tmp);
-	Tmp			=	C.read<string>( "Parameters/DownDkWinType");
+	Tmp				= C.read<string>( "Parameters/DownDkWinType");
 	DownDkWinType	= StrToIntVect(Tmp);
+
+	// For Truth Bank
+	MuUVMaxRadius		=	C.read<double>( "TruthBank/MuUVMaxRadius");
+	TriggerTimeJitter	=	C.read<double>( "TruthBank/TriggerTimeJitter");
+	MuZAroundTarget		=	C.read<double>( "TruthBank/MuZAroundTarget");
+	MueVertexEpsilon	=	C.read<double>( "TruthBank/MueVertexEpsilon");
+	MinDkTimeAfterMu	=	C.read<double>( "TruthBank/MinDkTimeAfterMu");
+	MaxDkTimeAfterMu	=	C.read<double>( "TruthBank/MaxDkTimeAfterMu");
+
+	// It is safer to do it at least once
+	tb_nmu			= 0;
+	tb_mu_trki		= -1;
+	tb_mu_firstvtx	= -1;
+	tb_mu_lastvtx	= -1;
+
+	tb_e_trki		= -1;
+	tb_e_firstvtx	= -1;
+	tb_e_lastvtx	= -1;
 }
 
 bool EventClass::InitGeometry(ConfigFile &C)
@@ -130,7 +148,7 @@ bool EventClass::Load( )
 		muon_radius = -1;
 	}
 
-	//	___________________ Tracking  ___________________ //
+	//	####################################### Tracking  ##################################### //
 
 	for( int t = 0; t < ntr; t++)
 	{
@@ -217,6 +235,76 @@ bool EventClass::Load( )
 			}
 	// if ( dkwintrack.size() > 1)
 	// 	cout<<" ************** Event nevt = "<<nevt<<"  dkwintrack size = "<<dkwintrack.size()<<endl;
+
+	//	####################################### Truth bank  ##################################### //
+	if ( Exists("nmctr") && Exists("nmcvtx") )
+	{
+		tb_nmu			= 0;
+		tb_mu_trki		= -1;
+		tb_mu_firstvtx	= -1;
+		tb_mu_lastvtx	= -1;
+
+		tb_e_trki		= -1;
+		tb_e_firstvtx	= -1;
+		tb_e_lastvtx	= -1;
+
+		// First of all, how many muons were simulated in this event ?
+		for ( int mctrk = 0; mctrk < nmctr; mctrk++ )
+			if(mctrack_pid[mctrk] == 5 || mctrack_pid[mctrk] == 65)
+			{
+				tb_nmu++;
+			}
+
+		for ( int mctrk = 0; mctrk < nmctr; mctrk++ )
+		{
+			if( ( mctrack_pid[mctrk] == 5 || mctrack_pid[mctrk] == 65 ) && tb_mu_trki < 0)
+			{
+				tb_mu_firstvtx	= mctrack_voff[mctrk];
+				tb_mu_lastvtx	= mctrack_voff[mctrk] + mctrack_nv[mctrk] - 1;
+				// If this is the only muon this is easy, just check that it decays.
+				if( tb_nmu == 1)
+				{
+					if( mcvertex_istop[tb_mu_lastvtx] == 1 ) 
+						tb_mu_trki = mctrk;
+				}
+				// More than one muon. We must select only one
+				else
+				{
+					if( mcvertex_istop[tb_mu_lastvtx] == 1 &&							/* Did the muon decay ? */
+							fabs(mcvertex_time[tb_mu_lastvtx]) < TriggerTimeJitter &&	/* In time of trigger */
+							fabs(mcvertex_vz[tb_mu_lastvtx]) < MuZAroundTarget &&		/* Stop in the target module */
+							sqrt(pow(mcvertex_vu[tb_mu_lastvtx],2) + 
+							pow(mcvertex_vv[tb_mu_lastvtx],2)) < MuUVMaxRadius)		/* Stop in Beamspot */
+						tb_mu_trki = mctrk;
+				}
+			}
+
+			if( ( mctrack_pid[mctrk] == 2 || mctrack_pid[mctrk] == 3 ) && tb_mu_trki > -1 && tb_e_trki < 0 )
+			{
+				tb_e_firstvtx	= mctrack_voff[mctrk];
+				tb_e_lastvtx	= mctrack_voff[mctrk] + mctrack_nv[mctrk] - 1;
+				if( fabs(mcvertex_vu[tb_e_firstvtx] - mcvertex_vu[tb_mu_lastvtx]) < MueVertexEpsilon &&
+						fabs(mcvertex_vv[tb_e_firstvtx] - mcvertex_vv[tb_mu_lastvtx]) < MueVertexEpsilon &&
+						fabs(mcvertex_vz[tb_e_firstvtx] - mcvertex_vz[tb_mu_lastvtx]) < MueVertexEpsilon &&
+						/* positron originates from position of muon stop */
+						MinDkTimeAfterMu < mcvertex_time[tb_e_firstvtx] - mcvertex_time[tb_mu_lastvtx] &&
+						mcvertex_time[tb_e_firstvtx] - mcvertex_time[tb_mu_lastvtx] < MaxDkTimeAfterMu
+						/* Decay time within reconstructable constraints */)
+				{
+					tb_e_trki	= mctrk;
+					for ( int V = tb_e_firstvtx; V < tb_e_lastvtx+1; V++ )
+					{
+						if ( mcvertex_istop[V] == 10 )
+							tb_e_firstdcvtx = V;
+						if ( mcvertex_istop[V] == 11 )
+							tb_e_lastdcvtx = V;
+					}
+				}
+			}
+
+		}
+
+	}
 
 	return true;
 }

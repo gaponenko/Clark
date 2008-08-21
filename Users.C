@@ -12,6 +12,7 @@
 #include "TreeClass.h"
 
 // Modules
+
 #include "TCAPm12widthCut.C"
 #include "EventTypeCut.C"
 #include "MuLastPCut.C"
@@ -36,11 +37,13 @@
 #include "FiducialCut.C"
 
 #include "StatusHistograms.C"
+#include "BiasPlots.C"
 #include "GlobalHistograms.C"
 
 void LoadAnalysisClasses( TreeClass *AnaObj)
 {
 	AnaObj->Register( new StatusHistograms("Beginning",	"at the beginning of the treesumming"));
+
 	AnaObj->Register( new TCAPm12widthCut());
 	AnaObj->Register( new EventTypeCut());
 	AnaObj->Register( new MuLastPCut());
@@ -63,10 +66,12 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new MichelSpectrum("Selected", "of the selected events"));
 	AnaObj->Register( new ECalibHistograms());
 	AnaObj->Register( new StatusHistograms("InSpectrum",	"of the events in the spectrum"));
+	AnaObj->Register( new BiasPlots("InSpectrum",	"of the events in the spectrum"));
 
 	AnaObj->Register( new FiducialCut());
 	AnaObj->Register( new MichelSpectrum("Fiducial", "after the fiducial cut"));
 	AnaObj->Register( new StatusHistograms("InFiducial",	"of the events in the fiducial"));
+	AnaObj->Register( new BiasPlots("InFiducial",	"of the events in the fiducial"));
 
 	AnaObj->Register( new GlobalHistograms());
 }

@@ -47,7 +47,7 @@ bool TCAPm12widthCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf,
 	//	 --------- Histograms initialization ---------		//
 	H.DefineTH1D( "TCAPm12widthCut","TCAP_before",		"TCAP before the cut",200, 0,200);
 	H.DefineTH1D( "TCAPm12widthCut","TCAP_after",		"TCAP after the cut",200, 0,200);
-	H.DefineTH2D( "TCAPm12widthCut","m12VsTCAP_before","m12 vs TCAP before the cut",200, 0,200,200, 0, 20000);
+	H.DefineTH2D( "TCAPm12widthCut","m12VsTCAP_before",	"m12 vs TCAP before the cut",200, 0,200,200, 0, 20000);
 	H.DefineTH2D( "TCAPm12widthCut","m12VsTCAP_after",	"m12 vs TCAP after the cut"	,200, 0,200,200, 0, 20000);
 
 	//	 --------- Parameters initialization ---------		//

@@ -26,13 +26,13 @@ class StatusHistograms : public ModuleClass{
 bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
 {
 	Log	= TmpLog;
-	Log->info( "Register Status Histograms");
 
 	if (not Conf.read<bool>("StatusHistograms/Do"))
 	{
 		Log->info( "StatusHistograms %s turned OFF",Title.c_str());
 		return false ;
 	}
+	Log->info( "Register Status Histograms %s", Title.c_str());
 
 	string N = Name;
 	string T = Title;

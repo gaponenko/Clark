@@ -77,6 +77,15 @@ class EventClass{
 		vector<string> PlaneType;
 		// vector<float> DCzposition;
 		
+		// For the truth bank
+		double MuUVMaxRadius;
+		double TriggerTimeJitter;
+		double MuZAroundTarget;
+		double MueVertexEpsilon;
+		double MinDkTimeAfterMu;
+		double MaxDkTimeAfterMu;
+
+		
 		//________________________ Energy calibration ___________________//
 
 		double	Ecal_au;		// upstream slope from energy calibration
@@ -308,8 +317,8 @@ class EventClass{
 
 		//______________ New variables (not tree variables) ______________//
 
-		Float_t		ptot[MAXTRK];		// Total momentum (NOT calibrated)
-		Float_t		hefit_ptot[MAXTRK];	// Total momentum (calibrated if energy calibration)
+		Float_t		ptot[MAXTRK];		// Total momentum (calibrated if energy calibration)
+		Float_t		hefit_ptot[MAXTRK];	// Total momentum (NOT calibrated)
 		Float_t		pu[MAXTRK];			// Track pu (calibrated if energy calibration)
 		Float_t		pv[MAXTRK];			// Track pv (calibrated if energy calibration)
 		Float_t		pz[MAXTRK];			// Track pz (calibrated if energy calibration)
@@ -334,6 +343,21 @@ class EventClass{
 
 		vector<int>	seltrack;			// Selected track at a given point in the analysis
 		vector<int>	dkwintrack;			// All good tracks (ierror==0) in the decay window
+
+		
+		// Truth bank
+		int			tb_nmu;				// Number of muons in the event
+		int			tb_mu_trki;			// Muon track index
+		int			tb_mu_firstvtx;		// Muon first vertex index
+		int			tb_mu_lastvtx;		// Muon last vertex index
+
+		int			tb_e_trki;			// Positron track index
+		int			tb_e_firstvtx;		// Positron first vertex index
+		int			tb_e_lastvtx;		// Positron last vertex index
+		int			tb_e_firstdcvtx;	// Positron vertex index at the first DC
+		int			tb_e_lastdcvtx;		// Positron vertex index at the last DC
+
+
 
 	private :
 		map <const char*, bool>ExistList;
