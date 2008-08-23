@@ -1,0 +1,120 @@
+# ===================	 TCAPm12widthCut 	=================== #
+# TCAPm12widthCut/Do	= true
+# TCAPm12widthCut/TCAPMin	= -10000.0
+# TCAPm12widthCut/TCAPMax	= 10000.0
+# TCAPm12widthCut/m12widthMin	= -100000.0
+# TCAPm12widthCut/m12widthMax	= 100000.0
+
+# ===================	 EventTypeCut 	=================== #
+# EventTypeCut/Do	= true
+# EventTypeCut/Types	= 1,2,6,7,10,11,21,22
+
+# ===================	 MuLastPCut 	=================== #
+# MuLastPCut/Do	= true
+# MuLastPCut/LastPlane	= 28
+
+# ===================	 MuUVCut 	=================== #
+# MuUVCut/Do	= true
+# MuUVCut/MaxRadius	= 2.5
+
+# ===================	 DkWinTimeCut 	=================== #
+# DkWinTimeCut/Do	= true
+# DkWinTimeCut/Min	= -100000.0
+# DkWinTimeCut/Max	= 100000.0
+
+# ===================	 NtracksCut 	=================== #
+# NtracksCut/Do	= true
+
+# ===================	 IerrorCut 	=================== #
+# IerrorCut/Do	= true
+# IerrorCut/SelectIerror	= 0
+
+# ===================	 StartStopCut 	=================== #
+# StartStopCut/Do	= true
+
+# ===================	 ChargeCut 	=================== #
+# ChargeCut/Do	= true
+# ChargeCut/SelectCharge	= 1
+
+# ===================	 PairMatchingCut 	=================== #
+# PairMatchingCut/Do	= true
+# PairMatchingCut/MinCDA	= 0.5
+# PairMatchingCut/MinDT	= 60.0
+# PairMatchingCut/tolerance_abs	= 1.e-4
+# PairMatchingCut/tolerance_rel	= 0.
+# PairMatchingCut/max_iter	= 100
+
+# ===================	 DistToTargetSel 	=================== #
+# DistToTargetSel/Do	= true
+
+# ===================	 Mu_eVertexSel 	=================== #
+# Mu_eVertexSel/Do	= true
+# Mu_eVertexSel/Do_mu_e_Calc-MOFIA	= 0
+
+# ===================	 DkFitTimeCut 	=================== #
+# DkFitTimeCut/Do	= true
+# DkFitTimeCut/Min	= 1050.0
+# DkFitTimeCut/Max	= 9000.0
+
+# ===================	 PACTCut 	=================== #
+# PACTCut/Do	= 0
+# PACTCut/NbBins	= 500
+# PACTCut/MaximumWidth	= 500.0
+# PACTCut/quadrant_11	= 1
+# PACTCut/quadrant_12	= 1
+# PACTCut/quadrant_21	= 1
+# PACTCut/quadrant_22	= 1
+# PACTCut/region_11	= 1.634, -5.428, -61.26, 642.3
+# PACTCut/region_12	= 1.634, -5.428, -61.26, 642.3
+# PACTCut/region_21	= 1.634, -5.428, -61.26, 642.3
+# PACTCut/region_22	= 1.634, -5.428, -61.26, 642.3
+
+# ===================	 StatusHistograms 	=================== #
+# StatusHistograms/Do	= false
+# StatusHistograms/PerWindowType	= false
+
+# ===================	 BiasPlots 	=================== #
+# BiasPlots/Do	= true
+# BiasPlots/Nptotbins	= 8
+# BiasPlots/minptot	= 15.0
+# BiasPlots/maxptot	= 55.0
+# BiasPlots/Nbinscosth	= 100
+# BiasPlots/mincosth	= 0.3
+# BiasPlots/maxcosth	= -0.3
+# BiasPlots/Nbinsdp	= 401
+# BiasPlots/mindp	= -2.0
+# BiasPlots/maxdp	= 2.0
+# BiasPlots/Nbinsdcosth	= 200
+# BiasPlots/mindcosth	= -0.05
+# BiasPlots/maxdcosth	= 0.05
+
+# ===================	 AsymmetryPlots 	=================== #
+# AsymmetryPlots/WeightedPlots	= 1
+# AsymmetryPlots/UnweightedPlots	= 0
+# AsymmetryPlots/tmu	= 2197.03
+# AsymmetryPlots/t_min	= 245.28
+# AsymmetryPlots/t_width_min	= 68.435
+# AsymmetryPlots/Fiducial/costh_min	= 0.50
+# AsymmetryPlots/Fiducial/costh_max	= 0.94
+# AsymmetryPlots/Fiducial/ptot_min	= 31.0
+# AsymmetryPlots/Fiducial/ptot_max	= 51.5
+# AsymmetryPlots/Fiducial/long_min	= 13.7
+# AsymmetryPlots/Fiducial/trans_max	= 43.0
+# AsymmetryPlots/Weighting	= 2.718
+
+# ===================	 ChiSquare 	=================== #
+# ChiSquare/Do	= 0
+# ChiSquare/RedChi2CutMin	= -1.0
+# ChiSquare/RedChi2CutMax	= -1.0
+
+# ===================	 Detector 	=================== #
+# Detector/BField	= 2.0
+# Detector/GeometryFile	= -57
+
+# ===================	 TruthBank 	=================== #
+# TruthBank/MuUVMaxRadius	= 4.0
+# TruthBank/TriggerTimeJitter	= 100.0
+# TruthBank/MuZAroundTarget	= 1.0
+# TruthBank/MueVertexEpsilon	= 0.01
+# TruthBank/MinDkTimeAfterMu	= 300.0
+# TruthBank/MaxDkTimeAfterMu	= 9100.0
