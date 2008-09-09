@@ -39,6 +39,7 @@ using namespace std;
 #define MAXMCTRK		1000	// Max number of MC tracks
 #define MAX_WIRES_P		160		// Max number of hits in PsPACT planes (?)
 #define MAXMICHELDDKS	32		// Max number of Michel decay from micheld server.
+#define MAXCDA			190		// Max number of CDA assuming a max of 20 good tracks.
 
 class EventClass{
 	public :
@@ -140,13 +141,20 @@ class EventClass{
 		Float_t		hefit_u0[MAXTRK];     		//[ntr]
 		Float_t		hefit_v0[MAXTRK];     		//[ntr]
 		Float_t		hefit_z[MAXTRK];      		//[ntr]
-		Float_t		hefit_cda[MAXTRK];    		//[ntr]
 		Int_t		hefit_pstart[MAXTRK]; 		//[ntr]
 		Int_t		hefit_pstop[MAXTRK];  		//[ntr]
 		Float_t		hefit_time[MAXTRK];   		//[ntr]
 		Float_t		hefit_chi2[MAXTRK];   		//[ntr]
 		Int_t		hefit_ndof[MAXTRK];   		//[ntr]
 		Int_t		hefit_ierror[MAXTRK]; 		//[ntr]
+
+
+		//__________________________ CDA ___________________________//
+
+		Int_t		dkwin_ncda;
+		Float_t		dkwin_cda[MAXCDA];      		//[ncda]
+		Float_t		dkwin_cdaz[MAXCDA];      		//[ncda]
+		Float_t		dkwin_cdadefl[MAXCDA];     		//[ncda]
 
 
 		//_________________________ TEC __________________________//

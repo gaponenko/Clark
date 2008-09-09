@@ -62,8 +62,7 @@ bool StartStopCut::Process(EventClass &E, HistogramFactory &H)
 		// ===> TRACK CUT HERE
 		// Looks complicated but works. Both ends of the track must be on the side
 		// we expect the decay to be according to the event type.
-		if( ( (E.is_upstreamdk != (E.dcmin[*t] <= 22)) || (E.is_upstreamdk != (E.dcmax[*t] <= 22)) )
-				|| (E.is_upstreamdk != (E.costh[*t] < 0)))
+		if( (E.is_upstreamdk != (E.dcmin[*t] <= 22)) || (E.is_upstreamdk != (E.dcmax[*t] <= 22)) )
 		{
 			E.seltrack.erase(t);	// First erase
 			t--;					// then decrement to avoid to skip the following track
@@ -71,6 +70,16 @@ bool StartStopCut::Process(EventClass &E, HistogramFactory &H)
 		}
 		else
 		{
+			// Sanity check
+			// cout <<"Event = "<<E.nevt<<"   upstream = "<<E.is_upstreamdk<<"   costh = "<<E.costh[*t]<<endl;
+			if (E.is_upstreamdk != (E.costh[*t] < 0))
+			{
+				Log->warn("StartStopCut: cos(theta) sign does not match track position: costh=%f, dcmin=%d, dcmax=%d, wintype=%d, event=%d", E.costh[*t], E.dcmin[*t], E.dcmax[*t], E.win_type[E.iewin], E.nevt);
+				E.seltrack.erase(t);	// First erase
+				t--;					// then decrement to avoid to skip the following track
+				continue;
+			}
+
 			Nb_StartStop_OK += 1;
 			if( E.is_upstreamdk)
 				H.Fill("StartStop_Up_after",E.dcmin[*t],E.dcmax[*t]);

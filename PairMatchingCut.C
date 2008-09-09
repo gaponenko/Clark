@@ -21,6 +21,7 @@ class PairMatchingCut : public ModuleClass{
 
 	private :
 		void Get_Anti_Tracks( EventClass &E, int t);
+		bool Get_CDA_FromTree( EventClass &E, int t, int a, double &z, double &cda, double &defl);
 		bool Get_CDA_FromCalculation( EventClass &E, int t, int a, double &z, double &cda, int &iterations);
 
 		log4cpp::Category *Log;
@@ -35,6 +36,7 @@ class PairMatchingCut : public ModuleClass{
 		double tolerance_abs;
 		double tolerance_rel;
 		int max_iter;
+		bool CalculateCDA;
 };
 
 bool PairMatchingCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
@@ -57,10 +59,10 @@ bool PairMatchingCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf,
 	//	 --------- Histograms initialization ---------		//
 	H.DefineTH1D( "PairMatchingCut", "ntrks_cda_before",	"Number of tracks before the CDA cut",10, -0.5,9.5);
 	H.DefineTH1D( "PairMatchingCut", "ntrks_cda_after",		"Number of tracks after the CDA cut", 10, -0.5,9.5);
-	H.DefineTH1D( "PairMatchingCut", "cda_up_before",		"Closest Distance of Approach before the cut, upstream tracks;CDA [cm]",	200, 0.0,10.0);
-	H.DefineTH1D( "PairMatchingCut", "cda_up_after",		"Closest Distance of Approach after the cut, upstream tracks;CDA [cm]",		200, 0.0,10.0);
-	H.DefineTH1D( "PairMatchingCut", "cda_down_before",		"Closest Distance of Approach before the cut, downstream tracks;CDA [cm]",	200, 0.0,10.0);
-	H.DefineTH1D( "PairMatchingCut", "cda_down_after",		"Closest Distance of Approach after the cut, downstream tracks;CDA [cm]",	200, 0.0,10.0);
+	H.DefineTH1D( "PairMatchingCut", "cda_up_before",		"Closest Distance of Approach before the cut, upstream tracks;CDA [cm]",	400, 0.0,10.0);
+	H.DefineTH1D( "PairMatchingCut", "cda_up_after",		"Closest Distance of Approach after the cut, upstream tracks;CDA [cm]",		400, 0.0,10.0);
+	H.DefineTH1D( "PairMatchingCut", "cda_down_before",		"Closest Distance of Approach before the cut, downstream tracks;CDA [cm]",	400, 0.0,10.0);
+	H.DefineTH1D( "PairMatchingCut", "cda_down_after",		"Closest Distance of Approach after the cut, downstream tracks;CDA [cm]",	400, 0.0,10.0);
 	H.DefineTH2D( "PairMatchingCut", "dt_vs_cda_before",	"T(more us) - T(more ds) vs CDA before the cut, downstream tracks;CDA [cm];dt [ns]",200, 0.0,10.0, 100, -500., 500.);
 	H.DefineTH2D( "PairMatchingCut", "dt_vs_cda_after",		"T(more us) - T(more ds) vs CDA after the cut, downstream tracks;CDA [cm];dt [ns]",	200, 0.0,10.0, 100, -500., 500.);
 
@@ -85,6 +87,7 @@ bool PairMatchingCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf,
 	tolerance_abs	= Conf.read<double>("PairMatchingCut/tolerance_abs");	// cm
 	tolerance_rel	= Conf.read<double>("PairMatchingCut/tolerance_rel");
 	max_iter		= Conf.read<int>("PairMatchingCut/max_iter");
+	CalculateCDA	= Conf.read<bool>("PairMatchingCut/CalculateCDA");
 
 	return true;
 }
@@ -96,9 +99,11 @@ bool PairMatchingCut::Process(EventClass &E, HistogramFactory &H)
 	H.NbCandidateTracks(Name,E);
 	
 	dT = 100000.;
-	double cda, zmin;
+	double cda, zmin, deflang; // deflection angle
 	int iter;	// number of iterations for the minimzation
+	bool IsCDAok;
 	// cout<<" In PairMatchingCut 2"<<endl;
+	
 	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
 	{
 		// First, get the antitracks			
@@ -113,12 +118,18 @@ bool PairMatchingCut::Process(EventClass &E, HistogramFactory &H)
 			if( E.dcmin[*t] >= E.dcmin[*a])
 				dT = -1 * dT;
 
-			// Calculate the CDA
 			// cout<<" In PairMatchingCut 4"<<endl;
-			if (not Get_CDA_FromCalculation(E, (*t), (*a), zmin, cda, iter))
+			//
+			//	Read from the tree or calculate the CDA.
+			if ( ( ! E.Exists("dkwin_ncda") ) || CalculateCDA )
+				IsCDAok = Get_CDA_FromCalculation(E, (*t), (*a), zmin, cda, iter);
+			else
+				IsCDAok = Get_CDA_FromTree(E, (*t), (*a), zmin, cda, deflang);
+
+			if (not IsCDAok )
 			{
 				// Something went wrong !
-				Log->info("No cda cut for event %i, track %i, anti-track%i\nThe time cut remains", E.nevt, *t, *a);
+				Log->warn("PairMatchingCut: No cda cut for event %i, track %i, anti-track%i. The time cut is still applied though.", E.nevt, *t, *a);
 				if( fabs(dT) < MinDT)
 				{
 					E.seltrack.erase(t);	// First erase
@@ -228,7 +239,60 @@ void PairMatchingCut::Get_Anti_Tracks( EventClass &E, int t)
 }
 
 // =================================================================== //
-//
+
+
+
+// =================================================================== //
+// Convert the track tree index into good track (ierror = 0) index.		//
+// =================================================================== //
+
+int ConvertToGoodTrack( EventClass &E, int &In)
+{
+	for ( int i = 0; i < E.dkwintrack.size(); i++ )
+	{
+		if ( E.dkwintrack[i] == In )
+			return i;
+	}
+	// If we reach that point, that's not good ...
+	return -1;
+}
+
+
+// =================================================================== //
+// Read the CDA from the tree.											//
+// =================================================================== //
+
+bool PairMatchingCut::Get_CDA_FromTree( EventClass &E, int t, int a, double &z, double &cda, double &defl)
+{
+	// 1) convert the track index into the dkwintrack index.
+	int T1 = ConvertToGoodTrack( E, t);
+	int T2 = ConvertToGoodTrack( E, a);
+	if ( T1 == -1 || T2 == -1 )
+	{
+		Log->warn("PairMatchingCut: A track or anti-track is not a good track (ierror = 0) so there is no CDA in the tree for it.");
+		return false;
+	}
+	// 2) order the indices
+	if ( T1 > T2 )
+	{
+		int Temp = T1;
+		T1 = T2;
+		T2 = Temp;
+	}
+	// 3) get the cda index
+	int CDA_i = T1 * E.dkwintrack.size() + T2 - 1;
+	cda		= E.dkwin_cda[CDA_i];
+	z		= E.dkwin_cdaz[CDA_i];
+	defl	= E.dkwin_cdadefl[CDA_i];
+
+	return true;
+}
+
+
+// =================================================================== //
+
+
+
 // =================================================================== //
 // Class wrapper for the minimization.                                  //
 // =================================================================== //
@@ -389,7 +453,7 @@ bool PairMatchingCut::Get_CDA_FromCalculation( EventClass &E, int t, int a, doub
 			if(GSL_SUCCESS != (status = gsl_min_fminimizer_iterate (s)) )
 			{
 				gsl_min_fminimizer_free(s);
-				Log->warn("Get_CDA_FromCalculation(): failure from gsl_min_fminimizer_iterate(): status==%i", status);
+				Log->warn("PairMatchingCut: Get_CDA_FromCalculation(): failure from gsl_min_fminimizer_iterate(): status==%i", status);
 				return false;
 			}
 
@@ -413,13 +477,13 @@ bool PairMatchingCut::Get_CDA_FromCalculation( EventClass &E, int t, int a, doub
 			else if(status == GSL_CONTINUE) {
 				if(iter>max_iter) {
 					gsl_min_fminimizer_free(s);
-					Log->warn("Get_CDA_FromCalculation(): exceeded max_iter=");
+					Log->warn("PairMatchingCut: Get_CDA_FromCalculation(): exceeded max_iter=");
 					return false;
 				}
 			}
 			else {
 				gsl_min_fminimizer_free(s);
-				Log->warn("Get_CDA_FromCalculation(); failure from gsl_min_test_interval(): status=");
+				Log->warn("PairMatchingCut: Get_CDA_FromCalculation(); failure from gsl_min_test_interval(): status=");
 				return false;
 			}	
 
@@ -450,7 +514,7 @@ bool PairMatchingCut::Get_CDA_FromCalculation( EventClass &E, int t, int a, doub
 	}
 	if (MinIndex == -1)
 	{
-		Log->warn("Get_CDA_FromCalculation(); The cda could not be found.");
+		Log->warn("PairMatchingCut: Get_CDA_FromCalculation(); The cda could not be found.");
 		cda	= 500;	// Safer with a large number since we cut on the small cda.
 		return false;
 	}

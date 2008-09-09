@@ -43,9 +43,8 @@ bool MichelSpectrum::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 	xmax		= Conf.read<double>("Parameters/XMaxMichel");
 
 	//	 --------- Histograms initialization ---------		//
-	string HistName = "Spectrum_"+Name;
-	string HistTitl = "Michel spectrum "+Title+";Momentum [MeV];cos(theta)";
-	H.DefineTH2D( "Michel", HistName, HistTitl.c_str(),nxbins,xmin,xmax,ncbins, -1.0, 1.0);
+	H.DefineTH2D( "Michel", "Spectrum_"+Name, "Michel spectrum "+Title+";Momentum [MeV];cos(#theta)",nxbins,xmin,xmax,ncbins, -1.0, 1.0);
+	H.DefineTH2D( "Michel", "Spectrum_PzVsPt_"+Name, "Longitudinal vs transverse momentum spectrum "+Title+";P_{t} [MeV];P_{z} [MeV]",nxbins,xmin,xmax,2*nxbins, -1.*xmax, xmax);
 
 	Log->info( "Register Michel spectrum ");
 	return true;
@@ -63,10 +62,12 @@ bool MichelSpectrum::Process(EventClass &E, HistogramFactory &H)
 		// MC runs with the accflag for the derivatives mostly
 		if (not E.ndecays > 0)
 			// If there is no decay from the micheld the weight is 0. (Probably still have an entry though.)
-			H.Fill("Spectrum_"+N,E.ptot[Trk],E.costh[Trk], 0);
+			H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	0);
+			H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		0);
 		try
 		{
-			H.Fill("Spectrum_"+N,E.ptot[Trk],E.costh[Trk], MichelWeight(E.micheld_accflag[0]));
+			H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	MichelWeight(E.micheld_accflag[0]));
+			H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		MichelWeight(E.micheld_accflag[0]));
 		}
 		catch( const char* Msg)
 		{
@@ -76,7 +77,8 @@ bool MichelSpectrum::Process(EventClass &E, HistogramFactory &H)
 		
 	}
 	else
-		H.Fill("Spectrum_"+N,E.ptot[Trk],E.costh[Trk]);
+		H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk]);
+		H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk]);
 
 	return true;
 }

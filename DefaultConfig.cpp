@@ -58,6 +58,7 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PairMatchingCut/tolerance_abs", 1.e-4); /*cm*/
 	SetKey(Conf, "PairMatchingCut/tolerance_rel", 0.);
 	SetKey(Conf, "PairMatchingCut/max_iter", 100);
+	SetKey(Conf, "PairMatchingCut/CalculateCDA", false);
 	
 	//	DistToTargetSel
 	SetKey(Conf, "DistToTargetSel/Do", true);

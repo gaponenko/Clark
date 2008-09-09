@@ -358,13 +358,20 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "hefit_u0",		hefit_u0);
 	GetVar(T, "", "hefit_v0",		hefit_v0);
 	GetVar(T, "", "hefit_z",		hefit_z);
-	GetVar(T, "", "hefit_cda",		hefit_cda);
 	GetVar(T, "", "hefit_pstart",	hefit_pstart);
 	GetVar(T, "", "hefit_pstop",	hefit_pstop);
 	GetVar(T, "", "hefit_time",		hefit_time);
 	GetVar(T, "", "hefit_chi2",		hefit_chi2);
 	GetVar(T, "", "hefit_ndof",		hefit_ndof);
 	GetVar(T, "", "hefit_ierror",	hefit_ierror);
+
+
+	//__________________________ CDA ___________________________//
+
+	GetVar(T, "", "dkwin_ncda",		&dkwin_ncda);
+	GetVar(T, "", "dkwin_cda",		dkwin_cda);
+	GetVar(T, "", "dkwin_cdaz",		dkwin_cdaz);
+	GetVar(T, "", "dkwin_cdadefl",	dkwin_cdadefl);
 
 
 	//_________________________ TEC __________________________//
