@@ -43,6 +43,7 @@
 # PairMatchingCut/tolerance_abs	= 1.e-4
 # PairMatchingCut/tolerance_rel	= 0.
 # PairMatchingCut/max_iter	= 100
+# PairMatchingCut/CalculateCDA	= false
 
 # ===================	 DistToTargetSel 	=================== #
 # DistToTargetSel/Do	= true
