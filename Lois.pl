@@ -20,7 +20,7 @@ my $InputDir;
 my $Output;
 my $Anum;
 
-if ($ARGV[1] =~ /^a(\d+)/ )
+if ($ARGV[1] =~ /^a([0-9_]+)/ )
 {
 	$Anum	= $1;
 }
@@ -43,6 +43,8 @@ else
 	$Output		= $ARGV[1];
 }
 	
+print "Analysing trees from $InputDir\n";
+
 my @List		= `ls $InputDir/*/0*.root`;
 
 my $ComList		= "";
