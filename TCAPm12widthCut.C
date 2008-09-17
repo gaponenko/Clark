@@ -70,7 +70,7 @@ bool TCAPm12widthCut::Process(EventClass &E, HistogramFactory &H)
 	{
 		H.Fill("TCAP_before",E.cptime[i]);
 		H.Fill("m12VsTCAP_before",E.cptime[i], E.m12width);
-		if ( E.cptime[i] >= cptime_min && E.cptime[i] <= cptime_max )
+		if ( E.cptime[i] >= cptime_min && E.cptime[i] < cptime_max )
 		{
 			TCAP_Good = i;
 			H.Fill("TCAP_after",E.cptime[i]);
@@ -89,7 +89,7 @@ bool TCAPm12widthCut::Process(EventClass &E, HistogramFactory &H)
 	if ( E.m12width > m12width_min && E.m12width < m12width_max )
 	{
 		for( int i = 0; i < 3; i++)
-			if ( E.cptime[i] >= cptime_min && E.cptime[i] <= cptime_max )
+			if ( E.cptime[i] >= cptime_min && E.cptime[i] < cptime_max )
 				H.Fill("m12VsTCAP_after",E.cptime[i], E.m12width);
 	}
 	else
