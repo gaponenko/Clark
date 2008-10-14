@@ -149,6 +149,16 @@ class EventClass{
 		Int_t		hefit_ierror[MAXTRK]; 		//[ntr]
 
 
+		//____________________ Last Hit Information _____________________//
+
+		Float_t		hefit_lastpu[MAXTRK];		//[ntr]
+		Float_t		hefit_lastpv[MAXTRK];		//[ntr]
+		Float_t		hefit_lastpz[MAXTRK];		//[ntr]
+		Float_t		hefit_lastu[MAXTRK];		//[ntr]
+		Float_t		hefit_lastv[MAXTRK];		//[ntr]
+		Float_t		hefit_lastz[MAXTRK];		//[ntr]
+
+
 		//__________________________ CDA ___________________________//
 
 		Int_t		dkwin_ncda;

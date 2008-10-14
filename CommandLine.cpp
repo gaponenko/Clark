@@ -64,6 +64,14 @@ int CommandLine::Init(int argc, char **argv)
 		}
 	}
 	while (next_option != -1);
+
+	// Did the user give a correct command line ?
+	if ( argc < 3 )
+	{
+		cerr<<" *** ERROR *** Please check that you put all the required arguments. See the --help option"<<endl;
+		return 1;
+	}
+
 	// We grab the argument that are not options
 	char const *const *Tmp;
 	int Nb_InFiles	= argc - optind;
@@ -77,12 +85,6 @@ int CommandLine::Init(int argc, char **argv)
 		Trees.push_back(Tmp[i]);
 	
 
-	// Did the user give a correct command line ?
-	// if ( ! IsOk() )
-	// {
-	// 	cerr<<" *** ERROR *** Please check that you put all the required arguments. See the --help option"<<endl;
-	// 	return 1;
-	// }
 
 	return 0;
 }
@@ -98,9 +100,19 @@ void	CommandLine::SaveToConfig(ConfigFile &Conf)
 
 void	CommandLine::Print_Help()
 {
-	cout<<"Usage:"<<endl
-		<<"options:"<<endl
+	cout<<endl<<"Usage:"<<endl
+		<<" Clark [-e ECALIBFILE:ECALIBARRAY] [-l LOG] [-o ROOTOUTPUT] CONFIGFILE TREEFILE1 TREEFILE2 ..."<<endl
+		<<" Clark [-e ECALIBFILE:ECALIBARRAY] [-l LOG] [-o ROOTOUTPUT] CONFIGFILE TREEDIR1 TREEDIR2 ..."<<endl
+		<<endl<<"options:"<<endl
+		<<"  -e, --ecalib       define the energy calibration file and the name of the TArray containing the calibration"<<endl
+		<<"  -h, --help         print this help"<<endl
+		<<"  -l, --logfile      define the log filename"<<endl
+		<<"  -o, --outputfile   define the root output filename"<<endl
 		<<endl<<"examples:"<<endl
+		<<"  To sum a couple of set75a12 trees:"<<endl
+		<<"    Clark set75a12s1_clk /twist/tw00y/systematics/data/set75/anal12/root/run44444/tree044444.root /twist/tw00y/systematics/data/set75/anal12/root/run44445/tree044445.root"<<endl
+		<<"  To sum all the good runs of set75a12:"<<endl
+		<<"    Clark set75a12s1_clk /twist/tw00y/systematics/data/set75/anal12/goodlinks/*"<<endl
 		<<endl;
 
 }

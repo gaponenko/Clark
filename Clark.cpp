@@ -33,7 +33,8 @@ int main(int argc, char **argv)
 
 	CommandLine	Com;
 
-	Com.Init (argc, argv);
+	if ( Com.Init (argc, argv) )
+		exit(1);
 
 	// ================ CONFIG FILE ===================== //
 

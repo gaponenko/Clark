@@ -365,6 +365,13 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "hefit_ndof",		hefit_ndof);
 	GetVar(T, "", "hefit_ierror",	hefit_ierror);
 
+	GetVar(T, "", "hefit_lastpu[ntr]",	hefit_lastpu);
+	GetVar(T, "", "hefit_lastpv[ntr]",	hefit_lastpv);
+	GetVar(T, "", "hefit_lastpz[ntr]",	hefit_lastpz);
+	GetVar(T, "", "hefit_lastu[ntr]",	hefit_lastu);
+	GetVar(T, "", "hefit_lastv[ntr]",	hefit_lastv);
+	GetVar(T, "", "hefit_lastz[ntr]",	hefit_lastz);
+
 
 	//__________________________ CDA ___________________________//
 
