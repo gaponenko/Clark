@@ -110,9 +110,13 @@ void	CommandLine::Print_Help()
 		<<"  -o, --outputfile   define the root output filename"<<endl
 		<<endl<<"examples:"<<endl
 		<<"  To sum a couple of set75a12 trees:"<<endl
-		<<"    Clark set75a12s1_clk /twist/tw00y/systematics/data/set75/anal12/root/run44444/tree044444.root /twist/tw00y/systematics/data/set75/anal12/root/run44445/tree044445.root"<<endl
+		<<"    Clark set75a12s1_clk /twist/tw00y/systematics/data/set75/anal12/root/run44444/tree044444.root /twist/tw00y/systematics/data/set75/anal12/root/run44445/tree044445.root"<<endl<<endl
 		<<"  To sum all the good runs of set75a12:"<<endl
-		<<"    Clark set75a12s1_clk /twist/tw00y/systematics/data/set75/anal12/goodlinks/*"<<endl
+		<<"    Clark set75a12s1_clk /twist/tw00y/systematics/data/set75/anal12/goodlinks/*"<<endl<<endl
+		<<"  To sum all the good runs of set75a12 with the energy calibration applied:"<<endl
+		<<"    Clark set75a12s1_ecal_clk -e ecal_set75a12s1.root:best_iteration/GlobalFitSummary /twist/tw00y/systematics/data/set75/anal12/goodlinks/*"<<endl
+		<<"  or equivalent:"<<endl
+		<<"    Clark set75a12s1_ecal_clk --ecalib=ecal_set75a12s1.root:best_iteration/GlobalFitSummary /twist/tw00y/systematics/data/set75/anal12/goodlinks/*"<<endl<<endl
 		<<endl;
 
 }
