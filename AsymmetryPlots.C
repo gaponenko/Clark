@@ -85,11 +85,16 @@ bool AsymmetryPlots::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 	
 		//	 --------- Histograms initialization ---------		//
 		// first the bins that have constant stat widths
-		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_u",      "U_n vs Decay Time (ns)"     ,Vbins);
-		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_d",      "D_n vs Decay Time (ns)"     ,Vbins);
-		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_deriv1", "Deriv_1 vs Decay Time (ns)" ,Vbins);
-		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_deriv2", "Deriv_2 vs Decay Time (ns)" ,Vbins);
-		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt",        "Gn vs Decay Time (ns)"      ,Vbins);
+		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_u",      "U_n vs Decay Time (ns)",		Vbins);
+		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_d",      "D_n vs Decay Time (ns)",		Vbins);
+		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_deriv1", "Deriv_1 vs Decay Time (ns)",	Vbins);
+		H.DefineTH1D_varwidth("AsymmetryPlots", "h_gnt_deriv2", "Deriv_2 vs Decay Time (ns)",	Vbins);
+
+		// Then the constant size bins
+		H.DefineTH1D("AsymmetryPlots", "h_gnts_u",     "U_n vs Decay Time (ns)",		150,0.,9600.);
+		H.DefineTH1D("AsymmetryPlots", "h_gnts_d",     "D_n vs Decay Time (ns)",		150,0.,9600.);
+		H.DefineTH1D("AsymmetryPlots", "h_gnts_deriv1","Deriv_1 vs Decay Time (ns)",	150,0.,9600.);
+		H.DefineTH1D("AsymmetryPlots", "h_gnts_deriv2","Deriv_2 vs Decay Time (ns)",	150,0.,9600.);
 	}
 
 	Log->info( "Register Asymmetry Plots");
@@ -109,12 +114,19 @@ bool AsymmetryPlots::Process(EventClass &E, HistogramFactory &H)
 			fabs(E.pz[trk]) > plong_min &&
 			E.pt[trk] < ptrans_max)
 		{
-			double decay_time = E.hefit_time[trk];
-			double ai = E.costh[trk]*((E.ptot[trk]/kpmax)-0.5)/(1.5-(E.ptot[trk]/kpmax));
-			H.Fill("h_gnt_u",decay_time, ai * pow(fabs(ai),Weighting));
-			H.Fill("h_gnt_d",decay_time, pow(fabs(ai),Weighting+1.));
-			H.Fill("h_gnt_deriv1",decay_time, pow(fabs(ai),2.*Weighting+2.));
-			H.Fill("h_gnt_deriv2",decay_time, ai * pow(fabs(ai),2.*Weighting+1.));
+			double decay_time, ai;
+			decay_time = E.hefit_time[trk];
+			ai = E.costh[trk]*((E.ptot[trk]/kpmax)-0.5)/(1.5-(E.ptot[trk]/kpmax));
+			// Constant stat bins
+			H.Fill("h_gnt_u",		decay_time, ai * pow(fabs(ai),Weighting));
+			H.Fill("h_gnt_d",		decay_time, pow(fabs(ai),Weighting+1.));
+			H.Fill("h_gnt_deriv1",	decay_time, pow(fabs(ai),2.*Weighting+2.));
+			H.Fill("h_gnt_deriv2",	decay_time, ai * pow(fabs(ai),2.*Weighting+1.));
+			// Constant size bins
+			H.Fill("h_gnts_u",		decay_time, ai * pow(fabs(ai),Weighting));
+			H.Fill("h_gnts_d",		decay_time, pow(fabs(ai),Weighting+1.));
+			H.Fill("h_gnts_deriv1",	decay_time, pow(fabs(ai),2.*Weighting+2.));
+			H.Fill("h_gnts_deriv2",	decay_time, ai * pow(fabs(ai),2.*Weighting+1.));
 		}
 	}
 

@@ -90,7 +90,7 @@ bool EventClass::InitGeometry(ConfigFile &C)
 
 bool EventClass::Load( )
 {
-	//	___________________ Windowing ___________________ //
+	//	#################################### Windowing #################################### //
 
 	imuonwin	= -1;	// Default value. This will crash the prog. That's the goal.
 	iewin		= -1;	// Default value. This will crash the prog. That's the goal.
@@ -124,7 +124,7 @@ bool EventClass::Load( )
 			}
 	}
 
-	//	___________________ Muon Variables ___________________ //
+	//	#################################### Muon Variables #################################### //
 
 	if (imuonwin != -1)
 	{
@@ -206,16 +206,20 @@ bool EventClass::Load( )
 		wavelen[t]	= 2.0 * M_PI * radius[t] * (-1*hefit_q[t]*hefit_pz[t] / hefit_pt[t]);
 		// cout<<" track "<<t<<" => "<<hefit_pt[t]<<"   "<<radius[t]<<"    "<<wavelen[t]<<endl;
 		
-		// Safety test. Sometimes the start or stop planes are not DCs. In that case the ierror is not 0 so the track should be thrown away anyway.
-		if ( PlaneType[hefit_pstart[t]-1] == "PC" or PlaneType[hefit_pstop[t]-1] == "PC")
+		// By default put some impossible values.
+		// It seems that some trees from 2004 and before put 0 for the pstart and pstop
+		// in the case of ierror=10 (at least). So I have to check that or it crashes.
+		// Sometimes the start or stop planes are not DCs.
+		// In that case the ierror is not 0 so the track should be thrown away anyway.
+		dcmin[t]	= 0;
+		dcmax[t]	= 57;
+		if ( hefit_pstart[t] != 0 || hefit_pstop[t] != 0 )
 		{
-			dcmin[t]	= 0;
-			dcmax[t]	= 57;
-		}
-		else
-		{
-			dcmin[t]	= GlobToDC[min(hefit_pstart[t], hefit_pstop[t])] + 1;
-			dcmax[t]	= GlobToDC[max(hefit_pstart[t], hefit_pstop[t])] + 1;
+			if ( PlaneType[hefit_pstart[t]-1] != "PC" && PlaneType[hefit_pstop[t]-1] != "PC")
+			{
+				dcmin[t]	= GlobToDC[min(hefit_pstart[t], hefit_pstop[t])] + 1;
+				dcmax[t]	= GlobToDC[max(hefit_pstart[t], hefit_pstop[t])] + 1;
+			}
 		}
 	}
 

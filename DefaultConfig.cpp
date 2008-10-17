@@ -86,7 +86,7 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PACTCut/region_22", "1.634, -5.428, -61.26, 642.3");
 	
 	//	StatusHistograms
-	SetKey(Conf, "StatusHistograms/Do", false);
+	SetKey(Conf, "StatusHistograms/Do", true);
 	SetKey(Conf, "StatusHistograms/PerWindowType", false);
 
 	// ==================== Special Analyses ======================== //
