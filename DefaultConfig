@@ -71,7 +71,7 @@
 # PACTCut/region_22	= 1.634, -5.428, -61.26, 642.3
 
 # ===================	 StatusHistograms 	=================== #
-# StatusHistograms/Do	= false
+# StatusHistograms/Do	= true
 # StatusHistograms/PerWindowType	= false
 
 # ===================	 BiasPlots 	=================== #
