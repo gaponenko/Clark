@@ -101,7 +101,7 @@
 # AsymmetryPlots/Fiducial/ptot_max	= 51.5
 # AsymmetryPlots/Fiducial/long_min	= 13.7
 # AsymmetryPlots/Fiducial/trans_max	= 43.0
-# AsymmetryPlots/Weighting	= 2.718
+# AsymmetryPlots/Weighting	= 1.0
 
 # ===================	 ChiSquare 	=================== #
 # ChiSquare/Do	= 0

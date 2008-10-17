@@ -122,7 +122,7 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "AsymmetryPlots/Fiducial/ptot_max", 	51.5);
 	SetKey(Conf, "AsymmetryPlots/Fiducial/long_min", 	13.7);
 	SetKey(Conf, "AsymmetryPlots/Fiducial/trans_max", 	43.0);
-	SetKey(Conf, "AsymmetryPlots/Weighting", 2.718);
+	SetKey(Conf, "AsymmetryPlots/Weighting", 1.0);
 
 	// ChiSquare
 	SetKey(Conf, "ChiSquare/Do", 0);				// default OFF
