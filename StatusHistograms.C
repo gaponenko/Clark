@@ -21,6 +21,12 @@ class StatusHistograms : public ModuleClass{
 		string Title;
 
 		bool PerWindowType;
+
+		double tec_x;
+		double tec_y;
+		double tec_tanthx;
+		double tec_tanthy;
+
 };
 
 bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
@@ -39,7 +45,7 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 
 	//	 --------- Parameters initialization ---------		//
 	PerWindowType	= Conf.read<bool>("StatusHistograms/PerWindowType");
-	
+
 	//	 --------- Histograms initialization ---------		//
 	//______________________ Event Branch __________________________ //
 	H.DefineTH1D( "Status",	"EvtType_"+N,	"Event Type "+T+";Event type",36, -0.5,35.5);
@@ -47,6 +53,13 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	H.DefineTH2D( "Status",	"m12VsTCAP_"+N,	"m12 vs TCAP "+T+";TCAP [ns];m12 width [ns]",200, 0,200,300, 0, 30000);
 	H.DefineTH1D( "Status",	"NumWin_"+N,	"Number of windows "+T,11, -0.5,10.5);
 	H.DefineTH1D( "Status",	"NumTrk_"+N,	"Number of tracks "+T,11, -0.5,10.5);
+
+	//_________________________ TEC ________________________ //
+	if ( E.Exists("tanthxy") && E.Exists("xy0") )
+	{
+		H.DefineTH2D( "Status","TECyvsx_"+N, "TEC y vs x "+T+";x [cm];y [cm]",160, -4,4,160, -4,4);
+		H.DefineTH2D( "Status","TECtanthyvstanthx_"+N, "TEC tanthy vs tanthx "+T+";tan theta_x;tan theta_y",200, -0.2,0.2, 200, -0.2,0.2);
+	}
 
 	//_________________________ Windows ________________________ //
 	H.DefineTH1D( "Status",	"Win_Type_"+N,	"Window Type "+T,22, -0.5,21.5);
@@ -72,7 +85,7 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 
 	H.DefineTH1D( "Status",	"Chi2_"+N,		"Reduced Chisquare of the selected tracks "+T,1000, 0,10);
 	H.DefineTH1D( "Status",	"Chi2Full_"+N,	"Reduced Chisquare of the selected tracks "+T,1000, 0,1000);
-	
+
 	H.DefineTH1D( "Status",	"Ndof_"+N,		"Number of degrees of freedom of the selected tracks "+T,1000, 0,10);
 	H.DefineTH1D( "Status",	"NdofFull_"+N,	"Number of degrees of freedom of the selected tracks "+T,1000, 0,1000);
 
@@ -89,6 +102,17 @@ bool StatusHistograms::Process(EventClass &E, HistogramFactory &H)
 
 	for ( int i = 0; i < 3; i++)
 		H.Fill("m12VsTCAP_"+Name,E.cptime[i], E.m12width);
+
+	//_________ TEC ________//
+	if ( E.Exists("tanthxy") && E.Exists("xy0") )
+	{
+		tec_tanthx = E.tanthxy[0];
+		tec_tanthy = E.tanthxy[1];
+		tec_x = tec_tanthx*(-191.944)+E.xy0[0];
+		tec_y = tec_tanthy*(-191.944)+E.xy0[1];
+		H.Fill("TECyvsx_"+Name,tec_x,tec_y);
+		H.Fill("TECtanthyvstanthx_"+Name,tec_tanthx,tec_tanthy);
+	}
 
 	//_________ Windows ________//
 	string wtstr;

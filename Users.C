@@ -14,6 +14,7 @@
 // Modules
 
 #include "TCAPm12widthCut.C"
+#include "TECCut.C"
 #include "EventTypeCut.C"
 #include "MuLastPCut.C"
 #include "MuUVCut.C"
@@ -45,6 +46,7 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new StatusHistograms("Beginning",	"at the beginning of the treesumming"));
 
 	AnaObj->Register( new TCAPm12widthCut());
+	AnaObj->Register( new TECCut());
 	AnaObj->Register( new EventTypeCut());
 	AnaObj->Register( new MuLastPCut());
 	AnaObj->Register( new MuUVCut());

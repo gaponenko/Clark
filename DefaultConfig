@@ -1,9 +1,28 @@
 # ===================	 TCAPm12widthCut 	=================== #
-# TCAPm12widthCut/Do	= true
+# TCAPm12widthCut/Do	= false
 # TCAPm12widthCut/TCAPMin	= -10000.0
 # TCAPm12widthCut/TCAPMax	= 10000.0
 # TCAPm12widthCut/m12widthMin	= -100000.0
 # TCAPm12widthCut/m12widthMax	= 100000.0
+
+# ===================	 TECCut 	=================== #
+# TECCut/Do	= false
+# TECCut/TECxMin	= -1000.0
+# TECCut/TECxMax	= 1000.0
+# TECCut/TECyMin	= -1000.0
+# TECCut/TECyMax	= 1000.0
+# TECCut/TECtanthxMin	= -1000.0
+# TECCut/TECtanthxMax	= 1000.0
+# TECCut/TECtanthyMin	= -1000.0
+# TECCut/TECtanthyMax	= 1000.0
+# TECCut/TECsigmaxMin	= -1.0
+# TECCut/TECsigmaxMax	= 1000.0
+# TECCut/TECsigmayMin	= -1.0
+# TECCut/TECsigmayMax	= 1000.0
+# TECCut/TECifailxMin	= -10.0
+# TECCut/TECifailxMax	= 10.0
+# TECCut/TECifailyMin	= -10.0
+# TECCut/TECifailyMax	= 10.0
 
 # ===================	 EventTypeCut 	=================== #
 # EventTypeCut/Do	= true

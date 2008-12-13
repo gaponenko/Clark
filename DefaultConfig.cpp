@@ -20,6 +20,25 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "TCAPm12widthCut/m12widthMin", -100000.0);
 	SetKey(Conf, "TCAPm12widthCut/m12widthMax", 100000.0);
 
+	//	TECCut
+	SetKey(Conf, "TECCut/Do", false);
+	SetKey(Conf, "TECCut/TECxMin", -1000.0);
+	SetKey(Conf, "TECCut/TECxMax", 1000.0);
+	SetKey(Conf, "TECCut/TECyMin", -1000.0);
+	SetKey(Conf, "TECCut/TECyMax", 1000.0);
+	SetKey(Conf, "TECCut/TECtanthxMin", -1000.0);
+	SetKey(Conf, "TECCut/TECtanthxMax", 1000.0);
+	SetKey(Conf, "TECCut/TECtanthyMin", -1000.0);
+	SetKey(Conf, "TECCut/TECtanthyMax", 1000.0);
+	SetKey(Conf, "TECCut/TECsigmaxMin", -1.0);
+	SetKey(Conf, "TECCut/TECsigmaxMax", 1000.0);
+	SetKey(Conf, "TECCut/TECsigmayMin", -1.0);
+	SetKey(Conf, "TECCut/TECsigmayMax", 1000.0);
+	SetKey(Conf, "TECCut/TECifailxMin", -1.0);
+	SetKey(Conf, "TECCut/TECifailxMax", 1000.0);
+	SetKey(Conf, "TECCut/TECifailyMin", -1.0);
+	SetKey(Conf, "TECCut/TECifailyMax", 1000.0);
+
 	//	EventTypeCut
 	SetKey(Conf, "EventTypeCut/Do", true);
 	SetKey(Conf, "EventTypeCut/Types", "1,2,6,7,10,11,21,22");
