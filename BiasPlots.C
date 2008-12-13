@@ -27,6 +27,7 @@ class BiasPlots : public ModuleClass{
 
 		float p, costh, t, invcosth;
 		float pdiff, cosdiff, wtdiff, dtdiff, thetadiff;
+		float pdiff_l, cosdiff_l, ptot_l, p_l, costh_l;
 
 		double binlow, binhigh;
 		string binlbl;
@@ -134,6 +135,16 @@ bool BiasPlots::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
 	}
 
+	if ( E.Exists("hefit_lastu") && E.Exists("hefit_lastpu") )
+	{
+		H.DefineTH2D( "BiasPlots", "dptot_firstvslast_"+N,		"#Delta p (Fit - MC) at the last hit vs at the first hit;#Delta p at the first hit;#Delta p at the last hit",	1100,-55.,55.,1100,-55.,55.);
+		H.DefineTH2D( "BiasPlots", "dcosth_firstvslast_"+N,		"#Delta cos#theta (Fit - MC) at the last hit vs at the first hit;#Delta cos#theta at the first hit;#Delta cos#theta at the last hit",	1000,-0.2,0.2,1000,-0.2,0.2);
+		H.DefineTH2D( "BiasPlots", "dptot_firstvslast_US_MatchZ_"+N,		"#Delta p (Fit - MC) at the last hit vs at the first hit "+T+", Upstream;#Delta p at the first hit;#Delta p at the last hit",	1100,-55.,55.,1100,-55.,55.);
+		H.DefineTH2D( "BiasPlots", "dcosth_firstvslast_US_MatchZ_"+N,		"#Delta cos#theta (Fit - MC) at the last hit vs at the first hit "+T+", Upstream;#Delta cos#theta at the first hit;#Delta cos#theta at the last hit",	1000,-0.2,0.2,1000,-0.2,0.2);
+		H.DefineTH2D( "BiasPlots", "dptot_firstvslast_DS_MatchZ_"+N,		"#Delta p (Fit - MC) at the last hit vs at the first hit "+T+", Downstream;#Delta p at the first hit;#Delta p at the last hit",	1100,-55.,55.,1100,-55.,55.);
+		H.DefineTH2D( "BiasPlots", "dcosth_firstvslast_DS_MatchZ_"+N,		"#Delta cos#theta (Fit - MC) at the last hit vs at the first hit "+T+", Downstream;#Delta cos#theta at the first hit;#Delta cos#theta at the last hit",	1000,-0.2,0.2,1000,-0.2,0.2);
+	}
+
 	return true;
 }
 
@@ -221,6 +232,33 @@ bool BiasPlots::Process(EventClass &E, HistogramFactory &H)
 				H.Fill( "dptot_invc_ds_"	+binlbl+"_"+Name,	invcosth,	pdiff);
 				H.Fill( "dcosth_invc_ds_"	+binlbl+"_"+Name,	invcosth,	cosdiff);
 				H.Fill( "dtheta_invc_ds_"	+binlbl+"_"+Name,	invcosth,	thetadiff);
+			}
+		}
+	}
+
+	if ( E.Exists("hefit_lastu") && E.Exists("hefit_lastpu") )
+	{
+		p_l			= E.mcvertex_ptot[E.tb_e_lastdcvtx];
+		costh_l		= E.mcvertex_costh[E.tb_e_lastdcvtx];
+		ptot_l		= sqrt( (E.hefit_lastpu[Trk]*E.hefit_lastpu[Trk])+(E.hefit_lastpv[Trk]*E.hefit_lastpv[Trk]) +(E.hefit_lastpz[Trk]*E.hefit_lastpz[Trk]) );
+		pdiff_l		= ptot_l - p_l;
+		cosdiff_l	= (E.hefit_lastpz[Trk] / ptot_l) - costh_l;
+
+		H.Fill( "dptot_firstvslast_"+Name,	pdiff, pdiff_l);
+		H.Fill( "dcosth_firstvslast_"+Name,	cosdiff, cosdiff_l);
+
+		if ( fabs(E.mcvertex_vz[E.tb_e_firstdcvtx] - E.hefit_z[Trk]) < 0.8 &&
+		fabs(E.mcvertex_vz[E.tb_e_lastdcvtx] - E.hefit_lastz[Trk]) < 0.8 )
+		{
+			if ( E.is_upstreamdk )
+			{
+				H.Fill( "dptot_firstvslast_US_MatchZ_"+Name,	pdiff, pdiff_l);
+				H.Fill( "dcosth_firstvslast_US_MatchZ_"+Name,	cosdiff, cosdiff_l);
+			}
+			else
+			{
+				H.Fill( "dptot_firstvslast_DS_MatchZ_"+Name,	pdiff, pdiff_l);
+				H.Fill( "dcosth_firstvslast_DS_MatchZ_"+Name,	cosdiff, cosdiff_l);
 			}
 		}
 	}
