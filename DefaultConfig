@@ -1,5 +1,7 @@
 # ===================	 TCAPm12widthCut 	=================== #
-# TCAPm12widthCut/Do	= false
+# TCAPm12widthCut/Do	= true
+### For 2006 data: TCAPMin = 26; TCAPMax = 52
+### For 2007 data: TCAPMin = 29; TCAPMax = 55
 # TCAPm12widthCut/TCAPMin	= -10000.0
 # TCAPm12widthCut/TCAPMax	= 10000.0
 # TCAPm12widthCut/m12widthMin	= -100000.0
@@ -19,10 +21,10 @@
 # TECCut/TECsigmaxMax	= 1000.0
 # TECCut/TECsigmayMin	= -1.0
 # TECCut/TECsigmayMax	= 1000.0
-# TECCut/TECifailxMin	= -10.0
-# TECCut/TECifailxMax	= 10.0
-# TECCut/TECifailyMin	= -10.0
-# TECCut/TECifailyMax	= 10.0
+# TECCut/TECifailxMin	= -1.0
+# TECCut/TECifailxMax	= 1000.0
+# TECCut/TECifailyMin	= -1.0
+# TECCut/TECifailyMax	= 1000.0
 
 # ===================	 EventTypeCut 	=================== #
 # EventTypeCut/Do	= true
@@ -63,6 +65,15 @@
 # PairMatchingCut/tolerance_rel	= 0.
 # PairMatchingCut/max_iter	= 100
 # PairMatchingCut/CalculateCDA	= false
+### Currently only the function 0 is defined
+### Basic cut min < r < max
+### CutParameters = min,max
+
+# ===================	 Mu_eVertexCut 	=================== #
+# Mu_eVertexCut/Do	= false
+# Mu_eVertexCut/Do_mu_e_Calc-MOFIA	= 0
+# Mu_eVertexCut/CutFunction	= 0
+# Mu_eVertexCut/CutParameters	= 0.0,1000.0
 
 # ===================	 DistToTargetSel 	=================== #
 # DistToTargetSel/Do	= true

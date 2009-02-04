@@ -15,6 +15,8 @@ void SetDefault(ConfigFile &Conf)
 
 	//	TCAPm12widthCut
 	SetKey(Conf, "TCAPm12widthCut/Do", true);
+	//// For 2006 data: TCAPMin = 26; TCAPMax = 52
+	//// For 2007 data: TCAPMin = 29; TCAPMax = 55
 	SetKey(Conf, "TCAPm12widthCut/TCAPMin", -10000.0);
 	SetKey(Conf, "TCAPm12widthCut/TCAPMax", 10000.0);
 	SetKey(Conf, "TCAPm12widthCut/m12widthMin", -100000.0);
@@ -79,18 +81,21 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PairMatchingCut/max_iter", 100);
 	SetKey(Conf, "PairMatchingCut/CalculateCDA", false);
 	
+	//	Mu_eVertexCut
+	//// Currently only the function 0 is defined
+	//// Basic cut min < r < max
+	//// CutParameters = min,max
+	SetKey(Conf, "Mu_eVertexCut/Do", false);
+	SetKey(Conf, "Mu_eVertexCut/Do_mu_e_Calc-MOFIA", 0);
+	SetKey(Conf, "Mu_eVertexCut/CutFunction", 0);
+	SetKey(Conf, "Mu_eVertexCut/CutParameters", "0.0,1000.0");
+	
 	//	DistToTargetSel
 	SetKey(Conf, "DistToTargetSel/Do", true);
 	
 	//	Mu_eVertexSel
 	SetKey(Conf, "Mu_eVertexSel/Do", true);
 	SetKey(Conf, "Mu_eVertexSel/Do_mu_e_Calc-MOFIA", 0);
-	
-	//	Mu_eVertexCut
-	SetKey(Conf, "Mu_eVertexCut/Do", false);
-	SetKey(Conf, "Mu_eVertexCut/Do_mu_e_Calc-MOFIA", 0);
-	SetKey(Conf, "Mu_eVertexCut/CutFunction", 0);
-	SetKey(Conf, "Mu_eVertexCut/CutParameters", "0.0, 1000.0");
 
 	//	DkFitTimeCut
 	SetKey(Conf, "DkFitTimeCut/Do", true);
