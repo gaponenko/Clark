@@ -86,6 +86,12 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "Mu_eVertexSel/Do", true);
 	SetKey(Conf, "Mu_eVertexSel/Do_mu_e_Calc-MOFIA", 0);
 	
+	//	Mu_eVertexCut
+	SetKey(Conf, "Mu_eVertexCut/Do", false);
+	SetKey(Conf, "Mu_eVertexCut/Do_mu_e_Calc-MOFIA", 0);
+	SetKey(Conf, "Mu_eVertexCut/CutFunction", 0);
+	SetKey(Conf, "Mu_eVertexCut/CutParameters", "0.0, 1000.0");
+
 	//	DkFitTimeCut
 	SetKey(Conf, "DkFitTimeCut/Do", true);
 	SetKey(Conf, "DkFitTimeCut/Min", 1050.0);	// in ns

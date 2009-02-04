@@ -26,6 +26,7 @@
 #include "PairMatchingCut.C"
 #include "DistToTargetSel.C"
 #include "Mu_eVertexSel.C"
+#include "Mu_eVertexCut.C"
 #include "DkFitTimeCut.C"
 #include "PACTCut.C"
 
@@ -56,6 +57,7 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new StartStopCut());
 	AnaObj->Register( new ChargeCut());
 	AnaObj->Register( new PairMatchingCut());
+	AnaObj->Register( new Mu_eVertexCut());
 	AnaObj->Register( new DistToTargetSel());
 	AnaObj->Register( new Mu_eVertexSel());
 	AnaObj->Register( new DkFitTimeCut());

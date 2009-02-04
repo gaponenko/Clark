@@ -32,6 +32,7 @@ bool Mu_eVertexSel::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 	//    -------- Name of the cut ---------     //
 	Name		= "Selec: mu-e vertex";
 
+	Log	= TmpLog;
 
 	//	 --------- Special list of cut in this class for the global histograms ---------		//
 	H.AddCut(Name);
