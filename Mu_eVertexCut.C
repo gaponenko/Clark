@@ -61,8 +61,6 @@ bool Mu_eVertexCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 				Log->error("Mu_eVertexCut: Wrong number of parameters for the function 0. A minimum and a maximum only are required.");
 				exit(1);
 			}
-		default:
-			return true;
 	}
 	//	 --------- Histograms initialization ---------		//
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_before",	"Mu-e dV vs dU before mu-e vertex cut, upstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
