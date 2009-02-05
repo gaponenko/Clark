@@ -53,6 +53,7 @@ bool Mu_eVertexCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 	CutFunction		= Conf.read<int>("Mu_eVertexCut/CutFunction");
 	CutParameters	= StrToFloatVect(Conf.read<string>("Mu_eVertexCut/CutParameters"));
 
+
 	switch(CutFunction)
 	{
 		case 0:
@@ -61,6 +62,7 @@ bool Mu_eVertexCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 				Log->error("Mu_eVertexCut: Wrong number of parameters for the function 0. A minimum and a maximum only are required.");
 				exit(1);
 			}
+			break;
 	}
 	//	 --------- Histograms initialization ---------		//
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_before",	"Mu-e dV vs dU before mu-e vertex cut, upstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
@@ -71,6 +73,14 @@ bool Mu_eVertexCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_after",	"Mu-e dV vs dU after mu-e vertex cut, downstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
 	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_up_after",			"Mu-e ellipse distance, after mu-e vertex cut, upstream tracks", 200, 0.0, 2.0);
 	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_after",			"Mu-e ellipse distance, after mu-e vertex cut, downstream tracks", 200, 0.0, 2.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_before_wide",	"Mu-e dV vs dU before mu-e vertex cut, upstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_before_wide",	"Mu-e dV vs dU before mu-e vertex cut, downstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
+	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_up_before_wide",			"Mu-e ellipse distance, before mu-e vertex cut, upstream tracks", 200, 0.0, 10.0);
+	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_before_wide",			"Mu-e ellipse distance, before mu-e vertex cut, downstream tracks", 200, 0.0, 10.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_after_wide",		"Mu-e dV vs dU after mu-e vertex cut, upstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_after_wide",	"Mu-e dV vs dU after mu-e vertex cut, downstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
+	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_up_after_wide",			"Mu-e ellipse distance, after mu-e vertex cut, upstream tracks", 200, 0.0, 10.0);
+	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_after_wide",			"Mu-e ellipse distance, after mu-e vertex cut, downstream tracks", 200, 0.0, 10.0);
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_Track_v_vs_u_up_before",		"Track V vs U  at the target before mu-e vertex cut, upstream tracks", 200, -50.0, 50.0, 200, -50.0, 50.0);
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_Track_v_vs_u_down_before",	"Track V vs U  at the target before mu-e vertex cut, downstream tracks", 200, -50.0, 50.0, 200, -50.0, 50.0);
 
@@ -141,12 +151,16 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 			H.Fill("Cut_Track_v_vs_u_up_before",u0[*t],v0[*t]);
 			H.Fill("Cut_mu_e_dv_vs_du_up_before",du,dv);
 			H.Fill("Cut_mu_e_r_up_before",r);
+			H.Fill("Cut_mu_e_dv_vs_du_up_before_wide",du,dv);
+			H.Fill("Cut_mu_e_r_up_before_wide",r);
 		}
 		else
 		{
 			H.Fill("Cut_Track_v_vs_u_down_before",u0[*t],v0[*t]);
 			H.Fill("Cut_mu_e_dv_vs_du_down_before",du,dv);
 			H.Fill("Cut_mu_e_r_down_before",r);
+			H.Fill("Cut_mu_e_dv_vs_du_down_before_wide",du,dv);
+			H.Fill("Cut_mu_e_r_down_before_wide",r);
 		}
 
 		switch(CutFunction)
@@ -154,9 +168,10 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 			case 0:
 				if( ! (CutParameters[0] < r && r < CutParameters[1]))
 					MustErase = true;
-			default:
-				return true;
+				break;
 		}
+
+
 		if (MustErase)
 		{
 			E.seltrack.erase(t);	// First erase
@@ -168,11 +183,15 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 			{
 				H.Fill("Cut_mu_e_dv_vs_du_up_after",du,dv);
 				H.Fill("Cut_mu_e_r_up_after",r);
+				H.Fill("Cut_mu_e_dv_vs_du_up_after_wide",du,dv);
+				H.Fill("Cut_mu_e_r_up_after_wide",r);
 			}
 			else
 			{
 				H.Fill("Cut_mu_e_dv_vs_du_down_after",du,dv);
 				H.Fill("Cut_mu_e_r_down_after",r);
+				H.Fill("Cut_mu_e_dv_vs_du_down_after_wide",du,dv);
+				H.Fill("Cut_mu_e_r_down_after_wide",r);
 			}
 		}
 	}
