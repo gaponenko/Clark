@@ -31,7 +31,7 @@ bool TemplateCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log
 	//	 --------- Special list of cut in this class for the global histograms ---------		//
 	H.AddCut(Name);
 	
-	if (not Conf.read<bool>("TemplateCut/Do", 1))
+	if (not Conf.read<bool>("TemplateCut/Do"))
 	{
 		Log->info( "TemplateCut turned OFF");
 		return false ;
@@ -43,8 +43,8 @@ bool TemplateCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log
 	// H.DefineTH2D( "Dir", "val_vs_par",	"Value versus a parameter", 20, 1., 21., 100, -0.5,99.5);
 
 	//	 --------- Parameters initialization ---------		//
-	// val_min		= Conf.read<double>("TemplateCut/val_Min", 0.0);
-	// val_max		= Conf.read<double>("TemplateCut/val_Max", 200.0);
+	// val_min		= Conf.read<double>("TemplateCut/val_Min");
+	// val_max		= Conf.read<double>("TemplateCut/val_Max");
 
 	return true;
 }
@@ -62,6 +62,26 @@ bool TemplateCut::Process(EventClass &E, HistogramFactory &H)
 //		return false;
 //	}
 //	H.Fill("val_after", E.val)
+//
+//	// More complicated cut on tracks (for example) in the event.
+//	// Example:
+//	// The vector of integer track contains the track indices in the event.
+//	// The following will loop over the track indices, check a value in the
+//	// array valarray for each integer *t and remove the bad tracks.
+//	// 
+//	// for(vector<int>::iterator t = E.track.begin(); t != E.track.end(); t++)
+//	// {
+//	// 	// ===> TRACK CUT HERE
+//	// 	if( E.valarray[*t]   != GoodVal)
+//	// 	{
+//	// 		E.seltrack.erase(t);    // First erase
+//	// 		t--;                    // then decrement to avoid to skip the following track
+//	// 		continue;
+//	// 	}
+//	// }
+
+//
+//
 	return true;
 }
 

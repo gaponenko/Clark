@@ -38,11 +38,11 @@ bool MuUVCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp
 	}
 	
 	//	 --------- Histograms initialization ---------		//
-	H.DefineTH1D( "MuonAndWinCut", "MuR_before",	"Muon radius before the cut;Radius [cm]", 100, 0.0,10.0);
-	H.DefineTH1D( "MuonAndWinCut", "MuR_after",		"Muon radius after the cut;Radius [cm]", 100, 0.0,10.0);
+	H.DefineTH1D( "MuUVCut", "MuR_before",	"Muon radius before the cut;Radius [cm]", 100, 0.0,10.0);
+	H.DefineTH1D( "MuUVCut", "MuR_after",		"Muon radius after the cut;Radius [cm]", 100, 0.0,10.0);
 
-	H.DefineTH2D( "MuonAndWinCut", "MuUV_before",	"Muon last V vs U before the cut;U position [cm];V position [cm]",60,-6.,6.,60,-6.,6.);
-	H.DefineTH2D( "MuonAndWinCut", "MuUV_after",	"Muon last V vs U after the cut;U position [cm];V position [cm]",60,-6.,6.,60,-6.,6.);
+	H.DefineTH2D( "MuUVCut", "MuUV_before",	"Muon last V vs U before the cut;U position [cm];V position [cm]",60,-6.,6.,60,-6.,6.);
+	H.DefineTH2D( "MuUVCut", "MuUV_after",	"Muon last V vs U after the cut;U position [cm];V position [cm]",60,-6.,6.,60,-6.,6.);
 
 	//	 --------- Parameters initialization ---------		//
 	MuonMaxRadius	= Conf.read<double>("MuUVCut/MaxRadius");
