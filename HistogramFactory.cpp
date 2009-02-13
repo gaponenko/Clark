@@ -65,6 +65,13 @@ void HistogramFactory::DefineArrayOfStr(string Path, string Name)
 	Store( Name, Path, "TObjArray");
 }
 
+void HistogramFactory::DefineObjString( string Path, string Name)
+{
+	ObjString[Name] = new TObjString();
+	// ObjString[Name]->SetName(Name.c_str());
+	Store( Name, Path, "TObjString");
+}
+
 
 
 void HistogramFactory::AddCut(string InCut)
@@ -144,6 +151,11 @@ void HistogramFactory::AddStrToArray( string Name, string InStr)
 void HistogramFactory::AddObjToArray( string Name, TObject *Obj)
 {
 	ObjArray[Name]->Add(Obj);
+}
+
+void HistogramFactory::FillObjString( string Name, string InStr)
+{
+	ObjString[Name]->SetString(InStr.c_str());
 }
 
 
@@ -235,6 +247,8 @@ void HistogramFactory::Save()
 				H3D[*N]->Write();
 			else if (Type[*N] == "TObjArray")
 				ObjArray[*N]->Write((*N).c_str(), Dummy->kSingleKey);
+			else if (Type[*N] == "TObjString")
+				ObjString[*N]->Write((*N).c_str(), Dummy->kSingleKey);
 			else
 				Log->error("The object %s cannot be saved. Its type is not supported by HistogramFactory");
 			File->cd();

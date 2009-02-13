@@ -59,6 +59,8 @@ bool MichelSpectrum::Process(EventClass &E, HistogramFactory &H)
 	
 	if (E.Exists("micheld_accflag") and E.Exists("ndecays"))
 	{
+		// To store later in the output file
+		E.cumulative_accflag |= E.micheld_accflag[0];
 		// MC runs with the accflag for the derivatives mostly
 		if (not E.ndecays > 0)
 			// If there is no decay from the micheld the weight is 0. (Probably still have an entry though.)

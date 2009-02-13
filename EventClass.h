@@ -362,6 +362,9 @@ class EventClass{
 		vector<int>	seltrack;			// Selected track at a given point in the analysis
 		vector<int>	dkwintrack;			// All good tracks (ierror==0) in the decay window
 
+		unsigned	cumulative_accflag;	// Used to determine which MC spectrum is being analysed
+										// Either base, or which derivative.
+										
 		
 		// Truth bank
 		int			tb_nmu;				// Number of muons in the event

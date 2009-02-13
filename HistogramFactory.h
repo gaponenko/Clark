@@ -44,6 +44,7 @@ class HistogramFactory {
 		void	DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect);
 		void	DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax);
 		void	DefineArrayOfStr(string Path, string Name);
+		void	DefineObjString(string Path, string Name);
 		void	AddCut(string InCut);
 		void	DefineEventsBeforeCut(const char* Path, const char* Title);
 		void	DefineEventsRejectedByCut(const char* Path, const char* Title);
@@ -55,6 +56,7 @@ class HistogramFactory {
 		void	ListToTObjArr( string GlobArr, vector<string> List);
 		void	AddStrToArray( string Name, string InStr);
 		void	AddObjToArray( string Name, TObject *Obj);
+		void	FillObjString(string Name, string InStr);
 		void	CutApplied(string LastCut);
 		void	NbCandidateTracks(string ComingCut, EventClass &E);
 
@@ -68,6 +70,7 @@ class HistogramFactory {
 		map<string, TH2D*> H2D;
 		map<string, TH3D*> H3D;
 		map<string, TObjArray*> ObjArray;
+		map<string, TObjString*> ObjString;
 		map<string, string> Type;
 		map<string, string> Dir;
 		map<string, int> Cuts;

@@ -293,4 +293,9 @@ void TreeClass::StoreExtraValues()
 	Hist.ListToTObjArr( "logdata", MofiaLogs);
 	Hist.ListToTObjArr( "logdata", reqnum);
 	Hist.ListToTObjArr( "logdata", nthrown);
+
+	Hist.DefineObjString("Michel", "acc");
+	ostringstream os;
+	os<<hex<<showbase<<Evt.cumulative_accflag;
+	Hist.FillObjString("acc", os.str().c_str());
 }

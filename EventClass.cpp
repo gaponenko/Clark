@@ -43,6 +43,8 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	tb_e_trki		= -1;
 	tb_e_firstvtx	= -1;
 	tb_e_lastvtx	= -1;
+
+	cumulative_accflag = 0;
 }
 
 bool EventClass::InitGeometry(ConfigFile &C)
