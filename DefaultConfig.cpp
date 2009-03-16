@@ -82,11 +82,14 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PairMatchingCut/CalculateCDA", false);
 	
 	//	Mu_eVertexCut
-	//// Currently only the function 0 is defined
-	//// Basic cut min < r < max
-	//// CutParameters = min,max
 	SetKey(Conf, "Mu_eVertexCut/Do", false);
 	SetKey(Conf, "Mu_eVertexCut/Do_mu_e_Calc-MOFIA", 0);
+	//// Function 0:
+	////     min < r < max
+	////     CutParameters = min,max
+	//// Function 1:
+	////     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
+	////     CutParameters = Bmin,Amin,Bmax,Bmax
 	SetKey(Conf, "Mu_eVertexCut/CutFunction", 0);
 	SetKey(Conf, "Mu_eVertexCut/CutParameters", "0.0,1000.0");
 	

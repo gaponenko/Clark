@@ -22,12 +22,12 @@ class Mu_eVertexCut : public ModuleClass{
 		int CutFunction;
 		vector<float> CutParameters;
 
-		bool MustErase;
 		vector<double> u0;
 		vector<double> v0;
 		vector<double> u0_Calc;
 		vector<double> v0_Calc;
 		double du, dv, r;
+		double CutMin, CutMax;
 };
 
 bool Mu_eVertexCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
@@ -63,27 +63,38 @@ bool Mu_eVertexCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 				exit(1);
 			}
 			break;
+		case 1:
+			if( CutParameters.size() != 4 )
+			{
+				Log->error("Mu_eVertexCut: Wrong number of parameters for the function 1. Four parameters are required.");
+				exit(1);
+			}
+			break;
 	}
 	//	 --------- Histograms initialization ---------		//
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_before",	"Mu-e dV vs dU before mu-e vertex cut, upstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_before",	"Mu-e dV vs dU before mu-e vertex cut, downstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
 	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_up_before",			"Mu-e ellipse distance, before mu-e vertex cut, upstream tracks", 200, 0.0, 2.0);
-	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_before",			"Mu-e ellipse distance, before mu-e vertex cut, downstream tracks", 200, 0.0, 2.0);
-	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_after",		"Mu-e dV vs dU after mu-e vertex cut, upstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
+	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_before",		"Mu-e ellipse distance, before mu-e vertex cut, downstream tracks", 200, 0.0, 2.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_after",	"Mu-e dV vs dU after mu-e vertex cut, upstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_after",	"Mu-e dV vs dU after mu-e vertex cut, downstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
 	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_up_after",			"Mu-e ellipse distance, after mu-e vertex cut, upstream tracks", 200, 0.0, 2.0);
 	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_after",			"Mu-e ellipse distance, after mu-e vertex cut, downstream tracks", 200, 0.0, 2.0);
+
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_before_wide",	"Mu-e dV vs dU before mu-e vertex cut, upstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
-	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_before_wide",	"Mu-e dV vs dU before mu-e vertex cut, downstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_before_wide","Mu-e dV vs dU before mu-e vertex cut, downstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
 	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_up_before_wide",			"Mu-e ellipse distance, before mu-e vertex cut, upstream tracks", 200, 0.0, 10.0);
-	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_before_wide",			"Mu-e ellipse distance, before mu-e vertex cut, downstream tracks", 200, 0.0, 10.0);
-	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_after_wide",		"Mu-e dV vs dU after mu-e vertex cut, upstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
+	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_before_wide",		"Mu-e ellipse distance, before mu-e vertex cut, downstream tracks", 200, 0.0, 10.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_after_wide",	"Mu-e dV vs dU after mu-e vertex cut, upstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_after_wide",	"Mu-e dV vs dU after mu-e vertex cut, downstream tracks", 200, -10.0, 10.0, 200, -10.0, 10.0);
 	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_up_after_wide",			"Mu-e ellipse distance, after mu-e vertex cut, upstream tracks", 200, 0.0, 10.0);
-	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_after_wide",			"Mu-e ellipse distance, after mu-e vertex cut, downstream tracks", 200, 0.0, 10.0);
-	H.DefineTH2D( "Mu_eVertexCut", "Cut_Track_v_vs_u_up_before",		"Track V vs U  at the target before mu-e vertex cut, upstream tracks", 200, -50.0, 50.0, 200, -50.0, 50.0);
+	H.DefineTH1D( "Mu_eVertexCut", "Cut_mu_e_r_down_after_wide",		"Mu-e ellipse distance, after mu-e vertex cut, downstream tracks", 200, 0.0, 10.0);
+	
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_Track_v_vs_u_up_before",	"Track V vs U  at the target before mu-e vertex cut, upstream tracks", 200, -50.0, 50.0, 200, -50.0, 50.0);
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_Track_v_vs_u_down_before",	"Track V vs U  at the target before mu-e vertex cut, downstream tracks", 200, -50.0, 50.0, 200, -50.0, 50.0);
 
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_r_vs_cost_before",		"Mu-e vertex versus cos(#theta), before mu-e vertex cut", 	200, -1.0, 1.0, 200, 0.0, 10.0);
+	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_r_vs_cost_after",		"Mu-e vertex versus cos(#theta), after mu-e vertex cut",	200, -1.0, 1.0, 200, 0.0, 10.0);
 
 	return true;
 }
@@ -142,7 +153,6 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 
 	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
 	{
-		MustErase = false;
 		du	= E.muon_ulast - u0[*t];
 		dv	= E.muon_vlast - v0[*t];
 		r	= sqrt(du * du + dv * dv);
@@ -163,16 +173,22 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 			H.Fill("Cut_mu_e_r_down_before_wide",r);
 		}
 
+		H.Fill("Cut_mu_e_r_vs_cost_before",E.costh[*t],r);
+
 		switch(CutFunction)
 		{
 			case 0:
-				if( ! (CutParameters[0] < r && r < CutParameters[1]))
-					MustErase = true;
+				CutMin = CutParameters[0];
+				CutMax = CutParameters[1];
+				break;
+			case 1:
+				CutMin = CutParameters[0] + CutParameters[1] / fabs(E.costh[*t]);
+				CutMax = CutParameters[2] + CutParameters[3] / fabs(E.costh[*t]);
 				break;
 		}
 
 
-		if (MustErase)
+		if( ! (CutMin < r && r < CutMax))
 		{
 			E.seltrack.erase(t);	// First erase
 			t--;					// then decrement to avoid to skip the following track
@@ -193,6 +209,7 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 				H.Fill("Cut_mu_e_dv_vs_du_down_after_wide",du,dv);
 				H.Fill("Cut_mu_e_r_down_after_wide",r);
 			}
+			H.Fill("Cut_mu_e_r_vs_cost_after",E.costh[*t],r);
 		}
 	}
 

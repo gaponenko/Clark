@@ -65,13 +65,16 @@
 # PairMatchingCut/tolerance_rel	= 0.
 # PairMatchingCut/max_iter	= 100
 # PairMatchingCut/CalculateCDA	= false
-### Currently only the function 0 is defined
-### Basic cut min < r < max
-### CutParameters = min,max
 
 # ===================	 Mu_eVertexCut 	=================== #
 # Mu_eVertexCut/Do	= false
 # Mu_eVertexCut/Do_mu_e_Calc-MOFIA	= 0
+### Function 0:
+###     min < r < max
+###     CutParameters = min,max
+### Function 1:
+###     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
+###     CutParameters = Bmin,Amin,Bmax,Bmax
 # Mu_eVertexCut/CutFunction	= 0
 # Mu_eVertexCut/CutParameters	= 0.0,1000.0
 
