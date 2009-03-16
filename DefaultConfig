@@ -74,7 +74,7 @@
 ###     CutParameters = min,max
 ### Function 1:
 ###     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
-###     CutParameters = Bmin,Amin,Bmax,Bmax
+###     CutParameters = Bmin,Amin,Bmax,Amax
 # Mu_eVertexCut/CutFunction	= 0
 # Mu_eVertexCut/CutParameters	= 0.0,1000.0
 
