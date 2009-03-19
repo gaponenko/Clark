@@ -74,7 +74,7 @@
 ###     CutParameters = min,max
 ### Function 1:
 ###     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
-###     CutParameters = Bmin,Amin,Bmax,Amax
+###     CutParameters = Bmin,Amin,Bmax,Bmax
 # Mu_eVertexCut/CutFunction	= 0
 # Mu_eVertexCut/CutParameters	= 0.0,1000.0
 
@@ -102,6 +102,14 @@
 # PACTCut/region_12	= 1.634, -5.428, -61.26, 642.3
 # PACTCut/region_21	= 1.634, -5.428, -61.26, 642.3
 # PACTCut/region_22	= 1.634, -5.428, -61.26, 642.3
+
+# ===================	 FiducialCut 	=================== #
+# FiducialCut/MinAbsCosTheta	= 0.5
+# FiducialCut/MaxAbsCosTheta	= 0.92
+# FiducialCut/MaxMomentum	= 51.5
+# FiducialCut/MinTransMom	= 10.0
+# FiducialCut/MaxTransMom	= 39.7
+# FiducialCut/MinLongiMom	= 13.7
 
 # ===================	 StatusHistograms 	=================== #
 # StatusHistograms/Do	= true

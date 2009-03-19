@@ -118,6 +118,15 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PACTCut/region_21", "1.634, -5.428, -61.26, 642.3");
 	SetKey(Conf, "PACTCut/region_22", "1.634, -5.428, -61.26, 642.3");
 	
+	// Fiducial Cut
+	SetKey(Conf, "FiducialCut/MinAbsCosTheta", 0.5);
+	SetKey(Conf, "FiducialCut/MaxAbsCosTheta", 0.92);
+	SetKey(Conf, "FiducialCut/MaxMomentum", 51.5);			// Mev/c
+	SetKey(Conf, "FiducialCut/MinTransMom", 10.0);			// Mev/c
+	SetKey(Conf, "FiducialCut/MaxTransMom", 39.7);			// Mev/c
+	SetKey(Conf, "FiducialCut/MinLongiMom", 13.7);			// Mev/c
+
+
 	//	StatusHistograms
 	SetKey(Conf, "StatusHistograms/Do", true);
 	SetKey(Conf, "StatusHistograms/PerWindowType", false);
