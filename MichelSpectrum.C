@@ -46,6 +46,10 @@ bool MichelSpectrum::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 	H.DefineTH2D( "Michel", "Spectrum_"+Name, "Michel spectrum "+Title+";Momentum [MeV];cos(#theta)",nxbins,xmin,xmax,ncbins, -1.0, 1.0);
 	H.DefineTH2D( "Michel", "Spectrum_PzVsPt_"+Name, "Longitudinal vs transverse momentum spectrum "+Title+";P_{t} [MeV];P_{z} [MeV]",nxbins,xmin,xmax,2*nxbins, -1.*xmax, xmax);
 
+	// IMPORTANT for mcfit !
+	H.Sumw2("Spectrum_"+Name);
+	H.Sumw2("Spectrum_PzVsPt_"+Name);
+
 	Log->info( "Register Michel spectrum ");
 	return true;
 }

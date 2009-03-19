@@ -180,6 +180,18 @@ void	HistogramFactory::NbCandidateTracks(string ComingCut, EventClass &E)
 	}
 }
 
+// =========================== Miscellaneous section =================================== \\
+
+void HistogramFactory::Sumw2( string Name)
+{
+	if ( Type[Name] == "TH1D" )
+		H1D[Name]->Sumw2();
+	else if ( Type[Name] == "TH2D" )
+		H2D[Name]->Sumw2();
+	else if ( Type[Name] == "TH3D" )
+		H3D[Name]->Sumw2();
+}
+
 
 // ============================= File saving section =================================== \\
 

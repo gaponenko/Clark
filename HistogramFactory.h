@@ -60,6 +60,9 @@ class HistogramFactory {
 		void	CutApplied(string LastCut);
 		void	NbCandidateTracks(string ComingCut, EventClass &E);
 
+		// =========================== Miscellaneous section ===================================
+		void	Sumw2(string Name);
+
 		// ============================= File saving section ===================================
 		void	Save();
 		void	DoDirectory(string FilePath);
