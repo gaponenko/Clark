@@ -62,29 +62,38 @@ bool MichelSpectrum::Process(EventClass &E, HistogramFactory &H)
 	int Trk = E.seltrack[0];
 	
 	if (E.Exists("micheld_accflag") and E.Exists("ndecays"))
+	// MC
 	{
 		// To store later in the output file
 		E.cumulative_accflag |= E.micheld_accflag[0];
 		// MC runs with the accflag for the derivatives mostly
 		if (not E.ndecays > 0)
+		{
 			// If there is no decay from the micheld the weight is 0. (Probably still have an entry though.)
 			H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	0);
 			H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		0);
-		try
-		{
-			H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	MichelWeight(E.micheld_accflag[0]));
-			H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		MichelWeight(E.micheld_accflag[0]));
 		}
-		catch( const char* Msg)
+		else
 		{
-			Log->crit("MichelSpectrum: %s = 0x%x",Msg,E.micheld_accflag[0]);
-			exit(1);
+			try
+			{
+				H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	MichelWeight(E.micheld_accflag[0]));
+				H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		MichelWeight(E.micheld_accflag[0]));
+			}
+			catch( const char* Msg)
+			{
+				Log->crit("MichelSpectrum: %s = 0x%x",Msg,E.micheld_accflag[0]);
+				exit(1);
+			}
 		}
 		
 	}
 	else
+	// DATA
+	{
 		H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk]);
 		H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk]);
+	}
 
 	return true;
 }

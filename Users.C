@@ -51,6 +51,7 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new EventTypeCut());
 	AnaObj->Register( new MuLastPCut());
 	AnaObj->Register( new MuUVCut());
+	AnaObj->Register( new PACTCut());
 	AnaObj->Register( new DkWinTimeCut());
 	AnaObj->Register( new NtracksCut());
 	AnaObj->Register( new IerrorCut());
@@ -61,7 +62,6 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new DistToTargetSel());
 	AnaObj->Register( new Mu_eVertexSel());
 	AnaObj->Register( new DkFitTimeCut());
-	AnaObj->Register( new PACTCut());
 
 	AnaObj->Register( new ChiSquare());
 
