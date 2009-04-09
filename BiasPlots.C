@@ -38,7 +38,7 @@ bool BiasPlots::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 	//    -------- Name of the cut ---------     //
 	Log	= TmpLog;
 
-	if ( (not Conf.read<bool>("BiasPlots/Do")) || not ( E.Exists("nmctr") && E.Exists("nmcvtx") ))
+	if ( (not Conf.read<bool>("BiasPlots/Do")) || not ( E.Exists("nmctr") && E.Exists("nmcvtx") && Conf.read<bool>("TruthBank/Do")))
 	{
 		Log->info( "BiasPlots %s turned OFF",Title.c_str());
 		return false ;

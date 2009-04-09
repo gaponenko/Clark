@@ -81,7 +81,9 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	}
 
 	//___________________ Helix fit tracks ______________________ //
-	H.DefineTH1D( "Status",	"DkFitTime_"+N,	"Decay fit time for selected the tracks "+T,1000, 0.,10000.);
+	H.DefineTH1D( "Status",	"DkFitTime_"+N,	"Decay fit time for selected the tracks "+T,10000, 0.,10000.);
+	H.DefineTH1D( "Status",	"DkFitTime_US_"+N,	"Decay fit time for selected US tracks "+T,10000, 0.,10000.);
+	H.DefineTH1D( "Status",	"DkFitTime_DS_"+N,	"Decay fit time for selected DS tracks "+T,10000, 0.,10000.);
 
 	H.DefineTH1D( "Status",	"Chi2_"+N,		"Reduced Chisquare of the selected tracks "+T,1000, 0,10);
 	H.DefineTH1D( "Status",	"Chi2Full_"+N,	"Reduced Chisquare of the selected tracks "+T,1000, 0,1000);
@@ -137,7 +139,17 @@ bool StatusHistograms::Process(EventClass &E, HistogramFactory &H)
 
 	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
 	{
-		H.Fill("DkFitTime_"+Name, E.hefit_time[*t] );
+		if (fabs(E.hefit_z[*t])<5)
+		{
+			H.Fill("DkFitTime_"+Name, E.hefit_time[*t] );
+			if (E.hefit_pz[*t]>0)
+			{
+				H.Fill("DkFitTime_DS_"+Name, E.hefit_time[*t] );
+			}
+			else {
+				H.Fill("DkFitTime_US_"+Name, E.hefit_time[*t] );
+			}
+		}
 		if (E.hefit_ndof[*t] > 0)
 		{
 			H.Fill("Chi2_"+Name,				E.hefit_chi2[*t] / E.hefit_ndof[*t]);

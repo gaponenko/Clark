@@ -115,6 +115,11 @@
 # StatusHistograms/Do	= true
 # StatusHistograms/PerWindowType	= false
 
+# ===================	 TruthBank 	=================== #
+# TruthBank/Do	= false
+### This flag turns the truth bank analysis off. No vertex bank analysed
+### but the accflag is still used for the Michel spectrum.
+
 # ===================	 BiasPlots 	=================== #
 # BiasPlots/Do	= true
 # BiasPlots/Nptotbins	= 8

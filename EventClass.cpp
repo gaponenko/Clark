@@ -27,6 +27,7 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	DownDkWinType	= StrToIntVect(Tmp);
 
 	// For Truth Bank
+	AnalyseTruthBank	=	C.read<bool>( "TruthBank/Do");
 	MuUVMaxRadius		=	C.read<double>( "TruthBank/MuUVMaxRadius");
 	TriggerTimeJitter	=	C.read<double>( "TruthBank/TriggerTimeJitter");
 	MuZAroundTarget		=	C.read<double>( "TruthBank/MuZAroundTarget");
@@ -243,7 +244,7 @@ bool EventClass::Load( )
 	// 	cout<<" ************** Event nevt = "<<nevt<<"  dkwintrack size = "<<dkwintrack.size()<<endl;
 
 	//	####################################### Truth bank  ##################################### //
-	if ( Exists("nmctr") && Exists("nmcvtx") )
+	if ( Exists("nmctr") && Exists("nmcvtx") && AnalyseTruthBank)
 	{
 		tb_nmu			= 0;
 		tb_mu_trki		= -1;

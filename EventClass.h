@@ -79,6 +79,7 @@ class EventClass{
 		// vector<float> DCzposition;
 		
 		// For the truth bank
+		bool AnalyseTruthBank;
 		double MuUVMaxRadius;
 		double TriggerTimeJitter;
 		double MuZAroundTarget;

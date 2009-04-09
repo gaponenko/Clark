@@ -133,6 +133,11 @@ void SetDefault(ConfigFile &Conf)
 
 	// ==================== Special Analyses ======================== //
 	
+	// Truth Bank
+	SetKey(Conf, "TruthBank/Do",			false);
+	//// This flag turns the truth bank analysis off. No vertex bank analysed
+	//// but the accflag is still used for the Michel spectrum.
+
 	// Bias Plots
 	SetKey(Conf, "BiasPlots/Do",			true);
 	SetKey(Conf, "BiasPlots/Nptotbins",		8);
