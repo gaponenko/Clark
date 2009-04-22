@@ -13,6 +13,14 @@ void SetDefault(ConfigFile &Conf)
 {
 	// ================ Standard Analysis =============== //
 
+	//	Energy Calibration
+	SetKey(Conf, "EnergyCalibration/Mode", 0);
+	//// This is turned on or off using the command line
+	//// The possible modes:
+	////	0 => Shift correction for beta
+	////	1 => Scaling correction for beta
+	
+
 	//	TCAPm12widthCut
 	SetKey(Conf, "TCAPm12widthCut/Do", true);
 	//// For 2006 data: TCAPMin = 26; TCAPMax = 52

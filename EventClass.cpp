@@ -35,6 +35,12 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	MinDkTimeAfterMu	=	C.read<double>( "TruthBank/MinDkTimeAfterMu");
 	MaxDkTimeAfterMu	=	C.read<double>( "TruthBank/MaxDkTimeAfterMu");
 
+	// Energy calibration mode
+	EcalibMode	= C.read<int>("EnergyCalibration/Mode");
+
+	// Kinematic end point.
+	KPmax		= C.read<double>("Parameters/KinematicPmax");
+
 	// It is safer to do it at least once
 	tb_nmu			= 0;
 	tb_mu_trki		= -1;
@@ -174,13 +180,32 @@ bool EventClass::Load( )
 		// Apply the energy calibration if needed
 		if (DoEcalib)
 		{
-			// Upstream
-			if (costh[t] < 0.0) 
-				ptot[t] = hefit_ptot[t] + ( Ecal_au / fabs(costh[t]) ) - Ecal_bu;
+			// Which type of energy calibration should be applied ?
+			switch(EcalibMode)
+			{
+				case 0:
+					// Upstream
+					if (costh[t] < 0.0) 
+						ptot[t] = hefit_ptot[t] + ( Ecal_au / fabs(costh[t]) ) - Ecal_bu;
+		
+					// Downstream
+					if (costh[t] > 0.0)
+						ptot[t] = hefit_ptot[t] + ( Ecal_ad / fabs(costh[t]) ) - Ecal_bd;
+					break;
+				case 1:
+					// Upstream
+					if (costh[t] < 0.0) 
+						ptot[t] = ( hefit_ptot[t] / ( 1. + ( Ecal_bu / KPmax ))) + ( Ecal_au / fabs(costh[t]) );
 
-			// Downstream
-			if (costh[t] > 0.0)
-				ptot[t] = hefit_ptot[t] + ( Ecal_ad / fabs(costh[t]) ) - Ecal_bd;
+					// Downstream
+					if (costh[t] > 0.0)
+						ptot[t] = ( hefit_ptot[t] / ( 1. + ( Ecal_bd / KPmax ))) + ( Ecal_ad / fabs(costh[t]) );
+					break;
+				default:
+					Log->error("EventClass: The EnergyCalibration/Mode does not correspond to any mode available for the energy calibration. Exit now.");
+					exit(1);
+			}
+
 
 			pz[t]	= costh[t] * ptot[t];
 

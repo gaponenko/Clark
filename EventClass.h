@@ -87,6 +87,9 @@ class EventClass{
 		double MinDkTimeAfterMu;
 		double MaxDkTimeAfterMu;
 
+		double KPmax;
+
+		int EcalibMode;
 		
 		//________________________ Energy calibration ___________________//
 
