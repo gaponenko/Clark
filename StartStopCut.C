@@ -43,6 +43,11 @@ bool StartStopCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, lo
 	H.DefineTH2D( "StartStopCut", "StartStop_Down_before",	"DC max vs min, downstream decays, before the cut;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
 	H.DefineTH2D( "StartStopCut", "StartStop_Down_after",	"DC max vs min, downstream decays, after the cut;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
 
+	H.DefineTH2D( "StartStopCut", "StartStop_Up_ePlus",		"DC max vs min, upstream decays, positive tracks;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
+	H.DefineTH2D( "StartStopCut", "StartStop_Up_eMinus",	"DC max vs min, upstream decays, negative tracks;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
+	H.DefineTH2D( "StartStopCut", "StartStop_Down_ePlus",	"DC max vs min, downstream decays, positive tracks;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
+	H.DefineTH2D( "StartStopCut", "StartStop_Down_eMinus",	"DC max vs min, downstream decays, negative tracks;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
+
 
 	return true;
 }
@@ -56,9 +61,21 @@ bool StartStopCut::Process(EventClass &E, HistogramFactory &H)
 	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
 	{
 		if( E.is_upstreamdk)
+		{
 			H.Fill("StartStop_Up_before",E.dcmin[*t],E.dcmax[*t]);
+			if ( E.hefit_q[*t] < 0 )
+				H.Fill("StartStop_Up_eMinus",E.dcmin[*t],E.dcmax[*t]);
+			else
+				H.Fill("StartStop_Up_ePlus",E.dcmin[*t],E.dcmax[*t]);
+		}
 		else
+		{
 			H.Fill("StartStop_Down_before",E.dcmin[*t],E.dcmax[*t]);
+			if ( E.hefit_q[*t] < 0 )
+				H.Fill("StartStop_Down_eMinus",E.dcmin[*t],E.dcmax[*t]);
+			else
+				H.Fill("StartStop_Down_ePlus",E.dcmin[*t],E.dcmax[*t]);
+		}
 		// ===> TRACK CUT HERE
 		// Looks complicated but works. Both ends of the track must be on the side
 		// we expect the decay to be according to the event type.
