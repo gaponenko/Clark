@@ -37,6 +37,11 @@ class PairMatchingCut : public ModuleClass{
 		double tolerance_rel;
 		int max_iter;
 		bool CalculateCDA;
+
+		float MinCDA_Beame;
+		float MinCDA_BrokTrk;
+		vector<float> BrokTrk_Z_Range;
+		vector<float> Beame_Z_Range;
 };
 
 bool PairMatchingCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
@@ -77,17 +82,25 @@ bool PairMatchingCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf,
 	H.DefineTH1D( "PairMatchingCut", "cda_z_min",		"Z of the minimum closest approach found",600, -60., 60.);
 	H.DefineTH1D( "PairMatchingCut", "cda_z_matching",	"Z of the closest approach for cut tracks",600, -60., 60.);
 
+	H.DefineTH1D( "PairMatchingCut", "cda_cuttype_found",	"Cut type found from the zmin",3, -0.5, 2.5);
+	H.DefineTH1D( "PairMatchingCut", "cda_cuttype_applied",	"Cut type applied",3, -0.5, 2.5);
+
 	// if (not(E.Exists("hefit_cda")))
 	// 	H.DefineTH1D( "PairMatchingCut", "anti-track_cut",	"Cuts applied on anti-tracks", 3, 0.5, 3.5);
 
 	//	 --------- Parameters initialization ---------		//
-	MinCDA		= Conf.read<double>("PairMatchingCut/MinCDA");
-	MinDT		= Conf.read<double>("PairMatchingCut/MinDT");
+	MinCDA			= Conf.read<double>("PairMatchingCut/MinCDA");
+	MinCDA_Beame	= Conf.read<double>("PairMatchingCut/MinCDA_Beame");
+	MinCDA_BrokTrk	= Conf.read<double>("PairMatchingCut/MinCDA_BrokTrk");
+	MinDT			= Conf.read<double>("PairMatchingCut/MinDT");
 
 	tolerance_abs	= Conf.read<double>("PairMatchingCut/tolerance_abs");	// cm
 	tolerance_rel	= Conf.read<double>("PairMatchingCut/tolerance_rel");
 	max_iter		= Conf.read<int>("PairMatchingCut/max_iter");
 	CalculateCDA	= Conf.read<bool>("PairMatchingCut/CalculateCDA");
+
+	BrokTrk_Z_Range	= StrToFloatVect(Conf.read<string>("PairMatchingCut/BrokTrk_Z_Range"));
+	Beame_Z_Range	= StrToFloatVect(Conf.read<string>("PairMatchingCut/Beame_Z_Range"));
 
 	return true;
 }
@@ -102,6 +115,8 @@ bool PairMatchingCut::Process(EventClass &E, HistogramFactory &H)
 	double cda, zmin, deflang; // deflection angle
 	int iter;	// number of iterations for the minimzation
 	bool IsCDAok;
+	float CDAcut;
+	int CDAcuttype;
 	// cout<<" In PairMatchingCut 2"<<endl;
 	
 	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
@@ -150,11 +165,30 @@ bool PairMatchingCut::Process(EventClass &E, HistogramFactory &H)
 			H.Fill("dt_vs_cda_before",cda, dT);
 		
 			// The anti track number is less than zero if the cut must not be applied.
-			if( cda < MinCDA and fabs(dT) < MinDT)
+			
+			if( BrokTrk_Z_Range[0] < fabs(zmin) && fabs(zmin) < BrokTrk_Z_Range[1] )
+			{
+				CDAcut = MinCDA_BrokTrk;
+				CDAcuttype = 1;
+			}
+			else if( Beame_Z_Range[0] < fabs(zmin) && fabs(zmin) < Beame_Z_Range[1] )
+			{
+				CDAcut = MinCDA_Beame;
+				CDAcuttype = 2;
+			}
+			else
+			{
+				CDAcut = MinCDA;
+				CDAcuttype = 0;
+			}
+
+			H.Fill("cda_cuttype_found",CDAcuttype);
+			if( cda < CDAcut and fabs(dT) < MinDT)
 			{
 				E.seltrack.erase(t);	// First erase
 				t--;					// then decrement to avoid to skip the following track
 				H.Fill("cda_z_matching",zmin);
+				H.Fill("cda_cuttype_applied",CDAcuttype);
 				break;	// from anti-track loop
 			}
 			else

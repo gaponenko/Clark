@@ -67,6 +67,10 @@
 # ===================	 PairMatchingCut 	=================== #
 # PairMatchingCut/Do	= true
 # PairMatchingCut/MinCDA	= 0.5
+# PairMatchingCut/MinCDA_BrokTrk	= 2.0
+# PairMatchingCut/MinCDA_Beame	= 0.5
+# PairMatchingCut/BrokTrk_Z_Range	= 22.0,48.0
+# PairMatchingCut/Beame_Z_Range	= 0.0,6.0
 # PairMatchingCut/MinDT	= 60.0
 # PairMatchingCut/tolerance_abs	= 1.e-4
 # PairMatchingCut/tolerance_rel	= 0.
@@ -81,7 +85,7 @@
 ###     CutParameters = min,max
 ### Function 1:
 ###     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
-###     CutParameters = Bmin,Amin,Bmax,Bmax
+###     CutParameters = Bmin,Amin,Bmax,Amax
 # Mu_eVertexCut/CutFunction	= 0
 # Mu_eVertexCut/CutParameters	= 0.0,1000.0
 

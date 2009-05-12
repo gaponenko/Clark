@@ -82,7 +82,11 @@ void SetDefault(ConfigFile &Conf)
 
 	//	PairMatchingCut
 	SetKey(Conf, "PairMatchingCut/Do", true);
-	SetKey(Conf, "PairMatchingCut/MinCDA", 0.5);
+	SetKey(Conf, "PairMatchingCut/MinCDA", 0.5);				// For all the other tracks
+	SetKey(Conf, "PairMatchingCut/MinCDA_BrokTrk", 2.0);		// For broken tracks
+	SetKey(Conf, "PairMatchingCut/MinCDA_Beame", 0.5);			// For beam positron
+	SetKey(Conf, "PairMatchingCut/BrokTrk_Z_Range", "22.0,48.0");	// For beam positron
+	SetKey(Conf, "PairMatchingCut/Beame_Z_Range", "0.0,6.0");	// For beam positron
 	SetKey(Conf, "PairMatchingCut/MinDT", 60.0);
 	SetKey(Conf, "PairMatchingCut/tolerance_abs", 1.e-4); /*cm*/
 	SetKey(Conf, "PairMatchingCut/tolerance_rel", 0.);
@@ -97,7 +101,7 @@ void SetDefault(ConfigFile &Conf)
 	////     CutParameters = min,max
 	//// Function 1:
 	////     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
-	////     CutParameters = Bmin,Amin,Bmax,Bmax
+	////     CutParameters = Bmin,Amin,Bmax,Amax
 	SetKey(Conf, "Mu_eVertexCut/CutFunction", 0);
 	SetKey(Conf, "Mu_eVertexCut/CutParameters", "0.0,1000.0");
 	
