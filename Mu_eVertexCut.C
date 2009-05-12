@@ -110,10 +110,6 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 	v0_Calc.clear();
 	double tmpu, tmpv;
 
-	// Little convenient output in the log file
-	if (E.seltrack.size() > 1)
-		Log->info("Event %d",E.nevt);
-
 	if ( ( not (E.Exists("hefit_u0") and E.Exists("hefit_v0")) ) or CalcVsMofia)
 	{
 		for ( int t = 0; t < E.ntr; t++)
