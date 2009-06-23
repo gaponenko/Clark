@@ -198,46 +198,29 @@ void HistogramFactory::Sumw2( string Name)
 void HistogramFactory::DoDirectory( string FilePath)
 {
 	File->cd();
-	string Current	= "";
 	if (FilePath == "")
 		return;
-	vector<const char*> Dirs;
-
-	string tmp = FilePath;
-	if (tmp.find("/", 0) == string::npos)
-		Dirs.push_back(tmp.c_str());
-	else
-		while (tmp.find("/", 0) != string::npos)
-		{
-			Dirs.push_back(tmp.substr( 0, tmp.find("/", 0)).c_str());
-			tmp	= tmp.substr( tmp.find("/", 0)+1);
-		}
 
 	TKey *K;
-	for(vector<const char*>::iterator D=Dirs.begin(); D != Dirs.end(); D++)
+	K	= (TKey*)File->GetKey(FilePath.c_str());
+	if (K == NULL)
+	// The directory doesn't exist. Create it.
 	{
-		K	= (TKey*)File->GetKey(*D);
-		if (K == NULL)
-		// The directory doesn't exist. Create it.
-		{
-			File->mkdir(*D);
-			File->cd(*D);
-		}
-		else
-		{
-			if ( not K->IsFolder())
-			{
-			// That's embarrasing. Probably a Histogram has the name of the directory we want. Oups !
-				Log->warn("The directory %s cannot be created because a histogram has already this name. The current directory \"%s\" will be used instead.",*D,Current.c_str());
-				return;
-			}
-			else
-				File->cd(*D);
 
-		}
-		Current += (*D);
-		Current += "/";
+		File->mkdir(FilePath.c_str());
 	}
+	else
+	{
+		if ( not K->IsFolder())
+		{
+		// That's embarrasing. Probably a Histogram has the name of the directory we want. Oups !
+			Log->warn("The directory %s cannot be created because a histogram has already this name. The root directory will be used instead.",FilePath.c_str());
+			return;
+		}
+
+	}
+	File->cd(FilePath.c_str());
+	
 }
 
 

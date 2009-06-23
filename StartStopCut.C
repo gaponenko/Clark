@@ -18,6 +18,10 @@ class StartStopCut : public ModuleClass{
 
 		string Name;
 
+		int CutType;
+		vector<float> StartPlane;
+		vector<float> StopPlane;
+		bool StartPlaneDefined, StopPlaneDefined;
 };
 
 bool StartStopCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
@@ -48,6 +52,17 @@ bool StartStopCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, lo
 	H.DefineTH2D( "StartStopCut", "StartStop_Down_ePlus",	"DC max vs min, downstream decays, positive tracks;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
 	H.DefineTH2D( "StartStopCut", "StartStop_Down_eMinus",	"DC max vs min, downstream decays, negative tracks;DC min;DC max",45,-0.5,44.5,45,-0.5,44.5);
 
+	StartPlane	= StrToFloatVect(Conf.read<string>("StartStopCut/StartPlane"));
+	StopPlane	= StrToFloatVect(Conf.read<string>("StartStopCut/StopPlane"));
+
+	StartPlaneDefined = false;
+	StopPlaneDefined = false;
+
+	if ( StartPlane[0] > 0 && StartPlane[1] > 0 ) 
+		StartPlaneDefined = true;
+
+	if ( StopPlane[0] > 0 && StopPlane[1] > 0 ) 
+		StopPlaneDefined = true;
 
 	return true;
 }
@@ -85,24 +100,39 @@ bool StartStopCut::Process(EventClass &E, HistogramFactory &H)
 			t--;					// then decrement to avoid to skip the following track
 			continue;
 		}
-		else
-		{
-			// Sanity check
-			// cout <<"Event = "<<E.nevt<<"   upstream = "<<E.is_upstreamdk<<"   costh = "<<E.costh[*t]<<endl;
-			if (E.is_upstreamdk != (E.costh[*t] < 0))
+
+		if( StartPlaneDefined )
+			if( ( E.is_upstreamdk && (E.dcmax[*t] != StartPlane[0])) || ( (!E.is_upstreamdk) && (E.dcmin[*t] != StartPlane[1])) )
 			{
-				Log->warn("StartStopCut: cos(theta) sign does not match track position: costh=%f, dcmin=%d, dcmax=%d, wintype=%d, event=%d", E.costh[*t], E.dcmin[*t], E.dcmax[*t], E.win_type[E.iewin], E.nevt);
 				E.seltrack.erase(t);	// First erase
 				t--;					// then decrement to avoid to skip the following track
 				continue;
 			}
 
-			Nb_StartStop_OK += 1;
-			if( E.is_upstreamdk)
-				H.Fill("StartStop_Up_after",E.dcmin[*t],E.dcmax[*t]);
-			else
-				H.Fill("StartStop_Down_after",E.dcmin[*t],E.dcmax[*t]);
+		if( StopPlaneDefined )
+			if( ( E.is_upstreamdk && (E.dcmin[*t] != StopPlane[0])) || ( (!E.is_upstreamdk) && (E.dcmax[*t] != StopPlane[1])) )
+			{
+				E.seltrack.erase(t);	// First erase
+				t--;					// then decrement to avoid to skip the following track
+				continue;
+			}
+
+		// Sanity check
+		// cout <<"Event = "<<E.nevt<<"   upstream = "<<E.is_upstreamdk<<"   costh = "<<E.costh[*t]<<endl;
+		if (E.is_upstreamdk != (E.costh[*t] < 0))
+		{
+			Log->warn("StartStopCut: cos(theta) sign does not match track position: costh=%f, dcmin=%d, dcmax=%d, wintype=%d, event=%d", E.costh[*t], E.dcmin[*t], E.dcmax[*t], E.win_type[E.iewin], E.nevt);
+			E.seltrack.erase(t);	// First erase
+			t--;					// then decrement to avoid to skip the following track
+			continue;
 		}
+
+		Nb_StartStop_OK += 1;
+		if( E.is_upstreamdk)
+			H.Fill("StartStop_Up_after",E.dcmin[*t],E.dcmax[*t]);
+		else
+			H.Fill("StartStop_Down_after",E.dcmin[*t],E.dcmax[*t]);
+		
 	}
 
 	// ===> EVENT CUT HERE

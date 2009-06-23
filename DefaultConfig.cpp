@@ -74,7 +74,16 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "IerrorCut/SelectIerror", "0");
 	
 	//	StartStopCut
+	//// The module selects the tracks on the right side
+	//// of the target according to the classification.
+	//// The StartPlane and StopPlane can be defined
+	//// precisely. For example for the tracks starting
+	//// right at the target and using 22 planes:
+	//// StartStopCut/StartPlane = 22,23
+	//// StartStopCut/StopPlane = 1,44
 	SetKey(Conf, "StartStopCut/Do", true);
+	SetKey(Conf, "StartStopCut/StartPlane", "-1,-1");
+	SetKey(Conf, "StartStopCut/StopPlane", "-1,-1");
 
 	//	ChargeCut
 	SetKey(Conf, "ChargeCut/Do", true);
@@ -94,7 +103,7 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PairMatchingCut/CalculateCDA", false);
 	
 	//	Mu_eVertexCut
-	SetKey(Conf, "Mu_eVertexCut/Do", false);
+	SetKey(Conf, "Mu_eVertexCut/Do", true);
 	SetKey(Conf, "Mu_eVertexCut/Do_mu_e_Calc-MOFIA", 0);
 	//// Function 0:
 	////     min < r < max
@@ -102,8 +111,8 @@ void SetDefault(ConfigFile &Conf)
 	//// Function 1:
 	////     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
 	////     CutParameters = Bmin,Amin,Bmax,Amax
-	SetKey(Conf, "Mu_eVertexCut/CutFunction", 0);
-	SetKey(Conf, "Mu_eVertexCut/CutParameters", "0.0,1000.0");
+	SetKey(Conf, "Mu_eVertexCut/CutFunction", 1);
+	SetKey(Conf, "Mu_eVertexCut/CutParameters", "0.0,0.0,1.0,1.0");
 	
 	//	DistToTargetSel
 	SetKey(Conf, "DistToTargetSel/Do", true);
@@ -131,12 +140,12 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PACTCut/region_22", "1.634, -5.428, -61.26, 642.3");
 	
 	// Fiducial Cut
-	SetKey(Conf, "FiducialCut/MinAbsCosTheta", 0.5);
-	SetKey(Conf, "FiducialCut/MaxAbsCosTheta", 0.92);
-	SetKey(Conf, "FiducialCut/MaxMomentum", 51.5);			// Mev/c
+	SetKey(Conf, "FiducialCut/MinAbsCosTheta", 0.54);
+	SetKey(Conf, "FiducialCut/MaxAbsCosTheta", 0.96);
+	SetKey(Conf, "FiducialCut/MaxMomentum", 52.0);			// Mev/c
 	SetKey(Conf, "FiducialCut/MinTransMom", 10.0);			// Mev/c
-	SetKey(Conf, "FiducialCut/MaxTransMom", 39.7);			// Mev/c
-	SetKey(Conf, "FiducialCut/MinLongiMom", 13.7);			// Mev/c
+	SetKey(Conf, "FiducialCut/MaxTransMom", 38.0);			// Mev/c
+	SetKey(Conf, "FiducialCut/MinLongiMom", 14.0);			// Mev/c
 
 
 	//	StatusHistograms
@@ -175,12 +184,12 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "AsymmetryPlots/tmu",				2197.03);			// ns
 	SetKey(Conf, "AsymmetryPlots/t_min",			245.28);		// ns
 	SetKey(Conf, "AsymmetryPlots/t_width_min",		68.435);	// ns
-	SetKey(Conf, "AsymmetryPlots/Fiducial/costh_min", 	0.50);
-	SetKey(Conf, "AsymmetryPlots/Fiducial/costh_max", 	0.94);
+	SetKey(Conf, "AsymmetryPlots/Fiducial/costh_min", 	0.54);
+	SetKey(Conf, "AsymmetryPlots/Fiducial/costh_max", 	0.96);
 	SetKey(Conf, "AsymmetryPlots/Fiducial/ptot_min", 	31.0);
-	SetKey(Conf, "AsymmetryPlots/Fiducial/ptot_max", 	51.5);
-	SetKey(Conf, "AsymmetryPlots/Fiducial/long_min", 	13.7);
-	SetKey(Conf, "AsymmetryPlots/Fiducial/trans_max", 	43.0);
+	SetKey(Conf, "AsymmetryPlots/Fiducial/ptot_max", 	52.0);
+	SetKey(Conf, "AsymmetryPlots/Fiducial/long_min", 	14.0);
+	SetKey(Conf, "AsymmetryPlots/Fiducial/trans_max", 	38.0);
 	SetKey(Conf, "AsymmetryPlots/Weighting", 1.0);
 
 	// ChiSquare

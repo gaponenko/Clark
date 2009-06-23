@@ -20,6 +20,11 @@ class MichelSpectrum : public ModuleClass{
 		string Name;
 		string Title;
 
+		int evt;
+		vector<string> EvtTypeStr;
+		vector<int> EvtTypeInt;
+
+		int accflag;
 };
 
 bool MichelSpectrum::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog)
@@ -42,6 +47,8 @@ bool MichelSpectrum::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 	xmin		= Conf.read<double>("Parameters/XMinMichel");
 	xmax		= Conf.read<double>("Parameters/XMaxMichel");
 
+	EvtTypeInt	= StrToIntVect(Conf.read<string>("EventTypeCut/Types"));
+
 	//	 --------- Histograms initialization ---------		//
 	H.DefineTH2D( "Michel", "Spectrum_"+Name, "Michel spectrum "+Title+";Momentum [MeV];cos(#theta)",nxbins,xmin,xmax,ncbins, -1.0, 1.0);
 	H.DefineTH2D( "Michel", "Spectrum_PzVsPt_"+Name, "Longitudinal vs transverse momentum spectrum "+Title+";P_{t} [MeV];P_{z} [MeV]",nxbins,xmin,xmax,2*nxbins, -1.*xmax, xmax);
@@ -49,6 +56,15 @@ bool MichelSpectrum::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, 
 	// IMPORTANT for mcfit !
 	H.Sumw2("Spectrum_"+Name);
 	H.Sumw2("Spectrum_PzVsPt_"+Name);
+
+	string TmpEvt;
+	for(vector<int>::iterator evt=EvtTypeInt.begin(); evt != EvtTypeInt.end(); evt++)
+	{
+		TmpEvt = IntToStr(*evt);
+		EvtTypeStr.push_back(TmpEvt);
+		H.DefineTH2D( "Michel_PerEvtTypes", "Spectrum_"+Name+"_EvtType"+TmpEvt, "Michel spectrum for event type "+TmpEvt+" "+Title+";Momentum [MeV];cos(#theta)",nxbins,xmin,xmax,ncbins, -1.0, 1.0);
+		H.DefineTH2D( "Michel_PerEvtTypes", "Spectrum_PzVsPt_"+Name+"_EvtType"+TmpEvt, "Longitudinal vs transverse momentum spectrum for event type "+TmpEvt+" "+Title+";P_{t} [MeV];P_{z} [MeV]",nxbins,xmin,xmax,2*nxbins, -1.*xmax, xmax);
+	}
 
 	Log->info( "Register Michel spectrum ");
 	return true;
@@ -60,25 +76,25 @@ bool MichelSpectrum::Process(EventClass &E, HistogramFactory &H)
 	string N = Name;
 	// The selected track
 	int Trk = E.seltrack[0];
+
+	accflag = 1; // Default value for data
 	
-	if (E.Exists("micheld_accflag") and E.Exists("ndecays"))
-	// MC
+	if (E.Exists("micheld_accflag") && E.Exists("ndecays"))
+	// Extract the accflag for MC
 	{
 		// To store later in the output file
 		E.cumulative_accflag |= E.micheld_accflag[0];
 		// MC runs with the accflag for the derivatives mostly
-		if (not E.ndecays > 0)
+		if (! E.ndecays > 0)
 		{
 			// If there is no decay from the micheld the weight is 0. (Probably still have an entry though.)
-			H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	0);
-			H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		0);
+			accflag = 0;
 		}
 		else
 		{
 			try
 			{
-				H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	MichelWeight(E.micheld_accflag[0]));
-				H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		MichelWeight(E.micheld_accflag[0]));
+				accflag = MichelWeight(E.micheld_accflag[0]);
 			}
 			catch( const char* Msg)
 			{
@@ -88,13 +104,20 @@ bool MichelSpectrum::Process(EventClass &E, HistogramFactory &H)
 		}
 		
 	}
-	else
-	// DATA
-	{
-		H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk]);
-		H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk]);
-	}
 
+
+	H.Fill("Spectrum_"+N,		E.ptot[Trk],E.costh[Trk],	accflag);
+	H.Fill("Spectrum_PzVsPt_"+N,E.pt[Trk],	E.pz[Trk],		accflag);
+	// for(vector<int>::iterator et = EvtTypeStr.begin(); et != EvtTypeStr.end(); et++)
+	for( int i = 0; i < EvtTypeInt.size(); i++)
+	{
+		if ( EvtTypeInt[i] == E.type )
+		{
+			H.Fill("Spectrum_"+N+"_EvtType"+EvtTypeStr[i],		E.ptot[Trk],E.costh[Trk],	accflag);
+			H.Fill("Spectrum_PzVsPt_"+N+"_EvtType"+EvtTypeStr[i],E.pt[Trk],	E.pz[Trk],		accflag);
+			break;
+		}
+	}
 	return true;
 }
 
