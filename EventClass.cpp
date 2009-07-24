@@ -174,7 +174,9 @@ bool EventClass::Load( )
 			sinth[t]	= 0.0;
 		}
 
-		hefit_phi[t]	= atan2(-1*hefit_q[t]*hefit_pv[t] , -1*hefit_q[t]*hefit_pu[t]) - M_PI /2.0;
+		// The momentum is perpendicular to the radius, hence -pi/2
+		// hefit_phi[t]	= atan2(-1*hefit_q[t]*hefit_pv[t] , -1*hefit_q[t]*hefit_pu[t]) - M_PI/2.0;
+		hefit_phi[t]	= atan2(-1*hefit_q[t]*hefit_pv[t] , -1*hefit_q[t]*hefit_pu[t]) - M_PI/2.0;
 		hefit_pt[t]	= sqrt((hefit_pu[t]*hefit_pu[t])+(hefit_pv[t]*hefit_pv[t]));
 
 		// Apply the energy calibration if needed
@@ -209,8 +211,19 @@ bool EventClass::Load( )
 
 			pz[t]	= costh[t] * ptot[t];
 
-			pu[t]	= -1 * (sinth[t] * ptot[t] * cos(hefit_phi[t]+M_PI/2.0) );
-			pv[t]	= -1 * (sinth[t] * ptot[t] * sin(hefit_phi[t]+M_PI/2.0) );
+			pu[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * cos((hefit_phi[t]+M_PI/2.0)) );
+			pv[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * sin((hefit_phi[t]+M_PI/2.0)) );
+
+			cout<<" ==========================="<<endl;
+			cout<<" ierror = "<<hefit_ierror[t]<<endl;
+			cout<<" q = "<<hefit_q[t]<<endl;
+			cout<<" DIFF p = "<<ptot[t]-hefit_ptot[t]<<endl;
+			cout<<" pu = "<<pu[t]<<"   "<<hefit_pu[t]<<endl;
+			cout<<" pv = "<<pv[t]<<"   "<<hefit_pv[t]<<endl;
+			cout<<" pz = "<<pz[t]<<"   "<<hefit_pz[t]<<endl;
+			cout<<" DIFF pu = "<<pu[t]-hefit_pu[t]<<endl;
+			cout<<" DIFF pv = "<<pv[t]-hefit_pv[t]<<endl;
+			cout<<" DIFF pz = "<<pz[t]-hefit_pz[t]<<endl;
 
 			// Transverse momentum
 			pt[t]		= sqrt((pu[t]*pu[t])+(pv[t]*pv[t]));

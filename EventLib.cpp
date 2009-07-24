@@ -12,6 +12,9 @@ int DistanceToTarget( EventClass &E, int T)
 // Returns the u and v position of the track at z
 void Get_uv_at( const EventClass *E, int Trk, double z, double &uu, double &vv)
 {
+	////////// WARNING !!!!!!!!!!!! /////////////
+	// This code has not been maintained for a while and could be flawed
+
 	// L	= -2 * M_PI * 8.4 * 2.0 / E.BField * ( 1/50.0 ) * E.hefit_pz[Trk]	// From tta, TrackParConverter.h and HFTrack.h. Sign very tough to extract.
 	// phi = ( 2 * M_PI ( z - z0 ) ) / L										// From tta, Helix.h
 	// phi = (z0 - z) / ( 8.4 * 2.0 / BField * ( 1/50.0 ) * -pz )

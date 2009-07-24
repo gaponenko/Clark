@@ -42,6 +42,9 @@ bool Mu_eVertexSel::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 		Log->info( "Mu-e vertex selection turned OFF");
 		return false ;
 	}
+
+	if ( ( not (E.Exists("hefit_u0") and E.Exists("hefit_v0")) ) or CalcVsMofia)
+		Log->warn("Mu_eVertexSel: Calculating the Mu-e vertex in the treesum. The code is not maintained and could be wrong !");
 	
 	//	 --------- Parameters initialization ---------		//
 	CalcVsMofia	= Conf.read<bool>("Mu_eVertexSel/Do_mu_e_Calc-MOFIA");

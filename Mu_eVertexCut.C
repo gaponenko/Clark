@@ -71,6 +71,12 @@ bool Mu_eVertexCut::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, l
 			}
 			break;
 	}
+
+	if ( ( not (E.Exists("hefit_u0") and E.Exists("hefit_v0")) ) or CalcVsMofia)
+		Log->warn("Mu_eVertexCut: Calculating the Mu-e vertex in the treesum. The code is not maintained and could be wrong !");
+
+
+
 	//	 --------- Histograms initialization ---------		//
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_up_before",	"Mu-e dV vs dU before mu-e vertex cut, upstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
 	H.DefineTH2D( "Mu_eVertexCut", "Cut_mu_e_dv_vs_du_down_before",	"Mu-e dV vs dU before mu-e vertex cut, downstream tracks", 200, -1.0, 1.0, 200, -1.0, 1.0);
@@ -131,6 +137,8 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 		}
 	}
 
+
+
 	if (E.Exists("hefit_u0") and E.Exists("hefit_v0"))
 	// ===========> Position at the target from MOFIA <=========== //
 		for ( int t = 0; t < E.ntr; t++)
@@ -144,6 +152,7 @@ bool Mu_eVertexCut::Process(EventClass &E, HistogramFactory &H)
 		u0	= u0_Calc;
 		v0	= v0_Calc;
 	}
+
 
 	// ===========> Loop over the tracks <============= //
 
