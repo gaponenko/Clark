@@ -185,6 +185,7 @@ bool EventClass::Load( )
 			// Which type of energy calibration should be applied ?
 			switch(EcalibMode)
 			{
+				// Angle Dep and offset => shift
 				case 0:
 					// Upstream
 					if (costh[t] < 0.0) 
@@ -194,6 +195,7 @@ bool EventClass::Load( )
 					if (costh[t] > 0.0)
 						ptot[t] = hefit_ptot[t] + ( Ecal_ad / fabs(costh[t]) ) - Ecal_bd;
 					break;
+				// 1) Offset as scaling; 2) Angle Dep as shift
 				case 1:
 					// Upstream
 					if (costh[t] < 0.0) 
@@ -202,6 +204,26 @@ bool EventClass::Load( )
 					// Downstream
 					if (costh[t] > 0.0)
 						ptot[t] = ( hefit_ptot[t] / ( 1. + ( Ecal_bd / KPmax ))) + ( Ecal_ad / fabs(costh[t]) );
+					break;
+				// 1) Angle Dep as shift; 2) Offset as scaling
+				case 2:
+					// Upstream
+					if (costh[t] < 0.0) 
+						ptot[t] = ( hefit_ptot[t]+ (Ecal_au / fabs(costh[t])) ) / ( 1. + ( Ecal_bu / KPmax ));
+
+					// Downstream
+					if (costh[t] > 0.0)
+						ptot[t] = ( hefit_ptot[t]+ (Ecal_ad / fabs(costh[t])) ) / ( 1. + ( Ecal_bd / KPmax ));
+					break;
+				// Angle Dep and offset => scaling
+				case 3:
+					// Upstream
+					if (costh[t] < 0.0) 
+						ptot[t] = hefit_ptot[t] / ( 1 + (1/KPmax) * ( Ecal_bu - (Ecal_au / fabs(costh[t]) )));
+		
+					// Downstream
+					if (costh[t] > 0.0)
+						ptot[t] = hefit_ptot[t] / ( 1 + (1/KPmax) * ( Ecal_bd - (Ecal_ad / fabs(costh[t]) )));
 					break;
 				default:
 					Log->error("EventClass: The EnergyCalibration/Mode does not correspond to any mode available for the energy calibration. Exit now.");

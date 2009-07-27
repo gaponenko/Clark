@@ -2,8 +2,10 @@
 # EnergyCalibration/Mode	= 0
 ### This is turned on or off using the command line
 ### The possible modes:
-###	0 => Shift correction for beta
-###	1 => Scaling correction for beta
+###	0 => alpha and beta corrections = shift
+###	1 => 1)beta correction = scale; 2)alpha correction = shift
+###	2 => 1)alpha correction = shift; 2)beta correction = scale
+###	3 => alpha and beta corrections = scale
 
 # ===================	 TCAPm12widthCut 	=================== #
 # TCAPm12widthCut/Do	= true
