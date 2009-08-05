@@ -205,7 +205,7 @@ bool TreeClass::ReadMofiaLog( string Filename, ConfigFile &Conf)
 	while ( getline( File, Line ) )
 	{
  		// Search for the nthrown
-		Tmp = ReadParam( " unpMCE3\\(\\): nthrown =\\s+([0-9.]+)", Line);
+		Tmp = ReadParam( " unpMCE3\\(\\): nthrown =\\s+([0-9.E+-]+)", Line);
 
  		if ( Tmp != "")
 		{
