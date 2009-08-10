@@ -236,17 +236,6 @@ bool EventClass::Load( )
 			pu[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * cos((hefit_phi[t]+M_PI/2.0)) );
 			pv[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * sin((hefit_phi[t]+M_PI/2.0)) );
 
-			cout<<" ==========================="<<endl;
-			cout<<" ierror = "<<hefit_ierror[t]<<endl;
-			cout<<" q = "<<hefit_q[t]<<endl;
-			cout<<" DIFF p = "<<ptot[t]-hefit_ptot[t]<<endl;
-			cout<<" pu = "<<pu[t]<<"   "<<hefit_pu[t]<<endl;
-			cout<<" pv = "<<pv[t]<<"   "<<hefit_pv[t]<<endl;
-			cout<<" pz = "<<pz[t]<<"   "<<hefit_pz[t]<<endl;
-			cout<<" DIFF pu = "<<pu[t]-hefit_pu[t]<<endl;
-			cout<<" DIFF pv = "<<pv[t]-hefit_pv[t]<<endl;
-			cout<<" DIFF pz = "<<pz[t]-hefit_pz[t]<<endl;
-
 			// Transverse momentum
 			pt[t]		= sqrt((pu[t]*pu[t])+(pv[t]*pv[t]));
 			// From that point on, don't use the tree variables even if there is
