@@ -24,6 +24,7 @@ using namespace std;
 #include "TObjArray.h"
 #include "TVectorT.h"
 #include "TObjString.h"
+#include "TRandom3.h"
 
 // Include Program
 #include "log4cpp/Category.hh"
@@ -55,6 +56,8 @@ class EventClass{
 		bool GetEcalib(string EcalibFile, string EcalibArray);
 
 		bool Exists( const char* Name)	{return ExistList[Name];}
+
+		TRandom3 *RandomNumbers;
 
 		log4cpp::Category *Log;
 		// Geometry class of the TWIST detector
@@ -90,6 +93,11 @@ class EventClass{
 		double KPmax;
 
 		int EcalibMode;
+		bool MomAngSmearingDo;
+		double MomSmearingMean;
+		double MomSmearingSigma;
+		double AngSmearingMean;
+		double AngSmearingSigma;
 		
 		//________________________ Energy calibration ___________________//
 

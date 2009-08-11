@@ -38,6 +38,13 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	// Energy calibration mode
 	EcalibMode	= C.read<int>("EnergyCalibration/Mode");
 
+	// Momentum and angle smearing
+	MomAngSmearingDo	= C.read<bool>("MomAngSmearing/Do");
+	MomSmearingMean		= C.read<double>("MomAngSmearing/MomMean");
+	MomSmearingSigma	= C.read<double>("MomAngSmearing/MomSigma");
+	AngSmearingMean		= C.read<double>("MomAngSmearing/AngMean");
+	AngSmearingSigma	= C.read<double>("MomAngSmearing/AngSigma");
+
 	// Kinematic end point.
 	KPmax		= C.read<double>("Parameters/KinematicPmax");
 
@@ -52,6 +59,9 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	tb_e_lastvtx	= -1;
 
 	cumulative_accflag = 0;
+
+	// Random number generator
+	RandomNumbers = new TRandom3();
 }
 
 bool EventClass::InitGeometry(ConfigFile &C)
@@ -174,6 +184,14 @@ bool EventClass::Load( )
 			sinth[t]	= 0.0;
 		}
 
+		if ( MomAngSmearingDo )
+		{
+			hefit_ptot[t] += RandomNumbers->Gaus(MomSmearingMean, MomSmearingSigma);
+			costh[t] = cos( acos( costh[t] )+ RandomNumbers->Gaus(AngSmearingMean, AngSmearingSigma) );
+			sinth[t] = sin( acos( costh[t] ) );
+		}
+
+
 		// The momentum is perpendicular to the radius, hence -pi/2
 		// hefit_phi[t]	= atan2(-1*hefit_q[t]*hefit_pv[t] , -1*hefit_q[t]*hefit_pu[t]) - M_PI/2.0;
 		hefit_phi[t]	= atan2(-1*hefit_q[t]*hefit_pv[t] , -1*hefit_q[t]*hefit_pu[t]) - M_PI/2.0;
@@ -231,28 +249,29 @@ bool EventClass::Load( )
 			}
 
 
-			pz[t]	= costh[t] * ptot[t];
-
-			pu[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * cos((hefit_phi[t]+M_PI/2.0)) );
-			pv[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * sin((hefit_phi[t]+M_PI/2.0)) );
-
-			// Transverse momentum
-			pt[t]		= sqrt((pu[t]*pu[t])+(pv[t]*pv[t]));
-			// From that point on, don't use the tree variables even if there is
-			// no energy calibration
-			// phi[t]		= atan2(-1*hefit_q[t]*pv[t] , -1*hefit_q[t]*pu[t]) - M_PI /2.0
 		}
 		else
 		{
 			// By default equal to the tree variables.
 			// They will be modified with the energy calibration if needed.
 			ptot[t]		= hefit_ptot[t];
-			pu[t]		= hefit_pu[t];
-			pv[t]		= hefit_pv[t];
-			pz[t]		= hefit_pz[t];
-			pt[t]		= hefit_pt[t];
+			// pu[t]		= hefit_pu[t];
+			// pv[t]		= hefit_pv[t];
+			// pz[t]		= hefit_pz[t];
+			// pt[t]		= hefit_pt[t];
 			// phi[t]	= hefit_phi[t]
 		}
+
+		pz[t]	= costh[t] * ptot[t];
+		pu[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * cos((hefit_phi[t]+M_PI/2.0)) );
+		pv[t]	= -1* hefit_q[t]*(sinth[t] * ptot[t] * sin((hefit_phi[t]+M_PI/2.0)) );
+		// Transverse momentum
+		pt[t]		= sqrt((pu[t]*pu[t])+(pv[t]*pv[t]));
+
+
+		// From that point on, don't use the tree variables even if there is
+		// no energy calibration
+		// phi[t]		= atan2(-1*hefit_q[t]*pv[t] , -1*hefit_q[t]*pu[t]) - M_PI /2.0
 		radius[t]	= 8.4 * ( 2.0 / BField ) * ( 1/50.0 ) * hefit_pt[t];	// From tta, TrackParConverter.h
 		////// radius[t]	= ( 0.3 / BField ) * hefit_pt[t];	// From textbooks
 		wavelen[t]	= 2.0 * M_PI * radius[t] * (-1*hefit_q[t]*hefit_pz[t] / hefit_pt[t]);
@@ -601,6 +620,11 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "mctrack_user2",	mctrack_user2);
 	GetVar(T, "", "mctrack_user3",	mctrack_user3);
 	GetVar(T, "", "mctrack_user4",	mctrack_user4);
+
+
+	// SPECIAL. Initialize the random seed using the run number.
+	if ( MomAngSmearingDo )
+		RandomNumbers->SetSeed();
 }
 
 

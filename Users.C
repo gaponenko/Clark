@@ -31,6 +31,7 @@
 #include "PACTCut.C"
 
 #include "ChiSquare.C"
+#include "MomAngSmearing.C"
 
 #include "AsymmetryPlots.C"
 
@@ -64,6 +65,7 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 	AnaObj->Register( new DkFitTimeCut());
 
 	AnaObj->Register( new ChiSquare());
+	AnaObj->Register( new MomAngSmearing());
 
 	AnaObj->Register( new AsymmetryPlots());
 

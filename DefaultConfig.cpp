@@ -22,6 +22,13 @@ void SetDefault(ConfigFile &Conf)
 	////	2 => 1)alpha correction = shift; 2)beta correction = scale
 	////	3 => alpha and beta corrections = scale
 	
+	// Momentum and angle smearing
+	SetKey(Conf, "MomAngSmearing/Do", false);
+	SetKey(Conf, "MomAngSmearing/MomMean", 0.0);
+	SetKey(Conf, "MomAngSmearing/MomSigma", 0.0);
+	SetKey(Conf, "MomAngSmearing/AngMean", 0.0);
+	SetKey(Conf, "MomAngSmearing/AngSigma", 0.0);
+	
 
 	//	TCAPm12widthCut
 	SetKey(Conf, "TCAPm12widthCut/Do", true);
