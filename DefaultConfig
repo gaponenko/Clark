@@ -175,6 +175,10 @@
 # ChiSquare/Do	= 0
 # ChiSquare/RedChi2CutMin	= -1.0
 # ChiSquare/RedChi2CutMax	= -1.0
+# ChiSquare/NCosThBinsMichel	= 100
+# ChiSquare/NXBinsMichel	= 110
+# ChiSquare/XMinMichel	= 0.0
+# ChiSquare/XMaxMichel	= 55.0
 
 # ===================	 Detector 	=================== #
 # Detector/BField	= 2.0

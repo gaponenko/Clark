@@ -205,6 +205,11 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "ChiSquare/Do", 0);				// default OFF
 	SetKey(Conf, "ChiSquare/RedChi2CutMin", -1.0);			// default OFF
 	SetKey(Conf, "ChiSquare/RedChi2CutMax", -1.0);			// default OFF
+	// Michel spectrum histogram
+	SetKey(Conf, "ChiSquare/NCosThBinsMichel", 100);
+	SetKey(Conf, "ChiSquare/NXBinsMichel", 110);
+	SetKey(Conf, "ChiSquare/XMinMichel", 0.0);
+	SetKey(Conf, "ChiSquare/XMaxMichel", 55.0);
 	
 	// ================== Detector Parameters ======================== //
 	SetKey(Conf, "Detector/BField",	2.0);

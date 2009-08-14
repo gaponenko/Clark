@@ -35,10 +35,10 @@ bool ChiSquare::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 	}
 
 	//	 --------- Parameters initialization ---------		//
-	int ncbins		= Conf.read<int>("Parameters/NCosThBinsMichel");
-	int nxbins		= Conf.read<int>("Parameters/NXBinsMichel");
-	double xmin		= Conf.read<double>("Parameters/XMinMichel");
-	double xmax		= Conf.read<double>("Parameters/XMaxMichel");
+	int ncbins		= Conf.read<int>("ChiSquare/NCosThBinsMichel");
+	int nxbins		= Conf.read<int>("ChiSquare/NXBinsMichel");
+	double xmin		= Conf.read<double>("ChiSquare/XMinMichel");
+	double xmax		= Conf.read<double>("ChiSquare/XMaxMichel");
 
 	RedChi2Min		= Conf.read<double>("ChiSquare/RedChi2CutMin");
 	RedChi2Max		= Conf.read<double>("ChiSquare/RedChi2CutMax");
