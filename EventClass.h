@@ -356,6 +356,10 @@ class EventClass{
 		Float_t		sinth[MAXTRK];		// Track sinus(theta)
 		Float_t		hefit_phi[MAXTRK];	// Track phi angle (NOT calibrated)
 		Float_t		hefit_pt[MAXTRK];	// Transverse momentum (NOT calibrated)
+		Int_t		hefit_uvquad[MAXTRK];	// uv quadrant ID
+		Int_t		hefit_xyquad[MAXTRK];	// xy quadrant ID
+		Float_t		hefit_phiquad[MAXTRK];	// Phi angle of the helix center wrt e+ position at the target
+
 		Float_t		pt[MAXTRK];			// Transverse momentum (calibrated if energy calibration)
 		Float_t		radius[MAXTRK];		// Radius of the helix
 		Float_t		wavelen[MAXTRK];	// Wavelength of the helix

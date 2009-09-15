@@ -195,6 +195,8 @@ bool EventClass::Load( )
 		// The momentum is perpendicular to the radius, hence -pi/2
 		// hefit_phi[t]	= atan2(-1*hefit_q[t]*hefit_pv[t] , -1*hefit_q[t]*hefit_pu[t]) - M_PI/2.0;
 		hefit_phi[t]	= atan2(-1*hefit_q[t]*hefit_pv[t] , -1*hefit_q[t]*hefit_pu[t]) - M_PI/2.0;
+		// Just to get phi back between -pi and +pi
+		hefit_phi[t] = ( hefit_phi[t] < -1.*M_PI) ? hefit_phi[t]+ 2.*M_PI : hefit_phi[t];
 		hefit_pt[t]	= sqrt((hefit_pu[t]*hefit_pu[t])+(hefit_pv[t]*hefit_pv[t]));
 
 		// Apply the energy calibration if needed
@@ -275,8 +277,25 @@ bool EventClass::Load( )
 		radius[t]	= 8.4 * ( 2.0 / BField ) * ( 1/50.0 ) * hefit_pt[t];	// From tta, TrackParConverter.h
 		////// radius[t]	= ( 0.3 / BField ) * hefit_pt[t];	// From textbooks
 		wavelen[t]	= 2.0 * M_PI * radius[t] * (-1*hefit_q[t]*hefit_pz[t] / hefit_pt[t]);
-		// cout<<" track "<<t<<" => "<<hefit_pt[t]<<"   "<<radius[t]<<"    "<<wavelen[t]<<endl;
-		
+
+		// Calculate quadrants 
+
+		double MoveCenterU=hefit_u0[t];
+		double MoveCenterV=hefit_v0[t];
+
+		float u0      = hefit_u[t] - radius[t] * cos(hefit_phi[t]);
+		float v0      = hefit_v[t] - radius[t] * sin(hefit_phi[t]);
+		int q = ( (u0-MoveCenterU) * (v0-MoveCenterV) > 0 ) ? 0 : 1;
+		q += ( (v0-MoveCenterV) < 0 ) ? 2 : 0;
+		hefit_uvquad[t]	= q;
+		hefit_phiquad[t]= atan2((v0-MoveCenterV), (u0-MoveCenterU));
+		float x0 = ((u0-MoveCenterU) - (v0-MoveCenterV))/sqrt(2);
+		float y0 = ((v0-MoveCenterV) + (u0-MoveCenterU))/sqrt(2);
+		q = (x0*y0 > 0 ) ? 0 : 1;
+		q += (y0 < 0 ) ? 2 : 0;
+		hefit_xyquad[t]=q;
+
+
 		// By default put some impossible values.
 		// It seems that some trees from 2004 and before put 0 for the pstart and pstop
 		// in the case of ierror=10 (at least). So I have to check that or it crashes.
