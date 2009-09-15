@@ -37,6 +37,8 @@
 
 #include "MichelSpectrum.C"
 #include "ECalibHistograms.C"
+#include "PhiQuadrantSpectra.C"
+
 #include "FiducialCut.C"
 
 #include "StatusHistograms.C"
@@ -66,6 +68,7 @@ void LoadAnalysisClasses( TreeClass *AnaObj)
 
 	AnaObj->Register( new ChiSquare());
 	AnaObj->Register( new MomAngSmearing());
+	AnaObj->Register( new PhiQuadrantSpectra());
 
 	AnaObj->Register( new AsymmetryPlots());
 

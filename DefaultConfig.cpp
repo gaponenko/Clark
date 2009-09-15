@@ -205,6 +205,10 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "ChiSquare/Do", 0);				// default OFF
 	SetKey(Conf, "ChiSquare/RedChi2CutMin", -1.0);			// default OFF
 	SetKey(Conf, "ChiSquare/RedChi2CutMax", -1.0);			// default OFF
+
+	// Quadrant Spectra
+	SetKey(Conf, "PhiQuadrantSpectra/Do",			false);
+
 	// Michel spectrum histogram
 	SetKey(Conf, "ChiSquare/NCosThBinsMichel", 100);
 	SetKey(Conf, "ChiSquare/NXBinsMichel", 110);
