@@ -139,7 +139,7 @@ bool StatusHistograms::Process(EventClass &E, HistogramFactory &H)
 
 	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
 	{
-		if (fabs(E.hefit_z[*t])<5)
+		if (fabs(E.hefit_z[*t])<5 && E.ptot[*t]>32.)
 		{
 			H.Fill("DkFitTime_"+Name, E.hefit_time[*t] );
 			if (E.hefit_pz[*t]>0)
