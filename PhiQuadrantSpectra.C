@@ -111,8 +111,8 @@ bool PhiQuadrantSpectra::Init(EventClass &E, HistogramFactory &H, ConfigFile &Co
 
 		// H.DefineTH2D("PhiQuadrantSpectra", "u0vsv0_quad"+Quad[i], "UV position of the center of the helix in quad "+Quad[i], 320, -16.,16., 320, -16.,16.);
 		// H.DefineTH2D("PhiQuadrantSpectra", "x0vsy0_quad"+Quad[i], "XY position of the center of the helix in quad "+Quad[i], 320, -16.,16., 320, -16.,16.);
-		H.DefineTH1D("PhiQuadrantSpectra","Pt_UVquad"+Quad[i],"Pt_UVquad"+Quad[i],1200,10,50);
-		H.DefineTH1D("PhiQuadrantSpectra","Chi2_UVquad"+Quad[i],"Pt_UVquad"+Quad[i],1000,0,10);
+		H.DefineTH1D("PhiQuadrantSpectra","Pt_UVquad"+Quad[i],"Transverse momentum for UV quadrant "+Quad[i],1200,10,50);
+		H.DefineTH1D("PhiQuadrantSpectra","Chi2_UVquad"+Quad[i],"chisquare for UV quadrant "+Quad[i],1000,0,10);
 	}
 	
 
