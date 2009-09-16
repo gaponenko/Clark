@@ -109,14 +109,13 @@ bool PhiQuadrantSpectra::Init(EventClass &E, HistogramFactory &H, ConfigFile &Co
 		H.DefineTH2D_Yvarwidth( "PhiQuadrantSpectra", "constinvcosth_XYquad"+Quad[i],	"Michel spectrum XY quadrant "+Quad[i]+" for ECal, binned in 1/cos#theta",	nxbins, xmin,xmax, invc_bins);
 		H.DefineTH2D( "PhiQuadrantSpectra", "constcosth_XYquad"+Quad[i],				"Michel spectrum XY quadrant "+Quad[i]+" for ECal, binned in cos#theta",	nxbins, xmin,xmax,100,-1.,1.);
 
-		// H.DefineTH2D("PhiQuadrantSpectra", "u0vsv0_quad"+Quad[i], "UV position of the center of the helix in quad "+Quad[i], 320, -16.,16., 320, -16.,16.);
+		H.DefineTH2D("PhiQuadrantSpectra", "u0vsv0_quad"+Quad[i], "UV position of the center of the helix in quad "+Quad[i], 320, -16.,16., 320, -16.,16.);
 		// H.DefineTH2D("PhiQuadrantSpectra", "x0vsy0_quad"+Quad[i], "XY position of the center of the helix in quad "+Quad[i], 320, -16.,16., 320, -16.,16.);
 		H.DefineTH1D("PhiQuadrantSpectra","Pt_UVquad"+Quad[i],"Transverse momentum for UV quadrant "+Quad[i],1200,10,50);
 		H.DefineTH1D("PhiQuadrantSpectra","Chi2_UVquad"+Quad[i],"chisquare for UV quadrant "+Quad[i],1000,0,10);
 	}
 	
 
-	// H.DefineTH2D("PhiQuadrantSpectra", "u0vsv0", "UV position of the center of the helix", 320, -16.,16., 320, -16.,16.);
 	// H.DefineTH2D("PhiQuadrantSpectra", "x0vsy0", "XY position of the center of the helix", 320, -16.,16., 320, -16.,16.);
 
 
@@ -138,7 +137,7 @@ bool PhiQuadrantSpectra::Process(EventClass &E, HistogramFactory &H)
 	H.Fill("constth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
 	H.Fill("constcosth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
 	H.Fill("constinvcosth_UVquad"+Quad[E.hefit_uvquad[Trk]],	E.ptot[Trk], E.costh[Trk]);
-	// H.Fill("u0vsv0_quad"+Quad[E.hefit_uvquad[Trk]]			,u0,v0);
+	H.Fill("u0vsv0_quad"+Quad[E.hefit_uvquad[Trk]]			,E.hefit_ucenter[Trk],E.hefit_vcenter[Trk]);
 
 	
 	// H.Fill("x0vsy0",x0,y0);

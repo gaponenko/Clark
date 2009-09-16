@@ -283,14 +283,14 @@ bool EventClass::Load( )
 		double MoveCenterU=hefit_u0[t];
 		double MoveCenterV=hefit_v0[t];
 
-		float u0      = hefit_u[t] - radius[t] * cos(hefit_phi[t]);
-		float v0      = hefit_v[t] - radius[t] * sin(hefit_phi[t]);
-		int q = ( (u0-MoveCenterU) * (v0-MoveCenterV) > 0 ) ? 0 : 1;
-		q += ( (v0-MoveCenterV) < 0 ) ? 2 : 0;
+		hefit_ucenter[t]      = hefit_u[t] - radius[t] * cos(hefit_phi[t]);
+		hefit_vcenter[t]      = hefit_v[t] - radius[t] * sin(hefit_phi[t]);
+		int q = ( (hefit_ucenter[t]-MoveCenterU) * (hefit_vcenter[t]-MoveCenterV) > 0 ) ? 0 : 1;
+		q += ( (hefit_vcenter[t]-MoveCenterV) < 0 ) ? 2 : 0;
 		hefit_uvquad[t]	= q;
-		hefit_phiquad[t]= atan2((v0-MoveCenterV), (u0-MoveCenterU));
-		float x0 = ((u0-MoveCenterU) - (v0-MoveCenterV))/sqrt(2);
-		float y0 = ((v0-MoveCenterV) + (u0-MoveCenterU))/sqrt(2);
+		hefit_phiquad[t]= atan2((hefit_vcenter[t]-MoveCenterV), (hefit_ucenter[t]-MoveCenterU));
+		float x0 = ((hefit_ucenter[t]-MoveCenterU) - (hefit_vcenter[t]-MoveCenterV))/sqrt(2);
+		float y0 = ((hefit_vcenter[t]-MoveCenterV) + (hefit_ucenter[t]-MoveCenterU))/sqrt(2);
 		q = (x0*y0 > 0 ) ? 0 : 1;
 		q += (y0 < 0 ) ? 2 : 0;
 		hefit_xyquad[t]=q;

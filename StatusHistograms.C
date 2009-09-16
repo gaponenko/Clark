@@ -21,6 +21,7 @@ class StatusHistograms : public ModuleClass{
 		string Title;
 
 		bool PerWindowType;
+		bool PhiQuadrants;
 
 		double tec_x;
 		double tec_y;
@@ -45,6 +46,7 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 
 	//	 --------- Parameters initialization ---------		//
 	PerWindowType	= Conf.read<bool>("StatusHistograms/PerWindowType");
+	PhiQuadrants	= Conf.read<bool>("PhiQuadrantSpectra/Do");
 
 	//	 --------- Histograms initialization ---------		//
 	//______________________ Event Branch __________________________ //
@@ -91,6 +93,13 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	H.DefineTH1D( "Status",	"Ndof_"+N,		"Number of degrees of freedom of the selected tracks "+T,1000, 0,10);
 	H.DefineTH1D( "Status",	"NdofFull_"+N,	"Number of degrees of freedom of the selected tracks "+T,1000, 0,1000);
 
+	//___________________ Quadrant study ______________________ //
+	if ( PhiQuadrants)
+	{
+		H.DefineTH2D("Status","UvsV_helixcenter_"+N, "UV position of the center of the helix "+T, 320, -16.,16., 320, -16.,16.);
+		H.DefineTH2D("Status","PtVsPhi_"+N,		"Transverse momentum versus target phi "+T,16,-1.*M_PI,M_PI,1200,10,50);
+		H.DefineTH2D("Status","Chi2VsPhi_"+N,	"chisquare versus target phi "+T,16,-1.*M_PI,M_PI,1000,0,10);
+	}
 
 	return true;
 }
@@ -156,6 +165,12 @@ bool StatusHistograms::Process(EventClass &E, HistogramFactory &H)
 			H.Fill("Chi2Full_"+Name,			E.hefit_chi2[*t] / E.hefit_ndof[*t]);
 			H.Fill("Ndof_"+Name,				E.hefit_ndof[*t]);
 			H.Fill("NdofFull_"+Name,			E.hefit_ndof[*t]);
+		}
+		if ( PhiQuadrants )
+		{
+			H.Fill("UvsV_helixcenter_"+Name,	E.hefit_ucenter[*t],E.hefit_vcenter[*t]);
+			H.Fill("PtVsPhi_"+Name,				E.hefit_phiquad[*t], E.pt[*t]);
+			H.Fill("Chi2VsPhi_"+Name,			E.hefit_phiquad[*t], E.hefit_chi2[*t]/E.hefit_ndof[*t]);
 		}
 	}
 
