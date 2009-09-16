@@ -111,6 +111,8 @@ bool PhiQuadrantSpectra::Init(EventClass &E, HistogramFactory &H, ConfigFile &Co
 
 		// H.DefineTH2D("PhiQuadrantSpectra", "u0vsv0_quad"+Quad[i], "UV position of the center of the helix in quad "+Quad[i], 320, -16.,16., 320, -16.,16.);
 		// H.DefineTH2D("PhiQuadrantSpectra", "x0vsy0_quad"+Quad[i], "XY position of the center of the helix in quad "+Quad[i], 320, -16.,16., 320, -16.,16.);
+		H.DefineTH1D("PhiQuadrantSpectra","Pt_UVquad"+Quad[i],"Pt_UVquad"+Quad[i],1200,10,50);
+		H.DefineTH1D("PhiQuadrantSpectra","Chi2_UVquad"+Quad[i],"Pt_UVquad"+Quad[i],1000,0,10);
 	}
 	
 
@@ -129,7 +131,9 @@ bool PhiQuadrantSpectra::Process(EventClass &E, HistogramFactory &H)
 	Trk = E.seltrack[0];
 	
 	H.Fill("Spectrum_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk],E.costh[Trk]);
-	H.Fill("Spectrum_PzVsPt_UVquad"+Quad[E.hefit_uvquad[Trk]],E.ptot[Trk],E.costh[Trk]);
+	H.Fill("Spectrum_PzVsPt_UVquad"+Quad[E.hefit_uvquad[Trk]],E.pt[Trk],E.hefit_pz[Trk]);
+	H.Fill("Pt_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.pt[Trk]);
+	H.Fill("Chi2_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.hefit_chi2[Trk]/E.hefit_ndof[Trk]);
 
 	H.Fill("constth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
 	H.Fill("constcosth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
@@ -139,7 +143,7 @@ bool PhiQuadrantSpectra::Process(EventClass &E, HistogramFactory &H)
 	
 	// H.Fill("x0vsy0",x0,y0);
 	H.Fill("Spectrum_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk],E.costh[Trk]);
-	H.Fill("Spectrum_PzVsPt_XYquad"+Quad[E.hefit_xyquad[Trk]],E.ptot[Trk],E.costh[Trk]);
+	H.Fill("Spectrum_PzVsPt_XYquad"+Quad[E.hefit_xyquad[Trk]],E.pt[Trk],E.hefit_pz[Trk]);
 
 	H.Fill("constth_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
 	H.Fill("constcosth_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
