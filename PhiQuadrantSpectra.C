@@ -126,27 +126,54 @@ bool PhiQuadrantSpectra::Init(EventClass &E, HistogramFactory &H, ConfigFile &Co
 bool PhiQuadrantSpectra::Process(EventClass &E, HistogramFactory &H)
 {
 	// ____ ____ //
+	accflag = 1; // Default value for data
+	
+	if (E.Exists("micheld_accflag") && E.Exists("ndecays"))
+	// Extract the accflag for MC
+	{
+		// To store later in the output file
+		E.cumulative_accflag |= E.micheld_accflag[0];
+		// MC runs with the accflag for the derivatives mostly
+		if (! E.ndecays > 0)
+		{
+			// If there is no decay from the micheld the weight is 0. (Probably still have an entry though.)
+			accflag = 0;
+		}
+		else
+		{
+			try
+			{
+				accflag = MichelWeight(E.micheld_accflag[0]);
+			}
+			catch( const char* Msg)
+			{
+				Log->crit("MichelSpectrum: %s = 0x%x",Msg,E.micheld_accflag[0]);
+				exit(1);
+			}
+		}
+		
+	}
 	// The selected track
 	Trk = E.seltrack[0];
 	
-	H.Fill("Spectrum_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk],E.costh[Trk]);
-	H.Fill("Spectrum_PzVsPt_UVquad"+Quad[E.hefit_uvquad[Trk]],E.pt[Trk],E.hefit_pz[Trk]);
-	H.Fill("Pt_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.pt[Trk]);
-	H.Fill("Chi2_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.hefit_chi2[Trk]/E.hefit_ndof[Trk]);
+	H.Fill("Spectrum_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk],E.costh[Trk], accflag);
+	H.Fill("Spectrum_PzVsPt_UVquad"+Quad[E.hefit_uvquad[Trk]],E.pt[Trk],E.hefit_pz[Trk], accflag);
+	H.Fill("Pt_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.pt[Trk], accflag);
+	H.Fill("Chi2_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.hefit_chi2[Trk]/E.hefit_ndof[Trk], accflag);
 
-	H.Fill("constth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
-	H.Fill("constcosth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
-	H.Fill("constinvcosth_UVquad"+Quad[E.hefit_uvquad[Trk]],	E.ptot[Trk], E.costh[Trk]);
+	H.Fill("constth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk], accflag);
+	H.Fill("constcosth_UVquad"+Quad[E.hefit_uvquad[Trk]],		E.ptot[Trk], E.costh[Trk], accflag);
+	H.Fill("constinvcosth_UVquad"+Quad[E.hefit_uvquad[Trk]],	E.ptot[Trk], E.costh[Trk], accflag);
 	H.Fill("u0vsv0_quad"+Quad[E.hefit_uvquad[Trk]]			,E.hefit_ucenter[Trk],E.hefit_vcenter[Trk]);
 
 	
-	// H.Fill("x0vsy0",x0,y0);
-	H.Fill("Spectrum_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk],E.costh[Trk]);
-	H.Fill("Spectrum_PzVsPt_XYquad"+Quad[E.hefit_xyquad[Trk]],E.pt[Trk],E.hefit_pz[Trk]);
+	// H.Fill("x0vsy0",x0,y0, accflag);
+	H.Fill("Spectrum_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk],E.costh[Trk], accflag);
+	H.Fill("Spectrum_PzVsPt_XYquad"+Quad[E.hefit_xyquad[Trk]],E.pt[Trk],E.hefit_pz[Trk], accflag);
 
-	H.Fill("constth_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
-	H.Fill("constcosth_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk], E.costh[Trk]);
-	H.Fill("constinvcosth_XYquad"+Quad[E.hefit_xyquad[Trk]],	E.ptot[Trk], E.costh[Trk]);
+	H.Fill("constth_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk], E.costh[Trk], accflag);
+	H.Fill("constcosth_XYquad"+Quad[E.hefit_xyquad[Trk]],		E.ptot[Trk], E.costh[Trk], accflag);
+	H.Fill("constinvcosth_XYquad"+Quad[E.hefit_xyquad[Trk]],	E.ptot[Trk], E.costh[Trk], accflag);
 
 	return true;
 }
