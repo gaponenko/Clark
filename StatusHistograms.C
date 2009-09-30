@@ -97,6 +97,8 @@ bool StatusHistograms::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf
 	if ( PhiQuadrants)
 	{
 		H.DefineTH2D("Status","UvsV_helixcenter_"+N, "UV position of the center of the helix "+T, 320, -16.,16., 320, -16.,16.);
+		H.DefineTH2D("Status","UvsV_helixcenter_US_"+N, "UV position of the center of the helix "+T+", upstream tracks", 320, -16.,16., 320, -16.,16.);
+		H.DefineTH2D("Status","UvsV_helixcenter_DS_"+N, "UV position of the center of the helix "+T+", downstream tracks", 320, -16.,16., 320, -16.,16.);
 		H.DefineTH2D("Status","PtVsPhi_"+N,		"Transverse momentum versus target phi "+T,16,-1.*M_PI,M_PI,1200,10,50);
 		H.DefineTH2D("Status","Chi2VsPhi_"+N,	"chisquare versus target phi "+T,16,-1.*M_PI,M_PI,1000,0,10);
 	}
@@ -169,6 +171,10 @@ bool StatusHistograms::Process(EventClass &E, HistogramFactory &H)
 		if ( PhiQuadrants )
 		{
 			H.Fill("UvsV_helixcenter_"+Name,	E.hefit_ucenter[*t],E.hefit_vcenter[*t]);
+			if (E.is_upstreamdk)
+				H.Fill("UvsV_helixcenter_US_"+Name,	E.hefit_ucenter[*t],E.hefit_vcenter[*t]);
+			else
+				H.Fill("UvsV_helixcenter_DS_"+Name,	E.hefit_ucenter[*t],E.hefit_vcenter[*t]);
 			H.Fill("PtVsPhi_"+Name,				E.hefit_phiquad[*t], E.pt[*t]);
 			H.Fill("Chi2VsPhi_"+Name,			E.hefit_phiquad[*t], E.hefit_chi2[*t]/E.hefit_ndof[*t]);
 		}
