@@ -28,6 +28,14 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "MomAngSmearing/MomSigma", 0.0);
 	SetKey(Conf, "MomAngSmearing/AngMean", 0.0);
 	SetKey(Conf, "MomAngSmearing/AngSigma", 0.0);
+
+	// Dimension scaling
+	SetKey(Conf, "MomentumScale/Do", false);
+	//// This scales the momentum values pz or pu and pv
+	//// If MomentumScale/Pt = S
+	//// Then pu=pu*S and pv=pv*S
+	SetKey(Conf, "MomentumScale/Pt", 1.0);
+	SetKey(Conf, "MomentumScale/Pz", 1.0);
 	
 
 	//	TCAPm12widthCut

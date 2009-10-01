@@ -45,6 +45,11 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	AngSmearingMean		= C.read<double>("MomAngSmearing/AngMean");
 	AngSmearingSigma	= C.read<double>("MomAngSmearing/AngSigma");
 
+	// Dimension scaling
+	MomentumScaleDo		= C.read<bool>("MomentumScale/Do");
+	ScalePt				= C.read<double>("MomentumScale/Pt");
+	ScalePz				= C.read<double>("MomentumScale/Pz");
+
 	// Kinematic end point.
 	KPmax		= C.read<double>("Parameters/KinematicPmax");
 
@@ -171,6 +176,14 @@ bool EventClass::Load( )
 
 	for( int t = 0; t < ntr; t++)
 	{
+		cout<<"===> "<<nevt<<"  "<<hefit_pu[t]<<"  "<<hefit_pv[t]<<"  "<<hefit_pz[t]<<endl;
+		if ( MomentumScaleDo )
+		{
+			hefit_pz[t] *= ScalePz;
+			hefit_pu[t] *= ScalePt;
+			hefit_pv[t] *= ScalePt;
+		}
+		cout<<"======> "<<hefit_pu[t]<<"    "<<hefit_pv[t]<<"    "<<hefit_pz[t]<<endl;
 		// First calculate uncalibrated using the tree variables
 		hefit_ptot[t]	= sqrt((hefit_pu[t]*hefit_pu[t])+(hefit_pv[t]*hefit_pv[t])+(hefit_pz[t]*hefit_pz[t]));
 		if (not hefit_ptot[t] == 0)

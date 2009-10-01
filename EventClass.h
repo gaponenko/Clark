@@ -99,6 +99,10 @@ class EventClass{
 		double AngSmearingMean;
 		double AngSmearingSigma;
 		
+		bool MomentumScaleDo;
+		double ScalePt;
+		double ScalePz;
+
 		//________________________ Energy calibration ___________________//
 
 		double	Ecal_au;		// upstream slope from energy calibration
