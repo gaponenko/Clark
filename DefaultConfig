@@ -7,6 +7,21 @@
 ###	2 => 1)alpha correction = shift; 2)beta correction = scale
 ###	3 => alpha and beta corrections = scale
 
+# ===================	 MomAngSmearing 	=================== #
+# MomAngSmearing/Do	= false
+# MomAngSmearing/MomMean	= 0.0
+# MomAngSmearing/MomSigma	= 0.0
+# MomAngSmearing/AngMean	= 0.0
+# MomAngSmearing/AngSigma	= 0.0
+
+# ===================	 MomentumScale 	=================== #
+# MomentumScale/Do	= false
+### This scales the momentum values pz or pu and pv
+### If MomentumScale/Pt = S
+### Then pu=pu*S and pv=pv*S
+# MomentumScale/Pt	= 1.0
+# MomentumScale/Pz	= 1.0
+
 # ===================	 TCAPm12widthCut 	=================== #
 # TCAPm12widthCut/Do	= true
 ### For 2006 data: TCAPMin = 26; TCAPMax = 52
@@ -175,6 +190,11 @@
 # ChiSquare/Do	= 0
 # ChiSquare/RedChi2CutMin	= -1.0
 # ChiSquare/RedChi2CutMax	= -1.0
+
+# ===================	 PhiQuadrantSpectra 	=================== #
+# PhiQuadrantSpectra/Do	= false
+
+# ===================	 ChiSquare 	=================== #
 # ChiSquare/NCosThBinsMichel	= 100
 # ChiSquare/NXBinsMichel	= 110
 # ChiSquare/XMinMichel	= 0.0
