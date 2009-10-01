@@ -176,14 +176,12 @@ bool EventClass::Load( )
 
 	for( int t = 0; t < ntr; t++)
 	{
-		cout<<"===> "<<nevt<<"  "<<hefit_pu[t]<<"  "<<hefit_pv[t]<<"  "<<hefit_pz[t]<<endl;
 		if ( MomentumScaleDo )
 		{
 			hefit_pz[t] *= ScalePz;
 			hefit_pu[t] *= ScalePt;
 			hefit_pv[t] *= ScalePt;
 		}
-		cout<<"======> "<<hefit_pu[t]<<"    "<<hefit_pv[t]<<"    "<<hefit_pz[t]<<endl;
 		// First calculate uncalibrated using the tree variables
 		hefit_ptot[t]	= sqrt((hefit_pu[t]*hefit_pu[t])+(hefit_pv[t]*hefit_pv[t])+(hefit_pz[t]*hefit_pz[t]));
 		if (not hefit_ptot[t] == 0)
