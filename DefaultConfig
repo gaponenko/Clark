@@ -21,6 +21,10 @@
 ### Then pu=pu*S and pv=pv*S
 # MomentumScale/Pt	= 1.0
 # MomentumScale/Pz	= 1.0
+# MomentumScale/Pt_Upstream	= 1.0
+# MomentumScale/Pz_Upstream	= 1.0
+# MomentumScale/Pt_Downstream	= 1.0
+# MomentumScale/Pz_Downstream	= 1.0
 
 # ===================	 TCAPm12widthCut 	=================== #
 # TCAPm12widthCut/Do	= true
