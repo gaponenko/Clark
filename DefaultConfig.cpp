@@ -36,6 +36,10 @@ void SetDefault(ConfigFile &Conf)
 	//// Then pu=pu*S and pv=pv*S
 	SetKey(Conf, "MomentumScale/Pt", 1.0);
 	SetKey(Conf, "MomentumScale/Pz", 1.0);
+	SetKey(Conf, "MomentumScale/Pt_Upstream", 1.0);
+	SetKey(Conf, "MomentumScale/Pz_Upstream", 1.0);
+	SetKey(Conf, "MomentumScale/Pt_Downstream", 1.0);
+	SetKey(Conf, "MomentumScale/Pz_Downstream", 1.0);
 	
 
 	//	TCAPm12widthCut

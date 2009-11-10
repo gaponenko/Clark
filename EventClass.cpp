@@ -49,6 +49,10 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	MomentumScaleDo		= C.read<bool>("MomentumScale/Do");
 	ScalePt				= C.read<double>("MomentumScale/Pt");
 	ScalePz				= C.read<double>("MomentumScale/Pz");
+	ScalePt_Up			= C.read<double>("MomentumScale/Pt_Upstream");
+	ScalePz_Up			= C.read<double>("MomentumScale/Pz_Upstream");
+	ScalePt_Dn			= C.read<double>("MomentumScale/Pt_Downstream");
+	ScalePz_Dn			= C.read<double>("MomentumScale/Pz_Downstream");
 
 	// Kinematic end point.
 	KPmax		= C.read<double>("Parameters/KinematicPmax");
@@ -176,11 +180,22 @@ bool EventClass::Load( )
 
 	for( int t = 0; t < ntr; t++)
 	{
+		// Scale the momentum. For systematics study
 		if ( MomentumScaleDo )
 		{
 			hefit_pz[t] *= ScalePz;
 			hefit_pu[t] *= ScalePt;
 			hefit_pv[t] *= ScalePt;
+			if (hefit_pz[t] < 0)
+			{
+				hefit_pu[t] *= ScalePt_Up;
+				hefit_pv[t] *= ScalePt_Up;
+			}
+			else
+			{
+				hefit_pu[t] *= ScalePt_Dn;
+				hefit_pv[t] *= ScalePt_Dn;
+			}
 		}
 		// First calculate uncalibrated using the tree variables
 		hefit_ptot[t]	= sqrt((hefit_pu[t]*hefit_pu[t])+(hefit_pv[t]*hefit_pv[t])+(hefit_pz[t]*hefit_pz[t]));

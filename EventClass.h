@@ -102,6 +102,10 @@ class EventClass{
 		bool MomentumScaleDo;
 		double ScalePt;
 		double ScalePz;
+		double ScalePt_Up;
+		double ScalePz_Up;
+		double ScalePt_Dn;
+		double ScalePz_Dn;
 
 		//________________________ Energy calibration ___________________//
 
