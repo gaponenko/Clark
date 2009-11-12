@@ -190,11 +190,13 @@ bool EventClass::Load( )
 			{
 				hefit_pu[t] *= ScalePt_Up;
 				hefit_pv[t] *= ScalePt_Up;
+				hefit_pz[t] *= ScalePz_Up;
 			}
 			else
 			{
 				hefit_pu[t] *= ScalePt_Dn;
 				hefit_pv[t] *= ScalePt_Dn;
+				hefit_pz[t] *= ScalePz_Dn;
 			}
 		}
 		// First calculate uncalibrated using the tree variables
