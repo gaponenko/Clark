@@ -8,7 +8,10 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	if (C.read<string>("CommandLine/EcalFile") != "")
 	{
 		if (GetEcalib(C.read<string>("CommandLine/EcalFile"), C.read<string>("CommandLine/EcalArray")))
+		{
 			DoEcalib	= true;
+			Log->info("Energy calibration parameters:\nUpstream slope       = %+e MeV/c\nUpstream intercept   = %+e MeV/c\nDownstream slope     = %+e MeV/c\nDownstream intercept = %+e MeV/c",Ecal_au,Ecal_bu,Ecal_ad,Ecal_bd);
+		}
 		else
 		{
 			Log->error("The energy calibration cannot be performed. Exit now.");
