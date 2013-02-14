@@ -38,11 +38,11 @@ class HistogramFactory {
 		bool	Init(log4cpp::Category *TmpLog, const char* Filename);
 
 		// =============================== definition section ==================================
-		void	DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax);
-		void	DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax);
-		void	DefineTH1D_varwidth(string Path, string Name, string Title, vector<double> BinVect);
-		void	DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect);
-		void	DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax);
+		TH1D*	DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax);
+		TH2D*	DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax);
+		TH1D*	DefineTH1D_varwidth(string Path, string Name, string Title, vector<double> BinVect);
+		TH2D*	DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect);
+		TH3D*	DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax);
 		void	DefineArrayOfStr(string Path, string Name);
 		void	DefineObjString(string Path, string Name);
 		void	AddCut(string InCut);

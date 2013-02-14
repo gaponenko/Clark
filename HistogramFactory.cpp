@@ -15,13 +15,14 @@ bool HistogramFactory::Init(log4cpp::Category *TmpLog, const char* Filename)
 
 // =============================== definition section ================================== \\
 
-void HistogramFactory::DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax)
+TH1D* HistogramFactory::DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax)
 {
 	H1D[Name]	= new TH1D(Name.c_str(), Title.c_str(), xBins, xMin, xMax);
 	Store( Name, Path, "TH1D");
+        return H1D[Name];
 }
 
-void HistogramFactory::DefineTH1D_varwidth(string Path, string Name, string Title, vector<double> BinVect)
+TH1D* HistogramFactory::DefineTH1D_varwidth(string Path, string Name, string Title, vector<double> BinVect)
 {
 	double *bins = new double[BinVect.size()];
 	for ( int i = 0; i < BinVect.size(); i++)
@@ -32,15 +33,17 @@ void HistogramFactory::DefineTH1D_varwidth(string Path, string Name, string Titl
 	H1D[Name]->Sumw2();			// use sqrt(sum of weights) instead of sqrt(entries)
 	H1D[Name]->SetOption("e1");	// show horizontal error bars
 	Store( Name, Path, "TH1D");
+        return H1D[Name];
 }
 
-void HistogramFactory::DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax)
+TH2D* HistogramFactory::DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax)
 {
 	H2D[Name]	= new TH2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax);
 	Store( Name, Path, "TH2D");
+        return H2D[Name];
 }
 
-void HistogramFactory::DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect)
+TH2D* HistogramFactory::DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect)
 {
 	double *ybins = new double[yBinVect.size()];
 	for ( int i = 0; i < yBinVect.size(); i++)
@@ -50,12 +53,14 @@ void HistogramFactory::DefineTH2D_Yvarwidth(string Path, string Name, string Tit
 	H2D[Name]	= new TH2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBinVect.size()-1, ybins);
 	H2D[Name]->Sumw2();			// use sqrt(sum of weights) instead of sqrt(entries)
 	Store( Name, Path, "TH2D");
+        return H2D[Name];
 }
 
-void HistogramFactory::DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax)
+TH3D* HistogramFactory::DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax)
 {
 	H3D[Name]	= new TH3D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax, zBins, zMin, zMax);
 	Store( Name, Path, "TH3D");
+        return H3D[Name];
 }
 
 void HistogramFactory::DefineArrayOfStr(string Path, string Name)
