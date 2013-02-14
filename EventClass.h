@@ -437,7 +437,7 @@ class EventClass{
 
 
 	private :
-		map <const char*, bool>ExistList;
+                map <std::string, bool>ExistList;
 
 		bool CheckBranchLeaf( TTree* T, const char* Branch, const char* Leaf);
 		bool CheckBranchLeaf( TTree* T, const char* Leaf);
