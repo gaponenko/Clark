@@ -38,9 +38,18 @@ using namespace std;
 #define MAXPLANE		2		// TEC number of modules ... yes 2
 #define MAXTRK			150		// Max number of helix fit tracks
 #define MAXMCTRK		1000	// Max number of MC tracks
-#define MAX_WIRES_P		160		// Max number of hits in PsPACT planes (?)
 #define MAXMICHELDDKS	32		// Max number of Michel decay from micheld server.
 #define MAXCDA			190		// Max number of CDA assuming a max of 20 good tracks.
+
+// Why do DetectorGeo.h defs disagree with MOFIA's det_geom_mod.f90??? Use here constants from the latter source.
+#define AG_MAXM_SCINTS        8
+#define AG_MAXT_SCINTS        8
+#define AG_MAXO_SCINTS        64
+#define AG_MAX_SCINTS         AG_MAXM_SCINTS + AG_MAXT_SCINTS + AG_MAXO_SCINTS
+
+#define MAXHITS_DC         MAX_WIRES_D * MAX_PLANES_D * 2 // dc_mngw
+#define MAXHITS_PC         MAX_WIRES_P * MAX_PLANES_P * 2 // pc_mngw
+#define MAXHITS_SC         AG_MAX_SCINTS * 8 // sc_mngw
 
 class EventClass{
 	public :
@@ -352,6 +361,27 @@ class EventClass{
 		Float_t		mctrack_user3[MAXMCTRK];			//[nmctr]
 		Float_t		mctrack_user4[MAXMCTRK];			//[nmctr]
 
+
+		//_________________________ All hits - DC  __________________________//
+		Int_t		dc_nhits;
+		Float_t		dc_time[MAXHITS_DC];			//[dc_nhits]
+		Float_t		dc_width[MAXHITS_DC];			//[dc_nhits]
+		Int_t		dc_plane[MAXHITS_DC];			//[dc_nhits]
+		Int_t		dc_cell[MAXHITS_DC];			//[dc_nhits]
+
+		//_________________________ All hits - PC  __________________________//
+		Int_t		pc_nhits;
+		Float_t		pc_time[MAXHITS_PC];			//[pc_nhits]
+		Float_t		pc_width[MAXHITS_PC];			//[pc_nhits]
+		Int_t		pc_plane[MAXHITS_PC];			//[pc_nhits]
+		Int_t		pc_cell[MAXHITS_PC];			//[pc_nhits]
+
+		//_________________________ All hits - SC  __________________________//
+		Int_t		sc_nhits;
+		Float_t		sc_time[MAXHITS_SC];			//[sc_nhits]
+		Float_t		sc_width[MAXHITS_SC];			//[sc_nhits]
+		Int_t		sc_iscint[MAXHITS_SC];			//[sc_nhits]
+		Int_t		sc_wire[MAXHITS_SC];			//[sc_nhits]
 
 		//______________ New variables (not tree variables) ______________//
 

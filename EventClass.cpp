@@ -671,6 +671,26 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "mctrack_user3",	mctrack_user3);
 	GetVar(T, "", "mctrack_user4",	mctrack_user4);
 
+        //_________________________ All hits - DC  __________________________//
+        GetVar(T, "DC_hits", "DC_nhits", &dc_nhits);
+        GetVar(T, "DC_hits", "DC_time", dc_time);
+        GetVar(T, "DC_hits", "DC_width", dc_width);
+        GetVar(T, "DC_hits", "DC_plane", dc_plane);
+        GetVar(T, "DC_hits", "DC_cell", dc_cell);
+
+        //_________________________ All hits - PC  __________________________//
+        GetVar(T, "PC_hits", "PC_nhits", &pc_nhits);
+        GetVar(T, "PC_hits", "PC_time", pc_time);
+        GetVar(T, "PC_hits", "PC_width", pc_width);
+        GetVar(T, "PC_hits", "PC_plane", pc_plane);
+        GetVar(T, "PC_hits", "PC_cell", pc_cell);
+
+        //_________________________ All hits - SC  __________________________//
+        GetVar(T, "SC_hits", "SC_nhits", &sc_nhits);
+        GetVar(T, "SC_hits", "SC_time", sc_time);
+        GetVar(T, "SC_hits", "SC_width", sc_width);
+        GetVar(T, "SC_hits", "SC_iscint", sc_iscint);
+        GetVar(T, "SC_hits", "SC_wire", sc_wire);
 
 	// SPECIAL. Initialize the random seed using the run number.
 	if ( MomAngSmearingDo )
