@@ -11,6 +11,9 @@ void SetKey(ConfigFile &Conf, string key, const T& t)
 
 void SetDefault(ConfigFile &Conf)
 {
+	// MuCapture, if enabled, can prevent the standard analysis from running
+	SetKey(Conf, "MuCapture/Do", false);
+
 	// ================ Standard Analysis =============== //
 
 	//	Energy Calibration

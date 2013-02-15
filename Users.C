@@ -45,8 +45,21 @@
 #include "BiasPlots.C"
 #include "GlobalHistograms.C"
 
-void LoadAnalysisClasses( TreeClass *AnaObj)
+#include "ConfigFile.h"
+#include "MuCapture.h"
+
+void LoadAnalysisClasses(const ConfigFile& conf, TreeClass *AnaObj)
 {
+  const bool doMuCapture = conf.read<bool>("MuCapture/Do");
+  const bool doDefaultTWIST = !doMuCapture || conf.read<bool>("MuCapture/doDefaultTWIST");
+
+  if(doMuCapture) {
+    AnaObj->Register(new MuCapture());
+  }
+  if(!doDefaultTWIST) {
+    return;
+  }
+
 	AnaObj->Register( new StatusHistograms("Beginning",	"at the beginning of the treesumming"));
 
 	AnaObj->Register( new TCAPm12widthCut());

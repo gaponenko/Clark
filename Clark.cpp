@@ -25,7 +25,7 @@ using namespace std;
 void SetDefault(ConfigFile &Conf);
 
 // See Users.C
-void LoadAnalysisClasses( TreeClass *AnaObj);
+void LoadAnalysisClasses(const ConfigFile& Conf, TreeClass *AnaObj);
 
 int main(int argc, char **argv)
 {
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 
 	TreeClass AnaObj;
 
-	LoadAnalysisClasses( &AnaObj);
+	LoadAnalysisClasses(Conf, &AnaObj);
 
 
 	LogAll.info("Initialization of the TreeAnalysis class");
