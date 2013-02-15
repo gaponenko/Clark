@@ -4,20 +4,19 @@ ROOTCFLAGS    := $(shell root-config --cflags)
 ROOTLDFLAGS    := $(shell root-config --ldflags)
 ROOTLIBS      := $(shell root-config --libs)
 
-CXX = g++
+# includes and libs
+INCLUDE = -I/twist/local/include
+LIBS += $(ROOTLIBS) -L/twist/local/lib -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
 
 # Flags for the compiler
-CXXFLAGS = -g -O2 $(ROOTCFLAGS)
+CXX = g++
+CXXFLAGS := -g -O2 $(ROOTCFLAGS)
 
 # Flags for the linker
-LDFLAGS = -g -O2 $(ROOTLDFLAGS)
-
 LINKER = g++
+LDFLAGS := -g -O2 $(ROOTLDFLAGS) -Xlinker -rpath=/twist/local/lib -Xlinker -rpath=$(shell root-config --libdir)
 
-# includes and libs
-INCLUDE = -I/usr/include -I/twist/local/include
-LIBS += $(ROOTLIBS) -L/twist/local/lib -llog4cpp -L/usr/lib -lgsl -lgslcblas -lm -lboost_regex
-
+#
 HEADERS := $(shell ls *.h)
 SRCS := $(shell ls *.cpp)
 OBJS := $(SRCS:%.cpp=%.o)
