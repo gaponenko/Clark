@@ -10,29 +10,24 @@ class TH2;
 
 class MuCapture : public ModuleClass {
 public :
-  bool    Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog) ;
+  bool    Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *Log) ;
   bool    Process(EventClass &E, HistogramFactory &H);
 
   MuCapture()
-    : Log(0)
-    , doDefaultTWIST(false)
-    , h_dt_pc_(0)
-    , h_dt_dc_(0)
-    , h_dt_any_(0)
-    , h_dt_any2_(0)
-    , h_m12_t0_(0)
+    : doDefaultTWIST_(false)
+    , windtpc_()
+    , hNumPCWin_()
+    , hWinPCTimeAll_()
+    , hWinPCTimeTrig_()
   {}
 
 private :
-  log4cpp::Category *Log;
-  string Name;
-  bool doDefaultTWIST;
+  bool doDefaultTWIST_;
+  double windtpc_;
 
-  TH1* h_dt_pc_;
-  TH1* h_dt_dc_;
-  TH1* h_dt_any_;
-  TH2* h_dt_any2_;
-  TH1* h_m12_t0_;
+  TH1* hNumPCWin_;
+  TH1* hWinPCTimeAll_;
+  TH1* hWinPCTimeTrig_;
 };
 
 #endif/*MuCapture_h*/
