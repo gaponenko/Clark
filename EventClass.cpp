@@ -3,6 +3,10 @@
 void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 {
 	Log	= L;
+
+        doMuCapture = C.read<bool>("MuCapture/Do");
+        doDefaultTWIST = !doMuCapture || C.read<bool>("MuCapture/doDefaultTWIST");
+
 	//__________ Extract the energy calibration parameters ___________//
 	DoEcalib	= false;
 	if (C.read<string>("CommandLine/EcalFile") != "")
@@ -119,8 +123,33 @@ bool EventClass::InitGeometry(ConfigFile &C)
 	}
 }
 
+void EventClass::LoadMuCapture() {
+  dc_hits_by_time_.clear();
+  dc_hits_by_time_.reserve(dc_nhits);
+  for(int i=0; i<dc_nhits; ++i) {
+    dc_hits_by_time_.push_back(TDCHitWP(dc_time[i], dc_width[i], dc_plane[i], dc_cell[i]));
+  }
+  std::sort(dc_hits_by_time_.begin(), dc_hits_by_time_.end(), TDCHitWPCmpTime());
+
+  pc_hits_by_time_.clear();
+  pc_hits_by_time_.reserve(pc_nhits);
+  for(int i=0; i<pc_nhits; ++i) {
+    pc_hits_by_time_.push_back(TDCHitWP(pc_time[i], pc_width[i], pc_plane[i], pc_cell[i]));
+  }
+  std::sort(pc_hits_by_time_.begin(), pc_hits_by_time_.end(), TDCHitWPCmpTime());
+
+}
+
 bool EventClass::Load( )
 {
+  if(doMuCapture) {
+    LoadMuCapture();
+  }
+
+  if(!doDefaultTWIST) {
+    return true;
+  }
+
 	//	#################################### Windowing #################################### //
 
 	imuonwin	= -1;	// Default value. This will crash the prog. That's the goal.
@@ -434,6 +463,29 @@ bool EventClass::Load( )
 	return true;
 }
 
+void EventClass::InitMuCaptureVar( TTree* T) {
+        //_________________________ All hits - DC  __________________________//
+        GetVar(T, "DC_hits", "DC_nhits", &dc_nhits);
+        GetVar(T, "DC_hits", "DC_time", dc_time);
+        GetVar(T, "DC_hits", "DC_width", dc_width);
+        GetVar(T, "DC_hits", "DC_plane", dc_plane);
+        GetVar(T, "DC_hits", "DC_cell", dc_cell);
+
+        //_________________________ All hits - PC  __________________________//
+        GetVar(T, "PC_hits", "PC_nhits", &pc_nhits);
+        GetVar(T, "PC_hits", "PC_time", pc_time);
+        GetVar(T, "PC_hits", "PC_width", pc_width);
+        GetVar(T, "PC_hits", "PC_plane", pc_plane);
+        GetVar(T, "PC_hits", "PC_cell", pc_cell);
+
+        //_________________________ All hits - SC  __________________________//
+        GetVar(T, "SC_hits", "SC_nhits", &sc_nhits);
+        GetVar(T, "SC_hits", "SC_time", sc_time);
+        GetVar(T, "SC_hits", "SC_width", sc_width);
+        GetVar(T, "SC_hits", "SC_iscint", sc_iscint);
+        GetVar(T, "SC_hits", "SC_wire", sc_wire);
+}
+
 void EventClass::InitVar( TTree* T)
 {
 	//__________________________ EVID branch _________________________//
@@ -454,6 +506,15 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "Event", "ntr",			&ntr);
 	GetVar(T, "Event", "pienuitr",		&pienuitr);
 
+        //----------------------------------------------------------------
+        // Load MuCapture vars and may be short circuit the rest
+        if(doMuCapture) {
+          InitMuCaptureVar(T);
+        }
+
+        if(!doDefaultTWIST) {
+          return;
+        }
 
 	//_____________________________ Windows __________________________//
 
@@ -670,27 +731,6 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "mctrack_user2",	mctrack_user2);
 	GetVar(T, "", "mctrack_user3",	mctrack_user3);
 	GetVar(T, "", "mctrack_user4",	mctrack_user4);
-
-        //_________________________ All hits - DC  __________________________//
-        GetVar(T, "DC_hits", "DC_nhits", &dc_nhits);
-        GetVar(T, "DC_hits", "DC_time", dc_time);
-        GetVar(T, "DC_hits", "DC_width", dc_width);
-        GetVar(T, "DC_hits", "DC_plane", dc_plane);
-        GetVar(T, "DC_hits", "DC_cell", dc_cell);
-
-        //_________________________ All hits - PC  __________________________//
-        GetVar(T, "PC_hits", "PC_nhits", &pc_nhits);
-        GetVar(T, "PC_hits", "PC_time", pc_time);
-        GetVar(T, "PC_hits", "PC_width", pc_width);
-        GetVar(T, "PC_hits", "PC_plane", pc_plane);
-        GetVar(T, "PC_hits", "PC_cell", pc_cell);
-
-        //_________________________ All hits - SC  __________________________//
-        GetVar(T, "SC_hits", "SC_nhits", &sc_nhits);
-        GetVar(T, "SC_hits", "SC_time", sc_time);
-        GetVar(T, "SC_hits", "SC_width", sc_width);
-        GetVar(T, "SC_hits", "SC_iscint", sc_iscint);
-        GetVar(T, "SC_hits", "SC_wire", sc_wire);
 
 	// SPECIAL. Initialize the random seed using the run number.
 	if ( MomAngSmearingDo )

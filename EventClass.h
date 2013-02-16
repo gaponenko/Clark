@@ -32,6 +32,8 @@ using namespace std;
 #include "FuncLib.h"
 #include "DetectorGeo.h"
 
+#include "TDCHitWP.h"
+
 #define MAXWIN			21
 #define MAXTECHITS		384
 #define MAXHIT			24		// TEC max hit per track (one hit per wire in each module)
@@ -77,7 +79,10 @@ class EventClass{
 		double BField;
 		int NumDC;
 		int NumPC;
-		
+
+		bool doMuCapture;
+		bool doDefaultTWIST;
+
 		//__________________________ Parameters _________________________//
 		float	pi;
 
@@ -362,21 +367,21 @@ class EventClass{
 		Float_t		mctrack_user4[MAXMCTRK];			//[nmctr]
 
 
-		//_________________________ All hits - DC  __________________________//
+		//_________________________ MuCapture: All hits - DC  __________________________//
 		Int_t		dc_nhits;
 		Float_t		dc_time[MAXHITS_DC];			//[dc_nhits]
 		Float_t		dc_width[MAXHITS_DC];			//[dc_nhits]
 		Int_t		dc_plane[MAXHITS_DC];			//[dc_nhits]
 		Int_t		dc_cell[MAXHITS_DC];			//[dc_nhits]
 
-		//_________________________ All hits - PC  __________________________//
+		//_________________________ MuCapture: All hits - PC  __________________________//
 		Int_t		pc_nhits;
 		Float_t		pc_time[MAXHITS_PC];			//[pc_nhits]
 		Float_t		pc_width[MAXHITS_PC];			//[pc_nhits]
 		Int_t		pc_plane[MAXHITS_PC];			//[pc_nhits]
 		Int_t		pc_cell[MAXHITS_PC];			//[pc_nhits]
 
-		//_________________________ All hits - SC  __________________________//
+		//_________________________ MuCapture: All hits - SC  __________________________//
 		Int_t		sc_nhits;
 		Float_t		sc_time[MAXHITS_SC];			//[sc_nhits]
 		Float_t		sc_width[MAXHITS_SC];			//[sc_nhits]
@@ -434,13 +439,21 @@ class EventClass{
 		int			tb_e_firstdcvtx;	// Positron vertex index at the first DC
 		int			tb_e_lastdcvtx;		// Positron vertex index at the last DC
 
-
+  const TDCHitWPCollection& dc_hits_by_time() const { return dc_hits_by_time_; }
+  const TDCHitWPCollection& pc_hits_by_time() const { return pc_hits_by_time_; }
 
 	private :
                 map <std::string, bool>ExistList;
 
 		bool CheckBranchLeaf( TTree* T, const char* Branch, const char* Leaf);
 		bool CheckBranchLeaf( TTree* T, const char* Leaf);
+
+  // Muon capture variables and methods
+  TDCHitWPCollection dc_hits_by_time_;
+  TDCHitWPCollection pc_hits_by_time_;
+
+  void LoadMuCapture();
+  void InitMuCaptureVar(TTree* T);
 
 };
 
