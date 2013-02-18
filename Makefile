@@ -10,7 +10,7 @@ LIBS += $(ROOTLIBS) -L/twist/local/lib -llog4cpp -lgsl -lgslcblas -lm -lboost_re
 
 # Flags for the compiler
 CXX = g++
-CXXFLAGS := -g -O2 $(ROOTCFLAGS)
+CXXFLAGS := -g -O2 $(ROOTCFLAGS) -Wall -Wno-parentheses -Wno-sign-compare
 
 # Flags for the linker
 LINKER = g++
