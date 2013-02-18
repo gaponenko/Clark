@@ -24,8 +24,13 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPFUTURE ,"PCTRIGSEP FUTURE");
 
-    ax->SetBinLabel(1+CUT_MUZ ,"mu Z");
+    ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS ,"Unassigned DC hits");
+
+    ax->SetBinLabel(1+CUT_MU_PC_RANGE ,"Mu PC range");
+    ax->SetBinLabel(1+CUT_MU_DC_RANGE ,"Mu DC range");
+
     ax->SetBinLabel(1+CUT_MU_UV,"mu UV");
+
     ax->SetBinLabel(1+CUTS_ACCEPTED ,"Accepted");
   }
 
@@ -36,7 +41,9 @@ public :
     CUT_PCWIN_TRIGSEPPAST,
     CUT_PCWIN_NUMAFTERTRIG,
     CUT_PCWIN_TRIGSEPFUTURE,
-    CUT_MUZ,
+    CUT_UNASSIGNEDDCHITS,
+    CUT_MU_PC_RANGE,
+    CUT_MU_DC_RANGE,
     CUT_MU_UV,
 
     CUTS_ACCEPTED,
@@ -50,6 +57,10 @@ public :
     : doDefaultTWIST_(false)
     , winPCLength_()
     , winPCSeparation_()
+    , winDCLength_()
+    , winDCEarlyMargin_()
+    , maxUnassignedDCHits_()
+
     , h_cuts_r()
     , h_cuts_p()
     , hNumPCWin_()
@@ -57,12 +68,19 @@ public :
     , hWinPCTimeTrig_()
     , hWinPCTStartBeforeTrig_()
     , hWinPCTStartAfterTrig_()
+    , hWinDCUnassignedEarly_()
+    , hWinDCUnassignedLate_()
+    , hWinDCUnassignedCount_()
   {}
 
 private :
   bool doDefaultTWIST_;
   double winPCLength_;
   double winPCSeparation_;
+
+  double winDCLength_;
+  double winDCEarlyMargin_;
+  int maxUnassignedDCHits_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;
@@ -73,10 +91,19 @@ private :
   TH1* hWinPCTStartBeforeTrig_;
   TH1* hWinPCTStartAfterTrig_;
 
+  TH1 *hWinDCUnassignedEarly_;
+  TH1 *hWinDCUnassignedLate_;
+  TH1 *hWinDCUnassignedCount_;
+
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
+
+  TimeWindowCollection constructTimeWindows(const TDCHitWPCollection& timeSortedHits, double winLength);
 
   // Returns the index of the window with start time closest to t=0
   int findTriggerWindow(const TimeWindowCollection& windows);
+
+  TimeWindowCollection assignDCHits(TDCHitWPPtrCollection* unassignedDCHits, const TDCHitWPCollection& timeSortedDCHits, const TimeWindowCollection& winpcs);
+
 };
 
 #endif/*MuCapture_h*/

@@ -21,6 +21,14 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   }
   Log->info( "Register MuCapture module");
 
+  //       --------- Parameters initialization ---------          //
+  doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
+  winPCLength_ = Conf.read<double>("MuCapture/winPCLength");
+  winPCSeparation_ = Conf.read<double>("MuCapture/winPCSeparation");
+  winDCLength_ = Conf.read<double>("MuCapture/winDCLength");
+  winDCEarlyMargin_ = Conf.read<double>("MuCapture/winDCEarlyMargin");
+  maxUnassignedDCHits_ = Conf.read<double>("MuCapture/maxUnassignedDCHits");
+
   //       --------- Histograms initialization ---------          //
 
   h_cuts_r = H.DefineTH1D("MuCapture", "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -38,10 +46,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hWinPCTStartBeforeTrig_ = H.DefineTH1D( "MuCapture", "winPCTStartBeforeTrig",   "PC 1 win start before trigger", 1200, -6000., 0.);
   hWinPCTStartAfterTrig_ = H.DefineTH1D( "MuCapture", "winPCTStartAfter",   "PC 1 win start after trigger", 2000, 0., 10000.);
 
-  //       --------- Parameters initialization ---------          //
-  doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
-  winPCLength_ = Conf.read<double>("MuCapture/winPCLength");
-  winPCSeparation_ = Conf.read<double>("MuCapture/winPCSeparation");
+  hWinDCUnassignedEarly_ = H.DefineTH1D( "MuCapture", "winDCUnassignedEarly",   "Unassigned DC hits, early", 1000, -1000., 0.);
+  hWinDCUnassignedLate_ = H.DefineTH1D( "MuCapture", "winDCUnassignedLate",   "Unassigned DC hits, late", 1000, 0., 1000.);
+  hWinDCUnassignedCount_ = H.DefineTH1D( "MuCapture", "winDCUnassignedCount",   "Count of unassigned DC hits", 101, -0.5, 100.5);
 
   return true;
 }
@@ -64,25 +71,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Sort PC hits into time windows
 
-  TimeWindowCollection winpcs;
-  const TDCHitWPCollection& pchits = evt.pc_hits_by_time();
-  for(unsigned i=0; i< pchits.size(); ++i) {
-
-    // This hit starts a new window
-    TimeWindow win;
-    win.tstart = pchits[i].time;
-    win.tend = win.tstart + winPCLength_;
-
-    // Put all hits falling in the  given time interval into the same window
-    while((i < pchits.size()) && (pchits[i].time < win.tend)) {
-      win.hits.push_back(TDCHitWPPtr(pchits, i));
-      ++i;
-    }
-
-    winpcs.push_back(win);
-  }
+  const TimeWindowCollection winpcs = constructTimeWindows(evt.pc_hits_by_time(), winPCLength_);
 
   const int iPCTrigWin = findTriggerWindow(winpcs);
+
   if(iPCTrigWin < 0) {
     return CUT_NOPCWIN;
   }
@@ -115,8 +107,45 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------
+  // Process DC hits
+  TDCHitWPPtrCollection unassignedDCHits;
+  const TimeWindowCollection windcs = assignDCHits(&unassignedDCHits, evt.dc_hits_by_time(), winpcs);
+  hWinDCUnassignedCount_->Fill(unassignedDCHits.size());
+
+  if(unassignedDCHits.size() > maxUnassignedDCHits_) {
+    return CUT_UNASSIGNEDDCHITS;
+  }
+
+  //----------------
 
   return CUTS_ACCEPTED;
+}
+
+//================================================================
+TimeWindowCollection MuCapture::constructTimeWindows(const TDCHitWPCollection& pchits, double winLength) {
+
+  TimeWindowCollection winpcs;
+
+  for(unsigned i=0; i< pchits.size(); ++i) {
+
+    // This hit starts a new window
+    TimeWindow win;
+    win.tstart = pchits[i].time;
+    win.tend = win.tstart + winLength;
+
+    // Put all hits falling in the  given time interval into the same window
+    while((i < pchits.size()) && (pchits[i].time < win.tend)) {
+      win.hits.push_back(TDCHitWPPtr(pchits, i));
+      ++i;
+    }
+
+    // Order hits in each window by plane/cell
+    std::sort(win.hits.begin(), win.hits.end(), TDCHitWPCmpGeom());
+
+    winpcs.push_back(win);
+  }
+
+  return winpcs;
 }
 
 //================================================================
@@ -133,6 +162,61 @@ int MuCapture::findTriggerWindow(const TimeWindowCollection& windows) {
   }
 
   return itrig;
+}
+
+//================================================================
+TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDCHits,
+                                             const TDCHitWPCollection& timeSortedDCHits,
+                                             const TimeWindowCollection& winpcs)
+{
+  TimeWindowCollection windcs;
+  windcs.reserve(winpcs.size());
+
+  if(!timeSortedDCHits.empty()) {
+
+    unsigned idchit=0;
+
+    for(unsigned ipcwin=0; ipcwin<winpcs.size(); ++ipcwin) {
+
+      TimeWindow dcwin;
+      dcwin.tstart = winpcs[ipcwin].tstart - winDCEarlyMargin_;
+      dcwin.tend = dcwin.tstart + winDCLength_;
+
+      for(; idchit < timeSortedDCHits.size() && (timeSortedDCHits[idchit].time < dcwin.tend); ++idchit) {
+        TDCHitWPPtr phit(timeSortedDCHits, idchit);
+        if(timeSortedDCHits[idchit].time < dcwin.tstart) {
+
+          unassignedDCHits->push_back(phit);
+
+          hWinDCUnassignedEarly_->Fill(phit->time - dcwin.tstart);
+          if(ipcwin > 0) {
+            hWinDCUnassignedLate_->Fill(phit->time - windcs[ipcwin-1].tend);
+          }
+
+        }
+        else {
+          dcwin.hits.push_back(phit);
+        }
+      }
+
+      // Filled DC window corresponding to the current PC window with hits
+      // Order then and move to the next pc window
+      std::sort(dcwin.hits.begin(), dcwin.hits.end(), TDCHitWPCmpGeom());
+
+      windcs.push_back(dcwin);
+
+    } // for(pcwin)
+
+    // Record any leftover hits
+    for(; idchit < timeSortedDCHits.size(); ++idchit) {
+      TDCHitWPPtr phit(timeSortedDCHits, idchit);
+      unassignedDCHits->push_back(phit);
+      hWinDCUnassignedLate_->Fill(phit->time - windcs.back().tend);
+    }
+
+  } // !timeSortedDCHits.empty()
+
+  return windcs;
 }
 
 //================================================================

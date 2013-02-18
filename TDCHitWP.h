@@ -45,6 +45,9 @@ public:
   const TDCHitWP& operator*() const { return (*coll_)[idx_]; }
 };
 
+typedef std::vector<TDCHitWPPtr> TDCHitWPPtrCollection;
+
+//----------------------------------------------------------------
 // Comparator
 struct TDCHitWPCmpGeom {
   bool operator()(const TDCHitWP& a, const TDCHitWP& b) {
