@@ -61,8 +61,8 @@ class EventClass{
 		void Init( ConfigFile &C, log4cpp::Category *L );
 		bool InitGeometry(ConfigFile &C);
 		void InitVar( TTree* T);
-		void GetVar( TTree* T, const char* Branch, const char* Leaf, Int_t* V);
-		void GetVar( TTree* T, const char* Branch, const char* Leaf, Float_t* V);
+		void GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Int_t* V);
+		void GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Float_t* V);
 		bool Load( );
 		bool GetEcalib(string EcalibFile, string EcalibArray);
 
@@ -442,11 +442,11 @@ class EventClass{
   const TDCHitWPCollection& dc_hits_by_time() const { return dc_hits_by_time_; }
   const TDCHitWPCollection& pc_hits_by_time() const { return pc_hits_by_time_; }
 
-	private :
-                map <std::string, bool>ExistList;
+private :
+  map <std::string, bool>ExistList;
 
-		bool CheckBranchLeaf( TTree* T, const char* Branch, const char* Leaf);
-		bool CheckBranchLeaf( TTree* T, const char* Leaf);
+  bool CheckBranchLeaf( TTree* T, const std::string& Branch, const std::string& Leaf);
+  bool CheckBranchLeaf( TTree* T, const std::string& Leaf);
 
   // Muon capture variables and methods
   TDCHitWPCollection dc_hits_by_time_;

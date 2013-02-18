@@ -1,5 +1,7 @@
 #include "EventClass.h"
 
+#include <cassert>
+
 void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 {
 	Log	= L;
@@ -738,13 +740,13 @@ void EventClass::InitVar( TTree* T)
 }
 
 
-void EventClass::GetVar( TTree* T, const char* Branch, const char* Leaf, Int_t* V)
+void EventClass::GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Int_t* V)
 {
 	if ( Branch == "")
 		if (CheckBranchLeaf( T, Leaf))
 		{
 			ExistList[Leaf]	= true;
-			T->GetLeaf(Leaf)->SetAddress(V);
+			T->GetLeaf(Leaf.c_str())->SetAddress(V);
 		}
 		else
 			ExistList[Leaf]	= false;
@@ -752,19 +754,19 @@ void EventClass::GetVar( TTree* T, const char* Branch, const char* Leaf, Int_t* 
 		if (CheckBranchLeaf( T, Branch, Leaf))
 		{
 			ExistList[Leaf]	= true;
-			T->GetBranch(Branch)->GetLeaf(Leaf)->SetAddress(V);
+			T->GetBranch(Branch.c_str())->GetLeaf(Leaf.c_str())->SetAddress(V);
 		}
 		else
 			ExistList[Leaf]	= false;
 }
 
-void EventClass::GetVar( TTree* T, const char* Branch, const char* Leaf, Float_t* V)
+void EventClass::GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Float_t* V)
 {
 	if ( Branch == "")
 		if (CheckBranchLeaf( T, Leaf))
 		{
 			ExistList[Leaf]	= true;
-			T->GetLeaf(Leaf)->SetAddress(V);
+			T->GetLeaf(Leaf.c_str())->SetAddress(V);
 		}
 		else
 			ExistList[Leaf]	= false;
@@ -772,37 +774,37 @@ void EventClass::GetVar( TTree* T, const char* Branch, const char* Leaf, Float_t
 		if (CheckBranchLeaf( T, Branch, Leaf))
 		{
 			ExistList[Leaf]	= true;
-			T->GetBranch(Branch)->GetLeaf(Leaf)->SetAddress(V);
+			T->GetBranch(Branch.c_str())->GetLeaf(Leaf.c_str())->SetAddress(V);
 		}
 		else
 			ExistList[Leaf]	= false;
 }
 
-bool EventClass::CheckBranchLeaf( TTree* T, const char* Branch, const char* Leaf)
+bool EventClass::CheckBranchLeaf( TTree* T, const std::string& Branch, const std::string& Leaf)
 {
-	TBranch *tmpBranch;
-	if (Branch != "")
-		if ( NULL == T->GetBranch(Branch))
-		{
-			return false;
-		}
-		else
-		{
-			tmpBranch	= T->GetBranch(Branch);
-		}
+  // 20130218 Andrei Gaponenko: the original code would crash if called with Branch == "".
+  // Make this explicit.
+  assert(Branch != "");
 
-	
-	if ( NULL == tmpBranch->GetLeaf(Leaf))
-	{
-		return false;
-	}
+  if ( NULL == T->GetBranch(Branch.c_str()))
+    {
+      return false;
+    }
+  else
+    {
+      TBranch *tmpBranch	= T->GetBranch(Branch.c_str());
+      if ( NULL == tmpBranch->GetLeaf(Leaf.c_str()))
+        {
+          return false;
+        }
+    }
 
-	return true;
+  return true;
 }
 
-bool EventClass::CheckBranchLeaf( TTree* T, const char* Leaf)
+bool EventClass::CheckBranchLeaf( TTree* T, const std::string& Leaf)
 {
-	if ( NULL == T->GetLeaf(Leaf))
+  if ( NULL == T->GetLeaf(Leaf.c_str()))
 	{
 		return false;
 	}

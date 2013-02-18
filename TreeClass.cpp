@@ -71,7 +71,6 @@ bool TreeClass::InitTree( string Treename, ConfigFile &Conf)
  	if (S_ISDIR (fileStat.st_mode))
  	{
  		Parsed	= StrToStrVect(Treename,'/');
-		Run;
  		if (Parsed[Parsed.size()-1] == "" && Parsed.size() > 1)
  			Run = Parsed[Parsed.size()-2];
  		else
@@ -180,7 +179,7 @@ void TreeClass::LoopTree()
 }
 
 
-// --------------------------------------------------------------------------------- \\
+// ---------------------------------------------------------------------------------
 
 
 bool TreeClass::ReadMofiaLog( string Filename, ConfigFile &Conf)

@@ -98,10 +98,10 @@ class DetectorGeo {
 		double	tt0scint[MAXT_SCINTS];       // Thickness of t0 scintillators
 
 	private :
-		bool	ReadDRFT( ifstream &file);
-		bool	ReadPROP( ifstream &file);
-		bool	ReadTARX( ifstream &file);
-		bool	ReadSCIX( ifstream &file);
+		void	ReadDRFT( ifstream &file);
+		void	ReadPROP( ifstream &file);
+		void	ReadTARX( ifstream &file);
+		void	ReadSCIX( ifstream &file);
 
 };
 

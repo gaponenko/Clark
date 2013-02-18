@@ -13,7 +13,7 @@ bool HistogramFactory::Init(log4cpp::Category *TmpLog, const char* Filename)
 	return true;
 }
 
-// =============================== definition section ================================== \\
+// =============================== definition section ==================================
 
 TH1D* HistogramFactory::DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax)
 {
@@ -115,7 +115,7 @@ void HistogramFactory::Store( string Name, string Path, string TmpType)
 }
 
 
-// ================================= Fill section ====================================== \\
+// ================================= Fill section ======================================
 
 void HistogramFactory::Fill( string Name, double Val)
 {
@@ -185,7 +185,7 @@ void	HistogramFactory::NbCandidateTracks(string ComingCut, EventClass &E)
 	}
 }
 
-// =========================== Miscellaneous section =================================== \\
+// =========================== Miscellaneous section ===================================
 
 void HistogramFactory::Sumw2( string Name)
 {
@@ -198,7 +198,7 @@ void HistogramFactory::Sumw2( string Name)
 }
 
 
-// ============================= File saving section =================================== \\
+// ============================= File saving section ===================================
 
 void HistogramFactory::DoDirectory( string FilePath)
 {

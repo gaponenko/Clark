@@ -52,7 +52,7 @@ bool DetectorGeo::ReadGeometry( string geofile, log4cpp::Category *L)
 }
 
 // =============== (1) Drift Chamber ================ //
-bool DetectorGeo::ReadDRFT( ifstream &file)
+void DetectorGeo::ReadDRFT( ifstream &file)
 {
 	char  ReadIn[280];
 	// skip to and over the + sign
@@ -119,7 +119,7 @@ bool DetectorGeo::ReadDRFT( ifstream &file)
 
 
 // ================== (2) PC variables ==================== //
-bool DetectorGeo::ReadPROP( ifstream &file)
+void DetectorGeo::ReadPROP( ifstream &file)
 {
 	char  ReadIn[280];
 	// skip to and over the + sign
@@ -182,7 +182,7 @@ bool DetectorGeo::ReadPROP( ifstream &file)
 
 
 // ================ (3) Target variables ================== //
-bool DetectorGeo::ReadTARX( ifstream &file)
+void DetectorGeo::ReadTARX( ifstream &file)
 {
 	char  ReadIn[280];
 	// Read in target info
@@ -220,7 +220,7 @@ bool DetectorGeo::ReadTARX( ifstream &file)
 
 
 // ================ (4) Scint variables =================== //
-bool DetectorGeo::ReadSCIX( ifstream &file)
+void DetectorGeo::ReadSCIX( ifstream &file)
 {
 	char  ReadIn[280];
 	// Read in scintillator info
@@ -284,7 +284,7 @@ bool DetectorGeo::ReadSCIX( ifstream &file)
 
 		for(int isc=0;isc<nmuscints;isc++)
 		{
-			file >> imuplane[isc] >> nmuwires[isc] >> 
+		file >> imuplane[isc] >> nmuwires[isc] >> 
 				rmuscint[isc] >> tmuscint[isc] >> zmuscint[isc];
 			rmuscint[isc]=rmuscint[isc]; 
 			tmuscint[isc]=tmuscint[isc]; 
@@ -315,5 +315,3 @@ bool DetectorGeo::ReadSCIX( ifstream &file)
 		}
 	}  //end readin of SCIN
 }
-
-

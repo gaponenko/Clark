@@ -25,8 +25,8 @@ class ModuleClass {
 	public :
 		ModuleClass()	{};
 		~ModuleClass()	{};
-		virtual bool	Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog) {};
-		virtual bool	Process(EventClass &E, HistogramFactory &H) {};
+  virtual bool	Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *TmpLog) = 0;
+  virtual bool	Process(EventClass &E, HistogramFactory &H) = 0;
 
 		// map<const char*, TH1D*> H1D;
 	private :
