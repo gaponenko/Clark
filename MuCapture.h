@@ -5,6 +5,9 @@
 
 #include "ModuleClass.h"
 
+#include "TDCHitWP.h"
+#include "TimeWindow.h"
+
 class TH1;
 class TH2;
 
@@ -15,19 +18,29 @@ public :
 
   MuCapture()
     : doDefaultTWIST_(false)
-    , windtpc_()
+    , winPCLength_()
+    , winPCSeparation_()
     , hNumPCWin_()
     , hWinPCTimeAll_()
     , hWinPCTimeTrig_()
+    , hWinPCTStartBeforeTrig_()
+    , hWinPCTStartAfterTrig_()
   {}
 
 private :
   bool doDefaultTWIST_;
-  double windtpc_;
+  double winPCLength_;
+  double winPCSeparation_;
 
   TH1* hNumPCWin_;
   TH1* hWinPCTimeAll_;
   TH1* hWinPCTimeTrig_;
+  TH1* hWinPCTStartBeforeTrig_;
+  TH1* hWinPCTStartAfterTrig_;
+
+  // Returns the index of the window with start time closest to t=0
+
+  int findTriggerWindow(const TimeWindowCollection& windows);
 };
 
 #endif/*MuCapture_h*/

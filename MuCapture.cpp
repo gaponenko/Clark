@@ -10,20 +10,8 @@
 #include "TH1.h"
 #include "TH2.h"
 
-#include "TDCHitWP.h"
-
 #define AGDEBUG(stuff) do { std::cerr<<"AG: "<<__FILE__<<", line "<<__LINE__<<", func "<<__func__<<": "<<stuff<<std::endl; } while(0)
 //#define AGDEBUG(stuff)
-
-//================================================================
-struct TimeWindow {
-  double tstart;
-  double tend;
-  std::vector<TDCHitWPPtr> hits;
-  TimeWindow() : tstart(), tend() {}
-};
-
-typedef std::vector<TimeWindow> TimeWindowCollection;
 
 //================================================================
 bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *Log) {
@@ -38,14 +26,22 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hWinPCTimeAll_ = H.DefineTH1D( "MuCapture", "winPCTimeAll",   "PC time window start, all", 1600, -6000., 10000.);
   hWinPCTimeTrig_ = H.DefineTH1D( "MuCapture", "winPCTimeTrig",   "PC time window start, trig", 200, -50., 50.);
 
+  hWinPCTStartBeforeTrig_ = H.DefineTH1D( "MuCapture", "winPCTStartBeforeTrig",   "PC 1 win start before trigger", 1200, -6000., 0.);
+  hWinPCTStartAfterTrig_ = H.DefineTH1D( "MuCapture", "winPCTStartAfter",   "PC 1 win start after trigger", 2000, 0., 10000.);
+
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
-  windtpc_ = Conf.read<double>("MuCapture/win_dt_pc");
+  winPCLength_ = Conf.read<double>("MuCapture/winPCLength");
+  winPCSeparation_ = Conf.read<double>("MuCapture/winPCSeparation");
 
   return true;
 }
 
+//================================================================
 bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
+
+  //----------------------------------------------------------------
+  // Sort PC hits into time windows
 
   TimeWindowCollection winpcs;
   const TDCHitWPCollection& pchits = evt.pc_hits_by_time();
@@ -54,9 +50,9 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
     // This hit starts a new window
     TimeWindow win;
     win.tstart = pchits[i].time;
-    win.tend = win.tstart + windtpc_;
+    win.tend = win.tstart + winPCLength_;
 
-    // Put all hits falling in the windtpc_ time interval into the same window
+    // Put all hits falling in the  given time interval into the same window
     while((i < pchits.size()) && (pchits[i].time < win.tend)) {
       win.hits.push_back(TDCHitWPPtr(pchits, i));
       ++i;
@@ -65,22 +61,47 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
     winpcs.push_back(win);
   }
 
+  const int iPCTrigWin = findTriggerWindow(winpcs);
+
+  //----------------
+  // PC window histograms
+
   hNumPCWin_->Fill(winpcs.size());
-
-  int iPCTrigWin = -1;
-  if(!winpcs.empty()) {
-    double tpctrig = winpcs[0].tstart;
-    iPCTrigWin = 0;
-    for(unsigned i=0; i<winpcs.size(); ++i) {
-      hWinPCTimeAll_->Fill(winpcs[i].tstart);
-      if(std::abs(winpcs[i].tstart) < std::abs(tpctrig)) {
-        tpctrig = winpcs[i].tstart;
-        iPCTrigWin = i;
-      }
-    }
-
-    hWinPCTimeTrig_->Fill(tpctrig);
+  if(iPCTrigWin >= 0) {
+    hWinPCTimeTrig_->Fill(winpcs[iPCTrigWin].tstart);
   }
 
+  for(unsigned i=0; i<winpcs.size(); ++i) {
+    hWinPCTimeAll_->Fill(winpcs[i].tstart);
+  }
+
+  //----------------
+  if(iPCTrigWin > 0) {
+    hWinPCTStartBeforeTrig_->Fill(winpcs[iPCTrigWin - 1].tstart);
+  }
+
+  if(iPCTrigWin + 1 < winpcs.size()) {
+    hWinPCTStartAfterTrig_->Fill(winpcs[iPCTrigWin + 1].tstart);
+  }
+
+  //----------------
   return doDefaultTWIST_;
 }
+
+//================================================================
+int MuCapture::findTriggerWindow(const TimeWindowCollection& windows) {
+  int itrig = -1;
+
+  if(!windows.empty()) {
+    itrig = 0;
+    for(int i=1; i<windows.size(); ++i) {
+      if(std::abs(windows[i].tstart) < std::abs(windows[itrig].tstart)) {
+        itrig = i;
+      }
+    }
+  }
+
+  return itrig;
+}
+
+//================================================================
