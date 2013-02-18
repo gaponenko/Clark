@@ -22,6 +22,15 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   Log->info( "Register MuCapture module");
 
   //       --------- Histograms initialization ---------          //
+
+  h_cuts_r = H.DefineTH1D("MuCapture", "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
+  h_cuts_r->SetStats(kFALSE);
+  set_cut_bin_labels(h_cuts_r->GetXaxis());
+
+  h_cuts_p = H.DefineTH1D("MuCapture", "cuts_p", "Events before cut", CUTS_END, -0.5, CUTS_END-0.5);
+  set_cut_bin_labels(h_cuts_p->GetXaxis());
+  h_cuts_p->SetStats(kFALSE);
+
   hNumPCWin_ = H.DefineTH1D( "MuCapture", "numPCWin",   "Number of PC time windows", 10, -0.5, 9.5);
   hWinPCTimeAll_ = H.DefineTH1D( "MuCapture", "winPCTimeAll",   "PC time window start, all", 1600, -6000., 10000.);
   hWinPCTimeTrig_ = H.DefineTH1D( "MuCapture", "winPCTimeTrig",   "PC time window start, trig", 200, -50., 50.);
@@ -39,6 +48,18 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
 //================================================================
 bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
+
+  EventCutNumber c = analyze(evt, hist);
+  h_cuts_r->Fill(c);
+  for(int cut=0; cut<=c; cut++) {
+    h_cuts_p->Fill(cut);
+  }
+
+  return doDefaultTWIST_;
+}
+
+//================================================================
+MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &hist) {
 
   //----------------------------------------------------------------
   // Sort PC hits into time windows
@@ -62,15 +83,14 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
   }
 
   const int iPCTrigWin = findTriggerWindow(winpcs);
+  if(iPCTrigWin < 0) {
+    return CUT_NOPCWIN;
+  }
 
   //----------------
   // PC window histograms
-
   hNumPCWin_->Fill(winpcs.size());
-  if(iPCTrigWin >= 0) {
-    hWinPCTimeTrig_->Fill(winpcs[iPCTrigWin].tstart);
-  }
-
+  hWinPCTimeTrig_->Fill(winpcs[iPCTrigWin].tstart);
   for(unsigned i=0; i<winpcs.size(); ++i) {
     hWinPCTimeAll_->Fill(winpcs[i].tstart);
   }
@@ -78,14 +98,25 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
   //----------------
   if(iPCTrigWin > 0) {
     hWinPCTStartBeforeTrig_->Fill(winpcs[iPCTrigWin - 1].tstart);
-  }
-
-  if(iPCTrigWin + 1 < winpcs.size()) {
-    hWinPCTStartAfterTrig_->Fill(winpcs[iPCTrigWin + 1].tstart);
+    if( std::abs(winpcs[iPCTrigWin - 1].tstart) < winPCSeparation_ ) {
+      return CUT_PCWIN_TRIGSEPPAST;
+    }
   }
 
   //----------------
-  return doDefaultTWIST_;
+  if(iPCTrigWin + 2 != winpcs.size()) {
+    return CUT_PCWIN_NUMAFTERTRIG;
+  }
+
+  //----------------
+  hWinPCTStartAfterTrig_->Fill(winpcs[iPCTrigWin + 1].tstart);
+  if( std::abs(winpcs[iPCTrigWin + 1].tstart) < winPCSeparation_ ) {
+    return CUT_PCWIN_TRIGSEPFUTURE;
+  }
+
+  //----------------
+
+  return CUTS_ACCEPTED;
 }
 
 //================================================================
