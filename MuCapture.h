@@ -7,6 +7,7 @@
 
 #include "TDCHitWP.h"
 #include "TimeWindow.h"
+#include "WireCluster.h"
 
 #include "TAxis.h"
 class TH1;
@@ -42,6 +43,7 @@ public :
     CUT_PCWIN_NUMAFTERTRIG,
     CUT_PCWIN_TRIGSEPFUTURE,
     CUT_UNASSIGNEDDCHITS,
+    CUT_MU_RANGE_GAPS,
     CUT_MU_PC_RANGE,
     CUT_MU_DC_RANGE,
     CUT_MU_UV,
@@ -71,6 +73,11 @@ public :
     , hWinDCUnassignedEarly_()
     , hWinDCUnassignedLate_()
     , hWinDCUnassignedCount_()
+
+    , hMuRangePCFirst_()
+    , hMuRangePCLast_()
+    , hMuRangeDCFirst_()
+    , hMuRangeDCLast_()
   {}
 
 private :
@@ -95,6 +102,11 @@ private :
   TH1 *hWinDCUnassignedLate_;
   TH1 *hWinDCUnassignedCount_;
 
+  TH1 *hMuRangePCFirst_;
+  TH1 *hMuRangePCLast_;
+  TH1 *hMuRangeDCFirst_;
+  TH1 *hMuRangeDCLast_;
+
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
   TimeWindowCollection constructTimeWindows(const TDCHitWPCollection& timeSortedHits, double winLength);
@@ -104,6 +116,7 @@ private :
 
   TimeWindowCollection assignDCHits(TDCHitWPPtrCollection* unassignedDCHits, const TDCHitWPCollection& timeSortedDCHits, const TimeWindowCollection& winpcs);
 
+  ClustersByPlane constructPlaneClusters(const TDCHitWPPtrCollection& hits);
 };
 
 #endif/*MuCapture_h*/

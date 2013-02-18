@@ -9,7 +9,7 @@
 struct TimeWindow {
   double tstart;
   double tend;
-  std::vector<TDCHitWPPtr> hits;
+  TDCHitWPPtrCollection hits;
   TimeWindow() : tstart(), tend() {}
 };
 

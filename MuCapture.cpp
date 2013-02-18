@@ -6,12 +6,48 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <cassert>
 
 #include "TH1.h"
 #include "TH2.h"
 
 #define AGDEBUG(stuff) do { std::cerr<<"AG: "<<__FILE__<<", line "<<__LINE__<<", func "<<__func__<<": "<<stuff<<std::endl; } while(0)
 //#define AGDEBUG(stuff)
+
+//================================================================
+namespace { // local helpers
+  struct PlaneRange {
+    int min;
+    int max;
+    bool noGaps;
+    PlaneRange() : min(-1), max(-1), noGaps(false) {}
+  };
+
+  PlaneRange findRange(const ClustersByPlane& cp) {
+    PlaneRange res;
+    typedef ClustersByPlane::const_iterator Iter;
+
+    Iter i = cp.begin();
+    if(i != cp.end()) {
+      assert(!i->second.empty());
+      res.min = i->first;
+      res.max = i->first;
+
+      for(++i; i!=cp.end(); ++i) {
+        if(res.min > i->first) {
+          res.min = i->first;
+        }
+        if(i->first > res.max) {
+          res.max= i->first;
+        }
+      }
+    }
+
+    res.noGaps = ((res.max - res.min + 1) == cp.size());
+
+    return res;
+  }
+}
 
 //================================================================
 bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *Log) {
@@ -49,6 +85,11 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hWinDCUnassignedEarly_ = H.DefineTH1D( "MuCapture", "winDCUnassignedEarly",   "Unassigned DC hits, early", 1000, -1000., 0.);
   hWinDCUnassignedLate_ = H.DefineTH1D( "MuCapture", "winDCUnassignedLate",   "Unassigned DC hits, late", 1000, 0., 1000.);
   hWinDCUnassignedCount_ = H.DefineTH1D( "MuCapture", "winDCUnassignedCount",   "Count of unassigned DC hits", 101, -0.5, 100.5);
+
+  hMuRangePCFirst_ = H.DefineTH1D("MuCapture", "MuRangePCFirst",   "Muon range PC first", 13, -0.5, 12.5);
+  hMuRangePCLast_ = H.DefineTH1D("MuCapture", "MuRangePCLast",   "Muon range PC last", 13, -0.5, 12.5);
+  hMuRangeDCFirst_ = H.DefineTH1D("MuCapture", "MuRangeDCFirst",   "Muon range DC first", 45, -0.5, 44.5);
+  hMuRangeDCLast_ = H.DefineTH1D("MuCapture", "MuRangeDCLast",   "Muon range DC last", 45, -0.5, 44.5);
 
   return true;
 }
@@ -117,6 +158,21 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------
+  const ClustersByPlane muonPCClusters = constructPlaneClusters(winpcs[iPCTrigWin].hits);
+  const ClustersByPlane muonDCClusters = constructPlaneClusters(windcs[iPCTrigWin].hits);
+
+  const PlaneRange pcRange = findRange(muonPCClusters);
+  const PlaneRange dcRange = findRange(muonDCClusters);
+  if(!(pcRange.noGaps  && dcRange.noGaps)) {
+    return CUT_MU_RANGE_GAPS;
+  }
+
+  hMuRangePCFirst_->Fill(pcRange.min);
+  hMuRangePCLast_->Fill(pcRange.max);
+  hMuRangeDCFirst_->Fill(dcRange.min);
+  hMuRangeDCLast_->Fill(dcRange.max);
+
+  //----------------
 
   return CUTS_ACCEPTED;
 }
@@ -169,8 +225,7 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
                                              const TDCHitWPCollection& timeSortedDCHits,
                                              const TimeWindowCollection& winpcs)
 {
-  TimeWindowCollection windcs;
-  windcs.reserve(winpcs.size());
+  TimeWindowCollection windcs(winpcs.size());
 
   if(!timeSortedDCHits.empty()) {
 
@@ -203,7 +258,7 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
       // Order then and move to the next pc window
       std::sort(dcwin.hits.begin(), dcwin.hits.end(), TDCHitWPCmpGeom());
 
-      windcs.push_back(dcwin);
+      windcs[ipcwin] = dcwin;
 
     } // for(pcwin)
 
@@ -217,6 +272,27 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
   } // !timeSortedDCHits.empty()
 
   return windcs;
+}
+
+//================================================================
+ClustersByPlane MuCapture::constructPlaneClusters(const TDCHitWPPtrCollection& hits) {
+  ClustersByPlane res;
+  for(unsigned i=0; i<hits.size(); ++i) {
+
+    WireCluster cl;
+    cl.plane = hits[i]->plane;
+    cl.hits.push_back(hits[i]);
+
+    for(; i<hits.size();++i) {
+      if(cl.plane != hits[i]->plane) break;
+      if(cl.hits.back()->cell + 1 != hits[i]->cell) break;
+      cl.hits.push_back(hits[i]);
+    }
+
+    res[cl.plane].push_back(cl);
+  }
+
+  return res;
 }
 
 //================================================================
