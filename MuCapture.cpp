@@ -28,23 +28,26 @@ namespace { // local helpers
     PlaneRange res;
     typedef ClustersByPlane::const_iterator Iter;
 
-    Iter i = cp.begin();
-    if(i != cp.end()) {
-      assert(!i->second.empty());
-      res.min = i->first;
-      res.max = i->first;
-
-      for(++i; i!=cp.end(); ++i) {
-        if(res.min > i->first) {
+    int numHitPlanes(0);
+    for(Iter  i = cp.begin(); i!=cp.end(); ++i) {
+      if(!i->second.empty()) {
+        ++numHitPlanes;
+        if(res.min == -1) {
           res.min = i->first;
+          res.max = i->first;
         }
-        if(i->first > res.max) {
-          res.max= i->first;
+        else {
+          if(res.min > i->first) {
+            res.min = i->first;
+          }
+          if(i->first > res.max) {
+            res.max= i->first;
+          }
         }
       }
     }
 
-    res.noGaps = ((res.max - res.min + 1) == cp.size());
+    res.noGaps = ((res.max - res.min + 1) == numHitPlanes);
 
     return res;
   }
@@ -188,6 +191,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   const ClustersByPlane muonPCClusters = constructPlaneClusters(winpcs[iPCTrigWin].hits);
+  //std::cout<<"iPCTrigWin hits = \n"<<winpcs[iPCTrigWin].hits<<std::endl;
+  //std::cout<<"muonPCClusters = \n"<<muonPCClusters<<std::endl;
+
   const ClustersByPlane muonDCClusters = constructPlaneClusters(windcs[iPCTrigWin].hits);
 
   const PlaneRange pcRange = findRange(muonPCClusters);
@@ -337,15 +343,15 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
 //================================================================
 ClustersByPlane MuCapture::constructPlaneClusters(const TDCHitWPPtrCollection& hits) {
   ClustersByPlane res;
-  for(unsigned i=0; i<hits.size(); ++i) {
+  for(unsigned i=0; i<hits.size(); ) {
 
     WireCluster cl;
     cl.plane = hits[i]->plane;
     cl.hits.push_back(hits[i]);
 
-    for(; i<hits.size();++i) {
+    for(++i; i<hits.size();++i) {
       if(cl.plane != hits[i]->plane) break;
-      if(cl.hits.back()->cell + 1 != hits[i]->cell) break;
+      if(cl.hits.back()->cell + 1 <  hits[i]->cell) break;
       cl.hits.push_back(hits[i]);
     }
 
