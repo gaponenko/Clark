@@ -35,6 +35,9 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_MU_UV_PC,"mu UV PC");
     ax->SetBinLabel(1+CUT_MU_UV_DC,"mu UV DC");
 
+    ax->SetBinLabel(1+CUT_MUSTOP_SINGLECLUSTER,"Mu single cluster");
+    ax->SetBinLabel(1+CUT_MUSTOP_UV,"Mu stop UV");
+
     ax->SetBinLabel(1+CUTS_ACCEPTED ,"Accepted");
   }
 
@@ -51,6 +54,9 @@ public :
     CUT_MU_DC_RANGE,
     CUT_MU_UV_PC,
     CUT_MU_UV_DC,
+
+    CUT_MUSTOP_SINGLECLUSTER,
+    CUT_MUSTOP_UV,
 
     CUTS_ACCEPTED,
     CUTS_END
@@ -70,6 +76,7 @@ public :
     , muUVPCCellMax_()
     , muUVDCCellMin_()
     , muUVDCCellMax_()
+    , muStopRMax_()
 
     , h_cuts_r()
     , h_cuts_p()
@@ -88,9 +95,12 @@ public :
     , hMuRangeDCLast_()
 
     , hMuUVLimitsPCUp_()
-    , hMuUVLimitsPC56_()
     , hMuUVLimitsDC_()
 
+    , hMuStopUVPos_()
+    , hMuStopRadius_()
+
+    , hMuStopUVWidth_()
   {}
 
 private :
@@ -106,6 +116,7 @@ private :
   int muUVPCCellMax_;
   int muUVDCCellMin_;
   int muUVDCCellMax_;
+  double muStopRMax_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;
@@ -126,8 +137,12 @@ private :
   TH1 *hMuRangeDCLast_;
 
   TH2 *hMuUVLimitsPCUp_;
-  TH2 *hMuUVLimitsPC56_;
   TH2 *hMuUVLimitsDC_;
+
+  TH2 *hMuStopUVPos_;
+  TH1 *hMuStopRadius_;
+
+  TH2 *hMuStopUVWidth_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

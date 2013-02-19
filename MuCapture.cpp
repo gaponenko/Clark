@@ -86,12 +86,14 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   winPCSeparation_ = Conf.read<double>("MuCapture/winPCSeparation");
   winDCLength_ = Conf.read<double>("MuCapture/winDCLength");
   winDCEarlyMargin_ = Conf.read<double>("MuCapture/winDCEarlyMargin");
-  maxUnassignedDCHits_ = Conf.read<double>("MuCapture/maxUnassignedDCHits");
+  maxUnassignedDCHits_ = Conf.read<int>("MuCapture/maxUnassignedDCHits");
 
   muUVPCCellMin_ = Conf.read<int>("MuCapture/muUVPCCellMin");
   muUVPCCellMax_ = Conf.read<int>("MuCapture/muUVPCCellMax");
   muUVDCCellMin_ = Conf.read<int>("MuCapture/muUVDCCellMin");
   muUVDCCellMax_ = Conf.read<int>("MuCapture/muUVDCCellMax");
+
+  muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
 
   //       --------- Histograms initialization ---------          //
 
@@ -120,8 +122,13 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuRangeDCLast_ = H.DefineTH1D("MuCapture", "MuRangeDCLast",   "Muon range DC last", 45, -0.5, 44.5);
 
   hMuUVLimitsPCUp_ = H.DefineTH2D("MuCapture", "MuUVLimitsPCUp", "Muon PC1234 max vs min coordinate", 160, 0.5, 160.5, 160, 0.5, 160.5);
-  hMuUVLimitsPC56_ = H.DefineTH2D("MuCapture", "MuUVLimitsPC56", "Muon PC56 hit UV", 160, 0.5, 160.5, 160, 0.5, 160.5);
   hMuUVLimitsDC_ = H.DefineTH2D("MuCapture", "MuUVLimitsDC", "Muon DC up max vs min coordinate", 80, 0.5, 80.5, 80, 0.5, 80.5);
+
+  // Make the bin size half a cell
+  hMuStopUVPos_ = H.DefineTH2D("MuCapture", "MuStopUVPos", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
+  hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
+
+  hMuStopUVWidth_ = H.DefineTH2D("MuCapture", "MuStopUVWidth", "Muon stop cluster V vs U width (cell units)", 5, 0.5, 5.5,  5, 0.5, 5.5);
 
   return true;
 }
@@ -223,13 +230,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   std::pair<int,int> uvpcuplimits = uvminmax(winpcs[iPCTrigWin].hits, pc1234);
   hMuUVLimitsPCUp_->Fill(uvpcuplimits.first, uvpcuplimits.second);
 
-  std::set<int> pc56;
-  pc56.insert(5); pc56.insert(6);
-  std::pair<int,int> uvpc56limits = uvminmax(winpcs[iPCTrigWin].hits, pc56);
-  hMuUVLimitsPC56_->Fill(uvpc56limits.first, uvpc56limits.second);
-
-  if( (uvpcuplimits.first < muUVPCCellMin_) || (muUVPCCellMax_ < uvpcuplimits.second) ||
-      (uvpc56limits.first < muUVPCCellMin_) || (muUVPCCellMax_ < uvpc56limits.second)) {
+  if( (uvpcuplimits.first < muUVPCCellMin_) || (muUVPCCellMax_ < uvpcuplimits.second)) {
     return CUT_MU_UV_PC;
   }
 
@@ -239,7 +240,29 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_MU_UV_DC;
   }
 
- //----------------
+  //----------------------------------------------------------------
+  // CUT_MUSTOP_UV
+
+  if((muonPCClusters[5].size() != 1) || (muonPCClusters[6].size() != 1)) {
+    return CUT_MUSTOP_SINGLECLUSTER;
+  }
+
+  // See dt_geo.00057 and twist-coordinate-system.uvplanes.pdf
+  const double muStopV = muonPCClusters[5].front().centralCell();
+  const double muStopU = muonPCClusters[6].front().centralCell();
+  hMuStopUVPos_->Fill(muStopU, muStopV);
+
+  // convert to cm
+  const double muStopRadius = 0.2 * sqrt(std::pow(muStopV-80.5, 2) + std::pow(muStopU-80.5, 2));
+  hMuStopRadius_->Fill(muStopRadius);
+  if(muStopRadius > muStopRMax_) {
+    return CUT_MUSTOP_UV;
+  }
+
+  //----------------------------------------------------------------
+  hMuStopUVWidth_->Fill(muonPCClusters[5].front().numCells(), muonPCClusters[6].front().numCells());
+
+  //----------------------------------------------------------------
   return CUTS_ACCEPTED;
 }
 
