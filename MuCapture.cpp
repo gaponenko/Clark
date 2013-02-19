@@ -345,17 +345,17 @@ ClustersByPlane MuCapture::constructPlaneClusters(const TDCHitWPPtrCollection& h
   ClustersByPlane res;
   for(unsigned i=0; i<hits.size(); ) {
 
-    WireCluster cl;
-    cl.plane = hits[i]->plane;
-    cl.hits.push_back(hits[i]);
+    TDCHitWPPtrCollection tmphits;
+    tmphits.push_back(hits[i]);
+    const int plane = hits[i]->plane;
 
     for(++i; i<hits.size();++i) {
-      if(cl.plane != hits[i]->plane) break;
-      if(cl.hits.back()->cell + 1 <  hits[i]->cell) break;
-      cl.hits.push_back(hits[i]);
+      if(plane != hits[i]->plane) break;
+      if(tmphits.back()->cell + 1 <  hits[i]->cell) break;
+      tmphits.push_back(hits[i]);
     }
 
-    res[cl.plane].push_back(cl);
+    res[plane].push_back(WireCluster(tmphits));
   }
 
   return res;

@@ -9,10 +9,22 @@
 
 #include "TDCHitWP.h"
 
-struct WireCluster {
-  int plane;
-  std::vector<TDCHitWPPtr> hits;
-  WireCluster() : plane(-1) {}
+class WireCluster {
+public:
+
+  int plane() const { return plane_; }
+  double centralCell() const { return centralCell_; }
+  double numCells() const { return numCells_; }
+
+  const TDCHitWPPtrCollection& hits() const { return hits_; }
+
+  explicit WireCluster(const TDCHitWPPtrCollection& hits);
+
+private:
+  TDCHitWPPtrCollection hits_;
+  int plane_;
+  double centralCell_;
+  int numCells_;
 };
 
 // plane number => clusters
