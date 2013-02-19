@@ -30,7 +30,8 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_MU_PC_RANGE ,"Mu PC range");
     ax->SetBinLabel(1+CUT_MU_DC_RANGE ,"Mu DC range");
 
-    ax->SetBinLabel(1+CUT_MU_UV,"mu UV");
+    ax->SetBinLabel(1+CUT_MU_UV_PC,"mu UV PC");
+    ax->SetBinLabel(1+CUT_MU_UV_DC,"mu UV DC");
 
     ax->SetBinLabel(1+CUTS_ACCEPTED ,"Accepted");
   }
@@ -46,7 +47,8 @@ public :
     CUT_MU_RANGE_GAPS,
     CUT_MU_PC_RANGE,
     CUT_MU_DC_RANGE,
-    CUT_MU_UV,
+    CUT_MU_UV_PC,
+    CUT_MU_UV_DC,
 
     CUTS_ACCEPTED,
     CUTS_END
@@ -62,6 +64,10 @@ public :
     , winDCLength_()
     , winDCEarlyMargin_()
     , maxUnassignedDCHits_()
+    , muUVPCCellMin_()
+    , muUVPCCellMax_()
+    , muUVDCCellMin_()
+    , muUVDCCellMax_()
 
     , h_cuts_r()
     , h_cuts_p()
@@ -78,6 +84,11 @@ public :
     , hMuRangePCLast_()
     , hMuRangeDCFirst_()
     , hMuRangeDCLast_()
+
+    , hMuUVLimitsPCUp_()
+    , hMuUVLimitsPC56_()
+    , hMuUVLimitsDC_()
+
   {}
 
 private :
@@ -88,6 +99,11 @@ private :
   double winDCLength_;
   double winDCEarlyMargin_;
   int maxUnassignedDCHits_;
+
+  int muUVPCCellMin_;
+  int muUVPCCellMax_;
+  int muUVDCCellMin_;
+  int muUVDCCellMax_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;
@@ -106,6 +122,10 @@ private :
   TH1 *hMuRangePCLast_;
   TH1 *hMuRangeDCFirst_;
   TH1 *hMuRangeDCLast_;
+
+  TH2 *hMuUVLimitsPCUp_;
+  TH2 *hMuUVLimitsPC56_;
+  TH2 *hMuUVLimitsDC_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
