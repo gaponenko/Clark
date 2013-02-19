@@ -172,6 +172,14 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hMuRangeDCFirst_->Fill(dcRange.min);
   hMuRangeDCLast_->Fill(dcRange.max);
 
+  if((pcRange.min != 1)||(pcRange.max != 6)) {
+    return CUT_MU_PC_RANGE;
+  }
+
+  if((dcRange.min != 1)||(dcRange.max != 22)) {
+    return CUT_MU_DC_RANGE;
+  }
+
   //----------------
 
   return CUTS_ACCEPTED;
