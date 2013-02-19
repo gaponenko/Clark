@@ -5,6 +5,7 @@
 #define TDCHitWP_h
 
 #include <vector>
+#include <ostream>
 
 struct TDCHitWP {
   float time;
@@ -60,5 +61,10 @@ struct TDCHitWPCmpGeom {
       (a->plane == b->plane) && (a->cell < b->cell);
   }
 };
+
+//----------------------------------------------------------------
+std::ostream& operator<<(std::ostream& os, const TDCHitWP& hit);
+std::ostream& operator<<(std::ostream& os, const TDCHitWPCollection& hits);
+std::ostream& operator<<(std::ostream& os, const TDCHitWPPtrCollection& hits);
 
 #endif/*TDCHitWP_h*/
