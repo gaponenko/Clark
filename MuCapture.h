@@ -27,6 +27,8 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS ,"Unassigned DC hits");
 
+    ax->SetBinLabel(1+CUT_MU_RANGE_GAPS ,"Mu range gaps");
+
     ax->SetBinLabel(1+CUT_MU_PC_RANGE ,"Mu PC range");
     ax->SetBinLabel(1+CUT_MU_DC_RANGE ,"Mu DC range");
 
