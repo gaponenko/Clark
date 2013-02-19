@@ -199,33 +199,32 @@ void HistogramFactory::Sumw2( string Name)
 
 
 // ============================= File saving section ===================================
+namespace {
+  TDirectory *mkdir_p(TDirectory *parent, const std::string& path) {
+    if(path.empty()) {
+      return parent;
+    }
+    else {
+      const std::string::size_type slashpos = path.find('/');
+      const std::string mydir(path.substr(0, slashpos));
+      const std::string subpath(((slashpos != std::string::npos) && (slashpos+1 < path.size())) ?
+                                path.substr(slashpos + 1) : "" );
 
-void HistogramFactory::DoDirectory( string FilePath)
+      TDirectory *my = parent->GetDirectory(mydir.c_str(), false);
+      if(!my) {
+        // The directory doesn't exist. Create it.
+        my = parent->mkdir(mydir.c_str());
+      }
+      return mkdir_p(my, subpath);
+    }
+  }
+}
+
+void HistogramFactory::DoDirectory(string FilePath)
 {
-	File->cd();
-	if (FilePath == "")
-		return;
-
-	TKey *K;
-	K	= (TKey*)File->GetKey(FilePath.c_str());
-	if (K == NULL)
-	// The directory doesn't exist. Create it.
-	{
-
-		File->mkdir(FilePath.c_str());
-	}
-	else
-	{
-		if ( not K->IsFolder())
-		{
-		// That's embarrasing. Probably a Histogram has the name of the directory we want. Oups !
-			Log->warn("The directory %s cannot be created because a histogram has already this name. The root directory will be used instead.",FilePath.c_str());
-			return;
-		}
-
-	}
-	File->cd(FilePath.c_str());
-	
+  File->cd();
+  mkdir_p(File, FilePath);
+  File->cd(FilePath.c_str());
 }
 
 
