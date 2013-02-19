@@ -128,7 +128,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuStopUVPos_ = H.DefineTH2D("MuCapture", "MuStopUVPos", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
   hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
-  hMuStopUVWidth_ = H.DefineTH2D("MuCapture", "MuStopUVWidth", "Muon stop cluster V vs U width (cell units)", 5, 0.5, 5.5,  5, 0.5, 5.5);
+  //----------------------------------------------------------------
+  pactCut_.init(H, Conf);
 
   return true;
 }
@@ -260,7 +261,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------------------------------------------------------
-  hMuStopUVWidth_->Fill(muonPCClusters[5].front().numCells(), muonPCClusters[6].front().numCells());
+  if(1 != pactCut_.quadrant(muonPCClusters[5].front(), muonPCClusters[6].front())) {
+    return CUT_MUSTOP_PACT;
+  }
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

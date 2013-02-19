@@ -9,6 +9,8 @@
 #include "TimeWindow.h"
 #include "WireCluster.h"
 
+#include "MuCapPACT.h"
+
 #include "TAxis.h"
 class TH1;
 class TH2;
@@ -38,6 +40,8 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_MUSTOP_SINGLECLUSTER,"Mu single cluster");
     ax->SetBinLabel(1+CUT_MUSTOP_UV,"Mu stop UV");
 
+    ax->SetBinLabel(1+CUT_MUSTOP_PACT,"Mu stop PACT");
+
     ax->SetBinLabel(1+CUTS_ACCEPTED ,"Accepted");
   }
 
@@ -57,6 +61,8 @@ public :
 
     CUT_MUSTOP_SINGLECLUSTER,
     CUT_MUSTOP_UV,
+
+    CUT_MUSTOP_PACT,
 
     CUTS_ACCEPTED,
     CUTS_END
@@ -99,8 +105,6 @@ public :
 
     , hMuStopUVPos_()
     , hMuStopRadius_()
-
-    , hMuStopUVWidth_()
   {}
 
 private :
@@ -142,7 +146,7 @@ private :
   TH2 *hMuStopUVPos_;
   TH1 *hMuStopRadius_;
 
-  TH2 *hMuStopUVWidth_;
+  MuCapPACT pactCut_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

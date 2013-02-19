@@ -16,6 +16,8 @@ public:
   double centralCell() const { return centralCell_; }
   double numCells() const { return numCells_; }
 
+  double totalTDCWidth() const;
+
   const TDCHitWPPtrCollection& hits() const { return hits_; }
 
   explicit WireCluster(const TDCHitWPPtrCollection& hits);

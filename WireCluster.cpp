@@ -31,6 +31,15 @@ WireCluster::WireCluster(const TDCHitWPPtrCollection& in)
 }
 
 //================================================================
+double WireCluster::totalTDCWidth() const {
+  double res(0);
+  for(TDCHitWPPtrCollection::const_iterator i= ++hits_.begin(); i!=hits_.end(); ++i) {
+    res += (*i)->width;
+  }
+  return res;
+}
+
+//================================================================
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl) {
   return os<<"Cluster(plane="<<cl.plane()<<", hits = "<<cl.hits()<<" )";
 }
