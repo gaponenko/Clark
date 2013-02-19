@@ -41,8 +41,10 @@ std::ostream& operator<<(std::ostream& os, const WireClusterCollection& coll) {
 }
 
 std::ostream& operator<<(std::ostream& os, const ClustersByPlane& cbp) {
-  for(ClustersByPlane::const_iterator i=cbp.begin(); i!=cbp.end(); ++i) {
-    os<<i->second;
+  os<<"ClustersByPlane: num planes = "<<cbp.size()<<",\n";
+  for(unsigned i=0; i < cbp.size(); ++i) {
+    os<<"plane "<<i<<" clusters:\n";
+    os<<cbp[i];
   }
   return os;
 }

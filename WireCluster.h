@@ -29,7 +29,7 @@ private:
 
 // plane number => clusters
 typedef std::vector<WireCluster> WireClusterCollection;
-typedef std::map<int, WireClusterCollection> ClustersByPlane;
+typedef std::vector<WireClusterCollection> ClustersByPlane;
 
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl);
 std::ostream& operator<<(std::ostream& os, const WireClusterCollection& coll);

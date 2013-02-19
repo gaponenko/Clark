@@ -29,19 +29,19 @@ namespace { // local helpers
     typedef ClustersByPlane::const_iterator Iter;
 
     int numHitPlanes(0);
-    for(Iter  i = cp.begin(); i!=cp.end(); ++i) {
-      if(!i->second.empty()) {
+    for(unsigned  i = 0; i<cp.size(); ++i) {
+      if(!cp[i].empty()) {
         ++numHitPlanes;
         if(res.min == -1) {
-          res.min = i->first;
-          res.max = i->first;
+          res.min = i;
+          res.max = i;
         }
         else {
-          if(res.min > i->first) {
-            res.min = i->first;
+          if(res.min > i) {
+            res.min = i;
           }
-          if(i->first > res.max) {
-            res.max= i->first;
+          if(i > res.max) {
+            res.max= i;
           }
         }
       }
@@ -190,11 +190,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------------------------------------------------------
-  const ClustersByPlane muonPCClusters = constructPlaneClusters(winpcs[iPCTrigWin].hits);
+  const ClustersByPlane muonPCClusters = constructPlaneClusters(12, winpcs[iPCTrigWin].hits);
   //std::cout<<"iPCTrigWin hits = \n"<<winpcs[iPCTrigWin].hits<<std::endl;
   //std::cout<<"muonPCClusters = \n"<<muonPCClusters<<std::endl;
 
-  const ClustersByPlane muonDCClusters = constructPlaneClusters(windcs[iPCTrigWin].hits);
+  const ClustersByPlane muonDCClusters = constructPlaneClusters(44, windcs[iPCTrigWin].hits);
 
   const PlaneRange pcRange = findRange(muonPCClusters);
   const PlaneRange dcRange = findRange(muonDCClusters);
@@ -341,8 +341,9 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
 }
 
 //================================================================
-ClustersByPlane MuCapture::constructPlaneClusters(const TDCHitWPPtrCollection& hits) {
-  ClustersByPlane res;
+ClustersByPlane MuCapture::constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrCollection& hits) {
+  ClustersByPlane res(1+maxPlaneNumber);
+
   for(unsigned i=0; i<hits.size(); ) {
 
     TDCHitWPPtrCollection tmphits;

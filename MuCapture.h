@@ -138,7 +138,7 @@ private :
 
   TimeWindowCollection assignDCHits(TDCHitWPPtrCollection* unassignedDCHits, const TDCHitWPCollection& timeSortedDCHits, const TimeWindowCollection& winpcs);
 
-  ClustersByPlane constructPlaneClusters(const TDCHitWPPtrCollection& hits);
+  ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrCollection& hits);
 };
 
 #endif/*MuCapture_h*/
