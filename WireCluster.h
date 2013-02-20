@@ -33,6 +33,9 @@ private:
 typedef std::vector<WireCluster> WireClusterCollection;
 typedef std::vector<WireClusterCollection> ClustersByPlane;
 
+// The clusterization
+ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrCollection& hits);
+
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl);
 std::ostream& operator<<(std::ostream& os, const WireClusterCollection& coll);
 std::ostream& operator<<(std::ostream& os, const ClustersByPlane& cbp);

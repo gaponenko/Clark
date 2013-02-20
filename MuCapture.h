@@ -156,8 +156,6 @@ private :
   int findTriggerWindow(const TimeWindowCollection& windows);
 
   TimeWindowCollection assignDCHits(TDCHitWPPtrCollection* unassignedDCHits, const TDCHitWPCollection& timeSortedDCHits, const TimeWindowCollection& winpcs);
-
-  ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrCollection& hits);
 };
 
 #endif/*MuCapture_h*/

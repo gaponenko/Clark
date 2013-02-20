@@ -40,6 +40,28 @@ double WireCluster::totalTDCWidth() const {
 }
 
 //================================================================
+ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrCollection& hits) {
+  ClustersByPlane res(1+maxPlaneNumber);
+
+  for(unsigned i=0; i<hits.size(); ) {
+
+    TDCHitWPPtrCollection tmphits;
+    tmphits.push_back(hits[i]);
+    const int plane = hits[i]->plane;
+
+    for(++i; i<hits.size();++i) {
+      if(plane != hits[i]->plane) break;
+      if(tmphits.back()->cell + 1 <  hits[i]->cell) break;
+      tmphits.push_back(hits[i]);
+    }
+
+    res[plane].push_back(WireCluster(tmphits));
+  }
+
+  return res;
+}
+
+//================================================================
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl) {
   return os<<"Cluster(plane="<<cl.plane()<<", hits = "<<cl.hits()<<" )";
 }
