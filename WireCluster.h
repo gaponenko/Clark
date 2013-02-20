@@ -29,12 +29,17 @@ private:
   int numCells_;
 };
 
-// plane number => clusters
+// clusters in one plane
 typedef std::vector<WireCluster> WireClusterCollection;
+
+// clusters[plane]
 typedef std::vector<WireClusterCollection> ClustersByPlane;
 
-// The clusterization
+// The clusterization, for PC and DC hits
 ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrCollection& hits);
+
+// Combine PCs and DCs together
+ClustersByPlane globalPlaneClusters(const ClustersByPlane& pcClusters, const ClustersByPlane& dcClusters);
 
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl);
 std::ostream& operator<<(std::ostream& os, const WireClusterCollection& coll);

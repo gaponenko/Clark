@@ -12,46 +12,13 @@
 #include "TH1.h"
 #include "TH2.h"
 
+#include "PlaneRange.h"
+
 #define AGDEBUG(stuff) do { std::cerr<<"AG: "<<__FILE__<<", line "<<__LINE__<<", func "<<__func__<<": "<<stuff<<std::endl; } while(0)
 //#define AGDEBUG(stuff)
 
 //================================================================
 namespace { // local helpers
-  struct PlaneRange {
-    int min;
-    int max;
-    bool noGaps;
-    PlaneRange() : min(-1), max(-1), noGaps(false) {}
-  };
-
-  PlaneRange findRange(const ClustersByPlane& cp) {
-    PlaneRange res;
-    typedef ClustersByPlane::const_iterator Iter;
-
-    int numHitPlanes(0);
-    for(unsigned  i = 0; i<cp.size(); ++i) {
-      if(!cp[i].empty()) {
-        ++numHitPlanes;
-        if(res.min == -1) {
-          res.min = i;
-          res.max = i;
-        }
-        else {
-          if(res.min > i) {
-            res.min = i;
-          }
-          if(i > res.max) {
-            res.max= i;
-          }
-        }
-      }
-    }
-
-    res.noGaps = ((res.max - res.min + 1) == numHitPlanes);
-
-    return res;
-  }
-
   //----------------------------------------------------------------
   std::pair<int,int> uvminmax(const TDCHitWPPtrCollection& hits, const std::set<int>& onlyPlanes = std::set<int>()) {
     int cmin=999, cmax=-1;
@@ -69,7 +36,6 @@ namespace { // local helpers
   }
 
   //----------------------------------------------------------------
-
 }
 
 //================================================================
@@ -96,6 +62,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
 
   //       --------- Histograms initialization ---------          //
+  pactCut_.init(H, Conf);
+  protonWindow_.init(H, Conf);
 
   h_cuts_r = H.DefineTH1D("MuCapture", "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
@@ -129,7 +97,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
   //----------------------------------------------------------------
-  pactCut_.init(H, Conf);
 
   return true;
 }
@@ -204,8 +171,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   const ClustersByPlane muonDCClusters = constructPlaneClusters(44, windcs[iPCTrigWin].hits);
 
-  const PlaneRange pcRange = findRange(muonPCClusters);
-  const PlaneRange dcRange = findRange(muonDCClusters);
+  const PlaneRange pcRange = findPlaneRange(muonPCClusters);
+  const PlaneRange dcRange = findPlaneRange(muonDCClusters);
   if(!(pcRange.noGaps  && dcRange.noGaps)) {
     return CUT_MU_RANGE_GAPS;
   }
@@ -266,8 +233,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------------------------------------------------------
-  const int iCaptureWin = iPCTrigWin + 1;
-
+  const int iProtonWin = iPCTrigWin + 1;
+  protonWindow_.process(muStopU, muStopV, winpcs[iProtonWin].hits, windcs[iProtonWin].hits, unassignedDCHits);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

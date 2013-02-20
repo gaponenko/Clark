@@ -62,6 +62,35 @@ ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrColl
 }
 
 //================================================================
+ClustersByPlane globalPlaneClusters(const ClustersByPlane& pcClusters, const ClustersByPlane& dcClusters) {
+  assert(pcClusters.size() == 13);
+  assert(dcClusters.size() == 45);
+  ClustersByPlane res(57);
+
+  for(int iGlobal=1; iGlobal <=4; ++iGlobal) {
+    res[iGlobal] = pcClusters[iGlobal];
+  }
+
+  for(int iGlobal=5; iGlobal <=26; ++iGlobal) {
+    res[iGlobal] = dcClusters[iGlobal - 4];
+  }
+
+  for(int iGlobal=27; iGlobal <=30; ++iGlobal) {
+    res[iGlobal] = pcClusters[iGlobal - 22];
+  }
+
+  for(int iGlobal=31; iGlobal <=52; ++iGlobal) {
+    res[iGlobal] = dcClusters[iGlobal - 8];
+  }
+
+  for(int iGlobal=53; iGlobal <=56; ++iGlobal) {
+    res[iGlobal] = pcClusters[iGlobal - 44];
+  }
+
+  return res;
+}
+
+//================================================================
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl) {
   return os<<"Cluster(plane="<<cl.plane()<<", hits = "<<cl.hits()<<" )";
 }

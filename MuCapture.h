@@ -10,6 +10,7 @@
 #include "WireCluster.h"
 
 #include "MuCapPACT.h"
+#include "MuCapProtonWindow.h"
 
 #include "TAxis.h"
 class TH1;
@@ -122,6 +123,9 @@ private :
   int muUVDCCellMax_;
   double muStopRMax_;
 
+  MuCapPACT pactCut_;
+  MuCapProtonWindow protonWindow_;
+
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;
 
@@ -145,8 +149,6 @@ private :
 
   TH2 *hMuStopUVPos_;
   TH1 *hMuStopRadius_;
-
-  MuCapPACT pactCut_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
