@@ -13,7 +13,7 @@ struct TDCHitWP {
   int plane;
   int cell;
 
-  TDCHitWP(float t, float w, float p, float c)
+  TDCHitWP(float t, float w, int p, int c)
     : time(t), width(w), plane(p), cell(c)
   {}
 };
