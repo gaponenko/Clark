@@ -97,6 +97,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
   //----------------------------------------------------------------
+  hwidthPCall_.init("MuCapture/pcWidthAll", "pcwidth", 12, H, Conf);
+  hwidthDCall_.init("MuCapture/dcWidthAll", "dcwidth", 44, H, Conf);
+
+  //----------------------------------------------------------------
 
   return true;
 }
@@ -115,6 +119,10 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
 
 //================================================================
 MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &hist) {
+
+  // Fill the "all hits" histos
+  hwidthPCall_.fill(evt.pc_hits_by_time());
+  hwidthDCall_.fill(evt.dc_hits_by_time());
 
   //----------------------------------------------------------------
   // Sort PC hits into time windows

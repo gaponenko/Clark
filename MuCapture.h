@@ -11,6 +11,7 @@
 
 #include "MuCapPACT.h"
 #include "MuCapProtonWindow.h"
+#include "HistTDCWidth.h"
 
 #include "TAxis.h"
 class TH1;
@@ -149,6 +150,9 @@ private :
 
   TH2 *hMuStopUVPos_;
   TH1 *hMuStopRadius_;
+
+  HistTDCWidth hwidthPCall_;
+  HistTDCWidth hwidthDCall_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
