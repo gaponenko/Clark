@@ -100,6 +100,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hwidthPCall_.init("MuCapture/pcWidthAll", "pcwidth", 12, H, Conf);
   hwidthDCall_.init("MuCapture/dcWidthAll", "dcwidth", 44, H, Conf);
 
+  hwidthPCMuWin_.init("MuCapture/pcWidthMuWin", "pcmuwidth", 12, H, Conf);
+  hwidthDCMuWin_.init("MuCapture/dcWidthMuWin", "dcmuwidth", 44, H, Conf);
+
   //----------------------------------------------------------------
 
   return true;
@@ -241,6 +244,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------------------------------------------------------
+  hwidthPCMuWin_.fill(winpcs[iPCTrigWin].hits);
+  hwidthDCMuWin_.fill(windcs[iPCTrigWin].hits);
+
   const int iProtonWin = iPCTrigWin + 1;
   protonWindow_.process(muStopU, muStopV, winpcs[iProtonWin].hits, windcs[iProtonWin].hits, unassignedDCHits, evt);
 

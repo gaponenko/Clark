@@ -154,6 +154,9 @@ private :
   HistTDCWidth hwidthPCall_;
   HistTDCWidth hwidthDCall_;
 
+  HistTDCWidth hwidthPCMuWin_;
+  HistTDCWidth hwidthDCMuWin_;
+
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
   TimeWindowCollection constructTimeWindows(const TDCHitWPCollection& timeSortedHits, double winLength);

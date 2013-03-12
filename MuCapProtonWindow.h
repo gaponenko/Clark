@@ -5,6 +5,7 @@
 
 #include "EventClass.h"
 #include "WireCluster.h"
+#include "HistTDCWidth.h"
 
 #include "TAxis.h"
 class TH1;
@@ -67,6 +68,9 @@ private :
 
   TH1 *hLastPlane_;
   TH1 *hProtonTime_;
+
+  HistTDCWidth hwidthPCProtonWin_;
+  HistTDCWidth hwidthDCProtonWin_;
 
   EventCutNumber analyze(double muStopU, double muStopV,
                          const TDCHitWPPtrCollection& protonPCHits,

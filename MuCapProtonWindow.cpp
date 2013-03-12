@@ -51,6 +51,9 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
 
   hLastPlane_ = hf.DefineTH1D("MuCapture/ProtonWindow", "lastPlane", "Proton last plane", 56, 0.5, 56.5);
   hProtonTime_ = hf.DefineTH1D("MuCapture/ProtonWindow", "protonTime", "Proton time", 1000, 0., 10000.);
+
+  hwidthPCProtonWin_.init("MuCapture/pcWidthProton", "pcpwidth", 12, hf, conf);
+  hwidthDCProtonWin_.init("MuCapture/dcWidthProton", "dcpwidth", 44, hf, conf);
 }
 
 //================================================================
@@ -111,6 +114,9 @@ analyze(double muStopU, double muStopV,
   hProtonTime_->Fill(getMinTime(clustersPC[7]));
 
   //std::cout<<"accepted: "<<evt.nrun<<"\t"<<evt.nevt<<"\t"<<gr.max<<std::endl;
+
+  hwidthPCProtonWin_.fill(protonPCHits);
+  hwidthDCProtonWin_.fill(protonDCHits);
 
   return CUTS_ACCEPTED;
 }
