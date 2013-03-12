@@ -32,6 +32,16 @@ using namespace std;
 
 
 class HistogramFactory {
+  struct StoredObjectData {
+    TObject *obj;
+    std::string path;
+    std::string name;
+    int writeOpt;
+    StoredObjectData(TObject *o, const std::string& p, const std::string& n, int opt)
+      : obj(o), path(p), name(n), writeOpt(opt)
+    {}
+  };
+
 	public :
 		HistogramFactory()	{};
 		~HistogramFactory()	{};
@@ -66,7 +76,7 @@ class HistogramFactory {
 		// ============================= File saving section ===================================
 		void	Save();
 		void	DoDirectory(string FilePath);
-		void	Store(string Name, string Path, string TmpType);
+		void	Store(TObject* obj, string Name, string Path, string TmpType);
 
 	private :
 		map<string, TH1D*> H1D;
@@ -78,7 +88,7 @@ class HistogramFactory {
 		map<string, string> Dir;
 		map<string, int> Cuts;
 		vector<string> OrderedCuts;
-		vector<string> OrderedHists;
+		vector<StoredObjectData> OrderedHists;
 		TFile *File;
 		log4cpp::Category *Log;
 };

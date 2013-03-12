@@ -18,7 +18,7 @@ bool HistogramFactory::Init(log4cpp::Category *TmpLog, const char* Filename)
 TH1D* HistogramFactory::DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax)
 {
 	H1D[Name]	= new TH1D(Name.c_str(), Title.c_str(), xBins, xMin, xMax);
-	Store( Name, Path, "TH1D");
+	Store(H1D[Name], Name, Path, "TH1D");
         return H1D[Name];
 }
 
@@ -32,14 +32,14 @@ TH1D* HistogramFactory::DefineTH1D_varwidth(string Path, string Name, string Tit
 	H1D[Name]	= new TH1D(Name.c_str(), Title.c_str(), BinVect.size()-1, bins);
 	H1D[Name]->Sumw2();			// use sqrt(sum of weights) instead of sqrt(entries)
 	H1D[Name]->SetOption("e1");	// show horizontal error bars
-	Store( Name, Path, "TH1D");
+	Store(H1D[Name], Name, Path, "TH1D");
         return H1D[Name];
 }
 
 TH2D* HistogramFactory::DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax)
 {
 	H2D[Name]	= new TH2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax);
-	Store( Name, Path, "TH2D");
+	Store(H2D[Name], Name, Path, "TH2D");
         return H2D[Name];
 }
 
@@ -52,14 +52,14 @@ TH2D* HistogramFactory::DefineTH2D_Yvarwidth(string Path, string Name, string Ti
 	}	
 	H2D[Name]	= new TH2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBinVect.size()-1, ybins);
 	H2D[Name]->Sumw2();			// use sqrt(sum of weights) instead of sqrt(entries)
-	Store( Name, Path, "TH2D");
+	Store(H2D[Name], Name, Path, "TH2D");
         return H2D[Name];
 }
 
 TH3D* HistogramFactory::DefineTH3D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, int zBins, double zMin, double zMax)
 {
 	H3D[Name]	= new TH3D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax, zBins, zMin, zMax);
-	Store( Name, Path, "TH3D");
+	Store(H3D[Name], Name, Path, "TH3D");
         return H3D[Name];
 }
 
@@ -67,14 +67,14 @@ void HistogramFactory::DefineArrayOfStr(string Path, string Name)
 {
 	ObjArray[Name]	= new TObjArray();
 	ObjArray[Name]->SetName(Name.c_str());
-	Store( Name, Path, "TObjArray");
+	Store(ObjArray[Name], Name, Path, "TObjArray");
 }
 
 void HistogramFactory::DefineObjString( string Path, string Name)
 {
 	ObjString[Name] = new TObjString();
 	// ObjString[Name]->SetName(Name.c_str());
-	Store( Name, Path, "TObjString");
+	Store(ObjString[Name], Name, Path, "TObjString");
 }
 
 
@@ -106,12 +106,17 @@ void HistogramFactory::DefineNbExtraTracksPerCut(const char* Path, const char* T
 		H2D["NbExtraTracksPerCut"]->GetXaxis()->SetBinLabel( b+1, OrderedCuts[b].c_str() );
 }
 
-void HistogramFactory::Store( string Name, string Path, string TmpType)
+void HistogramFactory::Store(TObject *obj, string Name, string Path, string TmpType)
 {
-	Dir[Name]	= Path;
-	Type[Name]	= TmpType;
-	File->cd();
-	OrderedHists.push_back(Name);
+  TH1 *hh = dynamic_cast<TH1*>(obj);
+  if(hh) {
+    hh->SetDirectory(0); // avoid name clashes
+  }
+  Dir[Name]	= Path;
+  Type[Name]	= TmpType;
+  File->cd();
+  int opt = ((TmpType == "TObjArray") || (TmpType == "TObjString")) ? TObject::kSingleKey: 0;
+  OrderedHists.push_back(StoredObjectData(obj, Path, Name, opt));
 }
 
 
@@ -230,27 +235,15 @@ void HistogramFactory::DoDirectory(string FilePath)
 
 void HistogramFactory::Save()
 {
-	int H = H1D.size() + H2D.size();
-	if ( H > 0)
-	{
-		TObject *Dummy = new TObject();
-		for(vector<string>::iterator N=OrderedHists.begin(); N != OrderedHists.end(); N++)
-		{
-			Log->info("Storing %s %s",Type[*N].c_str(), (*N).c_str());
-			DoDirectory(Dir[*N]);
-			if (Type[*N] == "TH1D")
-				H1D[*N]->Write();
-			else if (Type[*N] == "TH2D")
-				H2D[*N]->Write();
-			else if (Type[*N] == "TH3D")
-				H3D[*N]->Write();
-			else if (Type[*N] == "TObjArray")
-				ObjArray[*N]->Write((*N).c_str(), Dummy->kSingleKey);
-			else if (Type[*N] == "TObjString")
-				ObjString[*N]->Write((*N).c_str(), Dummy->kSingleKey);
-			else
-				Log->error("The object %s cannot be saved. Its type is not supported by HistogramFactory");
-			File->cd();
-		}
-	}
+  int H = H1D.size() + H2D.size();
+  if ( H > 0)
+    {
+      for(vector<StoredObjectData>::iterator N=OrderedHists.begin(); N != OrderedHists.end(); N++)
+        {
+          Log->info("Storing %s %s",Type[N->name].c_str(), (N->name).c_str());
+          DoDirectory(N->path);
+          N->obj->Write(N->name.c_str(), N->writeOpt);
+          File->cd();
+        }
+    }
 }
