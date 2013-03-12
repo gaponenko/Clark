@@ -234,7 +234,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   const int iProtonWin = iPCTrigWin + 1;
-  protonWindow_.process(muStopU, muStopV, winpcs[iProtonWin].hits, windcs[iProtonWin].hits, unassignedDCHits);
+  protonWindow_.process(muStopU, muStopV, winpcs[iProtonWin].hits, windcs[iProtonWin].hits, unassignedDCHits, evt);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

@@ -3,6 +3,7 @@
 #ifndef MuCapProtonWindow_h
 #define MuCapProtonWindow_h
 
+#include "EventClass.h"
 #include "WireCluster.h"
 
 #include "TAxis.h"
@@ -37,7 +38,8 @@ public:
   void process(double muStopU, double muStopV,
                const TDCHitWPPtrCollection& protonPCHits,
                const TDCHitWPPtrCollection& protonDCHits,
-               const TDCHitWPPtrCollection& unassignedDCHits
+               const TDCHitWPPtrCollection& unassignedDCHits,
+               const EventClass& evt
                );
 
   MuCapProtonWindow()
@@ -69,7 +71,8 @@ private :
   EventCutNumber analyze(double muStopU, double muStopV,
                          const TDCHitWPPtrCollection& protonPCHits,
                          const TDCHitWPPtrCollection& protonDCHits,
-                         const TDCHitWPPtrCollection& unassignedDCHits
+                         const TDCHitWPPtrCollection& unassignedDCHits,
+                         const EventClass& evt
                          );
 };
 

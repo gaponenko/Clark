@@ -57,10 +57,11 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
 void MuCapProtonWindow::process(double muStopU, double muStopV,
                                 const TDCHitWPPtrCollection& protonPCHits,
                                 const TDCHitWPPtrCollection& protonDCHits,
-                                const TDCHitWPPtrCollection& unassignedDCHits
+                                const TDCHitWPPtrCollection& unassignedDCHits,
+                                const EventClass& evt
                                 )
 {
-  EventCutNumber c = analyze(muStopV, muStopV, protonPCHits, protonDCHits, unassignedDCHits);
+  EventCutNumber c = analyze(muStopV, muStopV, protonPCHits, protonDCHits, unassignedDCHits, evt);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -72,7 +73,8 @@ MuCapProtonWindow::EventCutNumber MuCapProtonWindow::
 analyze(double muStopU, double muStopV,
         const TDCHitWPPtrCollection& protonPCHits,
         const TDCHitWPPtrCollection& protonDCHits,
-        const TDCHitWPPtrCollection& unassignedDCHits
+        const TDCHitWPPtrCollection& unassignedDCHits,
+        const EventClass& evt
         )
 {
 
@@ -107,6 +109,8 @@ analyze(double muStopU, double muStopV,
 //  }
 
   hProtonTime_->Fill(getMinTime(clustersPC[7]));
+
+  //std::cout<<"accepted: "<<evt.nrun<<"\t"<<evt.nevt<<"\t"<<gr.max<<std::endl;
 
   return CUTS_ACCEPTED;
 }
