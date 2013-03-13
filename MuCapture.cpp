@@ -48,6 +48,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
+  cutMinTDCWidthPC_ = Conf.read<double>("MuCapture/cutMinTDCWidthPC");
+  cutMinTDCWidthDC_ = Conf.read<double>("MuCapture/cutMinTDCWidthDC");
   winPCLength_ = Conf.read<double>("MuCapture/winPCLength");
   winPCSeparation_ = Conf.read<double>("MuCapture/winPCSeparation");
   winDCLength_ = Conf.read<double>("MuCapture/winDCLength");
@@ -130,7 +132,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Sort PC hits into time windows
 
-  const TimeWindowCollection winpcs = constructTimeWindows(evt.pc_hits_by_time(), winPCLength_);
+  const TDCHitWPPtrCollection filtered_pc_hits_by_time = selectHits(evt.pc_hits_by_time(), cutMinTDCWidthPC_);
+  const TimeWindowCollection winpcs = constructTimeWindows(filtered_pc_hits_by_time, winPCLength_);
 
   const int iPCTrigWin = findTriggerWindow(winpcs);
 
@@ -168,7 +171,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------
   // Process DC hits
   TDCHitWPPtrCollection unassignedDCHits;
-  const TimeWindowCollection windcs = assignDCHits(&unassignedDCHits, evt.dc_hits_by_time(), winpcs);
+  const TDCHitWPPtrCollection filtered_dc_hits_by_time = selectHits(evt.dc_hits_by_time(), cutMinTDCWidthDC_);
+  const TimeWindowCollection windcs = assignDCHits(&unassignedDCHits, filtered_dc_hits_by_time, winpcs);
   hWinDCUnassignedCount_->Fill(unassignedDCHits.size());
 
   if(unassignedDCHits.size() > maxUnassignedDCHits_) {
@@ -255,7 +259,18 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 }
 
 //================================================================
-TimeWindowCollection MuCapture::constructTimeWindows(const TDCHitWPCollection& pchits, double winLength) {
+TDCHitWPPtrCollection MuCapture::selectHits(const TDCHitWPCollection& hits, double minWidthCut) {
+  TDCHitWPPtrCollection res;
+  for(unsigned i=0; i<hits.size(); ++i) {
+    if(hits[i].width > minWidthCut) {
+      res.push_back(TDCHitWPPtr(hits, i));
+    }
+  }
+  return res;
+}
+
+//================================================================
+TimeWindowCollection MuCapture::constructTimeWindows(const TDCHitWPPtrCollection& pchits, double winLength) {
 
   TimeWindowCollection winpcs;
 
@@ -263,12 +278,12 @@ TimeWindowCollection MuCapture::constructTimeWindows(const TDCHitWPCollection& p
 
     // This hit starts a new window
     TimeWindow win;
-    win.tstart = pchits[i].time;
+    win.tstart = pchits[i]->time;
     win.tend = win.tstart + winLength;
 
     // Put all hits falling in the  given time interval into the same window
-    while((i < pchits.size()) && (pchits[i].time < win.tend)) {
-      win.hits.push_back(TDCHitWPPtr(pchits, i));
+    while((i < pchits.size()) && (pchits[i]->time < win.tend)) {
+      win.hits.push_back(pchits[i]);
       ++i;
     }
 
@@ -299,7 +314,7 @@ int MuCapture::findTriggerWindow(const TimeWindowCollection& windows) {
 
 //================================================================
 TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDCHits,
-                                             const TDCHitWPCollection& timeSortedDCHits,
+                                             const TDCHitWPPtrCollection& timeSortedDCHits,
                                              const TimeWindowCollection& winpcs)
 {
   TimeWindowCollection windcs(winpcs.size());
@@ -314,9 +329,9 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
       dcwin.tstart = winpcs[ipcwin].tstart - winDCEarlyMargin_;
       dcwin.tend = dcwin.tstart + winDCLength_;
 
-      for(; idchit < timeSortedDCHits.size() && (timeSortedDCHits[idchit].time < dcwin.tend); ++idchit) {
-        TDCHitWPPtr phit(timeSortedDCHits, idchit);
-        if(timeSortedDCHits[idchit].time < dcwin.tstart) {
+      for(; idchit < timeSortedDCHits.size() && (timeSortedDCHits[idchit]->time < dcwin.tend); ++idchit) {
+        TDCHitWPPtr phit = timeSortedDCHits[idchit];
+        if(timeSortedDCHits[idchit]->time < dcwin.tstart) {
 
           unassignedDCHits->push_back(phit);
 
@@ -341,7 +356,7 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
 
     // Record any leftover hits
     for(; idchit < timeSortedDCHits.size(); ++idchit) {
-      TDCHitWPPtr phit(timeSortedDCHits, idchit);
+      TDCHitWPPtr phit = timeSortedDCHits[idchit];
       unassignedDCHits->push_back(phit);
       hWinDCUnassignedLate_->Fill(phit->time - windcs.back().tend);
     }

@@ -75,6 +75,8 @@ public :
 
   MuCapture()
     : doDefaultTWIST_(false)
+    , cutMinTDCWidthPC_()
+    , cutMinTDCWidthDC_()
     , winPCLength_()
     , winPCSeparation_()
     , winDCLength_()
@@ -111,6 +113,10 @@ public :
 
 private :
   bool doDefaultTWIST_;
+
+  double cutMinTDCWidthPC_;
+  double cutMinTDCWidthDC_;
+
   double winPCLength_;
   double winPCSeparation_;
 
@@ -159,12 +165,14 @@ private :
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
-  TimeWindowCollection constructTimeWindows(const TDCHitWPCollection& timeSortedHits, double winLength);
+  TDCHitWPPtrCollection selectHits(const TDCHitWPCollection& hits, double minWidthCut);
+
+  TimeWindowCollection constructTimeWindows(const TDCHitWPPtrCollection& timeSortedHits, double winLength);
 
   // Returns the index of the window with start time closest to t=0
   int findTriggerWindow(const TimeWindowCollection& windows);
 
-  TimeWindowCollection assignDCHits(TDCHitWPPtrCollection* unassignedDCHits, const TDCHitWPCollection& timeSortedDCHits, const TimeWindowCollection& winpcs);
+  TimeWindowCollection assignDCHits(TDCHitWPPtrCollection* unassignedDCHits, const TDCHitWPPtrCollection& timeSortedDCHits, const TimeWindowCollection& winpcs);
 };
 
 #endif/*MuCapture_h*/
