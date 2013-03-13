@@ -22,7 +22,6 @@ public:
             HistogramFactory &hf,
             const ConfigFile &conf);
 
-  void fill(const TDCHitWP& hit);
   void fill(const TDCHitWPCollection& hits);
   void fill(const TDCHitWPPtrCollection& hits);
 
@@ -31,6 +30,9 @@ public:
 private :
   TH1 *hWidth_;
   std::vector<TH1*> byPlane_;
+  std::vector<TH1*> minWidth_;
+
+  void fill(const TDCHitWP& hit);
 };
 
 #endif/*HistTDCWidth_h*/
