@@ -31,6 +31,7 @@ private :
   TH1 *hWidth_;
   std::vector<TH1*> byPlane_;
   std::vector<TH1*> minWidth_;
+  std::vector<TH1*> maxWidth_;
 
   void fill(const TDCHitWP& hit);
 };

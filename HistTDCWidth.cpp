@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
+#include <limits>
 
 #include "TH1.h"
 
@@ -15,23 +16,32 @@
 
 //================================================================
 namespace {
-  class MinWidthFinder {
-  public:
-    typedef std::map<int,double> MinWidthMap;
-    const MinWidthMap& getMinWidths() const { return mw_; }
-    void addHit(const TDCHitWP& hit);
-  private:
-    MinWidthMap mw_;
+  struct Extrema {
+    double min;
+    double max;
+
+    Extrema()
+      : min(std::numeric_limits<double>::max())
+      , max(std::numeric_limits<double>::min())
+    {}
+
+    void fill(double width) {
+      min = std::min(min, width);
+      max = std::max(max, width);
+    }
   };
 
-  void MinWidthFinder::addHit(const TDCHitWP& hit) {
-    MinWidthMap::iterator p = mw_.find(hit.plane);
-    if(p == mw_.end()) {
-      mw_.insert(std::make_pair(hit.plane, double(hit.width)));
-    }
-    else {
-      p->second = std::min(double(hit.width), p->second);
-    }
+  class ExtremeWidthFinder {
+  public:
+    typedef std::map<int,Extrema> WidthMap;
+    const WidthMap& getWidths() const { return mw_; }
+    void addHit(const TDCHitWP& hit);
+  private:
+    WidthMap mw_;
+  };
+
+  void ExtremeWidthFinder::addHit(const TDCHitWP& hit) {
+    mw_[hit.plane].fill(hit.width);
   }
 }
 
@@ -59,6 +69,14 @@ void HistTDCWidth::init(const std::string& hdir,
     ostitle<<namePrefix<<" TDC MIN Width in plane "<<std::setw(2)<<std::setfill('0')<<i;
     minWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 1000, 0., 1000.));
   }
+
+  for(unsigned i=0; i<=maxPlaneNumber; ++i) {
+    std::ostringstream osname;
+    osname<<namePrefix<<"_maxWidth_"<<std::setw(2)<<std::setfill('0')<<i;
+    std::ostringstream ostitle;
+    ostitle<<namePrefix<<" TDC MAX Width in plane "<<std::setw(2)<<std::setfill('0')<<i;
+    maxWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 1000, 0., 1000.));
+  }
 }
 
 //================================================================
@@ -69,31 +87,33 @@ void HistTDCWidth::fill(const TDCHitWP& hit) {
 
 //================================================================
 void HistTDCWidth::fill(const TDCHitWPCollection& hits) {
-  MinWidthFinder mw;
+  ExtremeWidthFinder mw;
   for(TDCHitWPCollection::const_iterator i = hits.begin(); i!=hits.end(); ++i) {
     fill(*i);
     mw.addHit(*i);
   }
 
-  typedef MinWidthFinder::MinWidthMap PM;
-  const PM& mm = mw.getMinWidths();
+  typedef ExtremeWidthFinder::WidthMap PM;
+  const PM& mm = mw.getWidths();
   for(PM::const_iterator i=mm.begin(); i!=mm.end(); ++i) {
-    minWidth_[i->first]->Fill(i->second);
+    minWidth_[i->first]->Fill(i->second.min);
+    maxWidth_[i->first]->Fill(i->second.max);
   }
 }
 
 //================================================================
 void HistTDCWidth::fill(const TDCHitWPPtrCollection& hits) {
-  MinWidthFinder mw;
+  ExtremeWidthFinder mw;
   for(TDCHitWPPtrCollection::const_iterator i = hits.begin(); i!=hits.end(); ++i) {
     fill(**i);
     mw.addHit(**i);
   }
 
-  typedef MinWidthFinder::MinWidthMap PM;
-  const PM& mm = mw.getMinWidths();
+  typedef ExtremeWidthFinder::WidthMap PM;
+  const PM& mm = mw.getWidths();
   for(PM::const_iterator i=mm.begin(); i!=mm.end(); ++i) {
-    minWidth_[i->first]->Fill(i->second);
+    minWidth_[i->first]->Fill(i->second.min);
+    maxWidth_[i->first]->Fill(i->second.max);
   }
 }
 
