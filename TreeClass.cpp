@@ -110,7 +110,8 @@ bool TreeClass::InitTree( string Treename, ConfigFile &Conf)
 		}
 	}
 
-	Tree		= (TTree*) TreeFile->Get("T");
+	Tree = dynamic_cast<TTree*>(TreeFile->Get("T"));
+        if(!Tree) Tree = dynamic_cast<TTree*>(TreeFile->Get("clarkdumper/T"));
 
 	// ======> The first entry is loaded to check which variables are in the tree <======
 	// Get the next tree in the chain and verify
