@@ -109,6 +109,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
 
+  hOccupancyDCUnassigned_.init("MuCapture", "hitMapDCUnassigned", 44, 80, H, Conf);
+
   //----------------------------------------------------------------
 
   return true;
@@ -181,6 +183,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   const TDCHitWPPtrCollection filtered_dc_hits_by_time = selectHits(evt.dc_hits_by_time(), cutMinTDCWidthDC_);
   const TimeWindowCollection windcs = assignDCHits(&unassignedDCHits, filtered_dc_hits_by_time, winpcs);
   hWinDCUnassignedCount_->Fill(unassignedDCHits.size());
+  hOccupancyDCUnassigned_.fill(unassignedDCHits);
 
   if(unassignedDCHits.size() > maxUnassignedDCHits_) {
     return CUT_UNASSIGNEDDCHITS;

@@ -166,6 +166,7 @@ private :
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;
+  HistOccupancy hOccupancyDCUnassigned_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
