@@ -106,6 +106,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hwidthDCMuWin_.init("MuCapture/dcWidthMuWin", "dcmuwidth", 44, H, Conf);
 
   //----------------------------------------------------------------
+  hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
+  hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
+
+  //----------------------------------------------------------------
 
   return true;
 }
@@ -128,6 +132,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // Fill the "all hits" histos
   hwidthPCall_.fill(evt.pc_hits_by_time());
   hwidthDCall_.fill(evt.dc_hits_by_time());
+
+  hOccupancyPCAll_.fill(evt.pc_hits_by_time());
+  hOccupancyDCAll_.fill(evt.dc_hits_by_time());
 
   //----------------------------------------------------------------
   // Sort PC hits into time windows
