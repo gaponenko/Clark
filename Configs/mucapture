@@ -3,6 +3,8 @@ MuCapture/doDefaultTWIST = false
 MuCapture/loadDefaultTWISTVars = true
 
 Detector/GeometryFile = 61
+Detector/Geometry/dc_ppc = 25
+Detector/Geometry/pc_ppc = 5
 
 MuCapture/cutMinTDCWidthPC = 40
 MuCapture/cutMinTDCWidthDC = 50

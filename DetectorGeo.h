@@ -106,6 +106,7 @@ class DetectorGeo {
 		void	ReadSCIX( ifstream &file);
 
   void applyCorrections(const ConfigFile& conf, log4cpp::Category& logger);
+  void applyCorrectionsPPC(const std::string& calibFileName, log4cpp::Category& logger, double *posArray, int arrsize);
 };
 
 #endif

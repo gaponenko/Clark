@@ -355,23 +355,56 @@ void DetectorGeo::applyCorrections(const ConfigFile& conf, log4cpp::Category& lo
       throw std::runtime_error("Could not open calibratio file "+os.str());
     }
 
-    std::string line;
-    const boost::regex COMMENT("^C");
-    while(std::getline(file, line)) {
-      if(!boost::regex_search(line, COMMENT)) {
-        // std::cout<<"data line: "<<line<<std::endl;
-        int iplane(0);
-        double correction(0.);
-        std::istringstream is(line);
-        if(! (is>>iplane>>correction) ) {
-          throw std::runtime_error("DetectorGeo::applyCorrections(): error parsing the line \""+line+"\"");
-        }
-        // DetectorGeo uses 0-based plane numbering, but rest of the code is 1-based.
-        pshift[iplane-1] += correction;
-      }
-    }
+    applyCorrectionsPPC(os.str(), logger, pshift, MAX_PLANES_P);
   }
   else {
     logger.warn("NO PC UV corrections file Detector/Geometry/pc_ppc is specified");
   }
+
+  //----------------
+  const int idc_ppc = conf.read<int>("Detector/Geometry/dc_ppc", 0);
+  if(idc_ppc) {
+    std::ostringstream os;
+    os<<getenv("CAL_DB")<<"/dc_ppc."<<std::setfill('0')<<std::setw(5)<<idc_ppc;
+    logger.infoStream()<<"Reading DC UV corrections file "<<os.str();
+    std::ifstream file(os.str().c_str());
+    if(!file.is_open()) {
+      throw std::runtime_error("Could not open calibratio file "+os.str());
+    }
+
+    applyCorrectionsPPC(os.str(), logger, dshift, MAX_PLANES_D);
+  }
+  else {
+    logger.warn("NO DC UV corrections file Detector/Geometry/dc_ppc is specified");
+  }
 }
+
+//================================================================
+void DetectorGeo::applyCorrectionsPPC(const std::string& calibFileName, log4cpp::Category& logger, double *posArray, int arrsize) {
+  std::ifstream file(calibFileName.c_str());
+  if(!file.is_open()) {
+    throw std::runtime_error("Could not open calibration file "+calibFileName);
+  }
+
+  std::string line;
+  const boost::regex COMMENT("^C");
+  while(std::getline(file, line)) {
+    if(!boost::regex_search(line, COMMENT)) {
+      // std::cout<<"data line: "<<line<<std::endl;
+      unsigned iplane(0);
+      double correction(0.);
+      std::istringstream is(line);
+      if(! (is>>iplane>>correction) ) {
+        throw std::runtime_error("DetectorGeo::applyCorrections(): error parsing the line \""+line+"\"");
+      }
+
+      // DetectorGeo uses 0-based plane numbering, but rest of the code is 1-based.
+      if( (iplane < 1) || (iplane > arrsize)) {
+        throw std::runtime_error("DetectorGeo::applyCorrectionsPPC(): iplane is out of range");
+      }
+      posArray[iplane-1] += correction;
+    }
+  }
+}
+
+//================================================================
