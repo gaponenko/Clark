@@ -32,6 +32,9 @@ public:
     , trackz_()
     , costhVsPtot_()
     , u0v0_()
+    , trackRL_()
+    , helixCenterUV_()
+    , trackROut_()
     , hNumTracks_()
   {}
 
@@ -44,6 +47,11 @@ private :
   TH1 *trackz_;
   TH2 *costhVsPtot_;
   TH2 *u0v0_;
+
+  TH2 *trackRL_; // radius and wavelength
+  TH2 *helixCenterUV_;
+  TH1 *trackROut_;
+
   TH1 *hNumTracks_;
 };
 

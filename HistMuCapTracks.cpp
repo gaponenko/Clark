@@ -54,9 +54,28 @@ void HistMuCapTracks::init(const std::string& hdir,
   u0v0_ = hf.DefineTH2D(hdir,
                         namePrefix+"u0v0",
                         namePrefix + "u0v0",
-                        640, -160., 160, 640, -160., 160.);
+                        640, -16., 16, 640, -16., 16.);
 
   u0v0_->SetOption("colz");
+
+  trackRL_ = hf.DefineTH2D(hdir,
+                           namePrefix+"trackRL",
+                           namePrefix + "track wavelengh vs radius",
+                           400, 0., 40, 800, -40., 40.);
+
+  trackRL_->SetOption("colz");
+
+  helixCenterUV_ = hf.DefineTH2D(hdir,
+                                 namePrefix+"helixCenterUV",
+                                 namePrefix + "helix center UV",
+                                 320, -16., 16., 320, -16., 16.);
+
+  helixCenterUV_->SetOption("colz");
+
+
+  trackROut_ = hf.DefineTH1D(hdir, namePrefix+"rout",
+                             namePrefix+"max track distance from the Z axis",
+                             400, 0, 40.);
 
   hNumTracks_ = hf.DefineTH1D(hdir, namePrefix+"numSelectedTracks",
                               namePrefix+"numSelectedTracks",
@@ -81,6 +100,15 @@ void HistMuCapTracks::fill(const EventClass& evt, double timeWinStart) {
             trackz_->Fill(evt.hefit_z[i]);
             costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
             u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
+
+            trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
+            helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
+
+            const double rout =
+              sqrt(std::pow(evt.hefit_ucenter[i], 2) + std::pow(evt.hefit_vcenter[i], 2))
+              + evt.radius[i];
+
+            trackROut_->Fill(rout);
           }
         }
       }
