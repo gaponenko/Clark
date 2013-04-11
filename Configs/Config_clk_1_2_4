@@ -1,0 +1,217 @@
+# ===================	 EnergyCalibration 	=================== #
+# EnergyCalibration/Mode	= 0
+### This is turned on or off using the command line
+### The possible modes:
+###	0 => alpha and beta corrections = shift
+###	1 => 1)beta correction = scale; 2)alpha correction = shift
+###	2 => 1)alpha correction = shift; 2)beta correction = scale
+###	3 => alpha and beta corrections = scale
+
+# ===================	 MomAngSmearing 	=================== #
+# MomAngSmearing/Do	= false
+# MomAngSmearing/MomMean	= 0.0
+# MomAngSmearing/MomSigma	= 0.0
+# MomAngSmearing/AngMean	= 0.0
+# MomAngSmearing/AngSigma	= 0.0
+
+# ===================	 MomentumScale 	=================== #
+# MomentumScale/Do	= false
+### This scales the momentum values pz or pu and pv
+### If MomentumScale/Pt = S
+### Then pu=pu*S and pv=pv*S
+# MomentumScale/Pt	= 1.0
+# MomentumScale/Pz	= 1.0
+# MomentumScale/Pt_Upstream	= 1.0
+# MomentumScale/Pz_Upstream	= 1.0
+# MomentumScale/Pt_Downstream	= 1.0
+# MomentumScale/Pz_Downstream	= 1.0
+
+# ===================	 TCAPm12widthCut 	=================== #
+# TCAPm12widthCut/Do	= true
+### For 2006 data: TCAPMin = 26; TCAPMax = 52
+### For 2007 data: TCAPMin = 29; TCAPMax = 55
+# TCAPm12widthCut/TCAPMin	= -10000.0
+# TCAPm12widthCut/TCAPMax	= 10000.0
+# TCAPm12widthCut/m12widthMin	= -100000.0
+# TCAPm12widthCut/m12widthMax	= 100000.0
+
+# ===================	 TECCut 	=================== #
+# TECCut/Do	= false
+# TECCut/TECxMin	= -1000.0
+# TECCut/TECxMax	= 1000.0
+# TECCut/TECyMin	= -1000.0
+# TECCut/TECyMax	= 1000.0
+# TECCut/TECtanthxMin	= -1000.0
+# TECCut/TECtanthxMax	= 1000.0
+# TECCut/TECtanthyMin	= -1000.0
+# TECCut/TECtanthyMax	= 1000.0
+# TECCut/TECsigmaxMin	= -1.0
+# TECCut/TECsigmaxMax	= 1000.0
+# TECCut/TECsigmayMin	= -1.0
+# TECCut/TECsigmayMax	= 1000.0
+# TECCut/TECifailxMin	= -1.0
+# TECCut/TECifailxMax	= 1000.0
+# TECCut/TECifailyMin	= -1.0
+# TECCut/TECifailyMax	= 1000.0
+
+# ===================	 EventTypeCut 	=================== #
+# EventTypeCut/Do	= true
+# EventTypeCut/Types	= 1,2,6,7,10,11,21,22
+
+# ===================	 MuLastPCut 	=================== #
+# MuLastPCut/Do	= true
+# MuLastPCut/LastPlane	= 28
+
+# ===================	 MuUVCut 	=================== #
+# MuUVCut/Do	= true
+# MuUVCut/MaxRadius	= 2.5
+
+# ===================	 DkWinTimeCut 	=================== #
+# DkWinTimeCut/Do	= true
+# DkWinTimeCut/Min	= -100000.0
+# DkWinTimeCut/Max	= 100000.0
+
+# ===================	 NtracksCut 	=================== #
+# NtracksCut/Do	= true
+
+# ===================	 IerrorCut 	=================== #
+# IerrorCut/Do	= true
+# IerrorCut/SelectIerror	= 0
+### The module selects the tracks on the right side
+### of the target according to the classification.
+### The StartPlane and StopPlane can be defined
+### precisely. For example for the tracks starting
+### right at the target and using 22 planes:
+### StartStopCut/StartPlane = 22,23
+### StartStopCut/StopPlane = 1,44
+
+# ===================	 StartStopCut 	=================== #
+# StartStopCut/Do	= true
+# StartStopCut/StartPlane	= -1,-1
+# StartStopCut/StopPlane	= -1,-1
+
+# ===================	 ChargeCut 	=================== #
+# ChargeCut/Do	= true
+# ChargeCut/SelectCharge	= 1
+
+# ===================	 PairMatchingCut 	=================== #
+# PairMatchingCut/Do	= true
+# PairMatchingCut/MinCDA	= 0.5
+# PairMatchingCut/MinCDA_BrokTrk	= 2.0
+# PairMatchingCut/MinCDA_Beame	= 0.5
+# PairMatchingCut/BrokTrk_Z_Range	= 22.0,48.0
+# PairMatchingCut/Beame_Z_Range	= 0.0,6.0
+# PairMatchingCut/MinDT	= 60.0
+# PairMatchingCut/tolerance_abs	= 1.e-4
+# PairMatchingCut/tolerance_rel	= 0.
+# PairMatchingCut/max_iter	= 100
+# PairMatchingCut/CalculateCDA	= false
+
+# ===================	 Mu_eVertexCut 	=================== #
+# Mu_eVertexCut/Do	= true
+# Mu_eVertexCut/Do_mu_e_Calc-MOFIA	= 0
+### Function 0:
+###     min < r < max
+###     CutParameters = min,max
+### Function 1:
+###     Bmin + Amin / |cos(theta)| < r < Bmax + Amax / |cos(theta)|
+###     CutParameters = Bmin,Amin,Bmax,Amax
+# Mu_eVertexCut/CutFunction	= 1
+# Mu_eVertexCut/CutParameters	= 0.0,0.0,1.0,1.0
+
+# ===================	 DistToTargetSel 	=================== #
+# DistToTargetSel/Do	= true
+
+# ===================	 Mu_eVertexSel 	=================== #
+# Mu_eVertexSel/Do	= true
+# Mu_eVertexSel/Do_mu_e_Calc-MOFIA	= 0
+
+# ===================	 DkFitTimeCut 	=================== #
+# DkFitTimeCut/Do	= true
+# DkFitTimeCut/Min	= 1050.0
+# DkFitTimeCut/Max	= 9000.0
+
+# ===================	 PACTCut 	=================== #
+# PACTCut/Do	= 0
+# PACTCut/NbBins	= 500
+# PACTCut/MaximumWidth	= 500.0
+# PACTCut/quadrant_11	= 1
+# PACTCut/quadrant_12	= 1
+# PACTCut/quadrant_21	= 1
+# PACTCut/quadrant_22	= 1
+# PACTCut/region_11	= 1.634, -5.428, -61.26, 642.3
+# PACTCut/region_12	= 1.634, -5.428, -61.26, 642.3
+# PACTCut/region_21	= 1.634, -5.428, -61.26, 642.3
+# PACTCut/region_22	= 1.634, -5.428, -61.26, 642.3
+
+# ===================	 FiducialCut 	=================== #
+# FiducialCut/MinAbsCosTheta	= 0.54
+# FiducialCut/MaxAbsCosTheta	= 0.96
+# FiducialCut/MaxMomentum	= 52.0
+# FiducialCut/MinTransMom	= 10.0
+# FiducialCut/MaxTransMom	= 38.0
+# FiducialCut/MinLongiMom	= 14.0
+
+# ===================	 StatusHistograms 	=================== #
+# StatusHistograms/Do	= true
+# StatusHistograms/PerWindowType	= false
+
+# ===================	 TruthBank 	=================== #
+# TruthBank/Do	= false
+### This flag turns the truth bank analysis off. No vertex bank analysed
+### but the accflag is still used for the Michel spectrum.
+
+# ===================	 BiasPlots 	=================== #
+# BiasPlots/Do	= true
+# BiasPlots/Nptotbins	= 8
+# BiasPlots/minptot	= 15.0
+# BiasPlots/maxptot	= 55.0
+# BiasPlots/Nbinscosth	= 100
+# BiasPlots/mincosth	= 0.3
+# BiasPlots/maxcosth	= -0.3
+# BiasPlots/Nbinsdp	= 401
+# BiasPlots/mindp	= -2.0
+# BiasPlots/maxdp	= 2.0
+# BiasPlots/Nbinsdcosth	= 200
+# BiasPlots/mindcosth	= -0.05
+# BiasPlots/maxdcosth	= 0.05
+
+# ===================	 AsymmetryPlots 	=================== #
+# AsymmetryPlots/WeightedPlots	= 1
+# AsymmetryPlots/UnweightedPlots	= 0
+# AsymmetryPlots/tmu	= 2197.03
+# AsymmetryPlots/t_min	= 245.28
+# AsymmetryPlots/t_width_min	= 68.435
+# AsymmetryPlots/Fiducial/costh_min	= 0.54
+# AsymmetryPlots/Fiducial/costh_max	= 0.96
+# AsymmetryPlots/Fiducial/ptot_min	= 31.0
+# AsymmetryPlots/Fiducial/ptot_max	= 52.0
+# AsymmetryPlots/Fiducial/long_min	= 14.0
+# AsymmetryPlots/Fiducial/trans_max	= 38.0
+# AsymmetryPlots/Weighting	= 1.0
+
+# ===================	 ChiSquare 	=================== #
+# ChiSquare/Do	= 0
+# ChiSquare/RedChi2CutMin	= -1.0
+# ChiSquare/RedChi2CutMax	= -1.0
+
+# ===================	 PhiQuadrantSpectra 	=================== #
+# PhiQuadrantSpectra/Do	= false
+
+# ===================	 ChiSquare 	=================== #
+# ChiSquare/NCosThBinsMichel	= 100
+# ChiSquare/NXBinsMichel	= 110
+# ChiSquare/XMinMichel	= 0.0
+# ChiSquare/XMaxMichel	= 55.0
+
+# ===================	 Detector 	=================== #
+# Detector/BField	= 2.0
+# Detector/GeometryFile	= -57
+
+# ===================	 TruthBank 	=================== #
+# TruthBank/MuUVMaxRadius	= 4.0
+# TruthBank/TriggerTimeJitter	= 100.0
+# TruthBank/MuZAroundTarget	= 1.0
+# TruthBank/MueVertexEpsilon	= 0.01
+# TruthBank/MinDkTimeAfterMu	= 300.0
+# TruthBank/MaxDkTimeAfterMu	= 9100.0

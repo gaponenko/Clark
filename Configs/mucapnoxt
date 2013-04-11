@@ -1,0 +1,31 @@
+MuCapture/Do	= true
+MuCapture/doDefaultTWIST = false
+
+MuCapture/cutMinTDCWidthPC = 0
+MuCapture/cutMinTDCWidthDC = 0
+
+MuCapture/winPCLength = 100
+MuCapture/winPCSeparation = 1100
+
+# W.r.t PC win start
+MuCapture/winDCEarlyMargin = 100
+MuCapture/winDCLength = 1100
+
+MuCapture/maxUnassignedDCHits = 1
+
+MuCapture/muUVPCCellMin = 70
+MuCapture/muUVPCCellMax = 90
+
+MuCapture/muUVDCCellMin = 34
+MuCapture/muUVDCCellMax = 47
+
+# in cm
+MuCapture/muStopRMax = 2.5
+
+MuCapture/PACT/slopea = 1.634
+MuCapture/PACT/slopeb = -5.428
+MuCapture/PACT/intercepta = -61.26
+MuCapture/PACT/interceptb = 642.3
+
+# stop before the dense stack
+MuCapture/ProtonWindow/maxPlane = 44
