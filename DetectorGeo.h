@@ -105,6 +105,7 @@ class DetectorGeo {
 		void	ReadTARX( ifstream &file);
 		void	ReadSCIX( ifstream &file);
 
+  void applyCorrections(const ConfigFile& conf, log4cpp::Category& logger);
 };
 
 #endif

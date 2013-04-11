@@ -1,4 +1,10 @@
 #include <cmath>
+#include <sstream>
+#include <iomanip>
+#include <fstream>
+#include <stdexcept>
+
+#include <boost/regex.hpp>
 
 #include "DetectorGeo.h"
 #include "ConfigFile.h"
@@ -66,6 +72,9 @@ bool DetectorGeo::ReadGeometry(const ConfigFile& conf, log4cpp::Category *L)
 
 	} while (! file.eof() );   // while not eof
 	file.close();
+
+        applyCorrections(conf, *L);
+
 	return true;
 }
 
@@ -332,4 +341,37 @@ void DetectorGeo::ReadSCIX( ifstream &file)
 			   */
 		}
 	}  //end readin of SCIN
+}
+
+//================================================================
+void DetectorGeo::applyCorrections(const ConfigFile& conf, log4cpp::Category& logger) {
+  const int ipc_ppc = conf.read<int>("Detector/Geometry/pc_ppc", 0);
+  if(ipc_ppc) {
+    std::ostringstream os;
+    os<<getenv("CAL_DB")<<"/pc_ppc."<<std::setfill('0')<<std::setw(5)<<ipc_ppc;
+    logger.infoStream()<<"Reading PC UV corrections file "<<os.str();
+    std::ifstream file(os.str().c_str());
+    if(!file.is_open()) {
+      throw std::runtime_error("Could not open calibratio file "+os.str());
+    }
+
+    std::string line;
+    const boost::regex COMMENT("^C");
+    while(std::getline(file, line)) {
+      if(!boost::regex_search(line, COMMENT)) {
+        // std::cout<<"data line: "<<line<<std::endl;
+        int iplane(0);
+        double correction(0.);
+        std::istringstream is(line);
+        if(! (is>>iplane>>correction) ) {
+          throw std::runtime_error("DetectorGeo::applyCorrections(): error parsing the line \""+line+"\"");
+        }
+        // DetectorGeo uses 0-based plane numbering, but rest of the code is 1-based.
+        pshift[iplane-1] += correction;
+      }
+    }
+  }
+  else {
+    logger.warn("NO PC UV corrections file Detector/Geometry/pc_ppc is specified");
+  }
 }
