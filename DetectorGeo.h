@@ -30,12 +30,14 @@ using namespace std;
 #include "FuncLib.h"
 #include "log4cpp/Category.hh"
 
+class ConfigFile;
+
 class DetectorGeo {
 	public :
 		DetectorGeo()	{};
 		~DetectorGeo()	{};
 
-		bool ReadGeometry( string geofile, log4cpp::Category *L);
+		bool ReadGeometry(const ConfigFile& conf, log4cpp::Category *L);
 
 		// (1) DC variables
 		int		ndfoils;                 // Total number of foils in drift chambers

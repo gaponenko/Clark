@@ -1,8 +1,26 @@
-#include "DetectorGeo.h"
+#include <cmath>
 
-bool DetectorGeo::ReadGeometry( string geofile, log4cpp::Category *L)
+#include "DetectorGeo.h"
+#include "ConfigFile.h"
+
+bool DetectorGeo::ReadGeometry(const ConfigFile& conf, log4cpp::Category *L)
 {
-	
+  int GeoNum = conf.read<int>("Detector/GeometryFile", 0);
+  if(!GeoNum) {
+    L->warn("No geometry file given. The geometry of the detector is not set. Do not use any geo->* variable from the EventClass");
+    return false;
+  }
+
+  if(GeoNum < 0) {
+    L->warn("Using the default geometry file number %d",abs(GeoNum));
+    GeoNum = std::abs(GeoNum);
+  }
+
+  char TmpFile[256];
+  sprintf(TmpFile,"%s/dt_geo.%05d",getenv("CAL_DB"),GeoNum);
+  L->info("Reading geometry file %s",TmpFile);
+  const string geofile(TmpFile);
+
 	std::ifstream file(geofile.c_str());
 	if(!file)
 	{

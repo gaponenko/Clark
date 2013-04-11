@@ -108,23 +108,8 @@ bool EventClass::InitGeometry(ConfigFile &C)
 	// Tmp			=	C.read<string>( "Parameters/DCzposition");
 	// DCzposition	= StrToFloatVect(Tmp);
 
-	char TmpFile[256];
-	if (C.read<int>( "Detector/GeometryFile") != 0)
-	{
-		int GeoNum = C.read<int>( "Detector/GeometryFile");
-		if ( GeoNum < 0)
-			Log->warn("Using the default geometry file number %d",abs(GeoNum));
-		GeoNum = abs(GeoNum);
-		sprintf(TmpFile,"%s/dt_geo.%05d",getenv("CAL_DB"),GeoNum);
-		geo = new DetectorGeo();
-		Log->info("Reading geometry file %s",TmpFile);
-		return geo->ReadGeometry( TmpFile, Log);
-	}
-	else
-	{
-		Log->warn("No geometry file given. The geometry of the detector is not set. Do not use any geo->* variable from the EventClass");
-		return true;
-	}
+        geo = new DetectorGeo();
+        return geo->ReadGeometry(C, Log);
 }
 
 void EventClass::LoadMuCapture() {
