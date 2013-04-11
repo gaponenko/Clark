@@ -6,6 +6,9 @@
 #include "EventClass.h"
 #include "WireCluster.h"
 #include "HistTDCWidth.h"
+#include "HistMuCapTracks.h"
+#include "TimeWindow.h"
+#include "TDCHitWP.h"
 
 #include "TAxis.h"
 class TH1;
@@ -37,8 +40,8 @@ public:
   void init(HistogramFactory &hf, const ConfigFile &conf);
 
   void process(double muStopU, double muStopV,
-               const TDCHitWPPtrCollection& protonPCHits,
-               const TDCHitWPPtrCollection& protonDCHits,
+               const TimeWindow& protonWindowPC,
+               const TimeWindow& protonWindowDC,
                const TDCHitWPPtrCollection& unassignedDCHits,
                const EventClass& evt
                );
@@ -71,10 +74,12 @@ private :
 
   HistTDCWidth hwidthPCProtonWin_;
   HistTDCWidth hwidthDCProtonWin_;
+  HistMuCapTracks hnegtracks_;
+  HistMuCapTracks hpostracks_;
 
   EventCutNumber analyze(double muStopU, double muStopV,
-                         const TDCHitWPPtrCollection& protonPCHits,
-                         const TDCHitWPPtrCollection& protonDCHits,
+                         const TimeWindow& protonWindowPC,
+                         const TimeWindow& protonWindowDC,
                          const TDCHitWPPtrCollection& unassignedDCHits,
                          const EventClass& evt
                          );

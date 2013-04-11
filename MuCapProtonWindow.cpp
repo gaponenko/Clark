@@ -54,17 +54,20 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
 
   hwidthPCProtonWin_.init("MuCapture/pcWidthProton", "pcpwidth", 12, hf, conf);
   hwidthDCProtonWin_.init("MuCapture/dcWidthProton", "dcpwidth", 44, hf, conf);
+
+  hnegtracks_.init("MuCapture/ProtonWindow/negativetracks", "", -1, hf, conf);
+  hpostracks_.init("MuCapture/ProtonWindow/positivetracks", "", +1, hf, conf);
 }
 
 //================================================================
 void MuCapProtonWindow::process(double muStopU, double muStopV,
-                                const TDCHitWPPtrCollection& protonPCHits,
-                                const TDCHitWPPtrCollection& protonDCHits,
+                                const TimeWindow& protonWindowPC,
+                                const TimeWindow& protonWindowDC,
                                 const TDCHitWPPtrCollection& unassignedDCHits,
                                 const EventClass& evt
                                 )
 {
-  EventCutNumber c = analyze(muStopV, muStopV, protonPCHits, protonDCHits, unassignedDCHits, evt);
+  EventCutNumber c = analyze(muStopV, muStopV, protonWindowPC, protonWindowDC, unassignedDCHits, evt);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -74,12 +77,14 @@ void MuCapProtonWindow::process(double muStopU, double muStopV,
 //================================================================
 MuCapProtonWindow::EventCutNumber MuCapProtonWindow::
 analyze(double muStopU, double muStopV,
-        const TDCHitWPPtrCollection& protonPCHits,
-        const TDCHitWPPtrCollection& protonDCHits,
+        const TimeWindow& protonWindowPC,
+        const TimeWindow& protonWindowDC,
         const TDCHitWPPtrCollection& unassignedDCHits,
         const EventClass& evt
         )
 {
+  const TDCHitWPPtrCollection& protonPCHits = protonWindowPC.hits;
+  const TDCHitWPPtrCollection& protonDCHits = protonWindowDC.hits;
 
   const ClustersByPlane clustersPC = constructPlaneClusters(12, protonPCHits);
   const ClustersByPlane clustersDC = constructPlaneClusters(44, protonDCHits);
@@ -102,6 +107,9 @@ analyze(double muStopU, double muStopV,
     return CUT_RANGE_GAPS;
   }
 
+  hpostracks_.fill(evt, protonWindowPC.tstart);
+  hnegtracks_.fill(evt, protonWindowPC.tstart);
+
   hLastPlane_->Fill(gr.max);
   if(gr.max > maxPlane_) {
     return CUT_MAX_PLANE;
@@ -111,6 +119,9 @@ analyze(double muStopU, double muStopV,
 //    std::cout<<"pc 7 clusters:\n"<<clustersPC[7]<<std::endl;
 //  }
 
+  // If we use window start time here, longer proton tracks will get sharper timing
+  // because of more hits.  Restrict the amount of data we use for proton time to
+  // just PC7, so that all tracks get equally bad timing.
   hProtonTime_->Fill(getMinTime(clustersPC[7]));
 
   //std::cout<<"accepted: "<<evt.nrun<<"\t"<<evt.nevt<<"\t"<<gr.max<<std::endl;

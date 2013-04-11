@@ -28,5 +28,7 @@ MuCapture/PACT/slopeb = -5.428
 MuCapture/PACT/intercepta = -61.26
 MuCapture/PACT/interceptb = 642.3
 
+MuCapture/ProtonWindow/cutTrackTimeDiff = 100.
+
 # stop before the dense stack
 MuCapture/ProtonWindow/maxPlane = 44
