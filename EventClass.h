@@ -80,8 +80,8 @@ class EventClass{
 		int NumDC;
 		int NumPC;
 
-		bool doMuCapture;
-		bool doDefaultTWIST;
+		bool loadMuCaptureVars;
+		bool loadDefaultTWISTVars;
 
 		//__________________________ Parameters _________________________//
 		float	pi;

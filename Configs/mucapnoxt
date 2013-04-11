@@ -1,5 +1,6 @@
 MuCapture/Do	= true
 MuCapture/doDefaultTWIST = false
+MuCapture/loadDefaultTWISTVars = true
 
 MuCapture/cutMinTDCWidthPC = 0
 MuCapture/cutMinTDCWidthDC = 0

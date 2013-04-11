@@ -6,8 +6,10 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 {
 	Log	= L;
 
-        doMuCapture = C.read<bool>("MuCapture/Do");
-        doDefaultTWIST = !doMuCapture || C.read<bool>("MuCapture/doDefaultTWIST");
+        loadMuCaptureVars = C.read<bool>("MuCapture/Do");
+        loadDefaultTWISTVars = !loadMuCaptureVars
+          || C.read<bool>("MuCapture/doDefaultTWIST")
+          || C.read<bool>("MuCapture/loadDefaultTWISTVars", false);
 
 	//__________ Extract the energy calibration parameters ___________//
 	DoEcalib	= false;
@@ -144,11 +146,11 @@ void EventClass::LoadMuCapture() {
 
 bool EventClass::Load( )
 {
-  if(doMuCapture) {
+  if(loadMuCaptureVars) {
     LoadMuCapture();
   }
 
-  if(!doDefaultTWIST) {
+  if(!loadDefaultTWISTVars) {
     return true;
   }
 
@@ -510,11 +512,11 @@ void EventClass::InitVar( TTree* T)
 
         //----------------------------------------------------------------
         // Load MuCapture vars and may be short circuit the rest
-        if(doMuCapture) {
+        if(loadMuCaptureVars) {
           InitMuCaptureVar(T);
         }
 
-        if(!doDefaultTWIST) {
+        if(!loadDefaultTWISTVars) {
           return;
         }
 
