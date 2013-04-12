@@ -86,10 +86,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hWinDCUnassignedLate_ = H.DefineTH1D( "MuCapture", "winDCUnassignedLate",   "Unassigned DC hits, late", 1000, 0., 1000.);
   hWinDCUnassignedCount_ = H.DefineTH1D( "MuCapture", "winDCUnassignedCount",   "Count of unassigned DC hits", 101, -0.5, 100.5);
 
-  hMuRangePCFirst_ = H.DefineTH1D("MuCapture", "MuRangePCFirst",   "Muon range PC first", 13, -0.5, 12.5);
-  hMuRangePCLast_ = H.DefineTH1D("MuCapture", "MuRangePCLast",   "Muon range PC last", 13, -0.5, 12.5);
-  hMuRangeDCFirst_ = H.DefineTH1D("MuCapture", "MuRangeDCFirst",   "Muon range DC first", 45, -0.5, 44.5);
-  hMuRangeDCLast_ = H.DefineTH1D("MuCapture", "MuRangeDCLast",   "Muon range DC last", 45, -0.5, 44.5);
+  hMuonRange_ = H.DefineTH2D("MuCapture", "muonRange",   "Muon last vs first plane hit",
+                             56, 0.5, 56.5, 56, 0.5, 56.5);
+
+  hMuonRange_->SetOption("colz");
 
   hMuUVLimitsPCUp_ = H.DefineTH2D("MuCapture", "MuUVLimitsPCUp", "Muon PC1234 max vs min coordinate", 160, 0.5, 160.5, 160, 0.5, 160.5);
   hMuUVLimitsDC_ = H.DefineTH2D("MuCapture", "MuUVLimitsDC", "Muon DC up max vs min coordinate", 80, 0.5, 80.5, 80, 0.5, 80.5);
@@ -192,28 +192,17 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   const ClustersByPlane muonPCClusters = constructPlaneClusters(12, winpcs[iPCTrigWin].hits);
-  //std::cout<<"iPCTrigWin hits = \n"<<winpcs[iPCTrigWin].hits<<std::endl;
-  //std::cout<<"muonPCClusters = \n"<<muonPCClusters<<std::endl;
-
   const ClustersByPlane muonDCClusters = constructPlaneClusters(44, windcs[iPCTrigWin].hits);
+  const ClustersByPlane muonGlobalClusters = globalPlaneClusters(muonPCClusters, muonDCClusters);
 
-  const PlaneRange pcRange = findPlaneRange(muonPCClusters);
-  const PlaneRange dcRange = findPlaneRange(muonDCClusters);
-  if(!(pcRange.noGaps  && dcRange.noGaps)) {
+  const PlaneRange muonRange = findPlaneRange(muonGlobalClusters);
+  if(!muonRange.noGaps) {
     return CUT_MU_RANGE_GAPS;
   }
 
-  hMuRangePCFirst_->Fill(pcRange.min);
-  hMuRangePCLast_->Fill(pcRange.max);
-  hMuRangeDCFirst_->Fill(dcRange.min);
-  hMuRangeDCLast_->Fill(dcRange.max);
-
-  if((pcRange.min != 1)||(pcRange.max != 6)) {
-    return CUT_MU_PC_RANGE;
-  }
-
-  if((dcRange.min != 1)||(dcRange.max != 22)) {
-    return CUT_MU_DC_RANGE;
+  hMuonRange_->Fill(muonRange.min, muonRange.max);
+  if((muonRange.min != 1)||(muonRange.max != 28)) {
+    return CUT_MUON_RANGE;
   }
 
   //----------------------------------------------------------------

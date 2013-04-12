@@ -34,8 +34,7 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_MU_RANGE_GAPS ,"Mu range gaps");
 
-    ax->SetBinLabel(1+CUT_MU_PC_RANGE ,"Mu PC range");
-    ax->SetBinLabel(1+CUT_MU_DC_RANGE ,"Mu DC range");
+    ax->SetBinLabel(1+CUT_MUON_RANGE ,"Mu range");
 
     ax->SetBinLabel(1+CUT_MU_UV_PC,"mu UV PC");
     ax->SetBinLabel(1+CUT_MU_UV_DC,"mu UV DC");
@@ -57,8 +56,7 @@ public :
     CUT_PCWIN_TRIGSEPFUTURE,
     CUT_UNASSIGNEDDCHITS,
     CUT_MU_RANGE_GAPS,
-    CUT_MU_PC_RANGE,
-    CUT_MU_DC_RANGE,
+    CUT_MUON_RANGE,
     CUT_MU_UV_PC,
     CUT_MU_UV_DC,
 
@@ -100,10 +98,7 @@ public :
     , hWinDCUnassignedLate_()
     , hWinDCUnassignedCount_()
 
-    , hMuRangePCFirst_()
-    , hMuRangePCLast_()
-    , hMuRangeDCFirst_()
-    , hMuRangeDCLast_()
+    , hMuonRange_()
 
     , hMuUVLimitsPCUp_()
     , hMuUVLimitsDC_()
@@ -148,10 +143,7 @@ private :
   TH1 *hWinDCUnassignedLate_;
   TH1 *hWinDCUnassignedCount_;
 
-  TH1 *hMuRangePCFirst_;
-  TH1 *hMuRangePCLast_;
-  TH1 *hMuRangeDCFirst_;
-  TH1 *hMuRangeDCLast_;
+  TH2 *hMuonRange_;
 
   TH2 *hMuUVLimitsPCUp_;
   TH2 *hMuUVLimitsDC_;
