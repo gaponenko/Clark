@@ -241,14 +241,16 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_MUSTOP_SINGLECLUSTER;
   }
 
-  // See dt_geo.00057 and twist-coordinate-system.uvplanes.pdf
+  // See dt_geo.00061 and twist-coordinate-system.uvplanes.pdf
   const double muStopVCell = muonPCClusters[5].front().centralCell();
   const double muStopUCell = muonPCClusters[6].front().centralCell();
   hMuStopUVCell_->Fill(muStopUCell, muStopVCell);
 
-  // convert to cm
-  const double muStopV = 0.2*(muStopVCell - 80.5);
-  const double muStopU = 0.2*(muStopUCell - 80.5);
+  // convert to cm.
+  // PC5 is V-plane rot=+135, V increases with cell number
+  const double muStopV = +0.2*(muStopVCell - 80.5);
+  // PC6 is U-plane rot=-135, V decreases with cell number
+  const double muStopU = -0.2*(muStopUCell - 80.5);
   hMuStopUVPos_->Fill(muStopU, muStopV);
 
   const double muStopRadius = sqrt(std::pow(muStopV, 2) + std::pow(muStopU, 2));
