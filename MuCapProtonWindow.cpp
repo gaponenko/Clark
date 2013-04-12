@@ -67,7 +67,7 @@ void MuCapProtonWindow::process(double muStopU, double muStopV,
                                 const EventClass& evt
                                 )
 {
-  EventCutNumber c = analyze(muStopV, muStopV, protonWindowPC, protonWindowDC, unassignedDCHits, evt);
+  EventCutNumber c = analyze(muStopU, muStopV, protonWindowPC, protonWindowDC, unassignedDCHits, evt);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -107,8 +107,8 @@ analyze(double muStopU, double muStopV,
     return CUT_RANGE_GAPS;
   }
 
-  hpostracks_.fill(evt, protonWindowPC.tstart);
-  hnegtracks_.fill(evt, protonWindowPC.tstart);
+  hpostracks_.fill(evt, protonWindowPC.tstart, muStopU, muStopV);
+  hnegtracks_.fill(evt, protonWindowPC.tstart, muStopU, muStopV);
 
   hLastPlane_->Fill(gr.max);
   if(gr.max > maxPlane_) {

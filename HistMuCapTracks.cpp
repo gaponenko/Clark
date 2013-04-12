@@ -33,13 +33,6 @@ void HistMuCapTracks::init(const std::string& hdir,
                                 namePrefix + "t(track) - t(win)",
                                 700, -200., 500.);
 
-  costhVsPtot_ = hf.DefineTH2D(hdir,
-                               namePrefix+"ptotVsCosth",
-                               namePrefix + "ptot vs costh",
-                               140, 0., 70., 100, -1., +1.);
-
-  costhVsPtot_->SetOption("colz");
-
   hStartStop_ = hf.DefineTH2D(hdir,
                               namePrefix+"startStopPlane",
                               namePrefix + "startStopPlane",
@@ -51,6 +44,20 @@ void HistMuCapTracks::init(const std::string& hdir,
                           namePrefix + "trackz",
                           700, -89.5, 610.5);
 
+  trackMuonOffset_ = hf.DefineTH2D(hdir,
+                                   namePrefix+"trackMuonOffset",
+                                   namePrefix + "track-muon UV",
+                                   601, -3.05, 3.05, 601, -3.05, +3.05);
+
+  trackMuonOffset_->SetOption("colz");
+
+  costhVsPtot_ = hf.DefineTH2D(hdir,
+                               namePrefix+"ptotVsCosth",
+                               namePrefix + "ptot vs costh",
+                               140, 0., 70., 100, -1., +1.);
+
+  costhVsPtot_->SetOption("colz");
+
   u0v0_ = hf.DefineTH2D(hdir,
                         namePrefix+"u0v0",
                         namePrefix + "u0v0",
@@ -61,7 +68,7 @@ void HistMuCapTracks::init(const std::string& hdir,
   trackRL_ = hf.DefineTH2D(hdir,
                            namePrefix+"trackRL",
                            namePrefix + "track wavelengh vs radius",
-                           400, 0., 40, 800, -40., 40.);
+                           200, 0., 20, 1600, -80., 80.);
 
   trackRL_->SetOption("colz");
 
@@ -83,7 +90,11 @@ void HistMuCapTracks::init(const std::string& hdir,
 }
 
 //================================================================
-void HistMuCapTracks::fill(const EventClass& evt, double timeWinStart) {
+void HistMuCapTracks::fill(const EventClass& evt,
+                           double timeWinStart,
+                           double muStopU,
+                           double muStopV)
+{
   int numSelected(0);
 
   for(int i = 0; i < evt.ntr; ++i) {
@@ -98,6 +109,11 @@ void HistMuCapTracks::fill(const EventClass& evt, double timeWinStart) {
           if( (31== evt.hefit_pstart[i]) && (52 == evt.hefit_pstop[i])) {
             ++numSelected;
             trackz_->Fill(evt.hefit_z[i]);
+
+            const double du = evt.hefit_u0[i] - muStopU;
+            const double dv = evt.hefit_v0[i] - muStopV;
+            trackMuonOffset_->Fill(du, dv);
+
             costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
             u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
 
