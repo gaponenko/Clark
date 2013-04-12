@@ -272,4 +272,37 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "Parameters/PCplanes",		"1, 2, 3, 4, 27, 28, 29, 30, 53, 54, 55, 56");
 	SetKey(Conf, "Parameters/PlaneType",	"PC,PC,PC,PC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,PC,PC,PC,PC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,DC,PC,PC,PC,PC");
 	SetKey(Conf, "Parameters/DCzposition",	"-49.7924,-49.3923,-48.9923,-48.5922,-48.1921,-47.7921,-47.3920,-46.9919,-42.1920,-41.7921,-36.9923,-36.5924,-29.7941,-29.3941,-22.5960,-22.1961,-15.3980,-14.9981,-10.1987, -9.7988, -4.9995, -4.5995,  4.5998,  4.9998,  9.7994, 10.1993, 14.9976, 15.3976, 22.1960, 22.5959, 29.3943, 29.7942, 36.5927, 36.9926, 41.7924, 42.1924, 46.9924, 47.3923, 47.7922, 48.1922, 48.5922, 48.9922, 49.3922, 49.7922");
+
+
+        // ================== MuCapture analysis ======================== //
+        SetKey(Conf, "MuCapture/loadDefaultTWISTVars", true);
+        SetKey(Conf, "Detector/Geometry/dc_ppc", 25);
+        SetKey(Conf, "Detector/Geometry/pc_ppc", 5);
+        SetKey(Conf, "MuCapture/cutMinTDCWidthPC", 40.);
+        SetKey(Conf, "MuCapture/cutMinTDCWidthDC", 50.);
+        SetKey(Conf, "MuCapture/winPCLength", 100.);
+        SetKey(Conf, "MuCapture/winPCSeparation", 1100.);
+
+        //# W.r.t PC win start
+        SetKey(Conf, "MuCapture/winDCEarlyMargin", 100.);
+        SetKey(Conf, "MuCapture/winDCLength", 1100.);
+        SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
+        SetKey(Conf, "MuCapture/muUVPCCellMin", 70);
+        SetKey(Conf, "MuCapture/muUVPCCellMax", 90);
+        SetKey(Conf, "MuCapture/muUVDCCellMin", 34);
+        SetKey(Conf, "MuCapture/muUVDCCellMax", 47);
+        SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
+        SetKey(Conf, "MuCapture/PACT/slopea", 1.634);
+        SetKey(Conf, "MuCapture/PACT/slopeb", -5.428);
+        SetKey(Conf, "MuCapture/PACT/intercepta", -61.26);
+        SetKey(Conf, "MuCapture/PACT/interceptb", 642.3);
+
+        //# this must be very loose to use DIOs for proton normalization,
+        //# because there is no similar cut for protons
+        SetKey(Conf, "MuCapture/ProtonWindow/cutTrackTimeDiff", 100.);
+
+        //# stop before the dense stack
+        SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 44);
+
+        //================================================================
 }
