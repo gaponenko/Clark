@@ -96,6 +96,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   // Make the bin size half a cell
   hMuStopUVCell_ = H.DefineTH2D("MuCapture", "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
+  hMuStopUVPos_ = H.DefineTH2D("MuCapture", "MuStopUVPos", "Muon stop V vs U position (cm)", 201, -10.05, +10.05, 201, -10.05, +10.05 );
   hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
   //----------------------------------------------------------------
@@ -241,12 +242,16 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   // See dt_geo.00057 and twist-coordinate-system.uvplanes.pdf
-  const double muStopV = muonPCClusters[5].front().centralCell();
-  const double muStopU = muonPCClusters[6].front().centralCell();
-  hMuStopUVCell_->Fill(muStopU, muStopV);
+  const double muStopVCell = muonPCClusters[5].front().centralCell();
+  const double muStopUCell = muonPCClusters[6].front().centralCell();
+  hMuStopUVCell_->Fill(muStopUCell, muStopVCell);
 
   // convert to cm
-  const double muStopRadius = 0.2 * sqrt(std::pow(muStopV-80.5, 2) + std::pow(muStopU-80.5, 2));
+  const double muStopV = 0.2*(muStopVCell - 80.5);
+  const double muStopU = 0.2*(muStopUCell - 80.5);
+  hMuStopUVPos_->Fill(muStopU, muStopV);
+
+  const double muStopRadius = sqrt(std::pow(muStopV, 2) + std::pow(muStopU, 2));
   hMuStopRadius_->Fill(muStopRadius);
   if(muStopRadius > muStopRMax_) {
     return CUT_MUSTOP_UV;
