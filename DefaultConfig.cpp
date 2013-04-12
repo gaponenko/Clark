@@ -300,6 +300,8 @@ void SetDefault(ConfigFile &Conf)
         //# this must be very loose to use DIOs for proton normalization,
         //# because there is no similar cut for protons
         SetKey(Conf, "MuCapture/ProtonWindow/cutTrackTimeDiff", 100.);
+        SetKey(Conf, "MuCapture/ProtonWindow/cutTrackRmax", 6.3);//cm
+        SetKey(Conf, "MuCapture/ProtonWindow/cutTrackMuonOffset", 0.4);//cm
 
         //# stop before the dense stack
         SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 44);

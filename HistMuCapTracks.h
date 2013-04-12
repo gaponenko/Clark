@@ -26,11 +26,14 @@ public:
   HistMuCapTracks()
     : cutCharge_()
     , cutTrackWinTimeDiff_()
+    , cutTrackRmax_()
+    , cutTrackMuonOffset_()
     , trackwintimeLargeScale_()
     , trackwintime_()
     , hStartStop_()
     , trackz_()
     , trackMuonOffset_()
+    , trackMuondr_()
     , costhVsPtot_()
     , u0v0_()
     , trackRL_()
@@ -42,11 +45,15 @@ public:
 private :
   int cutCharge_;
   double cutTrackWinTimeDiff_;
+  double cutTrackRmax_;
+  double cutTrackMuonOffset_;
+
   TH1 *trackwintimeLargeScale_;
   TH1 *trackwintime_;
   TH2 *hStartStop_;
   TH1 *trackz_;
   TH2 *trackMuonOffset_;
+  TH1 *trackMuondr_;
 
   TH2 *costhVsPtot_;
   TH2 *u0v0_;

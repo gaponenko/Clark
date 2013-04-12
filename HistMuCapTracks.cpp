@@ -24,6 +24,8 @@ void HistMuCapTracks::init(const std::string& hdir,
 {
   cutCharge_ = chargeSign;
   cutTrackWinTimeDiff_ = conf.read<double>("MuCapture/ProtonWindow/cutTrackTimeDiff");
+  cutTrackRmax_ = conf.read<double>("MuCapture/ProtonWindow/cutTrackRmax");
+  cutTrackMuonOffset_ = conf.read<double>("MuCapture/ProtonWindow/cutTrackMuonOffset");
 
   trackwintimeLargeScale_ = hf.DefineTH1D(hdir, namePrefix+"trackWinTimeLS",
                                           namePrefix + "t(track) - t(win)",
@@ -50,6 +52,11 @@ void HistMuCapTracks::init(const std::string& hdir,
                                    601, -3.05, 3.05, 601, -3.05, +3.05);
 
   trackMuonOffset_->SetOption("colz");
+
+  trackMuondr_ = hf.DefineTH1D(hdir,
+                               namePrefix+"trackMuondr",
+                               namePrefix + "track-muon UV distance",
+                               100, 0., 5.);
 
   costhVsPtot_ = hf.DefineTH2D(hdir,
                                namePrefix+"ptotVsCosth",
@@ -100,35 +107,48 @@ void HistMuCapTracks::fill(const EventClass& evt,
   for(int i = 0; i < evt.ntr; ++i) {
     if(evt.hefit_ierror[i] == 0) {
       if(evt.hefit_q[i] == cutCharge_) {
+
         const double dt = evt.hefit_time[i] - timeWinStart;
         trackwintimeLargeScale_->Fill(dt);
         trackwintime_->Fill(dt);
         if(std::abs(dt) < cutTrackWinTimeDiff_) {
-          hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
-          // Select tracks that go from tgt to the end of tracker
-          if( (31== evt.hefit_pstart[i]) && (52 == evt.hefit_pstop[i])) {
-            ++numSelected;
-            trackz_->Fill(evt.hefit_z[i]);
+
+          trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
+          if(evt.radius[i] < cutTrackRmax_) {
 
             const double du = evt.hefit_u0[i] - muStopU;
             const double dv = evt.hefit_v0[i] - muStopV;
+            const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
             trackMuonOffset_->Fill(du, dv);
+            trackMuondr_->Fill(dr);
+            if(dr < cutTrackMuonOffset_) {
 
-            costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
-            u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
+              hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
+              // Select tracks that go from tgt to the end of tracker
+              if( (31== evt.hefit_pstart[i]) && (52 == evt.hefit_pstop[i])) {
 
-            trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
-            helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
+                ++numSelected;
+                trackz_->Fill(evt.hefit_z[i]);
 
-            const double rout =
-              sqrt(std::pow(evt.hefit_ucenter[i], 2) + std::pow(evt.hefit_vcenter[i], 2))
-              + evt.radius[i];
+                helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
 
-            trackROut_->Fill(rout);
-          }
-        }
-      }
-    }
+                const double rout =
+                  sqrt(std::pow(evt.hefit_ucenter[i], 2) + std::pow(evt.hefit_vcenter[i], 2))
+                  + evt.radius[i];
+
+                trackROut_->Fill(rout);
+
+                costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
+                u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
+
+              } // pstart,pstop
+
+            } // cutTrackMuonOffset
+
+          } // cutTrackRmax
+        } // cutTrackWinTimeDiff
+      } // cutCharge
+    } // ierror
   }
 
   hNumTracks_->Fill(numSelected);
