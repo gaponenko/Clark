@@ -108,7 +108,7 @@ public :
     , hMuUVLimitsPCUp_()
     , hMuUVLimitsDC_()
 
-    , hMuStopUVPos_()
+    , hMuStopUVCell_()
     , hMuStopRadius_()
   {}
 
@@ -155,7 +155,7 @@ private :
   TH2 *hMuUVLimitsPCUp_;
   TH2 *hMuUVLimitsDC_;
 
-  TH2 *hMuStopUVPos_;
+  TH2 *hMuStopUVCell_;
   TH1 *hMuStopRadius_;
 
   HistTDCWidth hwidthPCall_;

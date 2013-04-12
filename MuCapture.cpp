@@ -95,7 +95,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuUVLimitsDC_ = H.DefineTH2D("MuCapture", "MuUVLimitsDC", "Muon DC up max vs min coordinate", 80, 0.5, 80.5, 80, 0.5, 80.5);
 
   // Make the bin size half a cell
-  hMuStopUVPos_ = H.DefineTH2D("MuCapture", "MuStopUVPos", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
+  hMuStopUVCell_ = H.DefineTH2D("MuCapture", "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
   hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
   //----------------------------------------------------------------
@@ -243,7 +243,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // See dt_geo.00057 and twist-coordinate-system.uvplanes.pdf
   const double muStopV = muonPCClusters[5].front().centralCell();
   const double muStopU = muonPCClusters[6].front().centralCell();
-  hMuStopUVPos_->Fill(muStopU, muStopV);
+  hMuStopUVCell_->Fill(muStopU, muStopV);
 
   // convert to cm
   const double muStopRadius = 0.2 * sqrt(std::pow(muStopV-80.5, 2) + std::pow(muStopU-80.5, 2));
