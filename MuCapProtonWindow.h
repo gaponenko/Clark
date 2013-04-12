@@ -5,10 +5,12 @@
 
 #include "EventClass.h"
 #include "WireCluster.h"
-#include "HistTDCWidth.h"
-#include "HistMuCapTracks.h"
 #include "TimeWindow.h"
 #include "TDCHitWP.h"
+
+#include "HistTDCWidth.h"
+#include "HistMuCapTracks.h"
+#include "MuCapUVAnalysis.h"
 
 #include "TAxis.h"
 class TH1;
@@ -76,6 +78,7 @@ private :
   HistTDCWidth hwidthDCProtonWin_;
   HistMuCapTracks hnegtracks_;
   HistMuCapTracks hpostracks_;
+  MuCapUVAnalysis uvan_;
 
   EventCutNumber analyze(double muStopU, double muStopV,
                          const TimeWindow& protonWindowPC,

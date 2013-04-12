@@ -57,6 +57,7 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
 
   hnegtracks_.init("MuCapture/ProtonWindow/negativetracks", "", -1, hf, conf);
   hpostracks_.init("MuCapture/ProtonWindow/positivetracks", "", +1, hf, conf);
+  uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf);
 }
 
 //================================================================
@@ -109,6 +110,7 @@ analyze(double muStopU, double muStopV,
 
   hpostracks_.fill(evt, protonWindowPC.tstart, muStopU, muStopV);
   hnegtracks_.fill(evt, protonWindowPC.tstart, muStopU, muStopV);
+  uvan_.process(evt,  protonWindowPC.tstart, global, muStopU, muStopV);
 
   hLastPlane_->Fill(gr.max);
   if(gr.max > maxPlane_) {
