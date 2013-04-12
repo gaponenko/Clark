@@ -134,8 +134,7 @@ bool Mu_eVertexSel::Process(EventClass &E, HistogramFactory &H)
 	double mindist_Calc	= 9999999.9;
 	double du, dv, r;
 	double du_Calc, dv_Calc, r_Calc;
-	double bestdu, bestdv, bestr;
-	double bestdu_Calc, bestdv_Calc, bestr_Calc;
+	double bestdu(0.), bestdv(0.), bestr(0.);
 	for(vector<int>::iterator t = E.seltrack.begin(); t != E.seltrack.end(); t++)
 	{
 		du	= E.muon_ulast - u0[*t];
@@ -182,9 +181,6 @@ bool Mu_eVertexSel::Process(EventClass &E, HistogramFactory &H)
 			{
 				mindist_Calc = r_Calc;
 				best_Calc	= *t;
-				bestdu_Calc	= du_Calc;
-				bestdv_Calc	= dv_Calc;
-				bestr_Calc	= r_Calc;
 			}
 		}
 	}

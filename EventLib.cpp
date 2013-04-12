@@ -27,7 +27,7 @@ void Get_uv_at( const EventClass *E, int Trk, double z, double &uu, double &vv)
 	double u0	= E->hefit_u[Trk] - E->radius[Trk] * cos(E->hefit_phi[Trk]);
 	double v0	= E->hefit_v[Trk] - E->radius[Trk] * sin(E->hefit_phi[Trk]);
 	double z0	= E->hefit_z[Trk] - E->hefit_phi[Trk] * E->wavelen[Trk] / ( 2.0 * M_PI);
-	double phi	= 2.0 * M_PI * ( z - z0 ) / E->wavelen[Trk];
+	//double phi	= 2.0 * M_PI * ( z - z0 ) / E->wavelen[Trk];
 
 	uu	= u0 + E->radius[Trk] * cos(2.0 * M_PI * ( z - z0 ) / E->wavelen[Trk]);
 	vv	= v0 + E->radius[Trk] * sin(2.0 * M_PI * ( z - z0 ) / E->wavelen[Trk]);
