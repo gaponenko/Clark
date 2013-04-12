@@ -60,6 +60,7 @@ public:
     , trackwintimeLargeScale_()
     , trackwintime_()
     , hStartStop_()
+    , hHitRange_()
     , trackz_()
     , trackMuonOffset_()
     , trackMuondr_()
@@ -83,6 +84,7 @@ private :
   TH1 *trackwintimeLargeScale_;
   TH1 *trackwintime_;
   TH2 *hStartStop_;
+  TH2 *hHitRange_;
   TH1 *trackz_;
   TH2 *trackMuonOffset_;
   TH1 *trackMuondr_;

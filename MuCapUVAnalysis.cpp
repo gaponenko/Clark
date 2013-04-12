@@ -41,10 +41,17 @@ void MuCapUVAnalysis::init(const std::string& hdir,
 
   hStartStop_ = hf.DefineTH2D(hdir,
                               "startStopPlane",
-                              "startStopPlane",
+                              "Track stop vs start plane",
                               56, 0.5, 56.5, 56, 0.5, 56.5);
 
   hStartStop_->SetOption("colz");
+
+  hHitRange_ = hf.DefineTH2D(hdir,
+                             "hitRange",
+                             "time window hit range stop vs start",
+                             56, 0.5, 56.5, 56, 0.5, 56.5);
+
+  hHitRange_->SetOption("colz");
 
   trackz_ = hf.DefineTH1D(hdir, "trackz",
                           "trackz",
@@ -175,13 +182,12 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-
-  //  const PlaneRange gr = findPlaneRange(global);
+  const PlaneRange gr = findPlaneRange(globalClusters);
+  hHitRange_->Fill(gr.min, gr.max);
 
   hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
   // Select tracks that go from tgt to the end of tracker
   // if( (31== evt.hefit_pstart[i]) && (52 == evt.hefit_pstop[i])) {}
-
 
   trackz_->Fill(evt.hefit_z[i]);
 
