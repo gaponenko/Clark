@@ -248,9 +248,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   // convert to cm.
   // PC5 is V-plane rot=+135, V increases with cell number
-  const double muStopV = +0.2*(muStopVCell - 80.5);
+  const double muStopV = +0.2*(muStopVCell - 80.5) + evt.geo->pshift[5-1];
   // PC6 is U-plane rot=-135, V decreases with cell number
-  const double muStopU = -0.2*(muStopUCell - 80.5);
+  // this also flips the sign of the alignment correction. See
+  // chambers_mod.f90, it adds the correction to woffset,
+  //  which increases with wire number
+  const double muStopU = -0.2*(muStopUCell - 80.5) - evt.geo->pshift[6-1];
   hMuStopUVPos_->Fill(muStopU, muStopV);
 
   const double muStopRadius = sqrt(std::pow(muStopV, 2) + std::pow(muStopU, 2));
