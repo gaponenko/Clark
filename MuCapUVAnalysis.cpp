@@ -1,6 +1,7 @@
 // Andrei Gaponenko, 2013
 
 #include "MuCapUVAnalysis.h"
+#include <iomanip>
 
 #include "TH1.h"
 #include "TH2.h"
@@ -17,9 +18,16 @@ void MuCapUVAnalysis::init(const std::string& hdir,
                            const ConfigFile& conf)
 {
   cutCharge_ = -1;
-  cutTrackWinTimeDiff_ = conf.read<double>("MuCapture/ProtonWindow/cutTrackTimeDiff");
-  cutTrackRmax_ = conf.read<double>("MuCapture/ProtonWindow/cutTrackRmax");
-  cutTrackMuonOffset_ = conf.read<double>("MuCapture/ProtonWindow/cutTrackMuonOffset");
+  cutTrackWinTimeDiff_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackTimeDiff");
+  cutTrackRmax_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackRmax");
+  cutCosThetaMin_ = conf.read<double>("MuCapture/UVAnalysis/cutCosThetaMin");
+  cutCosThetaMax_ = conf.read<double>("MuCapture/UVAnalysis/cutCosThetaMax");
+  cutPtMin_ = conf.read<double>("MuCapture/UVAnalysis/cutPtMin");
+  cutPzMin_ = conf.read<double>("MuCapture/UVAnalysis/cutPzMin");
+  cutPtotMin_ = conf.read<double>("MuCapture/UVAnalysis/cutPtotMin");
+  cutPtotMax_ = conf.read<double>("MuCapture/UVAnalysis/cutPtotMax");
+  cutTrackMuonOffset_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackMuonOffset");
+  uvOutFileName_ = conf.read<std::string>("MuCapture/UVAnalysis/uvOutFileName");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -119,6 +127,13 @@ void MuCapUVAnalysis::init(const std::string& hdir,
   hNumTracks_ = hf.DefineTH1D(hdir, "numSelectedTracks",
                               "numSelectedTracks",
                               10, -0.5, 9.5);
+
+  if(!uvOutFileName_.empty()) {
+    uvOutFile_.open(uvOutFileName_.c_str());
+    if(!uvOutFile_) {
+      throw std::runtime_error("Error opening output file "+uvOutFileName_);
+    }
+  }
 }
 
 //================================================================
@@ -180,10 +195,37 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
+  // Make sure the tracks are fully contained in the transverse direction
   trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
   if(evt.radius[i] > cutTrackRmax_) {
     return CUT_RADIUS;
+  }
+
+  //----------------------------------------------------------------
+  // Other kinematic cuts
+  if(std::abs(evt.costh[i]) < cutCosThetaMin_) {
+    return CUT_COSTHETAMIN;
+  }
+
+  if(std::abs(evt.costh[i]) > cutCosThetaMax_) {
+    return CUT_COSTHETAMAX;
+  }
+
+  if(evt.pt[i] < cutPtMin_) {
+    return CUT_PTMIN;
+  }
+
+  if(evt.pz[i] < cutPzMin_) {
+    return CUT_PZMIN;
+  }
+
+  if(evt.ptot[i] < cutPtotMin_) {
+    return CUT_PTOTMIN;
+  }
+
+  if(evt.ptot[i] > cutPtotMax_) {
+    return CUT_PTOTMAX;
   }
 
   //----------------------------------------------------------------
@@ -215,6 +257,10 @@ analyzeTrack(int i, const EventClass& evt,
   final_costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
   final_trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
+
+  if(uvOutFile_) {
+    uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[i]<<"\t"<<evt.hefit_v0[i]<<std::endl;
+  }
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

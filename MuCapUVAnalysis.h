@@ -6,6 +6,7 @@
 #define MuCapUVAnalysis_h
 
 #include <string>
+#include <fstream>
 
 #include "WireCluster.h"
 
@@ -25,6 +26,14 @@ class MuCapUVAnalysis {
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
     ax->SetBinLabel(1+CUT_TIME, "time");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
+
+    ax->SetBinLabel(1+CUT_COSTHETAMIN, "cos(theta) min");
+    ax->SetBinLabel(1+CUT_COSTHETAMAX, "cos(theta) max");
+    ax->SetBinLabel(1+CUT_PTMIN, "pt min");
+    ax->SetBinLabel(1+CUT_PZMIN, "pz min");
+    ax->SetBinLabel(1+CUT_PTOTMIN, "ptot min");
+    ax->SetBinLabel(1+CUT_PTOTMAX, "ptot max");
+
     ax->SetBinLabel(1+CUT_TRACK_MUON_OFFSET, "drmu");
     ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
   }
@@ -35,6 +44,12 @@ public:
     CUT_CHARGE,
     CUT_TIME,
     CUT_RADIUS,
+    CUT_COSTHETAMIN,
+    CUT_COSTHETAMAX,
+    CUT_PTMIN,
+    CUT_PZMIN,
+    CUT_PTOTMIN,
+    CUT_PTOTMAX,
     CUT_TRACK_MUON_OFFSET,
     CUTS_ACCEPTED,
     CUTS_END
@@ -52,6 +67,12 @@ public:
     : cutCharge_()
     , cutTrackWinTimeDiff_()
     , cutTrackRmax_()
+    , cutCosThetaMin_()
+    , cutCosThetaMax_()
+    , cutPtMin_()
+    , cutPzMin_()
+    , cutPtotMin_()
+    , cutPtotMax_()
     , cutTrackMuonOffset_()
 
     , h_cuts_r()
@@ -84,7 +105,16 @@ private :
   int cutCharge_;
   double cutTrackWinTimeDiff_;
   double cutTrackRmax_;
+  double cutCosThetaMin_;
+  double cutCosThetaMax_;
+  double cutPtMin_;
+  double cutPzMin_;
+  double cutPtotMin_;
+  double cutPtotMax_;
   double cutTrackMuonOffset_;
+
+  std::string uvOutFileName_;
+  std::ofstream uvOutFile_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
