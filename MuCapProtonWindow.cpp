@@ -55,8 +55,6 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
   hwidthPCProtonWin_.init("MuCapture/pcWidthProton", "pcpwidth", 12, hf, conf);
   hwidthDCProtonWin_.init("MuCapture/dcWidthProton", "dcpwidth", 44, hf, conf);
 
-  hnegtracks_.init("MuCapture/ProtonWindow/negativetracks", "", -1, hf, conf);
-  hpostracks_.init("MuCapture/ProtonWindow/positivetracks", "", +1, hf, conf);
   uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf);
 }
 
@@ -108,8 +106,6 @@ analyze(double muStopU, double muStopV,
     return CUT_RANGE_GAPS;
   }
 
-  hpostracks_.fill(evt, protonWindowPC.tstart, muStopU, muStopV);
-  hnegtracks_.fill(evt, protonWindowPC.tstart, muStopU, muStopV);
   uvan_.process(evt,  protonWindowPC.tstart, global, muStopU, muStopV);
 
   hLastPlane_->Fill(gr.max);
