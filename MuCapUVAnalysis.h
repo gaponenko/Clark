@@ -59,16 +59,24 @@ public:
 
     , trackwintimeLargeScale_()
     , trackwintime_()
+
+    , trackRL_()
+    , costhVsPtot_()
+
     , hStartStop_()
     , hHitRange_()
     , trackz_()
+
     , trackMuonOffset_()
     , trackMuondr_()
-    , costhVsPtot_()
-    , u0v0_()
-    , trackRL_()
+
     , helixCenterUV_()
-    , trackROut_()
+
+    , final_trackRL_()
+    , final_costhVsPtot_()
+    , final_u0v0_()
+    , final_trackROut_()
+
     , hNumTracks_()
   {}
 
@@ -83,17 +91,22 @@ private :
 
   TH1 *trackwintimeLargeScale_;
   TH1 *trackwintime_;
+
+  TH2 *trackRL_;
+  TH2 *costhVsPtot_;
+
   TH2 *hStartStop_;
   TH2 *hHitRange_;
   TH1 *trackz_;
   TH2 *trackMuonOffset_;
   TH1 *trackMuondr_;
 
-  TH2 *costhVsPtot_;
-  TH2 *u0v0_;
-  TH2 *trackRL_; // radius and wavelength
   TH2 *helixCenterUV_;
-  TH1 *trackROut_;
+
+  TH2 *final_trackRL_; // radius and wavelength
+  TH2 *final_costhVsPtot_;
+  TH2 *final_u0v0_;
+  TH1 *final_trackROut_;
 
   TH1 *hNumTracks_;
 

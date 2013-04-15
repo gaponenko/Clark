@@ -76,12 +76,19 @@ void MuCapUVAnalysis::init(const std::string& hdir,
 
   costhVsPtot_->SetOption("colz");
 
-  u0v0_ = hf.DefineTH2D(hdir,
-                        "u0v0",
-                        "u0v0",
-                        640, -16., 16, 640, -16., 16.);
+  final_costhVsPtot_ = hf.DefineTH2D(hdir,
+                                     "final_ptotVsCosth",
+                                     "ptot vs costh",
+                                     140, 0., 70., 100, -1., +1.);
 
-  u0v0_->SetOption("colz");
+  final_costhVsPtot_->SetOption("colz");
+
+  final_u0v0_ = hf.DefineTH2D(hdir,
+                              "final_u0v0",
+                              "final_u0v0",
+                              640, -16., 16, 640, -16., 16.);
+
+  final_u0v0_->SetOption("colz");
 
   trackRL_ = hf.DefineTH2D(hdir,
                            "trackRL",
@@ -89,6 +96,13 @@ void MuCapUVAnalysis::init(const std::string& hdir,
                            200, 0., 20, 1600, -80., 80.);
 
   trackRL_->SetOption("colz");
+
+  final_trackRL_ = hf.DefineTH2D(hdir,
+                                 "final trackRL",
+                                 "final track wavelengh vs radius",
+                                 200, 0., 20, 1600, -80., 80.);
+
+  final_trackRL_->SetOption("colz");
 
   helixCenterUV_ = hf.DefineTH2D(hdir,
                                  "helixCenterUV",
@@ -98,9 +112,9 @@ void MuCapUVAnalysis::init(const std::string& hdir,
   helixCenterUV_->SetOption("colz");
 
 
-  trackROut_ = hf.DefineTH1D(hdir, "rout",
-                             "max track distance from the Z axis",
-                             400, 0, 40.);
+  final_trackROut_ = hf.DefineTH1D(hdir, "final_rout",
+                                   "max track distance from the Z axis",
+                                   400, 0, 40.);
 
   hNumTracks_ = hf.DefineTH1D(hdir, "numSelectedTracks",
                               "numSelectedTracks",
@@ -167,6 +181,7 @@ analyzeTrack(int i, const EventClass& evt,
 
   //----------------------------------------------------------------
   trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
+  costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
   if(evt.radius[i] > cutTrackRmax_) {
     return CUT_RADIUS;
   }
@@ -188,7 +203,6 @@ analyzeTrack(int i, const EventClass& evt,
   hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
   // Select tracks that go from tgt to the end of tracker
   // if( (31== evt.hefit_pstart[i]) && (52 == evt.hefit_pstop[i])) {}
-
   trackz_->Fill(evt.hefit_z[i]);
 
   helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
@@ -197,10 +211,10 @@ analyzeTrack(int i, const EventClass& evt,
     sqrt(std::pow(evt.hefit_ucenter[i], 2) + std::pow(evt.hefit_vcenter[i], 2))
     + evt.radius[i];
 
-  trackROut_->Fill(rout);
-
-  costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
-  u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
+  final_trackROut_->Fill(rout);
+  final_costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
+  final_trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
+  final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;
