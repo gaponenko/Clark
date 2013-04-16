@@ -1,0 +1,10 @@
+MuCapture/Do	= true
+MuCapture/doDefaultTWIST = false
+Detector/GeometryFile = 61
+Detector/Geometry/dc_ppc = 25
+Detector/Geometry/pc_ppc = 5
+
+# Relax the muon stop position cut
+MuCapture/muStopRMax = 3.0
+# Write out the unbinned results
+MuCapture/UVAnalysis/uvOutFileName = uvanalysis.dat
