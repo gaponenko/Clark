@@ -6,6 +6,8 @@
 
 #include <boost/regex.hpp>
 
+#include "log4cpp/Category.hh"
+
 #include "DetectorGeo.h"
 #include "ConfigFile.h"
 
@@ -79,7 +81,7 @@ bool DetectorGeo::ReadGeometry(const ConfigFile& conf, log4cpp::Category *L)
 }
 
 // =============== (1) Drift Chamber ================ //
-void DetectorGeo::ReadDRFT( ifstream &file)
+void DetectorGeo::ReadDRFT(std::ifstream &file)
 {
 	char  ReadIn[280];
 	// skip to and over the + sign
@@ -146,7 +148,7 @@ void DetectorGeo::ReadDRFT( ifstream &file)
 
 
 // ================== (2) PC variables ==================== //
-void DetectorGeo::ReadPROP( ifstream &file)
+void DetectorGeo::ReadPROP(std::ifstream &file)
 {
 	char  ReadIn[280];
 	// skip to and over the + sign
@@ -209,7 +211,7 @@ void DetectorGeo::ReadPROP( ifstream &file)
 
 
 // ================ (3) Target variables ================== //
-void DetectorGeo::ReadTARX( ifstream &file)
+void DetectorGeo::ReadTARX(std::ifstream &file)
 {
 	char  ReadIn[280];
 	// Read in target info
@@ -247,7 +249,7 @@ void DetectorGeo::ReadTARX( ifstream &file)
 
 
 // ================ (4) Scint variables =================== //
-void DetectorGeo::ReadSCIX( ifstream &file)
+void DetectorGeo::ReadSCIX(std::ifstream &file)
 {
 	char  ReadIn[280];
 	// Read in scintillator info

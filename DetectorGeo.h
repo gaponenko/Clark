@@ -6,8 +6,6 @@
 
 #ifndef DetectorGeo_h
 #define DetectorGeo_h
-// Include de C++
-using namespace std;
 
 // DCs
 #define MAX_FOILS_D 60
@@ -22,21 +20,14 @@ using namespace std;
 #define MAXT_SCINTS 4
 #define MAXO_SCINTS 128
 
-#include <iostream>
 #include <fstream>
 #include <string>
 
-// Include Program
-#include "FuncLib.h"
-#include "log4cpp/Category.hh"
-
+namespace log4cpp { class Category; }
 class ConfigFile;
 
 class DetectorGeo {
 	public :
-		DetectorGeo()	{};
-		~DetectorGeo()	{};
-
 		bool ReadGeometry(const ConfigFile& conf, log4cpp::Category *L);
 
 		// (1) DC variables
@@ -100,10 +91,10 @@ class DetectorGeo {
 		double	tt0scint[MAXT_SCINTS];       // Thickness of t0 scintillators
 
 	private :
-		void	ReadDRFT( ifstream &file);
-		void	ReadPROP( ifstream &file);
-		void	ReadTARX( ifstream &file);
-		void	ReadSCIX( ifstream &file);
+		void	ReadDRFT(std::ifstream &file);
+		void	ReadPROP(std::ifstream &file);
+		void	ReadTARX(std::ifstream &file);
+		void	ReadSCIX(std::ifstream &file);
 
   void applyCorrections(const ConfigFile& conf, log4cpp::Category& logger);
   void applyCorrectionsPPC(const std::string& calibFileName, log4cpp::Category& logger, double *posArray, int arrsize);
