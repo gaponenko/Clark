@@ -11,6 +11,7 @@
 
 #include "TH1.h"
 #include "TH2.h"
+#include "Math/Point2D.h"
 
 #include "PlaneRange.h"
 
@@ -230,23 +231,19 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_MUSTOP_SINGLECLUSTER;
   }
 
+  const double pc5wire = muonPCClusters[5].front().centralCell();
+  const double pc6wire = muonPCClusters[6].front().centralCell();
+
   // See dt_geo.00061 and twist-coordinate-system.uvplanes.pdf
-  const double muStopVCell = muonPCClusters[5].front().centralCell();
-  const double muStopUCell = muonPCClusters[6].front().centralCell();
-  hMuStopUVCell_->Fill(muStopUCell, muStopVCell);
+  hMuStopUVCell_->Fill(pc6wire, pc5wire);
 
-  // convert to cm.
-  // PC5 is V-plane rot=+135, V increases with cell number
-  const double muStopV = +0.2*(muStopVCell - 80.5) + evt.geo->pshift[5-1];
-  // PC6 is U-plane rot=-135, U decreases with cell number
-  // The sign of the alignment correction: see what is done
-  // in chambers_mod.f90.  The correction is added to
-  // mvector*woffset.  Woffset increases with wire number,
-  // and for rot=-135 mvector=(-1,0,0).
-  const double muStopU = -0.2*(muStopUCell - 80.5) + evt.geo->pshift[6-1];
-  hMuStopUVPos_->Fill(muStopU, muStopV);
+  ROOT::Math::XYPoint muStop =
+    WirePlane::uv(evt.geo->pc(5).measurement(pc5wire),
+                  evt.geo->pc(6).measurement(pc6wire));
 
-  const double muStopRadius = sqrt(std::pow(muStopV, 2) + std::pow(muStopU, 2));
+  hMuStopUVPos_->Fill(muStop.x(), muStop.y());
+
+  const double muStopRadius = sqrt(std::pow(muStop.y(), 2) + std::pow(muStop.x(), 2));
   hMuStopRadius_->Fill(muStopRadius);
   if(muStopRadius > muStopRMax_) {
     return CUT_MUSTOP_UV;
@@ -262,7 +259,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthDCMuWin_.fill(windcs[iPCTrigWin].hits);
 
   const int iProtonWin = iPCTrigWin + 1;
-  protonWindow_.process(muStopU, muStopV, winpcs[iProtonWin], windcs[iProtonWin], unassignedDCHits, evt);
+  protonWindow_.process(muStop.x(), muStop.y(), winpcs[iProtonWin], windcs[iProtonWin], unassignedDCHits, evt);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

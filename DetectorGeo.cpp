@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <fstream>
 #include <stdexcept>
+#include <algorithm>
+#include <iterator>
 
 #include <boost/regex.hpp>
 
@@ -11,6 +13,79 @@
 #include "DetectorGeo.h"
 #include "ConfigFile.h"
 
+//================================================================
+WirePlane::WirePlane(WirePlane::DetType d,
+                     double z,
+                     double rotDegrees,
+                     double alignmentShift)
+  : det_(d)
+  , wireSpacing_(d == PC ? 0.2 : 0.4)
+  , centralWire_(d == PC ? 161./2. : 81./2.)
+{
+  static const double pi = 4.*atan(1.);
+  const double rot = rotDegrees * pi/180.;
+
+  // This is equivalent to mvector computation in chambers_mod.f90
+  // but we just subtract 45 degrees instead of doing xyz2uvz3
+  mvector_ = ROOT::Math::XYZVector(cos(rot-pi/4.),
+                                   sin(rot-pi/4.),
+                                   0.);
+
+  dir_ = (std::abs(mvector_.x()) > std::abs(mvector_.y())) ? U : V;
+
+  center_ = ROOT::Math::XYZPoint((dir_ == U)? alignmentShift : 0.,
+                                 (dir_ == V)? alignmentShift : 0.,
+                                 z);
+}
+
+//================================================================
+WirePlane::Measurement WirePlane::measurement(double wireNumber) const {
+  ROOT::Math::XYZPoint wireCenter = center_ +
+    mvector_ * wireSpacing_ * (wireNumber - centralWire_);
+
+  return Measurement(dir_,
+                     (dir_ == U) ? wireCenter.x() : wireCenter.y()
+                     );
+}
+
+//================================================================
+ROOT::Math::XYPoint WirePlane::uv(Measurement m1, Measurement m2) {
+  if(m1.dir == m2.dir) {
+    throw std::runtime_error("ERROR: WirePlane::uv(): inputs measure the same direction.");
+  }
+  const double u = (m1.dir == U) ? m1.coordinate : m2.coordinate;
+  const double v = (m1.dir == V) ? m1.coordinate : m2.coordinate;
+  return ROOT::Math::XYPoint(u, v);
+}
+
+//================================================================
+namespace {
+  struct WirePlaneZSorter {
+    bool operator()(const WirePlane& a, const WirePlane& b) const {
+      return a.center().z() < b.center().z();
+    }
+  };
+}
+
+DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger) {
+  if(!ReadGeometry(conf, &logger)) {
+    throw std::runtime_error("DetectorGeo: error reading geometry.");
+  }
+
+  for(int i=0; i<npplanes; ++i) {
+    pcplanes_.push_back(WirePlane(WirePlane::PC, zpplane[i], prot[i], pshift[i]));
+  }
+
+  for(int i=0; i<ndplanes; ++i) {
+    dcplanes_.push_back(WirePlane(WirePlane::DC, zdplane[i], drot[i], dshift[i]));
+  }
+
+  std::copy(pcplanes_.begin(), pcplanes_.end(), std::back_inserter(globalplanes_));
+  std::copy(dcplanes_.begin(), dcplanes_.end(), std::back_inserter(globalplanes_));
+  std::sort(globalplanes_.begin(), globalplanes_.end(), WirePlaneZSorter());
+}
+
+//================================================================
 bool DetectorGeo::ReadGeometry(const ConfigFile& conf, log4cpp::Category *L)
 {
   int GeoNum = conf.read<int>("Detector/GeometryFile", 0);

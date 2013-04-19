@@ -2,7 +2,7 @@
 
 ROOTCFLAGS    := $(shell root-config --cflags)
 ROOTLDFLAGS    := $(shell root-config --ldflags)
-ROOTLIBS      := $(shell root-config --libs)
+ROOTLIBS      := -L$(shell root-config --libdir) -lGenVector $(shell root-config --libs)
 
 # includes and libs
 INCLUDE = -I/twist/local/include

@@ -84,7 +84,7 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	RandomNumbers = new TRandom3();
 }
 
-bool EventClass::InitGeometry(ConfigFile &C)
+void EventClass::InitGeometry(ConfigFile &C)
 {
 	BField		=	C.read<double>( "Detector/BField");
 
@@ -108,8 +108,7 @@ bool EventClass::InitGeometry(ConfigFile &C)
 	// Tmp			=	C.read<string>( "Parameters/DCzposition");
 	// DCzposition	= StrToFloatVect(Tmp);
 
-        geo = new DetectorGeo();
-        return geo->ReadGeometry(C, Log);
+        geo = new DetectorGeo(C, *Log);
 }
 
 void EventClass::LoadMuCapture() {

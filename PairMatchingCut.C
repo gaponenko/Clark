@@ -375,13 +375,13 @@ bool PairMatchingCut::Get_CDA_FromCalculation( EventClass &E, int t, int a, doub
 	//------------------------------------------------------------------//
 	if( E.dcmin[t] < E.dcmin[a])
 	{
-		z1 = E.geo->zdplane[int(min(E.dcmax[t], E.dcmin[a])-1)];
-		z2 = E.geo->zdplane[int(max(E.dcmax[t], E.dcmin[a])-1)];
+          z1 = E.geo->dc(std::min(E.dcmax[t], E.dcmin[a])).center().z();
+          z2 = E.geo->dc(std::max(E.dcmax[t], E.dcmin[a])).center().z();
 	}
 	else
 	{
-		z1 = E.geo->zdplane[int(min(E.dcmax[a], E.dcmin[t])-1)];
-		z2 = E.geo->zdplane[int(max(E.dcmax[a], E.dcmin[t])-1)];
+          z1 = E.geo->dc(std::min(E.dcmax[a], E.dcmin[t])).center().z();
+          z2 = E.geo->dc(std::max(E.dcmax[a], E.dcmin[t])).center().z();
 	}
 	z1 = z1 -0.2;
 	z2 = z2 +0.2;

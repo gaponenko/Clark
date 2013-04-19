@@ -59,7 +59,7 @@ class EventClass{
 		~EventClass()	{};
 
 		void Init( ConfigFile &C, log4cpp::Category *L );
-		bool InitGeometry(ConfigFile &C);
+		void InitGeometry(ConfigFile &C);
 		void InitVar( TTree* T);
 		void GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Int_t* V);
 		void GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Float_t* V);

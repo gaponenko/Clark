@@ -18,11 +18,7 @@ bool TreeClass::InitAll( string Treename, ConfigFile &Conf, log4cpp::Category *T
 	FirstInitTree	= false;
 
 	// Read the geometry file only
-	if ( not Evt.InitGeometry(Conf) )
-	{
-		Log->error("Something is wrong with the first tree of the list");
-		return false;
-	}
+	Evt.InitGeometry(Conf);
 
 	string HistFile;
 	// Initialization of the analyses
