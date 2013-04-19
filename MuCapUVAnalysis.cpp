@@ -140,12 +140,12 @@ void MuCapUVAnalysis::init(const std::string& hdir,
 void MuCapUVAnalysis::process(const EventClass& evt,
                               double timeWinStart,
                               const ClustersByPlane& globalClusters,
-                              double muStopU, double muStopV
+                              const ROOT::Math::XYPoint& muStopUV
                               )
 {
   int numSelected(0);
   for(int i = 0; i < evt.ntr; ++i) {
-    if(processTrack(i, evt, timeWinStart, globalClusters, muStopU, muStopV)) {
+    if(processTrack(i, evt, timeWinStart, globalClusters, muStopUV)) {
       ++numSelected;
     }
   }
@@ -157,10 +157,10 @@ bool MuCapUVAnalysis::processTrack(int itrack,
                                    const EventClass& evt,
                                    double timeWinStart,
                                    const ClustersByPlane& globalClusters,
-                                   double muStopU, double muStopV
+                                   const ROOT::Math::XYPoint& muStopUV
                                    )
 {
-  CutNumber c = analyzeTrack(itrack, evt, timeWinStart, globalClusters, muStopU, muStopV);
+  CutNumber c = analyzeTrack(itrack, evt, timeWinStart, globalClusters, muStopUV);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -173,7 +173,7 @@ MuCapUVAnalysis::CutNumber MuCapUVAnalysis::
 analyzeTrack(int i, const EventClass& evt,
              double timeWinStart,
              const ClustersByPlane& globalClusters,
-             double muStopU, double muStopV
+             const ROOT::Math::XYPoint& muStopUV
              )
 {
   //----------------------------------------------------------------
@@ -229,8 +229,8 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  const double du = evt.hefit_u0[i] - muStopU;
-  const double dv = evt.hefit_v0[i] - muStopV;
+  const double du = evt.hefit_u0[i] - muStopUV.x();
+  const double dv = evt.hefit_v0[i] - muStopUV.y();
   const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
   trackMuonOffset_->Fill(du, dv);
   trackMuondr_->Fill(dr);

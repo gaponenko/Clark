@@ -243,7 +243,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   hMuStopUVPos_->Fill(muStop.x(), muStop.y());
 
-  const double muStopRadius = sqrt(std::pow(muStop.y(), 2) + std::pow(muStop.x(), 2));
+  const double muStopRadius = muStop.R();
   hMuStopRadius_->Fill(muStopRadius);
   if(muStopRadius > muStopRMax_) {
     return CUT_MUSTOP_UV;
@@ -259,7 +259,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthDCMuWin_.fill(windcs[iPCTrigWin].hits);
 
   const int iProtonWin = iPCTrigWin + 1;
-  protonWindow_.process(muStop.x(), muStop.y(), winpcs[iProtonWin], windcs[iProtonWin], unassignedDCHits, evt);
+  protonWindow_.process(muStop, winpcs[iProtonWin], windcs[iProtonWin], unassignedDCHits, evt);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

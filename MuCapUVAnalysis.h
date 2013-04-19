@@ -11,6 +11,7 @@
 #include "WireCluster.h"
 
 #include "TAxis.h"
+#include "Math/Point2D.h"
 
 class TH1;
 class TH2;
@@ -60,7 +61,7 @@ public:
   void process(const EventClass& evt,
                double timeWinStart,
                const ClustersByPlane& globalClusters,
-               double muStopU, double muStopV
+               const ROOT::Math::XYPoint& muStopUV
                );
 
   MuCapUVAnalysis()
@@ -145,14 +146,14 @@ private :
                     const EventClass& evt,
                     double timeWinStart,
                     const ClustersByPlane& globalClusters,
-                    double muStopU, double muStopV
+                    const ROOT::Math::XYPoint& muStopUV
                     );
 
   CutNumber analyzeTrack(int itrack,
                          const EventClass& evt,
                          double timeWinStart,
                          const ClustersByPlane& globalClusters,
-                         double muStopU, double muStopV
+                         const ROOT::Math::XYPoint& muStopUV
                          );
 };
 

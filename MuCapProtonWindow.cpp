@@ -59,14 +59,14 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
 }
 
 //================================================================
-void MuCapProtonWindow::process(double muStopU, double muStopV,
+void MuCapProtonWindow::process(const ROOT::Math::XYPoint& muStopUV,
                                 const TimeWindow& protonWindowPC,
                                 const TimeWindow& protonWindowDC,
                                 const TDCHitWPPtrCollection& unassignedDCHits,
                                 const EventClass& evt
                                 )
 {
-  EventCutNumber c = analyze(muStopU, muStopV, protonWindowPC, protonWindowDC, unassignedDCHits, evt);
+  EventCutNumber c = analyze(muStopUV, protonWindowPC, protonWindowDC, unassignedDCHits, evt);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -75,7 +75,7 @@ void MuCapProtonWindow::process(double muStopU, double muStopV,
 
 //================================================================
 MuCapProtonWindow::EventCutNumber MuCapProtonWindow::
-analyze(double muStopU, double muStopV,
+analyze(const ROOT::Math::XYPoint& muStopUV,
         const TimeWindow& protonWindowPC,
         const TimeWindow& protonWindowDC,
         const TDCHitWPPtrCollection& unassignedDCHits,
@@ -106,7 +106,7 @@ analyze(double muStopU, double muStopV,
     return CUT_RANGE_GAPS;
   }
 
-  uvan_.process(evt,  protonWindowPC.tstart, global, muStopU, muStopV);
+  uvan_.process(evt,  protonWindowPC.tstart, global, muStopUV);
 
   hLastPlane_->Fill(gr.max);
   if(gr.max > maxPlane_) {

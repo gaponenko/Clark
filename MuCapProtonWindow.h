@@ -11,6 +11,7 @@
 #include "HistTDCWidth.h"
 #include "MuCapUVAnalysis.h"
 
+#include "Math/Point2D.h"
 #include "TAxis.h"
 class TH1;
 class TH2;
@@ -40,7 +41,7 @@ public:
 
   void init(HistogramFactory &hf, const ConfigFile &conf);
 
-  void process(double muStopU, double muStopV,
+  void process(const ROOT::Math::XYPoint& muStopUV,
                const TimeWindow& protonWindowPC,
                const TimeWindow& protonWindowDC,
                const TDCHitWPPtrCollection& unassignedDCHits,
@@ -77,7 +78,7 @@ private :
   HistTDCWidth hwidthDCProtonWin_;
   MuCapUVAnalysis uvan_;
 
-  EventCutNumber analyze(double muStopU, double muStopV,
+  EventCutNumber analyze(const ROOT::Math::XYPoint& muStopUV,
                          const TimeWindow& protonWindowPC,
                          const TimeWindow& protonWindowDC,
                          const TDCHitWPPtrCollection& unassignedDCHits,
