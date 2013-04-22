@@ -297,6 +297,9 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/PACT/intercepta", -61.26);
         SetKey(Conf, "MuCapture/PACT/interceptb", 642.3);
 
+        // make sure the planes are not adjacent at dz=0.4cm
+        SetKey(Conf, "MuCapture/ProtonWindow/Containment1D/minPlanedz", 0.5);
+
         //# this must be very loose to use DIOs for proton normalization,
         //# because there is no similar cut for protons
         SetKey(Conf, "MuCapture/UVAnalysis/cutTrackTimeDiff", 100.);

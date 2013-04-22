@@ -29,7 +29,7 @@ namespace { // local helpers
 }
 
 //================================================================
-void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
+void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf) {
   maxPlane_ = conf.read<double>("MuCapture/ProtonWindow/maxPlane");
 
   //----------------------------------------------------------------
@@ -56,6 +56,8 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const ConfigFile& conf) {
   hwidthDCProtonWin_.init("MuCapture/dcWidthProton", "dcpwidth", 44, hf, conf);
 
   uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf);
+  hpw_.init(hf, "MuCapture/ProtonWindow/Final", geom, conf);
+  rcheckProtonCandidates_.init(hf, "MuCapture/ProtonWindow/PCRCheck", geom, conf);
 }
 
 //================================================================
@@ -126,6 +128,12 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   hwidthPCProtonWin_.fill(protonPCHits);
   hwidthDCProtonWin_.fill(protonDCHits);
+  hpw_.fill(global, evt);
+
+  // the containment check requires at least 2U and 2V planes
+  if(32 <= gr.max) {
+    rcheckProtonCandidates_.rmax(gr.max, global);
+  }
 
   return CUTS_ACCEPTED;
 }

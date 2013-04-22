@@ -9,7 +9,9 @@
 #include "TDCHitWP.h"
 
 #include "HistTDCWidth.h"
+#include "HistProtonWindow.h"
 #include "MuCapUVAnalysis.h"
+#include "MuCapContainmentCheck.h"
 
 #include "Math/Point2D.h"
 #include "TAxis.h"
@@ -17,6 +19,7 @@ class TH1;
 class TH2;
 
 class HistogramFactory;
+class DetectorGeo;
 class ConfigFile;
 
 //================================================================
@@ -39,7 +42,7 @@ public:
     CUTS_END
   };
 
-  void init(HistogramFactory &hf, const ConfigFile &conf);
+  void init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile &conf);
 
   void process(const ROOT::Math::XYPoint& muStopUV,
                const TimeWindow& protonWindowPC,
@@ -77,6 +80,9 @@ private :
   HistTDCWidth hwidthPCProtonWin_;
   HistTDCWidth hwidthDCProtonWin_;
   MuCapUVAnalysis uvan_;
+  HistProtonWindow hpw_;
+
+  MuCapContainmentCheck rcheckProtonCandidates_;
 
   EventCutNumber analyze(const ROOT::Math::XYPoint& muStopUV,
                          const TimeWindow& protonWindowPC,
