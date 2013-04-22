@@ -137,19 +137,20 @@ void MuCapUVAnalysis::init(const std::string& hdir,
 }
 
 //================================================================
-void MuCapUVAnalysis::process(const EventClass& evt,
-                              double timeWinStart,
-                              const ClustersByPlane& globalClusters,
-                              const ROOT::Math::XYPoint& muStopUV
-                              )
+unsigned MuCapUVAnalysis::process(const EventClass& evt,
+                                  double timeWinStart,
+                                  const ClustersByPlane& globalClusters,
+                                  const ROOT::Math::XYPoint& muStopUV
+                                  )
 {
-  int numSelected(0);
+  unsigned numSelected(0);
   for(int i = 0; i < evt.ntr; ++i) {
     if(processTrack(i, evt, timeWinStart, globalClusters, muStopUV)) {
       ++numSelected;
     }
   }
   hNumTracks_->Fill(numSelected);
+  return numSelected;
 }
 
 //================================================================

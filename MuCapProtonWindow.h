@@ -60,6 +60,8 @@ public:
     , hStartClusterSize_()
     , hLastPlane_()
     , hProtonTime_()
+    , hCCRvsPlaneDIO_()
+    , hCCRvsPlaneProtons_()
   {}
 
 private :
@@ -77,11 +79,15 @@ private :
   TH1 *hLastPlane_;
   TH1 *hProtonTime_;
 
+  TH2 *hCCRvsPlaneDIO_;
+  TH2 *hCCRvsPlaneProtons_;
+
   HistTDCWidth hwidthPCProtonWin_;
   HistTDCWidth hwidthDCProtonWin_;
   MuCapUVAnalysis uvan_;
   HistProtonWindow hpw_;
 
+  MuCapContainmentCheck rcheckDIO_;
   MuCapContainmentCheck rcheckProtonCandidates_;
 
   EventCutNumber analyze(const ROOT::Math::XYPoint& muStopUV,

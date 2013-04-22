@@ -55,8 +55,21 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   hwidthPCProtonWin_.init("MuCapture/pcWidthProton", "pcpwidth", 12, hf, conf);
   hwidthDCProtonWin_.init("MuCapture/dcWidthProton", "dcpwidth", 44, hf, conf);
 
+  hCCRvsPlaneDIO_ = hf.DefineTH2D("MuCapture/ProtonWindow", "RvsPlaneDIO",
+                                  "Extrpolated Rmax vs plane for DIO",
+                                  56, 0.5, 56.5, 250, 0., 25.);
+
+  hCCRvsPlaneDIO_->SetOption("colz");
+
+  hCCRvsPlaneProtons_ = hf.DefineTH2D("MuCapture/ProtonWindow", "RvsPlaneProtons",
+                                      "Extrpolated Rmax vs plane for Protons",
+                                      56, 0.5, 56.5, 250, 0., 25.);
+
+  hCCRvsPlaneProtons_->SetOption("colz");
+
   uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf);
   hpw_.init(hf, "MuCapture/ProtonWindow/Final", geom, conf);
+  rcheckDIO_.init(hf, "MuCapture/ProtonWindow/DIORCheck", geom, conf);
   rcheckProtonCandidates_.init(hf, "MuCapture/ProtonWindow/PCRCheck", geom, conf);
 }
 
@@ -108,7 +121,13 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     return CUT_RANGE_GAPS;
   }
 
-  uvan_.process(evt,  protonWindowPC.tstart, global, muStopUV);
+  const unsigned numDIO = uvan_.process(evt,  protonWindowPC.tstart, global, muStopUV);
+  if(numDIO) {
+    for(int plane=32; plane <= maxPlane_; ++plane) {
+      const double r = rcheckDIO_.rmax(plane, global);
+      hCCRvsPlaneDIO_->Fill(plane, r);
+    }
+  }
 
   hLastPlane_->Fill(gr.max);
   if(gr.max > maxPlane_) {
@@ -132,7 +151,8 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   // the containment check requires at least 2U and 2V planes
   if(32 <= gr.max) {
-    rcheckProtonCandidates_.rmax(gr.max, global);
+    const double r = rcheckProtonCandidates_.rmax(gr.max, global);
+    hCCRvsPlaneProtons_->Fill(gr.max, r);
   }
 
   return CUTS_ACCEPTED;

@@ -58,11 +58,12 @@ public:
 
   void init(const std::string& hdir, HistogramFactory &hf, const ConfigFile &conf);
 
-  void process(const EventClass& evt,
-               double timeWinStart,
-               const ClustersByPlane& globalClusters,
-               const ROOT::Math::XYPoint& muStopUV
-               );
+  // Returns the number of accepted tracks
+  unsigned process(const EventClass& evt,
+                   double timeWinStart,
+                   const ClustersByPlane& globalClusters,
+                   const ROOT::Math::XYPoint& muStopUV
+                   );
 
   MuCapUVAnalysis()
     : cutCharge_()
