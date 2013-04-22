@@ -1,3 +1,5 @@
 MuCapture/Do	= true
 MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 61
+Detector/Geometry/dc_ppc = 25
+Detector/Geometry/pc_ppc = 5

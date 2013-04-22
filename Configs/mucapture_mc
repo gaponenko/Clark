@@ -1,0 +1,6 @@
+MuCapture/Do	= true
+MuCapture/loadDefaultTWISTVars = false
+MuCapture/doDefaultTWIST = false
+Detector/GeometryFile = 61
+Detector/Geometry/dc_ppc = 0
+Detector/Geometry/pc_ppc = 0
