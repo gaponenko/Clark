@@ -500,6 +500,30 @@ void EventClass::InitVar( TTree* T)
           InitMuCaptureVar(T);
         }
 
+        if(AnalyseTruthBank) {
+          //_________________________ MCBankOutput  __________________________//
+          GetVar(T, "MCSet", "spectrum",        &spectrum);
+          GetVar(T, "MCSet", "sample",          &sample);
+          GetVar(T, "MCSet", "ndecays",         &ndecays);
+          GetVar(T, "MCSet", "spin3",           &spin3);
+          GetVar(T, "", "nmctr",                &nmctr);
+          GetVar(T, "", "mctrack_itrack",       mctrack_itrack);
+          GetVar(T, "", "mctrack_pid",          mctrack_pid);
+          GetVar(T, "", "mctrack_voff",         mctrack_voff);
+          GetVar(T, "", "mctrack_nv",           mctrack_nv);
+          GetVar(T, "", "nmcvtx",               &nmcvtx);
+          GetVar(T, "", "mcvertex_ptot",        mcvertex_ptot);
+          GetVar(T, "", "mcvertex_costh",       mcvertex_costh);
+          GetVar(T, "", "mcvertex_phimuv",      mcvertex_phimuv);
+          GetVar(T, "", "mcvertex_time",        mcvertex_time);
+          GetVar(T, "", "mcvertex_vu",          mcvertex_vu);
+          GetVar(T, "", "mcvertex_vv",          mcvertex_vv);
+          GetVar(T, "", "mcvertex_vz",          mcvertex_vz);
+          GetVar(T, "", "mcvertex_istop",       mcvertex_istop);
+          GetVar(T, "", "micheld_itrack",       micheld_itrack);
+          GetVar(T, "", "micheld_accflag",      micheld_accflag);
+        }
+
         if(!loadDefaultTWISTVars) {
           return;
         }
@@ -678,31 +702,6 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "fgfit_numv",			fgfit_numv);
 	GetVar(T, "", "fgfit_nunused",		fgfit_nunused);
 	GetVar(T, "", "fgfit_nmissingpl",	fgfit_nmissingpl);
-
-
-	//_________________________ MCBankOutput  __________________________//
-
-	GetVar(T, "MCSet", "spectrum",		&spectrum);
-	GetVar(T, "MCSet", "sample",		&sample);
-	GetVar(T, "MCSet", "ndecays",		&ndecays);
-	GetVar(T, "MCSet", "spin3",			&spin3);
-	GetVar(T, "", "nmctr",				&nmctr);
-	GetVar(T, "", "mctrack_itrack",		mctrack_itrack);
-	GetVar(T, "", "mctrack_pid",		mctrack_pid);
-	GetVar(T, "", "mctrack_voff",		mctrack_voff);
-	GetVar(T, "", "mctrack_nv",			mctrack_nv);
-	GetVar(T, "", "nmcvtx",				&nmcvtx);
-	GetVar(T, "", "mcvertex_ptot",		mcvertex_ptot);
-	GetVar(T, "", "mcvertex_costh",		mcvertex_costh);
-	GetVar(T, "", "mcvertex_phimuv",	mcvertex_phimuv);
-	GetVar(T, "", "mcvertex_time",		mcvertex_time);
-	GetVar(T, "", "mcvertex_vu",		mcvertex_vu);
-	GetVar(T, "", "mcvertex_vv",		mcvertex_vv);
-	GetVar(T, "", "mcvertex_vz",		mcvertex_vz);
-	GetVar(T, "", "mcvertex_istop",		mcvertex_istop);
-	GetVar(T, "", "micheld_itrack",		micheld_itrack);
-	GetVar(T, "", "micheld_accflag",	micheld_accflag);
-
 
 	//_________________________ User  __________________________//
 
