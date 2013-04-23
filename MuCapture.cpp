@@ -113,6 +113,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hOccupancyDCUnassigned_.init("MuCapture", "hitMapDCUnassigned", 44, 80, H, Conf);
 
+  hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
+
   //----------------------------------------------------------------
 
   return true;
@@ -139,6 +141,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   hOccupancyPCAll_.fill(evt.pc_hits_by_time());
   hOccupancyDCAll_.fill(evt.dc_hits_by_time());
+
+  hTruthAll_.fill(evt);
 
   //----------------------------------------------------------------
   // Sort PC hits into time windows

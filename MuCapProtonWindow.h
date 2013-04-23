@@ -12,6 +12,7 @@
 #include "HistProtonWindow.h"
 #include "MuCapUVAnalysis.h"
 #include "MuCapContainmentCheck.h"
+#include "HistMuCapRTruth.h"
 
 #include "Math/Point2D.h"
 #include "TAxis.h"
@@ -62,6 +63,7 @@ public:
     , hProtonTime_()
     , hCCRvsPlaneDIO_()
     , hCCRvsPlaneProtons_()
+    , hLastPlaneVsMCPstart_()
   {}
 
 private :
@@ -82,6 +84,8 @@ private :
   TH2 *hCCRvsPlaneDIO_;
   TH2 *hCCRvsPlaneProtons_;
 
+  TH2 *hLastPlaneVsMCPstart_;
+
   HistTDCWidth hwidthPCProtonWin_;
   HistTDCWidth hwidthDCProtonWin_;
   MuCapUVAnalysis uvan_;
@@ -89,6 +93,7 @@ private :
 
   MuCapContainmentCheck rcheckDIO_;
   MuCapContainmentCheck rcheckProtonCandidates_;
+  HistMuCapRTruth hrtruth_;
 
   EventCutNumber analyze(const ROOT::Math::XYPoint& muStopUV,
                          const TimeWindow& protonWindowPC,

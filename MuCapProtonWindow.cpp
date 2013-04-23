@@ -67,10 +67,17 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
 
   hCCRvsPlaneProtons_->SetOption("colz");
 
+  hLastPlaneVsMCPstart_ = hf.DefineTH2D("MuCapture/ProtonWindow", "lastPlaneVsMCPstart",
+                                        "Last plane vs MC pstart",
+                                        200, 0., 200., 56, 0.5, 56.5);
+
+  hLastPlaneVsMCPstart_->SetOption("colz");
+
   uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf);
   hpw_.init(hf, "MuCapture/ProtonWindow/Final", geom, conf);
   rcheckDIO_.init(hf, "MuCapture/ProtonWindow/DIORCheck", geom, conf);
   rcheckProtonCandidates_.init(hf, "MuCapture/ProtonWindow/PCRCheck", geom, conf);
+  hrtruth_.init(hf, "MuCapture/ProtonWindow/RTruth", conf);
 }
 
 //================================================================
@@ -130,6 +137,10 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   }
 
   hLastPlane_->Fill(gr.max);
+  if(evt.nmcvtx == 2) {
+    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max);
+  }
+
   if(gr.max > maxPlane_) {
     return CUT_MAX_PLANE;
   }
@@ -153,6 +164,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   if(32 <= gr.max) {
     const double r = rcheckProtonCandidates_.rmax(gr.max, global);
     hCCRvsPlaneProtons_->Fill(gr.max, r);
+    hrtruth_.fill(evt, gr.max, r);
   }
 
   return CUTS_ACCEPTED;

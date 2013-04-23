@@ -13,6 +13,7 @@
 #include "MuCapProtonWindow.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
+#include "HistMuCapTruth.h"
 
 #include "TAxis.h"
 class TH1;
@@ -161,6 +162,7 @@ private :
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;
   HistOccupancy hOccupancyDCUnassigned_;
+  HistMuCapTruth hTruthAll_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
