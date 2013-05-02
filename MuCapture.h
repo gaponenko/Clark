@@ -111,8 +111,8 @@ public :
   {}
 
 private :
-  bool doDefaultTWIST_;
   bool doMCTruth_;
+  bool doDefaultTWIST_;
 
   double cutMinTDCWidthPC_;
   double cutMinTDCWidthDC_;
