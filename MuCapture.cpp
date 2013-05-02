@@ -47,6 +47,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   }
   Log->info( "Register MuCapture module");
 
+  doMCTruth_ = Conf.read<bool>("TruthBank/Do");
+
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
   cutMinTDCWidthPC_ = Conf.read<double>("MuCapture/cutMinTDCWidthPC");
@@ -113,7 +115,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hOccupancyDCUnassigned_.init("MuCapture", "hitMapDCUnassigned", 44, 80, H, Conf);
 
-  hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
+  if(doMCTruth_) {
+    hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
+  }
 
   //----------------------------------------------------------------
 
@@ -142,7 +146,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hOccupancyPCAll_.fill(evt.pc_hits_by_time());
   hOccupancyDCAll_.fill(evt.dc_hits_by_time());
 
-  hTruthAll_.fill(evt);
+  if(doMCTruth_) {
+    hTruthAll_.fill(evt);
+  }
 
   //----------------------------------------------------------------
   // Sort PC hits into time windows

@@ -74,7 +74,8 @@ public :
   virtual bool Process(EventClass &E, HistogramFactory &H);
 
   MuCapture()
-    : doDefaultTWIST_(false)
+    : doMCTruth_(false)
+    , doDefaultTWIST_(false)
     , cutMinTDCWidthPC_()
     , cutMinTDCWidthDC_()
     , winPCLength_()
@@ -111,6 +112,7 @@ public :
 
 private :
   bool doDefaultTWIST_;
+  bool doMCTruth_;
 
   double cutMinTDCWidthPC_;
   double cutMinTDCWidthDC_;
