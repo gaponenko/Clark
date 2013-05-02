@@ -13,6 +13,7 @@
 #include "MuCapUVAnalysis.h"
 #include "MuCapContainmentCheck.h"
 #include "HistMuCapRTruth.h"
+#include "HistMuCapTruth.h"
 
 #include "Math/Point2D.h"
 #include "TAxis.h"
@@ -110,6 +111,9 @@ private :
   MuCapContainmentCheck rcheckDIO_;
   MuCapContainmentCheck rcheckProtonCandidates_;
   HistMuCapRTruth hrtruth_;
+  HistMuCapTruth htruthLoose_;
+  HistMuCapTruth htruthMinRange_;
+  HistMuCapTruth htruthTight_;
 
   EventCutNumber analyze(const ROOT::Math::XYPoint& muStopUV,
                          const TimeWindow& protonWindowPC,

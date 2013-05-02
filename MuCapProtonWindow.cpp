@@ -76,6 +76,9 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
 
   if(doMCTruth_) {
     hrtruth_.init(hf, "MuCapture/ProtonWindow/RTruth", conf);
+    htruthLoose_.init(hf, "MuCapture/ProtonWindow/TruthLoose", conf);
+    htruthMinRange_.init(hf, "MuCapture/ProtonWindow/TruthMinRange", conf);
+    htruthTight_.init(hf, "MuCapture/ProtonWindow/TruthTight", conf);
 
     hLastPlaneVsMCPstart_ = hf.DefineTH2D("MuCapture/ProtonWindow", "lastPlaneVsMCPstart",
                                           "Last plane vs MC pstart",
@@ -150,6 +153,13 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     return CUT_MAX_RANGE;
   }
 
+  //----------------------------------------------------------------
+  // CUTS_LOOSE_PROTONS are passed at this point
+
+  if(doMCTruth_) {
+    htruthLoose_.fill(evt);
+  }
+
   // If we use window start time here, longer proton tracks will get sharper timing
   // because of more hits.  Restrict the amount of data we use for proton time to
   // just PC7, so that all tracks get equally bad timing.
@@ -166,6 +176,10 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     return CUT_MIN_RANGE;
   }
 
+  if(doMCTruth_) {
+    htruthMinRange_.fill(evt);
+  }
+
   const double rext = rcheckProtonCandidates_.rmax(gr.max, global);
   hCCRvsPlaneProtons_->Fill(gr.max, rext);
   if(doMCTruth_) {
@@ -173,6 +187,10 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   }
   if(rext > cutRextMax_) {
     return CUT_REXT;
+  }
+
+  if(doMCTruth_) {
+    htruthTight_.fill(evt);
   }
 
   return CUTS_TIGHT_PROTONS;
