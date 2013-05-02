@@ -29,7 +29,7 @@ void HistMuCapRTruth::init(HistogramFactory &hf,
 void HistMuCapRTruth::fill(const EventClass& evt, int lastPlane, double extrapolatedRmax) {
   if(evt.nmcvtx != 2) {
     std::ostringstream os;
-    os<<"HistMuCapRTruth::fill(): unexpected number mc vertexes = "<<evt.nmcvtx;
+    os<<"HistMuCapRTruth::fill(): unexpected number of mc vertexes = "<<evt.nmcvtx;
     throw std::runtime_error(os.str());
   }
 
