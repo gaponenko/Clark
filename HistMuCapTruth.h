@@ -25,13 +25,19 @@ public:
   void fill(const EventClass& evt);
 
   HistMuCapTruth()
-    : hVUend_()
+    : hptot_()
+    , hphi_()
+    , hpcos_()
+    , hVUend_()
     , hRZend_()
     , hRendVsPstart_()
     , hZendVsPstart_()
   {}
 
 private :
+  TH1 *hptot_;
+  TH1 *hphi_;
+  TH2 *hpcos_;
   TH2 *hVUend_;
   TH2 *hRZend_;
   TH2 *hRendVsPstart_;

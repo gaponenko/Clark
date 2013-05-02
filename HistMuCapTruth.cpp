@@ -16,6 +16,12 @@ void HistMuCapTruth::init(HistogramFactory &hf,
                           const std::string& hdir,
                           const ConfigFile &conf)
 {
+  static const double PI = 4.*atan(1.);
+  hptot_ = hf.DefineTH1D(hdir, "ptot", "MC ptot", 200, 0., 200.);
+  hphi_ = hf.DefineTH1D(hdir, "phi", "MC momentum phi", 100, -PI, +PI);
+  hpcos_ = hf.DefineTH2D(hdir, "cosVsPtos", "MC cosTheta vs ptot", 200, 0., 200., 100, -1., 1.);
+  hpcos_->SetOption("colz");
+
   hVUend_ = hf.DefineTH2D(hdir, "uvend", "V vs U primary end vtx for |Zend|<60 cm", 600, -30., 30., 600, -30., 30.);
   hVUend_->SetOption("box");
 
@@ -36,6 +42,10 @@ void HistMuCapTruth::fill(const EventClass& evt) {
     os<<"HistMuCapTruth::fill(): unexpected number mc vertexes = "<<evt.nmcvtx;
     throw std::runtime_error(os.str());
   }
+
+  hptot_->Fill(evt.mcvertex_ptot[0]);
+  hphi_->Fill(evt.mcvertex_phimuv[0]);
+  hpcos_->Fill(evt.mcvertex_ptot[0], evt.mcvertex_costh[0]);
 
   const double endR = std::sqrt(std::pow(evt.mcvertex_vu[1], 2) + std::pow(evt.mcvertex_vv[1], 2));
   hRZend_->Fill(evt.mcvertex_vz[1], endR);
