@@ -30,7 +30,9 @@ namespace { // local helpers
 
 //================================================================
 void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf) {
-  maxPlane_ = conf.read<double>("MuCapture/ProtonWindow/maxPlane");
+  doMCTruth_ = conf.read<bool>("TruthBank/Do");
+  cutMaxPlane_ = conf.read<double>("MuCapture/ProtonWindow/maxPlane");
+  cutRextMax_ = conf.read<double>("MuCapture/ProtonWindow/RextMax");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D("MuCapture/ProtonWindow", "protonCuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -67,17 +69,20 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
 
   hCCRvsPlaneProtons_->SetOption("colz");
 
-  hLastPlaneVsMCPstart_ = hf.DefineTH2D("MuCapture/ProtonWindow", "lastPlaneVsMCPstart",
-                                        "Last plane vs MC pstart",
-                                        200, 0., 200., 56, 0.5, 56.5);
-
-  hLastPlaneVsMCPstart_->SetOption("colz");
-
   uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf);
   hpw_.init(hf, "MuCapture/ProtonWindow/Final", geom, conf);
   rcheckDIO_.init(hf, "MuCapture/ProtonWindow/DIORCheck", geom, conf);
   rcheckProtonCandidates_.init(hf, "MuCapture/ProtonWindow/PCRCheck", geom, conf);
-  hrtruth_.init(hf, "MuCapture/ProtonWindow/RTruth", conf);
+
+  if(doMCTruth_) {
+    hrtruth_.init(hf, "MuCapture/ProtonWindow/RTruth", conf);
+
+    hLastPlaneVsMCPstart_ = hf.DefineTH2D("MuCapture/ProtonWindow", "lastPlaneVsMCPstart",
+                                          "Last plane vs MC pstart",
+                                          200, 0., 200., 56, 0.5, 56.5);
+
+    hLastPlaneVsMCPstart_->SetOption("colz");
+  }
 }
 
 //================================================================
@@ -130,24 +135,20 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   const unsigned numDIO = uvan_.process(evt,  protonWindowPC.tstart, global, muStopUV);
   if(numDIO) {
-    for(int plane=32; plane <= maxPlane_; ++plane) {
+    for(int plane=32; plane <= cutMaxPlane_; ++plane) {
       const double r = rcheckDIO_.rmax(plane, global);
       hCCRvsPlaneDIO_->Fill(plane, r);
     }
   }
 
   hLastPlane_->Fill(gr.max);
-  if(evt.nmcvtx == 2) {
+  if(doMCTruth_ && (evt.nmcvtx == 2)) {
     hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max);
   }
 
-  if(gr.max > maxPlane_) {
-    return CUT_MAX_PLANE;
+  if(gr.max > cutMaxPlane_) {
+    return CUT_MAX_RANGE;
   }
-
-//  if(clustersPC[7].size() > 1) {
-//    std::cout<<"pc 7 clusters:\n"<<clustersPC[7]<<std::endl;
-//  }
 
   // If we use window start time here, longer proton tracks will get sharper timing
   // because of more hits.  Restrict the amount of data we use for proton time to
@@ -161,11 +162,18 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   hpw_.fill(global, evt);
 
   // the containment check requires at least 2U and 2V planes
-  if(32 <= gr.max) {
-    const double r = rcheckProtonCandidates_.rmax(gr.max, global);
-    hCCRvsPlaneProtons_->Fill(gr.max, r);
-    hrtruth_.fill(evt, gr.max, r);
+  if(gr.max < 32) {
+    return CUT_MIN_RANGE;
   }
 
-  return CUTS_ACCEPTED;
+  const double rext = rcheckProtonCandidates_.rmax(gr.max, global);
+  hCCRvsPlaneProtons_->Fill(gr.max, rext);
+  if(doMCTruth_) {
+    hrtruth_.fill(evt, gr.max, rext);
+  }
+  if(rext > cutRextMax_) {
+    return CUT_REXT;
+  }
+
+  return CUTS_TIGHT_PROTONS;
 }

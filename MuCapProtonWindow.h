@@ -29,8 +29,14 @@ class MuCapProtonWindow {
     ax->SetBinLabel(1+CUT_UPSTREAM, "Upstream");
     ax->SetBinLabel(1+CUT_NOPC7, "NOPC7");
     ax->SetBinLabel(1+CUT_RANGE_GAPS, "RANGE_GAPS");
-    ax->SetBinLabel(1+CUT_MAX_PLANE, "MAX_PLANE");
-    ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
+    ax->SetBinLabel(1+CUT_MAX_RANGE, "MAX_RANGE");
+
+    ax->SetBinLabel(1+CUTS_LOOSE_PROTONS, "Loose protons");
+
+    ax->SetBinLabel(1+CUT_MIN_RANGE, "Min range");
+    ax->SetBinLabel(1+CUT_REXT, "Rext");
+
+    ax->SetBinLabel(1+CUTS_TIGHT_PROTONS, "Tight protons");
   }
 
 public:
@@ -38,8 +44,14 @@ public:
     CUT_UPSTREAM,
     CUT_NOPC7,
     CUT_RANGE_GAPS,
-    CUT_MAX_PLANE,
-    CUTS_ACCEPTED,
+    CUT_MAX_RANGE,
+
+    CUTS_LOOSE_PROTONS,
+
+    CUT_MIN_RANGE,
+    CUT_REXT,
+
+    CUTS_TIGHT_PROTONS,
     CUTS_END
   };
 
@@ -53,7 +65,9 @@ public:
                );
 
   MuCapProtonWindow()
-    : maxPlane_()
+    : doMCTruth_(false)
+    , cutMaxPlane_()
+    , cutRextMax_()
     , h_cuts_r()
     , h_cuts_p()
     , hStartPos_()
@@ -67,7 +81,9 @@ public:
   {}
 
 private :
-  int maxPlane_;
+  bool doMCTruth_;
+  int cutMaxPlane_;
+  double cutRextMax_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
