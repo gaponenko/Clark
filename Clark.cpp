@@ -131,7 +131,10 @@ int main(int argc, char **argv)
 	}
 
 	// This is for the total nthrown and similar values stored in the output root file
-	AnaObj.StoreExtraValues();
+        if(!  Conf.read<bool>("MuCapture/Do")
+           || Conf.read<bool>("MuCapture/doDefaultTWIST")) {
+          AnaObj.StoreExtraValues();
+        }
 
 	AnaObj.SaveHistos();
 
