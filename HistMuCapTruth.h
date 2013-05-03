@@ -26,6 +26,7 @@ public:
 
   HistMuCapTruth()
     : hptot_()
+    , hek_()
     , hphi_()
     , hpcos_()
     , hVUend_()
@@ -36,6 +37,7 @@ public:
 
 private :
   TH1 *hptot_;
+  TH1 *hek_;
   TH1 *hphi_;
   TH2 *hpcos_;
   TH2 *hVUend_;
