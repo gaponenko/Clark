@@ -240,7 +240,7 @@ void HistogramFactory::Save()
     {
       for(vector<StoredObjectData>::iterator N=OrderedHists.begin(); N != OrderedHists.end(); N++)
         {
-          Log->info("Storing %s %s",Type[N->name].c_str(), (N->name).c_str());
+          Log->info("Storing %s %s/%s with opt = %d",Type[N->name].c_str(), (N->path).c_str(), (N->name).c_str(), N->writeOpt);
           DoDirectory(N->path);
           N->obj->Write(N->name.c_str(), N->writeOpt);
           File->cd();
