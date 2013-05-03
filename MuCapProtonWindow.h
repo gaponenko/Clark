@@ -86,6 +86,9 @@ private :
   int cutMaxPlane_;
   double cutRextMax_;
 
+  std::string tightProtonsOutFileName_;
+  std::ofstream tightProtonsOutFile_;
+
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 

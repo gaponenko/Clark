@@ -33,6 +33,7 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
   cutMaxPlane_ = conf.read<double>("MuCapture/ProtonWindow/maxPlane");
   cutRextMax_ = conf.read<double>("MuCapture/ProtonWindow/RextMax");
+  tightProtonsOutFileName_ = conf.read<std::string>("MuCapture/ProtonWindow/TightProtonsFileName", "");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D("MuCapture/ProtonWindow", "protonCuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -85,6 +86,13 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
                                           200, 0., 200., 56, 0.5, 56.5);
 
     hLastPlaneVsMCPstart_->SetOption("colz");
+  }
+
+  if(!tightProtonsOutFileName_.empty()) {
+    tightProtonsOutFile_.open(tightProtonsOutFileName_.c_str());
+    if(!tightProtonsOutFile_) {
+      throw std::runtime_error("Error opening output file "+tightProtonsOutFileName_);
+    }
   }
 }
 
@@ -165,8 +173,6 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   // just PC7, so that all tracks get equally bad timing.
   hProtonTime_->Fill(getMinTime(clustersPC[7]));
 
-  //std::cout<<"accepted: "<<evt.nrun<<"\t"<<evt.nevt<<"\t"<<gr.max<<std::endl;
-
   hwidthPCProtonWin_.fill(protonPCHits);
   hwidthDCProtonWin_.fill(protonDCHits);
   hpw_.fill(global, evt);
@@ -191,6 +197,10 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   if(doMCTruth_) {
     htruthTight_.fill(evt);
+  }
+
+  if(tightProtonsOutFile_) {
+    tightProtonsOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
   }
 
   return CUTS_TIGHT_PROTONS;
