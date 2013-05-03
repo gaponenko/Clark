@@ -42,9 +42,10 @@ class HistogramFactory {
     {}
   };
 
-	public :
-		HistogramFactory()	{};
-		~HistogramFactory()	{};
+public :
+  HistogramFactory() : File(0) {}
+  ~HistogramFactory();
+
 		bool	Init(log4cpp::Category *TmpLog, const char* Filename);
 
 		// =============================== definition section ==================================

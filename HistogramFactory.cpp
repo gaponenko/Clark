@@ -247,3 +247,8 @@ void HistogramFactory::Save()
         }
     }
 }
+
+HistogramFactory::~HistogramFactory() {
+  if(File) File->Close();
+  delete File;
+}
