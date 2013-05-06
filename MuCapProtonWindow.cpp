@@ -55,8 +55,10 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   hLastPlane_ = hf.DefineTH1D("MuCapture/ProtonWindow", "lastPlane", "Proton last plane", 56, 0.5, 56.5);
   hProtonTime_ = hf.DefineTH1D("MuCapture/ProtonWindow", "protonTime", "Proton time", 1000, 0., 10000.);
 
-  hwidthPCProtonWin_.init("MuCapture/pcWidthProton", "pcpwidth", 12, hf, conf);
-  hwidthDCProtonWin_.init("MuCapture/dcWidthProton", "dcpwidth", 44, hf, conf);
+  hwidthPCTightProtons_.init("MuCapture/ProtonWindow/pcWidthTightProtons", "pcpwidth", 12, hf, conf);
+  hwidthDCTightProtons_.init("MuCapture/ProtonWindow/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
+  hwidthPCTightDIO_.init("MuCapture/ProtonWindow/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
+  hwidthDCTightDIO_.init("MuCapture/ProtonWindow/dcWidthTightDIO", "dcpwidth", 44, hf, conf);
 
   hCCRvsPlaneDIO_ = hf.DefineTH2D("MuCapture/ProtonWindow", "RvsPlaneDIO",
                                   "Extrpolated Rmax vs plane for DIO",
@@ -147,6 +149,10 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   const unsigned numDIO = uvan_.process(evt,  protonWindowPC.tstart, global, muStopUV);
   if(numDIO) {
+
+    hwidthPCTightDIO_.fill(protonPCHits);
+    hwidthDCTightDIO_.fill(protonDCHits);
+
     for(int plane=32; plane <= cutMaxPlane_; ++plane) {
       const double r = rcheckDIO_.rmax(plane, global);
       hCCRvsPlaneDIO_->Fill(plane, r);
@@ -174,8 +180,6 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   // just PC7, so that all tracks get equally bad timing.
   hProtonTime_->Fill(getMinTime(clustersPC[7]));
 
-  hwidthPCProtonWin_.fill(protonPCHits);
-  hwidthDCProtonWin_.fill(protonDCHits);
   hpw_.fill(global, evt);
 
   //----------------------------------------------------------------
@@ -213,6 +217,9 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   if(tightProtonsOutFile_) {
     tightProtonsOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
   }
+
+  hwidthPCTightProtons_.fill(protonPCHits);
+  hwidthDCTightProtons_.fill(protonDCHits);
 
   return CUTS_TIGHT_PROTONS;
 }

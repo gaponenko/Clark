@@ -109,8 +109,11 @@ private :
 
   TH2 *hLastPlaneVsMCPstart_;
 
-  HistTDCWidth hwidthPCProtonWin_;
-  HistTDCWidth hwidthDCProtonWin_;
+  HistTDCWidth hwidthPCTightProtons_;
+  HistTDCWidth hwidthDCTightProtons_;
+  HistTDCWidth hwidthPCTightDIO_;
+  HistTDCWidth hwidthDCTightDIO_;
+
   MuCapUVAnalysis uvan_;
   HistProtonWindow hpw_;
 
