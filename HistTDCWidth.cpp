@@ -52,14 +52,14 @@ void HistTDCWidth::init(const std::string& hdir,
                         HistogramFactory &hf,
                         const ConfigFile& conf)
 {
-  hWidth_ = hf.DefineTH1D(hdir, namePrefix, namePrefix + " TDC width", 1000, 0., 1000.);
+  hWidth_ = hf.DefineTH1D(hdir, namePrefix, namePrefix + " TDC width", 2000, 0., 2000.);
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
     std::ostringstream osname;
     osname<<namePrefix<<"_"<<std::setw(2)<<std::setfill('0')<<i;
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC Width, plane "<<std::setw(2)<<std::setfill('0')<<i;
-    byPlane_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 1000, 0., 1000.));
+    byPlane_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
   }
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
@@ -67,7 +67,7 @@ void HistTDCWidth::init(const std::string& hdir,
     osname<<namePrefix<<"_minWidth_"<<std::setw(2)<<std::setfill('0')<<i;
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC MIN Width in plane "<<std::setw(2)<<std::setfill('0')<<i;
-    minWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 1000, 0., 1000.));
+    minWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
   }
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
@@ -75,7 +75,7 @@ void HistTDCWidth::init(const std::string& hdir,
     osname<<namePrefix<<"_maxWidth_"<<std::setw(2)<<std::setfill('0')<<i;
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC MAX Width in plane "<<std::setw(2)<<std::setfill('0')<<i;
-    maxWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 1000, 0., 1000.));
+    maxWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
   }
 }
 
