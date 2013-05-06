@@ -28,11 +28,13 @@ class ConfigFile;
 class MuCapProtonWindow {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_UPSTREAM, "Upstream");
-    ax->SetBinLabel(1+CUT_NOPC7, "NOPC7");
+    ax->SetBinLabel(1+CUT_NOPC7, "PC7");
     ax->SetBinLabel(1+CUT_RANGE_GAPS, "RANGE_GAPS");
     ax->SetBinLabel(1+CUT_MAX_RANGE, "MAX_RANGE");
 
     ax->SetBinLabel(1+CUTS_LOOSE_PROTONS, "Loose protons");
+
+    ax->SetBinLabel(1+CUT_NOPC8, "PC8");
 
     ax->SetBinLabel(1+CUT_MIN_RANGE, "Min range");
     ax->SetBinLabel(1+CUT_REXT, "Rext");
@@ -49,6 +51,7 @@ public:
 
     CUTS_LOOSE_PROTONS,
 
+    CUT_NOPC8,
     CUT_MIN_RANGE,
     CUT_REXT,
 
@@ -115,6 +118,7 @@ private :
   MuCapContainmentCheck rcheckProtonCandidates_;
   HistMuCapRTruth hrtruth_;
   HistMuCapTruth htruthLoose_;
+  HistMuCapTruth htruthPC8_;
   HistMuCapTruth htruthMinRange_;
   HistMuCapTruth htruthTight_;
 

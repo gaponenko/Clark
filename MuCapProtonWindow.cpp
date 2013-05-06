@@ -78,6 +78,7 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   if(doMCTruth_) {
     hrtruth_.init(hf, "MuCapture/ProtonWindow/RTruth", conf);
     htruthLoose_.init(hf, "MuCapture/ProtonWindow/TruthLoose", conf);
+    htruthPC8_.init(hf, "MuCapture/ProtonWindow/TruthPC8", conf);
     htruthMinRange_.init(hf, "MuCapture/ProtonWindow/TruthMinRange", conf);
     htruthTight_.init(hf, "MuCapture/ProtonWindow/TruthTight", conf);
 
@@ -177,6 +178,16 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   hwidthDCProtonWin_.fill(protonDCHits);
   hpw_.fill(global, evt);
 
+  //----------------------------------------------------------------
+  if(gr.max < 30) {
+    return CUT_NOPC8;
+  }
+
+  if(doMCTruth_) {
+    htruthPC8_.fill(evt);
+  }
+
+  //----------------------------------------------------------------
   // the containment check requires at least 2U and 2V planes
   if(gr.max < 32) {
     return CUT_MIN_RANGE;
