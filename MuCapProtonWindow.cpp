@@ -44,12 +44,16 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   h_cuts_p->SetStats(kFALSE);
 
   hNumClusters_ = hf.DefineTH2D("MuCapture/ProtonWindow", "numClustersVsPlane", "Num cluster vs plane", 56, 0.5, 56.5,  11, -0.5, 10.5);
+  hNumClusters_->SetOption("colz");
 
   hStartPos_ = hf.DefineTH2D("MuCapture/ProtonWindow", "startPos", "Proton start V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
+  hStartPos_->SetOption("colz");
 
   hStartOffset_ = hf.DefineTH2D("MuCapture/ProtonWindow", "startOffset", "Proton start offset V vs U (cell units)", 41, -5.125, 5.125,  41, -5.125, 5.125);
+  hStartOffset_->SetOption("colz");
 
   hStartClusterSize_ = hf.DefineTH2D("MuCapture/ProtonWindow", "startClusterSize", "Proton start cluster V vs U width (cell units)", 25, -0.5, 24.5,  25, -0.5, 24.5);
+  hStartClusterSize_->SetOption("colz");
 
   hLastPlane_ = hf.DefineTH1D("MuCapture/ProtonWindow", "lastPlane", "Proton last plane", 56, 0.5, 56.5);
   hProtonTime_ = hf.DefineTH1D("MuCapture/ProtonWindow", "protonTime", "Proton time", 1000, 0., 10000.);

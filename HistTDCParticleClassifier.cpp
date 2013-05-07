@@ -21,10 +21,17 @@ void HistTDCParticleClassifier::init(HistogramFactory &hf,
                                      const DetectorGeo& geom,
                                      const ConfigFile &conf)
 {
-  hpc8vs7maxWidth_ = hf.DefineTH2D(hdir, "pc8vs7maxWidth","pc8vs7maxWidth", 400, 0., 2000., 400, 0., 2000.);
-  hpc8vs7meanWidth_ = hf.DefineTH2D(hdir, "pc8vs7meanWidth","pc8vs7meanWidth", 400, 0., 2000., 400, 0., 2000.);
-  hpc8vs7medianWidth_ = hf.DefineTH2D(hdir, "pc8vs7medianWidth","pc8vs7medianWidth", 400, 0., 2000., 400, 0., 2000.);
+  hpc8vs7maxWidth_ = hf.DefineTH2D(hdir, "pc8vs7maxWidth","pc8vs7maxWidth", 200, 0., 2000., 200, 0., 2000.);
+  hpc8vs7maxWidth_->SetOption("colz");
+
+  hpc8vs7meanWidth_ = hf.DefineTH2D(hdir, "pc8vs7meanWidth","pc8vs7meanWidth", 200, 0., 2000., 200, 0., 2000.);
+  hpc8vs7meanWidth_->SetOption("colz");
+
+  hpc8vs7medianWidth_ = hf.DefineTH2D(hdir, "pc8vs7medianWidth","pc8vs7medianWidth", 200, 0., 2000., 200, 0., 2000.);
+  hpc8vs7medianWidth_->SetOption("colz");
+
   hpc8vs7maxHits_ = hf.DefineTH2D(hdir, "pc8vs7maxHits","pc8vs7maxHits", 10, -0.5, 9.5, 10, -0.5, 9.5);
+  hpc8vs7maxHits_->SetOption("colz");
 }
 
 //================================================================
