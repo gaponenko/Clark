@@ -63,6 +63,22 @@ void HistTDCWidth::init(const std::string& hdir,
     ostitle<<namePrefix<<" TDC MAX Width in plane "<<std::setw(2)<<std::setfill('0')<<i;
     maxWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
   }
+
+  for(unsigned i=0; i<=maxPlaneNumber; ++i) {
+    std::ostringstream osname;
+    osname<<namePrefix<<"_meanWidth_"<<std::setw(2)<<std::setfill('0')<<i;
+    std::ostringstream ostitle;
+    ostitle<<namePrefix<<" TDC mean width in plane "<<std::setw(2)<<std::setfill('0')<<i;
+    meanWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
+  }
+
+  for(unsigned i=0; i<=maxPlaneNumber; ++i) {
+    std::ostringstream osname;
+    osname<<namePrefix<<"_medianWidth_"<<std::setw(2)<<std::setfill('0')<<i;
+    std::ostringstream ostitle;
+    ostitle<<namePrefix<<" TDC median width in plane "<<std::setw(2)<<std::setfill('0')<<i;
+    medianWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
+  }
 }
 
 //================================================================
@@ -84,6 +100,8 @@ void HistTDCWidth::fill(const TDCHitWPCollection& hits) {
   for(PM::const_iterator i=mm.begin(); i!=mm.end(); ++i) {
     minWidth_[i->first]->Fill(i->second.min());
     maxWidth_[i->first]->Fill(i->second.max());
+    meanWidth_[i->first]->Fill(i->second.mean());
+    medianWidth_[i->first]->Fill(i->second.median());
   }
 }
 
@@ -100,6 +118,8 @@ void HistTDCWidth::fill(const TDCHitWPPtrCollection& hits) {
   for(PM::const_iterator i=mm.begin(); i!=mm.end(); ++i) {
     minWidth_[i->first]->Fill(i->second.min());
     maxWidth_[i->first]->Fill(i->second.max());
+    meanWidth_[i->first]->Fill(i->second.mean());
+    medianWidth_[i->first]->Fill(i->second.median());
   }
 }
 

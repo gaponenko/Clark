@@ -32,6 +32,8 @@ private :
   std::vector<TH1*> byPlane_;
   std::vector<TH1*> minWidth_;
   std::vector<TH1*> maxWidth_;
+  std::vector<TH1*> meanWidth_;
+  std::vector<TH1*> medianWidth_;
 
   void fill(const TDCHitWP& hit);
 };
