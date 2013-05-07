@@ -3,6 +3,8 @@
 #ifndef MuCapUtilities_h
 #define MuCapUtilities_h
 
+#include <vector>
+
 namespace MuCapUtilities {
   // TWIST units are MeV/c^2
   double mass(int pdgId);
@@ -15,6 +17,7 @@ namespace MuCapUtilities {
     void fill(double x);
 
     double mean() const;
+    double median() const;
     double min() const { return min_; }
     double max() const { return max_; }
 
@@ -23,6 +26,7 @@ namespace MuCapUtilities {
     Stats();
 
   private:
+    std::vector<double> values_;
     double sum_;
     double min_;
     double max_;

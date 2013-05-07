@@ -35,7 +35,7 @@ void HistTDCParticleClassifier::fill(const ClustersByPlane& gc) {
 
   hpc8vs7maxWidth_->Fill(stat7.widthStats().max(), stat8.widthStats().max());
   hpc8vs7meanWidth_->Fill(stat7.widthStats().mean(), stat8.widthStats().mean());
-  //hpc8vs7medianWidth_->Fill(stat7.widthStats().median(), stat8.widthStats().median());
+  hpc8vs7medianWidth_->Fill(stat7.widthStats().median(), stat8.widthStats().median());
   hpc8vs7maxHits_->Fill(stat7.maxHitsPerWire(), stat8.maxHitsPerWire());
 }
 

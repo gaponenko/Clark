@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
 #include <limits>
 
 namespace MuCapUtilities {
@@ -46,11 +47,31 @@ namespace MuCapUtilities {
   }
 
   //================================================================
+  double Stats::median() const {
+    if(!values_.size()) {
+      throw std::runtime_error("Stats::median() called with numEntries==0");
+    }
+
+    // Want to keep median() const, not impose overhead on filling,
+    // and do not want to implement caching.
+    std::vector<double> tmp(values_);
+    std::sort(tmp.begin(), tmp.end());
+    unsigned im1 = (tmp.size()-1)/2;
+    double res = tmp[im1];
+    if(!(tmp.size()%2)) {
+      res += tmp[im1+1];
+      res /= 2.;
+    }
+    return res;
+  }
+
+  //================================================================
   void Stats::fill(double x) {
     ++numEntries_;
     sum_ += x;
     if(x < min_) min_ = x;
     if(x > max_) max_ = x;
+    values_.push_back(x);
   }
 
   //================================================================
