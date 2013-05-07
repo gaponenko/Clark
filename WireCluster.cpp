@@ -13,16 +13,16 @@ WireCluster::WireCluster(const TDCHitWPPtrCollection& in)
   , numCells_()
 {
   assert(!hits_.empty());
-  plane_ = hits_.front()->plane;
+  plane_ = hits_.front()->plane();
 
-  int cmin = hits_.front()->cell;
-  int cmax = hits_.front()->cell;
+  int cmin = hits_.front()->cell();
+  int cmax = hits_.front()->cell();
   for(TDCHitWPPtrCollection::const_iterator i= ++hits_.begin(); i!=hits_.end(); ++i) {
-    if( (*i)->cell < cmin) {
-      cmin = (*i)->cell;
+    if( (*i)->cell() < cmin) {
+      cmin = (*i)->cell();
     }
-    if(cmax < (*i)->cell) {
-      cmax = (*i)->cell;
+    if(cmax < (*i)->cell()) {
+      cmax = (*i)->cell();
     }
   }
 
@@ -47,11 +47,11 @@ ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrColl
 
     TDCHitWPPtrCollection tmphits;
     tmphits.push_back(hits[i]);
-    const int plane = hits[i]->plane;
+    const int plane = hits[i]->plane();
 
     for(++i; i<hits.size();++i) {
-      if(plane != hits[i]->plane) break;
-      if(tmphits.back()->cell + 1 <  hits[i]->cell) break;
+      if(plane != hits[i]->plane()) break;
+      if(tmphits.back()->cell() + 1 <  hits[i]->cell()) break;
       tmphits.push_back(hits[i]);
     }
 

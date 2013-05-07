@@ -31,7 +31,7 @@ void HistOccupancy::init(const std::string& hdir,
 
 //================================================================
 void HistOccupancy::fill(const TDCHitWP& hit) {
-  hitMap_->Fill(hit.plane, hit.cell);
+  hitMap_->Fill(hit.plane(), hit.cell());
 }
 
 //================================================================

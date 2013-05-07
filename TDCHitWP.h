@@ -7,14 +7,28 @@
 #include <vector>
 #include <ostream>
 
-struct TDCHitWP {
-  float time;
-  float width;
+//================================================================
+struct WireCellId {
   int plane;
   int cell;
+  WireCellId(int p, int c) : plane(p), cell(c) {}
+
+  bool operator<(const WireCellId& b) const {
+    return (plane < b.plane) ||
+      (plane == b.plane) && (cell < b.cell);
+  }
+};
+
+//================================================================
+struct TDCHitWP {
+  WireCellId cid;
+  float time;
+  float width;
+  int plane() const { return cid.plane; }
+  int cell() const { return cid.cell; }
 
   TDCHitWP(float t, float w, int p, int c)
-    : time(t), width(w), plane(p), cell(c)
+    : cid(p,c), time(t), width(w)
   {}
 };
 
@@ -51,18 +65,17 @@ typedef std::vector<TDCHitWPPtr> TDCHitWPPtrCollection;
 //----------------------------------------------------------------
 // Comparator
 struct TDCHitWPCmpGeom {
-  bool operator()(const TDCHitWP& a, const TDCHitWP& b) {
-    return (a.plane < b.plane) ||
-      (a.plane == b.plane) && (a.cell < b.cell);
+  bool operator()(const TDCHitWP& a, const TDCHitWP& b) const {
+    return (a.cid < b.cid);
   }
 
-  bool operator()(const TDCHitWPPtr& a, const TDCHitWPPtr& b) {
-    return (a->plane < b->plane) ||
-      (a->plane == b->plane) && (a->cell < b->cell);
+  bool operator()(const TDCHitWPPtr& a, const TDCHitWPPtr& b) const {
+    return (a->cid < b->cid);
   }
 };
 
 //----------------------------------------------------------------
+std::ostream& operator<<(std::ostream& os, const WireCellId& cid);
 std::ostream& operator<<(std::ostream& os, const TDCHitWP& hit);
 std::ostream& operator<<(std::ostream& os, const TDCHitWPCollection& hits);
 std::ostream& operator<<(std::ostream& os, const TDCHitWPPtrCollection& hits);

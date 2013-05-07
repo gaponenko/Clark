@@ -27,7 +27,7 @@ namespace {
   };
 
   void ExtremeWidthFinder::addHit(const TDCHitWP& hit) {
-    mw_[hit.plane].fill(hit.width);
+    mw_[hit.plane()].fill(hit.width);
   }
 }
 
@@ -68,7 +68,7 @@ void HistTDCWidth::init(const std::string& hdir,
 //================================================================
 void HistTDCWidth::fill(const TDCHitWP& hit) {
   hWidth_->Fill(hit.width);
-  byPlane_[hit.plane]->Fill(hit.width);
+  byPlane_[hit.plane()]->Fill(hit.width);
 }
 
 //================================================================

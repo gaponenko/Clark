@@ -24,12 +24,12 @@ namespace { // local helpers
   std::pair<int,int> uvminmax(const TDCHitWPPtrCollection& hits, const std::set<int>& onlyPlanes = std::set<int>()) {
     int cmin=999, cmax=-1;
     for(unsigned i=0; i<hits.size(); ++i) {
-      if(onlyPlanes.empty() || (onlyPlanes.find(hits[i]->plane) != onlyPlanes.end())) {
-        if(hits[i]->cell < cmin) {
-          cmin = hits[i]->cell;
+      if(onlyPlanes.empty() || (onlyPlanes.find(hits[i]->plane()) != onlyPlanes.end())) {
+        if(hits[i]->cell() < cmin) {
+          cmin = hits[i]->cell();
         }
-        if(cmax < hits[i]->cell) {
-          cmax = hits[i]->cell;
+        if(cmax < hits[i]->cell()) {
+          cmax = hits[i]->cell();
         }
       }
     }

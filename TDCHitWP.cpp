@@ -5,8 +5,12 @@
 #include <algorithm>
 #include <iterator>
 
+std::ostream& operator<<(std::ostream& os, const WireCellId& cid) {
+  return os<<"cid("<<cid.plane<<", "<<cid.cell<<")";
+}
+
 std::ostream& operator<<(std::ostream& os, const TDCHitWP& hit) {
-  return os<<"TDCHit(plane="<<hit.plane<<", cell="<<hit.cell<<", time="<<hit.time<<", width="<<hit.width<<" )";
+  return os<<"TDCHit(cid="<<hit.cid<<", time="<<hit.time<<", width="<<hit.width<<" )";
 }
 
 std::ostream& operator<<(std::ostream& os, const TDCHitWPCollection& coll) {
