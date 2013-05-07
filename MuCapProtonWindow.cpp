@@ -153,7 +153,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     hwidthPCTightDIO_.fill(protonPCHits);
     hwidthDCTightDIO_.fill(protonDCHits);
 
-    for(int plane=32; plane <= cutMaxPlane_; ++plane) {
+    for(int plane=32; plane <= std::min(cutMaxPlane_, gr.max); ++plane) {
       const double r = rcheckDIO_.rmax(plane, global);
       hCCRvsPlaneDIO_->Fill(plane, r);
     }
