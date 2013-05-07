@@ -14,6 +14,7 @@
 #include "MuCapContainmentCheck.h"
 #include "HistMuCapRTruth.h"
 #include "HistMuCapTruth.h"
+#include "HistTDCParticleClassifier.h"
 
 #include "Math/Point2D.h"
 #include "TAxis.h"
@@ -113,6 +114,9 @@ private :
   HistTDCWidth hwidthDCTightProtons_;
   HistTDCWidth hwidthPCTightDIO_;
   HistTDCWidth hwidthDCTightDIO_;
+
+  HistTDCParticleClassifier hcprotons_;
+  HistTDCParticleClassifier hcdio_;
 
   MuCapUVAnalysis uvan_;
   HistProtonWindow hpw_;

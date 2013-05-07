@@ -11,7 +11,6 @@
 
 #include "PlaneRange.h"
 
-
 //================================================================
 namespace { // local helpers
   double getMinTime(const WireClusterCollection& coll) {
@@ -59,6 +58,9 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   hwidthDCTightProtons_.init("MuCapture/ProtonWindow/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
   hwidthPCTightDIO_.init("MuCapture/ProtonWindow/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
   hwidthDCTightDIO_.init("MuCapture/ProtonWindow/dcWidthTightDIO", "dcpwidth", 44, hf, conf);
+
+  hcprotons_.init(hf, "MuCapture/ProtonWindow/clprotons", geom, conf);
+  hcdio_.init(hf, "MuCapture/ProtonWindow/cldio", geom, conf);
 
   hCCRvsPlaneDIO_ = hf.DefineTH2D("MuCapture/ProtonWindow", "RvsPlaneDIO",
                                   "Extrpolated Rmax vs plane for DIO",
@@ -152,6 +154,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
     hwidthPCTightDIO_.fill(protonPCHits);
     hwidthDCTightDIO_.fill(protonDCHits);
+    hcdio_.fill(global);
 
     for(int plane=32; plane <= std::min(cutMaxPlane_, gr.max); ++plane) {
       const double r = rcheckDIO_.rmax(plane, global);
@@ -220,6 +223,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   hwidthPCTightProtons_.fill(protonPCHits);
   hwidthDCTightProtons_.fill(protonDCHits);
+  hcprotons_.fill(global);
 
   return CUTS_TIGHT_PROTONS;
 }
