@@ -316,8 +316,9 @@ void SetDefault(ConfigFile &Conf)
         // Empty file name disables the output
         SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
-        //# Use the last two PC planes as a veto
-        SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 54);
+        //# Use downstream PC planes as a veto
+        //NB: need implement ganged wires to include PC9,10 in the range.
+        SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 52);
         // See Andrei's slides for 2013-05-01.
         // From purity vs eff Want proton eff~=0.2,
         // from slide 3 this is <~13 cm
