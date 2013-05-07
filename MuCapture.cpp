@@ -279,7 +279,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 TDCHitWPPtrCollection MuCapture::selectHits(const TDCHitWPCollection& hits, double minWidthCut) {
   TDCHitWPPtrCollection res;
   for(unsigned i=0; i<hits.size(); ++i) {
-    if(hits[i].width > minWidthCut) {
+    if(hits[i].width() > minWidthCut) {
       res.push_back(TDCHitWPPtr(hits, i));
     }
   }
@@ -295,11 +295,11 @@ TimeWindowCollection MuCapture::constructTimeWindows(const TDCHitWPPtrCollection
 
     // This hit starts a new window
     TimeWindow win;
-    win.tstart = pchits[i]->time;
+    win.tstart = pchits[i]->time();
     win.tend = win.tstart + winLength;
 
     // Put all hits falling in the  given time interval into the same window
-    while((i < pchits.size()) && (pchits[i]->time < win.tend)) {
+    while((i < pchits.size()) && (pchits[i]->time() < win.tend)) {
       win.hits.push_back(pchits[i]);
       ++i;
     }
@@ -346,15 +346,15 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
       dcwin.tstart = winpcs[ipcwin].tstart - winDCEarlyMargin_;
       dcwin.tend = dcwin.tstart + winDCLength_;
 
-      for(; idchit < timeSortedDCHits.size() && (timeSortedDCHits[idchit]->time < dcwin.tend); ++idchit) {
+      for(; idchit < timeSortedDCHits.size() && (timeSortedDCHits[idchit]->time() < dcwin.tend); ++idchit) {
         TDCHitWPPtr phit = timeSortedDCHits[idchit];
-        if(timeSortedDCHits[idchit]->time < dcwin.tstart) {
+        if(timeSortedDCHits[idchit]->time() < dcwin.tstart) {
 
           unassignedDCHits->push_back(phit);
 
-          hWinDCUnassignedEarly_->Fill(phit->time - dcwin.tstart);
+          hWinDCUnassignedEarly_->Fill(phit->time() - dcwin.tstart);
           if(ipcwin > 0) {
-            hWinDCUnassignedLate_->Fill(phit->time - windcs[ipcwin-1].tend);
+            hWinDCUnassignedLate_->Fill(phit->time() - windcs[ipcwin-1].tend);
           }
 
         }
@@ -375,7 +375,7 @@ TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDC
     for(; idchit < timeSortedDCHits.size(); ++idchit) {
       TDCHitWPPtr phit = timeSortedDCHits[idchit];
       unassignedDCHits->push_back(phit);
-      hWinDCUnassignedLate_->Fill(phit->time - windcs.back().tend);
+      hWinDCUnassignedLate_->Fill(phit->time() - windcs.back().tend);
     }
 
   } // !timeSortedDCHits.empty()

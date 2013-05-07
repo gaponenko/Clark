@@ -20,15 +20,20 @@ struct WireCellId {
 };
 
 //================================================================
-struct TDCHitWP {
-  WireCellId cid;
-  float time;
-  float width;
-  int plane() const { return cid.plane; }
-  int cell() const { return cid.cell; }
+class TDCHitWP {
+  WireCellId cid_;
+  float time_;
+  float width_;
+public:
+  int plane() const { return cid_.plane; }
+  int cell() const { return cid_.cell; }
+  float time() const { return time_; }
+  float width() const { return width_; }
+
+  const WireCellId& cid() const { return cid_; }
 
   TDCHitWP(float t, float w, int p, int c)
-    : cid(p,c), time(t), width(w)
+    : cid_(p,c), time_(t), width_(w)
   {}
 };
 
@@ -39,7 +44,7 @@ typedef std::vector<TDCHitWP> TDCHitWPCollection;
 
 struct TDCHitWPCmpTime {
   bool operator()(const TDCHitWP& a, const TDCHitWP& b) {
-    return a.time < b.time;
+    return a.time() < b.time();
   }
 };
 
@@ -66,11 +71,11 @@ typedef std::vector<TDCHitWPPtr> TDCHitWPPtrCollection;
 // Comparator
 struct TDCHitWPCmpGeom {
   bool operator()(const TDCHitWP& a, const TDCHitWP& b) const {
-    return (a.cid < b.cid);
+    return (a.cid() < b.cid());
   }
 
   bool operator()(const TDCHitWPPtr& a, const TDCHitWPPtr& b) const {
-    return (a->cid < b->cid);
+    return (a->cid() < b->cid());
   }
 };
 

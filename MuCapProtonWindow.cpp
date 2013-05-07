@@ -16,11 +16,11 @@
 namespace { // local helpers
   double getMinTime(const WireClusterCollection& coll) {
     assert(!coll.empty());
-    double t = coll.front().hits().front()->time;
+    double t = coll.front().hits().front()->time();
     for(WireClusterCollection::const_iterator c = coll.begin(); c!=coll.end(); ++c) {
       for(TDCHitWPPtrCollection::const_iterator h = c->hits().begin(); h != c->hits().end(); ++h) {
-        if(t > (*h)->time) {
-          t = (*h)->time;
+        if(t > (*h)->time()) {
+          t = (*h)->time();
         }
       }
     }
