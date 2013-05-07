@@ -13,27 +13,13 @@
 
 #include "HistogramFactory.h"
 #include "ConfigFile.h"
+#include "MuCapUtilities.h"
 
 //================================================================
 namespace {
-  struct Extrema {
-    double min;
-    double max;
-
-    Extrema()
-      : min(std::numeric_limits<double>::max())
-      , max(std::numeric_limits<double>::min())
-    {}
-
-    void fill(double width) {
-      min = std::min(min, width);
-      max = std::max(max, width);
-    }
-  };
-
   class ExtremeWidthFinder {
   public:
-    typedef std::map<int,Extrema> WidthMap;
+    typedef std::map<int,MuCapUtilities::Stats> WidthMap;
     const WidthMap& getWidths() const { return mw_; }
     void addHit(const TDCHitWP& hit);
   private:
@@ -96,8 +82,8 @@ void HistTDCWidth::fill(const TDCHitWPCollection& hits) {
   typedef ExtremeWidthFinder::WidthMap PM;
   const PM& mm = mw.getWidths();
   for(PM::const_iterator i=mm.begin(); i!=mm.end(); ++i) {
-    minWidth_[i->first]->Fill(i->second.min);
-    maxWidth_[i->first]->Fill(i->second.max);
+    minWidth_[i->first]->Fill(i->second.min());
+    maxWidth_[i->first]->Fill(i->second.max());
   }
 }
 
@@ -112,8 +98,8 @@ void HistTDCWidth::fill(const TDCHitWPPtrCollection& hits) {
   typedef ExtremeWidthFinder::WidthMap PM;
   const PM& mm = mw.getWidths();
   for(PM::const_iterator i=mm.begin(); i!=mm.end(); ++i) {
-    minWidth_[i->first]->Fill(i->second.min);
-    maxWidth_[i->first]->Fill(i->second.max);
+    minWidth_[i->first]->Fill(i->second.min());
+    maxWidth_[i->first]->Fill(i->second.max());
   }
 }
 

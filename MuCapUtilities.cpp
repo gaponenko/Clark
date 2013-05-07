@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
+#include <limits>
 
 namespace MuCapUtilities {
   //================================================================
@@ -27,4 +28,30 @@ namespace MuCapUtilities {
     const double etot = std::sqrt(std::pow(ptot,2) + std::pow(m, 2));
     return etot - m;
   }
+
+  //================================================================
+  Stats::Stats()
+    : sum_(0.)
+    , min_(std::numeric_limits<double>::max())
+    , max_(std::numeric_limits<double>::min())
+    , numEntries_(0)
+ {}
+
+  //================================================================
+  double Stats::mean() const {
+    if(!numEntries_) {
+      throw std::runtime_error("Stats::mean() called with numEntries==0");
+    }
+    return sum_/numEntries_;
+  }
+
+  //================================================================
+  void Stats::fill(double x) {
+    ++numEntries_;
+    sum_ += x;
+    if(x < min_) min_ = x;
+    if(x > max_) max_ = x;
+  }
+
+  //================================================================
 }
