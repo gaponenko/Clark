@@ -63,7 +63,8 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   hwidthPCTightDIO_.init("MuCapture/ProtonWindow/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
   hwidthDCTightDIO_.init("MuCapture/ProtonWindow/dcWidthTightDIO", "dcpwidth", 44, hf, conf);
 
-  hcprotons_.init(hf, "MuCapture/ProtonWindow/clprotons", geom, conf);
+  hcLooseProtons_.init(hf, "MuCapture/ProtonWindow/clLooseProtons", geom, conf);
+  hcTightProtons_.init(hf, "MuCapture/ProtonWindow/clTightProtons", geom, conf);
   hcdio_.init(hf, "MuCapture/ProtonWindow/cldio", geom, conf);
 
   hCCRvsPlaneDIO_ = hf.DefineTH2D("MuCapture/ProtonWindow", "RvsPlaneDIO",
@@ -178,6 +179,8 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   //----------------------------------------------------------------
   // CUTS_LOOSE_PROTONS are passed at this point
 
+  hcLooseProtons_.fill(global);
+
   if(doMCTruth_) {
     htruthLoose_.fill(evt);
   }
@@ -227,7 +230,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   hwidthPCTightProtons_.fill(protonPCHits);
   hwidthDCTightProtons_.fill(protonDCHits);
-  hcprotons_.fill(global);
+  hcTightProtons_.fill(global);
 
   return CUTS_TIGHT_PROTONS;
 }

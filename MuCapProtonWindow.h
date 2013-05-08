@@ -115,7 +115,8 @@ private :
   HistTDCWidth hwidthPCTightDIO_;
   HistTDCWidth hwidthDCTightDIO_;
 
-  HistTDCParticleClassifier hcprotons_;
+  HistTDCParticleClassifier hcLooseProtons_;
+  HistTDCParticleClassifier hcTightProtons_;
   HistTDCParticleClassifier hcdio_;
 
   MuCapUVAnalysis uvan_;
