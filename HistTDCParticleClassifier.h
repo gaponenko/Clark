@@ -32,6 +32,9 @@ public:
     , hLastVsRestMaxWidthDC_()
     , hLastVsRestMeanWidthDC_()
     , hLastVsRestMedianWidthDC_()
+    , hMaxWidthDC_()
+    , hMeanWidthDC_()
+    , hMedianWidthDC_()
   {}
 
 private :
@@ -43,6 +46,10 @@ private :
   TH2 *hLastVsRestMaxWidthDC_;
   TH2 *hLastVsRestMeanWidthDC_;
   TH2 *hLastVsRestMedianWidthDC_;
+
+  TH1 *hMaxWidthDC_;
+  TH1 *hMeanWidthDC_;
+  TH1 *hMedianWidthDC_;
 };
 
 #endif/*HistTDCParticleClassifier_h*/
