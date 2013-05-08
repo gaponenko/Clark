@@ -29,6 +29,9 @@ public:
     , hpc8vs7meanWidth_()
     , hpc8vs7medianWidth_()
     , hpc8vs7maxHits_()
+    , hLastVsRestMaxWidth_()
+    , hLastVsRestMeanWidth_()
+    , hLastVsRestMedianWidth_()
   {}
 
 private :
@@ -36,6 +39,10 @@ private :
   TH2 *hpc8vs7meanWidth_;
   TH2 *hpc8vs7medianWidth_;
   TH2 *hpc8vs7maxHits_;
+
+  TH2 *hLastVsRestMaxWidth_;
+  TH2 *hLastVsRestMeanWidth_;
+  TH2 *hLastVsRestMedianWidth_;
 };
 
 #endif/*HistTDCParticleClassifier_h*/

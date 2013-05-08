@@ -14,6 +14,7 @@
 
 #include "HistogramFactory.h"
 #include "ConfigFile.h"
+#include "PlaneRange.h"
 
 //================================================================
 void HistTDCParticleClassifier::init(HistogramFactory &hf,
@@ -32,6 +33,18 @@ void HistTDCParticleClassifier::init(HistogramFactory &hf,
 
   hpc8vs7maxHits_ = hf.DefineTH2D(hdir, "pc8vs7maxHits","pc8vs7maxHits", 10, -0.5, 9.5, 10, -0.5, 9.5);
   hpc8vs7maxHits_->SetOption("colz");
+
+  hLastVsRestMaxWidth_ = hf.DefineTH2D(hdir, "LastVsRestMaxWidthDC","LastVsRestMaxWidthDC",
+                                       200, 0., 2000., 200, 0., 2000.);
+  hLastVsRestMaxWidth_->SetOption("colz");
+
+  hLastVsRestMeanWidth_ = hf.DefineTH2D(hdir, "LastVsRestMeanWidthDC","LastVsRestMeanWidthDC",
+                                        200, 0., 2000., 200, 0., 2000.);
+  hLastVsRestMeanWidth_->SetOption("colz");
+
+  hLastVsRestMedianWidth_ = hf.DefineTH2D(hdir, "LastVsRestMedianWidthDC","LastVsRestMedianWidthDC",
+                                          200, 0., 2000., 200, 0., 2000.);
+  hLastVsRestMedianWidth_->SetOption("colz");
 }
 
 //================================================================
@@ -44,6 +57,19 @@ void HistTDCParticleClassifier::fill(const ClustersByPlane& gc) {
   hpc8vs7meanWidth_->Fill(stat7.widthStats().mean(), stat8.widthStats().mean());
   hpc8vs7medianWidth_->Fill(stat7.widthStats().median(), stat8.widthStats().median());
   hpc8vs7maxHits_->Fill(stat7.maxHitsPerWire(), stat8.maxHitsPerWire());
+
+  const PlaneRange gr = findPlaneRange(gc);
+  if(gr.max >= 32) { // at least 2 DC planes hit
+    TDCHitStats last, rest;
+    last.fill(gc[gr.max]);
+    for(int i=31; i<gr.max; ++i) {
+      rest.fill(gc[i]);
+    }
+
+    hLastVsRestMaxWidth_->Fill(rest.widthStats().max(), last.widthStats().max());
+    hLastVsRestMeanWidth_->Fill(rest.widthStats().mean(), last.widthStats().mean());
+    hLastVsRestMedianWidth_->Fill(rest.widthStats().median(), last.widthStats().median());
+  }
 }
 
 //================================================================
