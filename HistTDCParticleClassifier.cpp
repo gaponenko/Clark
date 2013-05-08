@@ -34,17 +34,17 @@ void HistTDCParticleClassifier::init(HistogramFactory &hf,
   hpc8vs7maxHits_ = hf.DefineTH2D(hdir, "pc8vs7maxHits","pc8vs7maxHits", 10, -0.5, 9.5, 10, -0.5, 9.5);
   hpc8vs7maxHits_->SetOption("colz");
 
-  hLastVsRestMaxWidth_ = hf.DefineTH2D(hdir, "LastVsRestMaxWidthDC","LastVsRestMaxWidthDC",
+  hLastVsRestMaxWidthDC_ = hf.DefineTH2D(hdir, "LastVsRestMaxWidthDC","LastVsRestMaxWidthDC",
                                        200, 0., 2000., 200, 0., 2000.);
-  hLastVsRestMaxWidth_->SetOption("colz");
+  hLastVsRestMaxWidthDC_->SetOption("colz");
 
-  hLastVsRestMeanWidth_ = hf.DefineTH2D(hdir, "LastVsRestMeanWidthDC","LastVsRestMeanWidthDC",
+  hLastVsRestMeanWidthDC_ = hf.DefineTH2D(hdir, "LastVsRestMeanWidthDC","LastVsRestMeanWidthDC",
                                         200, 0., 2000., 200, 0., 2000.);
-  hLastVsRestMeanWidth_->SetOption("colz");
+  hLastVsRestMeanWidthDC_->SetOption("colz");
 
-  hLastVsRestMedianWidth_ = hf.DefineTH2D(hdir, "LastVsRestMedianWidthDC","LastVsRestMedianWidthDC",
+  hLastVsRestMedianWidthDC_ = hf.DefineTH2D(hdir, "LastVsRestMedianWidthDC","LastVsRestMedianWidthDC",
                                           200, 0., 2000., 200, 0., 2000.);
-  hLastVsRestMedianWidth_->SetOption("colz");
+  hLastVsRestMedianWidthDC_->SetOption("colz");
 }
 
 //================================================================
@@ -66,9 +66,9 @@ void HistTDCParticleClassifier::fill(const ClustersByPlane& gc) {
       rest.fill(gc[i]);
     }
 
-    hLastVsRestMaxWidth_->Fill(rest.widthStats().max(), last.widthStats().max());
-    hLastVsRestMeanWidth_->Fill(rest.widthStats().mean(), last.widthStats().mean());
-    hLastVsRestMedianWidth_->Fill(rest.widthStats().median(), last.widthStats().median());
+    hLastVsRestMaxWidthDC_->Fill(rest.widthStats().max(), last.widthStats().max());
+    hLastVsRestMeanWidthDC_->Fill(rest.widthStats().mean(), last.widthStats().mean());
+    hLastVsRestMedianWidthDC_->Fill(rest.widthStats().median(), last.widthStats().median());
   }
 }
 

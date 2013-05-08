@@ -29,9 +29,9 @@ public:
     , hpc8vs7meanWidth_()
     , hpc8vs7medianWidth_()
     , hpc8vs7maxHits_()
-    , hLastVsRestMaxWidth_()
-    , hLastVsRestMeanWidth_()
-    , hLastVsRestMedianWidth_()
+    , hLastVsRestMaxWidthDC_()
+    , hLastVsRestMeanWidthDC_()
+    , hLastVsRestMedianWidthDC_()
   {}
 
 private :
@@ -40,9 +40,9 @@ private :
   TH2 *hpc8vs7medianWidth_;
   TH2 *hpc8vs7maxHits_;
 
-  TH2 *hLastVsRestMaxWidth_;
-  TH2 *hLastVsRestMeanWidth_;
-  TH2 *hLastVsRestMedianWidth_;
+  TH2 *hLastVsRestMaxWidthDC_;
+  TH2 *hLastVsRestMeanWidthDC_;
+  TH2 *hLastVsRestMedianWidthDC_;
 };
 
 #endif/*HistTDCParticleClassifier_h*/
