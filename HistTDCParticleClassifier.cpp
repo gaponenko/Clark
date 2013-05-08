@@ -49,20 +49,27 @@ void HistTDCParticleClassifier::init(HistogramFactory &hf,
   hMaxWidthDC_ = hf.DefineTH1D(hdir, "maxWidthDC", "maxWidthDC", 200, 0., 2000);
   hMeanWidthDC_ = hf.DefineTH1D(hdir, "meanWidthDC", "meanWidthDC", 200, 0., 2000);
   hMedianWidthDC_ = hf.DefineTH1D(hdir, "medianWidthDC", "medianWidthDC", 200, 0., 2000);
+
+  hMaxWidthPC_ = hf.DefineTH1D(hdir, "maxWidthPC", "maxWidthPC", 200, 0., 2000);
+  hMeanWidthPC_ = hf.DefineTH1D(hdir, "meanWidthPC", "meanWidthPC", 200, 0., 2000);
+  hMedianWidthPC_ = hf.DefineTH1D(hdir, "medianWidthPC", "medianWidthPC", 200, 0., 2000);
 }
 
 //================================================================
 void HistTDCParticleClassifier::fill(const ClustersByPlane& gc) {
-  TDCHitStats stat7, stat8;
-  stat7.fill(gc[29]);
-  stat8.fill(gc[30]);
-
-  hpc8vs7maxWidth_->Fill(stat7.widthStats().max(), stat8.widthStats().max());
-  hpc8vs7meanWidth_->Fill(stat7.widthStats().mean(), stat8.widthStats().mean());
-  hpc8vs7medianWidth_->Fill(stat7.widthStats().median(), stat8.widthStats().median());
-  hpc8vs7maxHits_->Fill(stat7.maxHitsPerWire(), stat8.maxHitsPerWire());
-
   const PlaneRange gr = findPlaneRange(gc);
+
+  if(gr.max >= 30) { // PC7 and 8
+    TDCHitStats stat7, stat8;
+    stat7.fill(gc[29]);
+    stat8.fill(gc[30]);
+
+    hpc8vs7maxWidth_->Fill(stat7.widthStats().max(), stat8.widthStats().max());
+    hpc8vs7meanWidth_->Fill(stat7.widthStats().mean(), stat8.widthStats().mean());
+    hpc8vs7medianWidth_->Fill(stat7.widthStats().median(), stat8.widthStats().median());
+    hpc8vs7maxHits_->Fill(stat7.maxHitsPerWire(), stat8.maxHitsPerWire());
+  }
+
   if(gr.max >= 32) { // at least 2 DC planes hit
     TDCHitStats last, rest;
     last.fill(gc[gr.max]);
@@ -75,14 +82,26 @@ void HistTDCParticleClassifier::fill(const ClustersByPlane& gc) {
     hLastVsRestMedianWidthDC_->Fill(rest.widthStats().median(), last.widthStats().median());
   }
 
-  TDCHitStats dcstats;
-  for(int i=31; i<=gr.max; ++i) {
-    dcstats.fill(gc[i]);
+  if(gr.max >= 31) { // have DC hits
+    TDCHitStats dcstats;
+    for(int i=31; i<=gr.max; ++i) {
+      dcstats.fill(gc[i]);
+    }
+    hMaxWidthDC_->Fill(dcstats.widthStats().max());
+    hMeanWidthDC_->Fill(dcstats.widthStats().mean());
+    hMedianWidthDC_->Fill(dcstats.widthStats().median());
   }
 
-  hMaxWidthDC_->Fill(dcstats.widthStats().max());
-  hMeanWidthDC_->Fill(dcstats.widthStats().mean());
-  hMedianWidthDC_->Fill(dcstats.widthStats().median());
+  if(gr.max >= 29) { // have PC hits
+    TDCHitStats pcstats;
+    for(int i=29; i<=30; ++i) {
+      pcstats.fill(gc[i]);
+    }
+
+    hMaxWidthPC_->Fill(pcstats.widthStats().max());
+    hMeanWidthPC_->Fill(pcstats.widthStats().mean());
+    hMedianWidthPC_->Fill(pcstats.widthStats().median());
+  }
 }
 
 //================================================================

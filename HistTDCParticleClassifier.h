@@ -35,6 +35,9 @@ public:
     , hMaxWidthDC_()
     , hMeanWidthDC_()
     , hMedianWidthDC_()
+    , hMaxWidthPC_()
+    , hMeanWidthPC_()
+    , hMedianWidthPC_()
   {}
 
 private :
@@ -50,6 +53,10 @@ private :
   TH1 *hMaxWidthDC_;
   TH1 *hMeanWidthDC_;
   TH1 *hMedianWidthDC_;
+
+  TH1 *hMaxWidthPC_;
+  TH1 *hMeanWidthPC_;
+  TH1 *hMedianWidthPC_;
 };
 
 #endif/*HistTDCParticleClassifier_h*/
