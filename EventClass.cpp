@@ -11,6 +11,8 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
           || C.read<bool>("MuCapture/doDefaultTWIST")
           || C.read<bool>("MuCapture/loadDefaultTWISTVars", false);
 
+        killPC6DeadWire = C.read<bool>("MuCapture/killPC6DeadWire");
+
 	//__________ Extract the energy calibration parameters ___________//
 	DoEcalib	= false;
 	if (C.read<string>("CommandLine/EcalFile") != "")
@@ -122,7 +124,9 @@ void EventClass::LoadMuCapture() {
   pc_hits_by_time_.clear();
   pc_hits_by_time_.reserve(pc_nhits);
   for(int i=0; i<pc_nhits; ++i) {
-    pc_hits_by_time_.push_back(TDCHitWP(pc_time[i], pc_width[i], pc_plane[i], pc_cell[i]));
+    if(!killPC6DeadWire || (pc_plane[i] != 6) || (pc_cell[i] != 88)) {
+      pc_hits_by_time_.push_back(TDCHitWP(pc_time[i], pc_width[i], pc_plane[i], pc_cell[i]));
+    }
   }
   std::sort(pc_hits_by_time_.begin(), pc_hits_by_time_.end(), TDCHitWPCmpTime());
 

@@ -278,6 +278,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/loadDefaultTWISTVars", true);
         SetKey(Conf, "Detector/Geometry/dc_ppc", 25);
         SetKey(Conf, "Detector/Geometry/pc_ppc", 5);
+        SetKey(Conf, "MuCapture/killPC6DeadWire", true);
         SetKey(Conf, "MuCapture/cutMinTDCWidthPC", 40.);
         SetKey(Conf, "MuCapture/cutMinTDCWidthDC", 50.);
         SetKey(Conf, "MuCapture/winPCLength", 100.);
