@@ -70,7 +70,8 @@ void HistTDCParticleClassifier::fill(const ClustersByPlane& gc) {
     hpc8vs7maxHits_->Fill(stat7.maxHitsPerWire(), stat8.maxHitsPerWire());
   }
 
-  if(gr.max >= 32) { // at least 2 DC planes hit
+  if((gr.max >= 32) && // at least 2 DC planes hit
+     (gr.max <= 52)) { // DC stop
     TDCHitStats last, rest;
     last.fill(gc[gr.max]);
     for(int i=31; i<gr.max; ++i) {
