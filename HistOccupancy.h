@@ -23,6 +23,7 @@ public:
             HistogramFactory &hf,
             const ConfigFile &conf);
 
+  void fill(const TDCHitWP& hit);
   void fill(const TDCHitWPCollection& hits);
   void fill(const TDCHitWPPtrCollection& hits);
 
@@ -30,7 +31,6 @@ public:
 
 private :
   TH2 *hitMap_;
-  void fill(const TDCHitWP& hit);
 };
 
 #endif/*HistOccupancy_h*/
