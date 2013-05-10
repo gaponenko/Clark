@@ -281,12 +281,16 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/killPC6DeadWire", true);
         SetKey(Conf, "MuCapture/cutMinTDCWidthPC", 40.);
         SetKey(Conf, "MuCapture/cutMinTDCWidthDC", 50.);
+
         SetKey(Conf, "MuCapture/winPCLength", 100.);
-        SetKey(Conf, "MuCapture/winPCSeparation", 1100.);
+        // Trigger window has to be within max dt from 0
+        SetKey(Conf, "MuCapture/winTrigMaxdt", 30.);
+        SetKey(Conf, "MuCapture/winPCPreTrigSeparation", 1100.);
 
         //# W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCEarlyMargin", 100.);
         SetKey(Conf, "MuCapture/winDCLength", 1100.);
+        SetKey(Conf, "MuCapture/winDCDoHistos", true);
         SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
         SetKey(Conf, "MuCapture/muUVPCCellMin", 70);
         SetKey(Conf, "MuCapture/muUVPCCellMax", 90);

@@ -28,8 +28,18 @@ namespace { // local helpers
 }
 
 //================================================================
-void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf) {
+void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf,
+                             TimeWindow::StreamType cutWinStream, double cutAfterTrigTimeSep)
+{
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
+
+  cutStream_ = cutWinStream;
+  if(cutStream_ != TimeWindow::DOWNSTREAM) {
+    throw std::runtime_error("MuCapProtonWindow: requested cutWinStream value is not implemented");
+  }
+
+  cutAfterTrigTimeSep_ = cutAfterTrigTimeSep;
+
   cutMaxPlane_ = conf.read<double>("MuCapture/ProtonWindow/maxPlane");
   cutRextMax_ = conf.read<double>("MuCapture/ProtonWindow/RextMax");
   tightProtonsOutFileName_ = conf.read<std::string>("MuCapture/ProtonWindow/TightProtonsFileName", "");
@@ -108,13 +118,11 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
 
 //================================================================
 void MuCapProtonWindow::process(const ROOT::Math::XYPoint& muStopUV,
-                                const TimeWindow& protonWindowPC,
-                                const TimeWindow& protonWindowDC,
-                                const TDCHitWPPtrCollection& unassignedDCHits,
+                                const TimeWindowingResults& wres,
                                 const EventClass& evt
                                 )
 {
-  EventCutNumber c = analyze(muStopUV, protonWindowPC, protonWindowDC, unassignedDCHits, evt);
+  EventCutNumber c = analyze(muStopUV, wres, evt);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -124,22 +132,26 @@ void MuCapProtonWindow::process(const ROOT::Math::XYPoint& muStopUV,
 //================================================================
 MuCapProtonWindow::EventCutNumber MuCapProtonWindow::
 analyze(const ROOT::Math::XYPoint& muStopUV,
-        const TimeWindow& protonWindowPC,
-        const TimeWindow& protonWindowDC,
-        const TDCHitWPPtrCollection& unassignedDCHits,
+        const TimeWindowingResults& wres,
         const EventClass& evt
         )
 {
-  const TDCHitWPPtrCollection& protonPCHits = protonWindowPC.hits;
-  const TDCHitWPPtrCollection& protonDCHits = protonWindowDC.hits;
+  const TimeWindow& protonWindow = wres.windows[1+wres.iTrigWin];
 
+  // Trig time is 0, dt from that rather than from less precise trigWin time
+  if(protonWindow.tstart < cutAfterTrigTimeSep_) {
+    return CUT_TRIGSEP;
+  }
+
+  const TDCHitWPPtrCollection& protonPCHits = protonWindow.pcHits;
+  const TDCHitWPPtrCollection& protonDCHits = protonWindow.dcHits;
   const ClustersByPlane clustersPC = constructPlaneClusters(12, protonPCHits);
   const ClustersByPlane clustersDC = constructPlaneClusters(44, protonDCHits);
   const ClustersByPlane global = globalPlaneClusters(clustersPC, clustersDC);
-
   const PlaneRange gr = findPlaneRange(global);
-  if(gr.min < 29) {
-    return CUT_UPSTREAM;
+
+  if(protonWindow.stream != cutStream_) {
+    return CUT_STREAM;
   }
 
   if(clustersPC[7].empty()) {
@@ -154,7 +166,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     return CUT_RANGE_GAPS;
   }
 
-  const unsigned numDIO = uvan_.process(evt,  protonWindowPC.tstart, global, muStopUV);
+  const unsigned numDIO = uvan_.process(evt,  protonWindow.tstart, global, muStopUV);
   if(numDIO) {
 
     hwidthPCTightDIO_.fill(protonPCHits);

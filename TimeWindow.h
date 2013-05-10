@@ -7,12 +7,30 @@
 #include "TDCHitWP.h"
 
 struct TimeWindow {
-  double tstart;
-  double tend;
-  TDCHitWPPtrCollection hits;
-  TimeWindow() : tstart(), tend() {}
+  enum StreamType { UPSTREAM=-1, MIXED=0, DOWNSTREAM=+1 };
+
+  StreamType stream;
+  double tstart; // PC
+  double tendPC;
+  double tstartDC;
+  double tendDC;
+
+  TDCHitWPPtrCollection pcHits;
+  TDCHitWPPtrCollection dcHits;
+
+  TimeWindow() : stream(MIXED), tstart(), tendPC(), tstartDC(), tendDC() {}
 };
 
+
 typedef std::vector<TimeWindow> TimeWindowCollection;
+
+struct TimeWindowingResults {
+  TimeWindowCollection windows;
+  unsigned iTrigWin;
+  TDCHitWPPtrCollection unassignedDCHits;
+  TimeWindowingResults(): iTrigWin(-1u) {}
+};
+
+
 
 #endif/*TimeWindow_h*/

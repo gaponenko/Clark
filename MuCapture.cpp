@@ -13,6 +13,8 @@
 #include "TH2.h"
 #include "Math/Point2D.h"
 
+#include "TimeWindow.h"
+
 #include "PlaneRange.h"
 
 #define AGDEBUG(stuff) do { std::cerr<<"AG: "<<__FILE__<<", line "<<__LINE__<<", func "<<__func__<<": "<<stuff<<std::endl; } while(0)
@@ -53,10 +55,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
   cutMinTDCWidthPC_ = Conf.read<double>("MuCapture/cutMinTDCWidthPC");
   cutMinTDCWidthDC_ = Conf.read<double>("MuCapture/cutMinTDCWidthDC");
-  winPCLength_ = Conf.read<double>("MuCapture/winPCLength");
-  winPCSeparation_ = Conf.read<double>("MuCapture/winPCSeparation");
-  winDCLength_ = Conf.read<double>("MuCapture/winDCLength");
-  winDCEarlyMargin_ = Conf.read<double>("MuCapture/winDCEarlyMargin");
+  winPCPreTrigSeparation_ = Conf.read<double>("MuCapture/winPCPreTrigSeparation");
   maxUnassignedDCHits_ = Conf.read<int>("MuCapture/maxUnassignedDCHits");
 
   muUVPCCellMin_ = Conf.read<int>("MuCapture/muUVPCCellMin");
@@ -67,8 +66,11 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
 
   //       --------- Histograms initialization ---------          //
+  pcWindowing_.init(H, "MuCapture/WindowingPC", *E.geo, Conf);
+  dcWindowing_.init(H, "MuCapture/WindowingDC", *E.geo, Conf);
+
   pactCut_.init(H, Conf);
-  protonWindow_.init(H, *E.geo, Conf);
+  protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1100./*FIXME*/);
 
   h_cuts_r = H.DefineTH1D("MuCapture", "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
@@ -78,21 +80,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
-  hNumPCWin_ = H.DefineTH1D( "MuCapture", "numPCWin",   "Number of PC time windows", 10, -0.5, 9.5);
-  hWinPCTimeAll_ = H.DefineTH1D( "MuCapture", "winPCTimeAll",   "PC time window start, all", 1600, -6000., 10000.);
-  hWinPCTimeTrig_ = H.DefineTH1D( "MuCapture", "winPCTimeTrig",   "PC time window start, trig", 200, -50., 50.);
+  hNumAfterTrigWindows_ = H.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
 
-  hWinPCTStartBeforeTrig_ = H.DefineTH1D( "MuCapture", "winPCTStartBeforeTrig",   "PC 1 win start before trigger", 1200, -6000., 0.);
-  hWinPCTStartAfterTrig_ = H.DefineTH1D( "MuCapture", "winPCTStartAfter",   "PC 1 win start after trigger", 2000, 0., 10000.);
-
-  hWinDCUnassignedEarly_ = H.DefineTH1D( "MuCapture", "winDCUnassignedEarly",   "Unassigned DC hits, early", 1000, -1000., 0.);
-  hWinDCUnassignedLate_ = H.DefineTH1D( "MuCapture", "winDCUnassignedLate",   "Unassigned DC hits, late", 1000, 0., 1000.);
-  hWinDCUnassignedCount_ = H.DefineTH1D( "MuCapture", "winDCUnassignedCount",   "Count of unassigned DC hits", 101, -0.5, 100.5);
-
-  hMuonRange_ = H.DefineTH2D("MuCapture", "muonRange",   "Muon last vs first plane hit",
-                             56, 0.5, 56.5, 56, 0.5, 56.5);
-
-  hMuonRange_->SetOption("colz");
+  hWinDCUnassignedCount_ = H.DefineTH1D("MuCapture", "winDCUnassignedCount", "Count of unassigned DC hits", 101, -0.5, 100.5);
 
   hMuUVLimitsPCUp_ = H.DefineTH2D("MuCapture", "MuUVLimitsPCUp", "Muon PC1234 max vs min coordinate", 160, 0.5, 160.5, 160, 0.5, 160.5);
   hMuUVLimitsDC_ = H.DefineTH2D("MuCapture", "MuUVLimitsDC", "Muon DC up max vs min coordinate", 80, 0.5, 80.5, 80, 0.5, 80.5);
@@ -106,14 +96,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hwidthPCall_.init("MuCapture/pcWidthAll", "pcwidth", 12, H, Conf);
   hwidthDCall_.init("MuCapture/dcWidthAll", "dcwidth", 44, H, Conf);
 
-  hwidthPCMuWin_.init("MuCapture/pcWidthMuWin", "pcmuwidth", 12, H, Conf);
-  hwidthDCMuWin_.init("MuCapture/dcWidthMuWin", "dcmuwidth", 44, H, Conf);
-
   //----------------------------------------------------------------
   hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
-
-  hOccupancyDCUnassigned_.init("MuCapture", "hitMapDCUnassigned", 44, 80, H, Conf);
 
   if(doMCTruth_) {
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
@@ -153,57 +138,53 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Sort PC hits into time windows
 
-  const TDCHitWPPtrCollection filtered_pc_hits_by_time = selectHits(evt.pc_hits_by_time(), cutMinTDCWidthPC_);
-  const TimeWindowCollection winpcs = constructTimeWindows(filtered_pc_hits_by_time, winPCLength_);
+  TimeWindowingResults wres;
+  pcWindowing_.assignPCHits(selectHits(evt.pc_hits_by_time(), cutMinTDCWidthPC_), &wres);
 
-  const int iPCTrigWin = findTriggerWindow(winpcs);
-
-  if(iPCTrigWin < 0) {
-    return CUT_NOPCWIN;
+  if(wres.iTrigWin == -1u) {
+    return CUT_NOTRIGWIN;
   }
 
-  //----------------
-  // PC window histograms
-  hNumPCWin_->Fill(winpcs.size());
-  hWinPCTimeTrig_->Fill(winpcs[iPCTrigWin].tstart);
-  for(unsigned i=0; i<winpcs.size(); ++i) {
-    hWinPCTimeAll_->Fill(winpcs[i].tstart);
+  const TimeWindow& trigWin = wres.windows[wres.iTrigWin];
+  if(trigWin.stream != TimeWindow::UPSTREAM) {
+    return CUT_TRIGPCWIN_TYPE;
   }
 
-  //----------------
-  if(iPCTrigWin > 0) {
-    hWinPCTStartBeforeTrig_->Fill(winpcs[iPCTrigWin - 1].tstart);
-    if( std::abs(winpcs[iPCTrigWin - 1].tstart) < winPCSeparation_ ) {
-      return CUT_PCWIN_TRIGSEPPAST;
-    }
+  const ClustersByPlane muonPCClusters = constructPlaneClusters(12, trigWin.pcHits);
+  const PlaneRange trigPCRange = findPlaneRange(muonPCClusters);
+  if(!trigPCRange.noGaps) {
+    return CUT_TRIGPCWIN_GAPS;
   }
 
-  //----------------
-  if(iPCTrigWin + 2 != winpcs.size()) {
+  if((trigPCRange.min != 1) || (trigPCRange.max != 6)) {
+    return CUT_TRIGPCWIN_RANGE;
+  }
+
+  hNumAfterTrigWindows_->Fill(int(wres.windows.size() - wres.iTrigWin - 1));
+  if(wres.iTrigWin + 2 != wres.windows.size()) {
     return CUT_PCWIN_NUMAFTERTRIG;
   }
 
-  //----------------
-  hWinPCTStartAfterTrig_->Fill(winpcs[iPCTrigWin + 1].tstart);
-  if( std::abs(winpcs[iPCTrigWin + 1].tstart) < winPCSeparation_ ) {
-    return CUT_PCWIN_TRIGSEPFUTURE;
+  // Trig time is 0, dt from that rather than from less precise trigWin time
+  if((wres.iTrigWin > 0) && (std::abs(wres.windows[wres.iTrigWin - 1].tstart) < winPCPreTrigSeparation_)) {
+    return CUT_PCWIN_TRIGSEPPAST;
   }
 
   //----------------
   // Process DC hits
-  TDCHitWPPtrCollection unassignedDCHits;
   const TDCHitWPPtrCollection filtered_dc_hits_by_time = selectHits(evt.dc_hits_by_time(), cutMinTDCWidthDC_);
-  const TimeWindowCollection windcs = assignDCHits(&unassignedDCHits, filtered_dc_hits_by_time, winpcs);
-  hWinDCUnassignedCount_->Fill(unassignedDCHits.size());
-  hOccupancyDCUnassigned_.fill(unassignedDCHits);
+  dcWindowing_.assignDCHits(filtered_dc_hits_by_time, &wres);
+  if(trigWin.stream != TimeWindow::UPSTREAM) {
+    return CUT_TRIGDCWIN_TYPE;
+  }
 
-  if(unassignedDCHits.size() > maxUnassignedDCHits_) {
+  hWinDCUnassignedCount_->Fill(wres.unassignedDCHits.size());
+  if(wres.unassignedDCHits.size() > maxUnassignedDCHits_) {
     return CUT_UNASSIGNEDDCHITS;
   }
 
   //----------------------------------------------------------------
-  const ClustersByPlane muonPCClusters = constructPlaneClusters(12, winpcs[iPCTrigWin].hits);
-  const ClustersByPlane muonDCClusters = constructPlaneClusters(44, windcs[iPCTrigWin].hits);
+  const ClustersByPlane muonDCClusters = constructPlaneClusters(44, trigWin.dcHits);
   const ClustersByPlane muonGlobalClusters = globalPlaneClusters(muonPCClusters, muonDCClusters);
 
   const PlaneRange muonRange = findPlaneRange(muonGlobalClusters);
@@ -211,32 +192,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_MU_RANGE_GAPS;
   }
 
-  hMuonRange_->Fill(muonRange.min, muonRange.max);
-  if((muonRange.min != 1)||(muonRange.max != 28)) {
-    return CUT_MUON_RANGE;
-  }
-
-  //----------------------------------------------------------------
-  // Muon UV cuts
-
-  std::set<int> pc1234;
-  pc1234.insert(1); pc1234.insert(2); pc1234.insert(3); pc1234.insert(4);
-  std::pair<int,int> uvpcuplimits = uvminmax(winpcs[iPCTrigWin].hits, pc1234);
-  hMuUVLimitsPCUp_->Fill(uvpcuplimits.first, uvpcuplimits.second);
-
-  if( (uvpcuplimits.first < muUVPCCellMin_) || (muUVPCCellMax_ < uvpcuplimits.second)) {
-    return CUT_MU_UV_PC;
-  }
-
-  std::pair<int,int> uvdclimits = uvminmax(windcs[iPCTrigWin].hits);
-  hMuUVLimitsDC_->Fill(uvdclimits.first, uvdclimits.second);
-  if((uvdclimits.first < muUVDCCellMin_) || (muUVDCCellMax_ < uvdclimits.second)) {
-    return CUT_MU_UV_DC;
-  }
-
   //----------------------------------------------------------------
   // CUT_MUSTOP_UV
-
   if((muonPCClusters[5].size() != 1) || (muonPCClusters[6].size() != 1)) {
     return CUT_MUSTOP_SINGLECLUSTER;
   }
@@ -265,11 +222,25 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------------------------------------------------------
-  hwidthPCMuWin_.fill(winpcs[iPCTrigWin].hits);
-  hwidthDCMuWin_.fill(windcs[iPCTrigWin].hits);
+  // Extra muon UV cuts
 
-  const int iProtonWin = iPCTrigWin + 1;
-  protonWindow_.process(muStop, winpcs[iProtonWin], windcs[iProtonWin], unassignedDCHits, evt);
+  std::set<int> pc1234;
+  pc1234.insert(1); pc1234.insert(2); pc1234.insert(3); pc1234.insert(4);
+  std::pair<int,int> uvpcuplimits = uvminmax(trigWin.pcHits, pc1234);
+  hMuUVLimitsPCUp_->Fill(uvpcuplimits.first, uvpcuplimits.second);
+
+  if( (uvpcuplimits.first < muUVPCCellMin_) || (muUVPCCellMax_ < uvpcuplimits.second)) {
+    return CUT_MU_UV_PC;
+  }
+
+  std::pair<int,int> uvdclimits = uvminmax(trigWin.dcHits);
+  hMuUVLimitsDC_->Fill(uvdclimits.first, uvdclimits.second);
+  if((uvdclimits.first < muUVDCCellMin_) || (muUVDCCellMax_ < uvdclimits.second)) {
+    return CUT_MU_UV_DC;
+  }
+
+  //----------------------------------------------------------------
+  protonWindow_.process(muStop, wres, evt);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;
@@ -284,103 +255,6 @@ TDCHitWPPtrCollection MuCapture::selectHits(const TDCHitWPCollection& hits, doub
     }
   }
   return res;
-}
-
-//================================================================
-TimeWindowCollection MuCapture::constructTimeWindows(const TDCHitWPPtrCollection& pchits, double winLength) {
-
-  TimeWindowCollection winpcs;
-
-  for(unsigned i=0; i< pchits.size(); ++i) {
-
-    // This hit starts a new window
-    TimeWindow win;
-    win.tstart = pchits[i]->time();
-    win.tend = win.tstart + winLength;
-
-    // Put all hits falling in the  given time interval into the same window
-    while((i < pchits.size()) && (pchits[i]->time() < win.tend)) {
-      win.hits.push_back(pchits[i]);
-      ++i;
-    }
-
-    // Order hits in each window by plane/cell
-    std::sort(win.hits.begin(), win.hits.end(), TDCHitWPCmpGeom());
-
-    winpcs.push_back(win);
-  }
-
-  return winpcs;
-}
-
-//================================================================
-int MuCapture::findTriggerWindow(const TimeWindowCollection& windows) {
-  int itrig = -1;
-
-  if(!windows.empty()) {
-    itrig = 0;
-    for(int i=1; i<windows.size(); ++i) {
-      if(std::abs(windows[i].tstart) < std::abs(windows[itrig].tstart)) {
-        itrig = i;
-      }
-    }
-  }
-
-  return itrig;
-}
-
-//================================================================
-TimeWindowCollection MuCapture::assignDCHits(TDCHitWPPtrCollection *unassignedDCHits,
-                                             const TDCHitWPPtrCollection& timeSortedDCHits,
-                                             const TimeWindowCollection& winpcs)
-{
-  TimeWindowCollection windcs(winpcs.size());
-
-  if(!timeSortedDCHits.empty()) {
-
-    unsigned idchit=0;
-
-    for(unsigned ipcwin=0; ipcwin<winpcs.size(); ++ipcwin) {
-
-      TimeWindow dcwin;
-      dcwin.tstart = winpcs[ipcwin].tstart - winDCEarlyMargin_;
-      dcwin.tend = dcwin.tstart + winDCLength_;
-
-      for(; idchit < timeSortedDCHits.size() && (timeSortedDCHits[idchit]->time() < dcwin.tend); ++idchit) {
-        TDCHitWPPtr phit = timeSortedDCHits[idchit];
-        if(timeSortedDCHits[idchit]->time() < dcwin.tstart) {
-
-          unassignedDCHits->push_back(phit);
-
-          hWinDCUnassignedEarly_->Fill(phit->time() - dcwin.tstart);
-          if(ipcwin > 0) {
-            hWinDCUnassignedLate_->Fill(phit->time() - windcs[ipcwin-1].tend);
-          }
-
-        }
-        else {
-          dcwin.hits.push_back(phit);
-        }
-      }
-
-      // Filled DC window corresponding to the current PC window with hits
-      // Order then and move to the next pc window
-      std::sort(dcwin.hits.begin(), dcwin.hits.end(), TDCHitWPCmpGeom());
-
-      windcs[ipcwin] = dcwin;
-
-    } // for(pcwin)
-
-    // Record any leftover hits
-    for(; idchit < timeSortedDCHits.size(); ++idchit) {
-      TDCHitWPPtr phit = timeSortedDCHits[idchit];
-      unassignedDCHits->push_back(phit);
-      hWinDCUnassignedLate_->Fill(phit->time() - windcs.back().tend);
-    }
-
-  } // !timeSortedDCHits.empty()
-
-  return windcs;
 }
 
 //================================================================

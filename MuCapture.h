@@ -6,7 +6,6 @@
 #include "ModuleClass.h"
 
 #include "TDCHitWP.h"
-#include "TimeWindow.h"
 #include "WireCluster.h"
 
 #include "MuCapPACT.h"
@@ -14,57 +13,65 @@
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
 #include "HistMuCapTruth.h"
+#include "TimeWindowingPC.h"
+#include "TimeWindowingDC.h"
 
 #include "TAxis.h"
 class TH1;
 class TH2;
 
-
 //================================================================
 class MuCapture : public ModuleClass {
   void set_cut_bin_labels(TAxis* ax) {
-    ax->SetBinLabel(1+CUT_NOPCWIN ,"NOPCs");
+    ax->SetBinLabel(1+CUT_NOTRIGWIN, "NoTrigWin");
 
-    ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST ,"PCTRIGSEP PAST");
+    ax->SetBinLabel(1+CUT_TRIGPCWIN_TYPE, "TrigPCWinType");
+    ax->SetBinLabel(1+CUT_TRIGPCWIN_GAPS, "TrigPCWinGaps");
+    ax->SetBinLabel(1+CUT_TRIGPCWIN_RANGE, "TrigPCWinRange");
 
-    ax->SetBinLabel(1+CUT_PCWIN_NUMAFTERTRIG ,"Num after-trig windows");
+    ax->SetBinLabel(1+CUT_PCWIN_NUMAFTERTRIG, "Num after-trig windows");
 
-    ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPFUTURE ,"PCTRIGSEP FUTURE");
+    ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "PCTRIGSEP PAST");
 
-    ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS ,"Unassigned DC hits");
+    ax->SetBinLabel(1+CUT_TRIGPCWIN_TYPE, "TrigDCWinType");
+    ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS, "Unassigned DC hits");
 
-    ax->SetBinLabel(1+CUT_MU_RANGE_GAPS ,"Mu range gaps");
+    ax->SetBinLabel(1+CUT_MU_RANGE_GAPS, "Mu range gaps");
 
-    ax->SetBinLabel(1+CUT_MUON_RANGE ,"Mu range");
+    ax->SetBinLabel(1+CUT_MUSTOP_SINGLECLUSTER, "Mu single cluster");
+    ax->SetBinLabel(1+CUT_MUSTOP_UV, "Mu stop UV");
 
-    ax->SetBinLabel(1+CUT_MU_UV_PC,"mu UV PC");
-    ax->SetBinLabel(1+CUT_MU_UV_DC,"mu UV DC");
+    ax->SetBinLabel(1+CUT_MUSTOP_PACT, "Mu stop PACT");
 
-    ax->SetBinLabel(1+CUT_MUSTOP_SINGLECLUSTER,"Mu single cluster");
-    ax->SetBinLabel(1+CUT_MUSTOP_UV,"Mu stop UV");
+    ax->SetBinLabel(1+CUT_MU_UV_PC, "mu UV PC");
+    ax->SetBinLabel(1+CUT_MU_UV_DC, "mu UV DC");
 
-    ax->SetBinLabel(1+CUT_MUSTOP_PACT,"Mu stop PACT");
-
-    ax->SetBinLabel(1+CUTS_ACCEPTED ,"Accepted");
+    ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
   }
 
 public :
 
   enum EventCutNumber {
-    CUT_NOPCWIN,
-    CUT_PCWIN_TRIGSEPPAST,
+    CUT_NOTRIGWIN,
+
+    CUT_TRIGPCWIN_TYPE,
+    CUT_TRIGPCWIN_GAPS,
+    CUT_TRIGPCWIN_RANGE,
     CUT_PCWIN_NUMAFTERTRIG,
-    CUT_PCWIN_TRIGSEPFUTURE,
+    CUT_PCWIN_TRIGSEPPAST,
+
+    CUT_TRIGDCWIN_TYPE,
     CUT_UNASSIGNEDDCHITS,
+
     CUT_MU_RANGE_GAPS,
-    CUT_MUON_RANGE,
-    CUT_MU_UV_PC,
-    CUT_MU_UV_DC,
 
     CUT_MUSTOP_SINGLECLUSTER,
     CUT_MUSTOP_UV,
 
     CUT_MUSTOP_PACT,
+
+    CUT_MU_UV_PC,
+    CUT_MU_UV_DC,
 
     CUTS_ACCEPTED,
     CUTS_END
@@ -78,10 +85,7 @@ public :
     , doDefaultTWIST_(false)
     , cutMinTDCWidthPC_()
     , cutMinTDCWidthDC_()
-    , winPCLength_()
-    , winPCSeparation_()
-    , winDCLength_()
-    , winDCEarlyMargin_()
+    , winPCPreTrigSeparation_()
     , maxUnassignedDCHits_()
     , muUVPCCellMin_()
     , muUVPCCellMax_()
@@ -91,16 +95,9 @@ public :
 
     , h_cuts_r()
     , h_cuts_p()
-    , hNumPCWin_()
-    , hWinPCTimeAll_()
-    , hWinPCTimeTrig_()
-    , hWinPCTStartBeforeTrig_()
-    , hWinPCTStartAfterTrig_()
-    , hWinDCUnassignedEarly_()
-    , hWinDCUnassignedLate_()
-    , hWinDCUnassignedCount_()
+    , hNumAfterTrigWindows_()
 
-    , hMuonRange_()
+    , hWinDCUnassignedCount_()
 
     , hMuUVLimitsPCUp_()
     , hMuUVLimitsDC_()
@@ -117,11 +114,8 @@ private :
   double cutMinTDCWidthPC_;
   double cutMinTDCWidthDC_;
 
-  double winPCLength_;
-  double winPCSeparation_;
+  double winPCPreTrigSeparation_;
 
-  double winDCLength_;
-  double winDCEarlyMargin_;
   int maxUnassignedDCHits_;
 
   int muUVPCCellMin_;
@@ -130,23 +124,17 @@ private :
   int muUVDCCellMax_;
   double muStopRMax_;
 
+  TimeWindowingPC pcWindowing_;
+  TimeWindowingDC dcWindowing_;
   MuCapPACT pactCut_;
   MuCapProtonWindow protonWindow_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;
 
-  TH1* hNumPCWin_;
-  TH1* hWinPCTimeAll_;
-  TH1* hWinPCTimeTrig_;
-  TH1* hWinPCTStartBeforeTrig_;
-  TH1* hWinPCTStartAfterTrig_;
+  TH1 *hNumAfterTrigWindows_;
 
-  TH1 *hWinDCUnassignedEarly_;
-  TH1 *hWinDCUnassignedLate_;
   TH1 *hWinDCUnassignedCount_;
-
-  TH2 *hMuonRange_;
 
   TH2 *hMuUVLimitsPCUp_;
   TH2 *hMuUVLimitsDC_;
@@ -158,24 +146,12 @@ private :
   HistTDCWidth hwidthPCall_;
   HistTDCWidth hwidthDCall_;
 
-  HistTDCWidth hwidthPCMuWin_;
-  HistTDCWidth hwidthDCMuWin_;
-
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;
-  HistOccupancy hOccupancyDCUnassigned_;
   HistMuCapTruth hTruthAll_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
-
   TDCHitWPPtrCollection selectHits(const TDCHitWPCollection& hits, double minWidthCut);
-
-  TimeWindowCollection constructTimeWindows(const TDCHitWPPtrCollection& timeSortedHits, double winLength);
-
-  // Returns the index of the window with start time closest to t=0
-  int findTriggerWindow(const TimeWindowCollection& windows);
-
-  TimeWindowCollection assignDCHits(TDCHitWPPtrCollection* unassignedDCHits, const TDCHitWPPtrCollection& timeSortedDCHits, const TimeWindowCollection& winpcs);
 };
 
 #endif/*MuCapture_h*/

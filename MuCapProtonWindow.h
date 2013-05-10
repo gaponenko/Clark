@@ -28,7 +28,8 @@ class ConfigFile;
 //================================================================
 class MuCapProtonWindow {
   void set_cut_bin_labels(TAxis* ax) {
-    ax->SetBinLabel(1+CUT_UPSTREAM, "Upstream");
+    ax->SetBinLabel(1+CUT_TRIGSEP, "dt trig");
+    ax->SetBinLabel(1+CUT_STREAM, "stream");
     ax->SetBinLabel(1+CUT_NOPC7, "PC7");
     ax->SetBinLabel(1+CUT_RANGE_GAPS, "RANGE_GAPS");
     ax->SetBinLabel(1+CUT_MAX_RANGE, "MAX_RANGE");
@@ -45,7 +46,8 @@ class MuCapProtonWindow {
 
 public:
   enum EventCutNumber {
-    CUT_UPSTREAM,
+    CUT_STREAM,
+    CUT_TRIGSEP,
     CUT_NOPC7,
     CUT_RANGE_GAPS,
     CUT_MAX_RANGE,
@@ -60,17 +62,18 @@ public:
     CUTS_END
   };
 
-  void init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile &conf);
+  void init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile &conf,
+            TimeWindow::StreamType cutWinStream, double cutAfterTrigTimeSep);
 
   void process(const ROOT::Math::XYPoint& muStopUV,
-               const TimeWindow& protonWindowPC,
-               const TimeWindow& protonWindowDC,
-               const TDCHitWPPtrCollection& unassignedDCHits,
+               const TimeWindowingResults& wres,
                const EventClass& evt
                );
 
   MuCapProtonWindow()
     : doMCTruth_(false)
+    , cutStream_(TimeWindow::DOWNSTREAM)
+    , cutAfterTrigTimeSep_()
     , cutMaxPlane_()
     , cutRextMax_()
     , h_cuts_r()
@@ -87,6 +90,8 @@ public:
 
 private :
   bool doMCTruth_;
+  TimeWindow::StreamType cutStream_;
+  double cutAfterTrigTimeSep_;
   int cutMaxPlane_;
   double cutRextMax_;
 
@@ -131,9 +136,7 @@ private :
   HistMuCapTruth htruthTight_;
 
   EventCutNumber analyze(const ROOT::Math::XYPoint& muStopUV,
-                         const TimeWindow& protonWindowPC,
-                         const TimeWindow& protonWindowDC,
-                         const TDCHitWPPtrCollection& unassignedDCHits,
+                         const TimeWindowingResults& wres,
                          const EventClass& evt
                          );
 };
