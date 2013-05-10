@@ -138,8 +138,13 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Sort PC hits into time windows
 
+  const TDCHitWPPtrCollection filteredPChits = selectHits(evt.pc_hits_by_time(), cutMinTDCWidthPC_);
+  if(filteredPChits.empty()) {
+    return CUT_NOPCHITS;
+  }
+
   TimeWindowingResults wres;
-  pcWindowing_.assignPCHits(selectHits(evt.pc_hits_by_time(), cutMinTDCWidthPC_), &wres);
+  pcWindowing_.assignPCHits(filteredPChits, &wres);
 
   if(wres.iTrigWin == -1u) {
     return CUT_NOTRIGWIN;
@@ -172,8 +177,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------
   // Process DC hits
-  const TDCHitWPPtrCollection filtered_dc_hits_by_time = selectHits(evt.dc_hits_by_time(), cutMinTDCWidthDC_);
-  dcWindowing_.assignDCHits(filtered_dc_hits_by_time, &wres);
+  dcWindowing_.assignDCHits(selectHits(evt.dc_hits_by_time(), cutMinTDCWidthDC_), &wres);
   if(trigWin.stream != TimeWindow::UPSTREAM) {
     return CUT_TRIGDCWIN_TYPE;
   }

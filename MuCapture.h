@@ -23,6 +23,7 @@ class TH2;
 //================================================================
 class MuCapture : public ModuleClass {
   void set_cut_bin_labels(TAxis* ax) {
+    ax->SetBinLabel(1+CUT_NOPCHITS, "NoPCHits");
     ax->SetBinLabel(1+CUT_NOTRIGWIN, "NoTrigWin");
 
     ax->SetBinLabel(1+CUT_TRIGPCWIN_TYPE, "TrigPCWinType");
@@ -33,7 +34,7 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "PCTRIGSEP PAST");
 
-    ax->SetBinLabel(1+CUT_TRIGPCWIN_TYPE, "TrigDCWinType");
+    ax->SetBinLabel(1+CUT_TRIGDCWIN_TYPE, "TrigDCWinType");
     ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS, "Unassigned DC hits");
 
     ax->SetBinLabel(1+CUT_MU_RANGE_GAPS, "Mu range gaps");
@@ -52,6 +53,7 @@ class MuCapture : public ModuleClass {
 public :
 
   enum EventCutNumber {
+    CUT_NOPCHITS,
     CUT_NOTRIGWIN,
 
     CUT_TRIGPCWIN_TYPE,
