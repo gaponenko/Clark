@@ -75,7 +75,6 @@ void TimeWindowingPC::assignPCHits(const TDCHitWPPtrCollection& pchits, TimeWind
 
   // Histos that require trigger and more to be defined
   if(iPCTrigWin != -1u) {
-    hWinPCTimeTrig_->Fill(winpcs[iPCTrigWin].tstart);
     if(0 < iPCTrigWin) {
       hWinPCTStartBeforeTrig_->Fill(winpcs[iPCTrigWin - 1].tstart);
     }
@@ -105,6 +104,8 @@ unsigned TimeWindowingPC::findTriggerWindow(const TimeWindowCollection& windows)
         itrig = i;
       }
     }
+
+    hWinPCTimeTrig_->Fill(windows[itrig].tstart);
 
     // If the closes window is too far from t=0 don't call it the trigger
     if(std::abs(windows[itrig].tstart) > winTrigMaxdt_) {
