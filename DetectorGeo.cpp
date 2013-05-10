@@ -136,7 +136,7 @@ bool DetectorGeo::ReadGeometry(const ConfigFile& conf, log4cpp::Category *L)
 		if( ( !strncmp(ReadIn,"TAR2", 4))		// "old" target
 			or ( !strncmp(ReadIn,"TAR3", 4)))	// "new" target
 		{
-			ReadTARX(file);
+                  ReadTARX(file, ReadIn);
 		}
 
 		// (4) Scint variables
@@ -144,7 +144,7 @@ bool DetectorGeo::ReadGeometry(const ConfigFile& conf, log4cpp::Category *L)
 		if( ( !strncmp(ReadIn,"SCI2", 4))
 			or ( !strncmp(ReadIn,"SCI3", 4)))
 		{
-			ReadSCIX(file);
+                  ReadSCIX(file, ReadIn);
 		}
 
 	} while (! file.eof() );   // while not eof
@@ -286,9 +286,8 @@ void DetectorGeo::ReadPROP(std::ifstream &file)
 
 
 // ================ (3) Target variables ================== //
-void DetectorGeo::ReadTARX(std::ifstream &file)
+void DetectorGeo::ReadTARX(std::ifstream &file, char* ReadIn)
 {
-	char  ReadIn[280];
 	// Read in target info
 	if(!strncmp(ReadIn,"TAR2", 4)) // "old" target
 	{
@@ -307,7 +306,6 @@ void DetectorGeo::ReadTARX(std::ifstream &file)
 
 	else if(!strncmp(ReadIn,"TAR3", 4)) // "new" target
 	{
-		std::cout<<" Found TAR3"<<std::endl;
 		// skip to and over the + sign
 		do 
 		{
@@ -324,13 +322,11 @@ void DetectorGeo::ReadTARX(std::ifstream &file)
 
 
 // ================ (4) Scint variables =================== //
-void DetectorGeo::ReadSCIX(std::ifstream &file)
+void DetectorGeo::ReadSCIX(std::ifstream &file, char *ReadIn)
 {
-	char  ReadIn[280];
 	// Read in scintillator info
 	if(!strncmp(ReadIn,"SCI2", 4)) 
 	{
-		std::cout<<" Found SCI2"<<std::endl;
 		// skip to and over the + sign
 		do 
 		{
@@ -375,7 +371,6 @@ void DetectorGeo::ReadSCIX(std::ifstream &file)
 	}  
 	else if(!strncmp(ReadIn,"SCI3", 4)) 
 	{
-		std::cout<<" Found SCI3"<<std::endl;
 		// skip to and over the + sign
 		do 
 		{

@@ -156,8 +156,8 @@ private :
   bool ReadGeometry(const ConfigFile& conf, log4cpp::Category *L);
   void  ReadDRFT(std::ifstream &file);
   void  ReadPROP(std::ifstream &file);
-  void  ReadTARX(std::ifstream &file);
-  void  ReadSCIX(std::ifstream &file);
+  void  ReadTARX(std::ifstream &file, char *lastLine);
+  void  ReadSCIX(std::ifstream &file, char *lastLine);
 
   void applyCorrections(const ConfigFile& conf, log4cpp::Category& logger);
   void applyCorrectionsPPC(const std::string& calibFileName, log4cpp::Category& logger, double *posArray, int arrsize);
