@@ -8,8 +8,8 @@
 
 #include "HistogramFactory.h"
 #include "ConfigFile.h"
-
 #include "PlaneRange.h"
+#include "EventList.h"
 
 //================================================================
 namespace { // local helpers
@@ -127,6 +127,13 @@ void MuCapProtonWindow::process(const ROOT::Math::XYPoint& muStopUV,
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
   }
+
+  if(gEventList.requested(evt)) {
+    const int cbin = h_cuts_p->GetXaxis()->FindFixBin(c);
+    std::cout<<__func__<<": run "<<evt.nrun<<" event "<<evt.nevt
+             <<" status "<<c<<": "<<h_cuts_p->GetXaxis()->GetBinLabel(cbin)
+             <<std::endl;
+  }
 }
 
 //================================================================
@@ -149,6 +156,11 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   const ClustersByPlane clustersDC = constructPlaneClusters(44, protonDCHits);
   const ClustersByPlane global = globalPlaneClusters(clustersPC, clustersDC);
   const PlaneRange gr = findPlaneRange(global);
+
+  if(gEventList.requested(evt)) {
+    std::cout<<__func__<<": run "<<evt.nrun<<" event "<<evt.nevt
+             <<": proton GlobalClusters = "<<global<<std::endl;
+  }
 
   if(protonWindow.stream != cutStream_) {
     return CUT_STREAM;

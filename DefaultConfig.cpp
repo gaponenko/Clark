@@ -276,6 +276,7 @@ void SetDefault(ConfigFile &Conf)
 
         // ================== MuCapture analysis ======================== //
         SetKey(Conf, "MuCapture/loadDefaultTWISTVars", true);
+        SetKey(Conf, "MuCapture/debugEventList", "");
         SetKey(Conf, "Detector/Geometry/dc_ppc", 25);
         SetKey(Conf, "Detector/Geometry/pc_ppc", 5);
         SetKey(Conf, "MuCapture/killPC6DeadWire", true);

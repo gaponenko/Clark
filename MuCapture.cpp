@@ -14,8 +14,8 @@
 #include "Math/Point2D.h"
 
 #include "TimeWindow.h"
-
 #include "PlaneRange.h"
+#include "EventList.h"
 
 #define AGDEBUG(stuff) do { std::cerr<<"AG: "<<__FILE__<<", line "<<__LINE__<<", func "<<__func__<<": "<<stuff<<std::endl; } while(0)
 //#define AGDEBUG(stuff)
@@ -50,6 +50,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   Log->info( "Register MuCapture module");
 
   doMCTruth_ = Conf.read<bool>("TruthBank/Do");
+  gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
@@ -116,6 +117,13 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
+  }
+
+  if(gEventList.requested(evt)) {
+    const int cbin = h_cuts_p->GetXaxis()->FindFixBin(c);
+    std::cout<<__func__<<": run "<<evt.nrun<<" event "<<evt.nevt
+             <<" status "<<c<<": "<<h_cuts_p->GetXaxis()->GetBinLabel(cbin)
+             <<std::endl;
   }
 
   return doDefaultTWIST_;
@@ -190,6 +198,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   const ClustersByPlane muonDCClusters = constructPlaneClusters(44, trigWin.dcHits);
   const ClustersByPlane muonGlobalClusters = globalPlaneClusters(muonPCClusters, muonDCClusters);
+
+  if(gEventList.requested(evt)) {
+    std::cout<<__func__<<": run "<<evt.nrun<<" event "<<evt.nevt
+             <<": muonGlobalClusters = "<<muonGlobalClusters
+             <<std::endl;
+  }
 
   const PlaneRange muonRange = findPlaneRange(muonGlobalClusters);
   if(!muonRange.noGaps) {
