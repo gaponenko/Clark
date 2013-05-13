@@ -39,15 +39,6 @@ public:
 
 typedef std::vector<TDCHitWP> TDCHitWPCollection;
 
-//=====
-// A comparator, for use with std::sort
-
-struct TDCHitWPCmpTime {
-  bool operator()(const TDCHitWP& a, const TDCHitWP& b) {
-    return a.time() < b.time();
-  }
-};
-
 //================================================================
 // A non-owning pointer-like class for presenting different views
 // on a hit collection
@@ -68,7 +59,19 @@ public:
 typedef std::vector<TDCHitWPPtr> TDCHitWPPtrCollection;
 
 //----------------------------------------------------------------
-// Comparator
+// Comparators for use with std::sort
+
+struct TDCHitWPCmpTime {
+  bool operator()(const TDCHitWP& a, const TDCHitWP& b) {
+    return a.time() < b.time();
+  }
+
+  bool operator()(const TDCHitWPPtr& a, const TDCHitWPPtr& b) const {
+    return (a->time() < b->time());
+  }
+};
+
+
 struct TDCHitWPCmpGeom {
   bool operator()(const TDCHitWP& a, const TDCHitWP& b) const {
     return (a.cid() < b.cid());

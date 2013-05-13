@@ -133,11 +133,11 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
 MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &hist) {
 
   // Fill the "all hits" histos
-  hwidthPCall_.fill(evt.pc_hits_by_time());
-  hwidthDCall_.fill(evt.dc_hits_by_time());
+  hwidthPCall_.fill(evt.pc_hits());
+  hwidthDCall_.fill(evt.dc_hits());
 
-  hOccupancyPCAll_.fill(evt.pc_hits_by_time());
-  hOccupancyDCAll_.fill(evt.dc_hits_by_time());
+  hOccupancyPCAll_.fill(evt.pc_hits());
+  hOccupancyDCAll_.fill(evt.dc_hits());
 
   if(doMCTruth_) {
     hTruthAll_.fill(evt);
@@ -146,7 +146,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Sort PC hits into time windows
 
-  const TDCHitWPPtrCollection filteredPChits = selectHits(evt.pc_hits_by_time(), cutMinTDCWidthPC_);
+  const TDCHitWPPtrCollection filteredPChits = selectHits(evt.pc_hits(), cutMinTDCWidthPC_);
   if(filteredPChits.empty()) {
     return CUT_NOPCHITS;
   }
@@ -185,7 +185,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------
   // Process DC hits
-  dcWindowing_.assignDCHits(selectHits(evt.dc_hits_by_time(), cutMinTDCWidthDC_), &wres);
+  dcWindowing_.assignDCHits(selectHits(evt.dc_hits(), cutMinTDCWidthDC_), &wres);
   if(trigWin.stream != TimeWindow::UPSTREAM) {
     return CUT_TRIGDCWIN_TYPE;
   }

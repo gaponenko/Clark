@@ -36,7 +36,10 @@ void TimeWindowingPC::init(HistogramFactory &hf,
 }
 
 //================================================================
-void TimeWindowingPC::assignPCHits(const TDCHitWPPtrCollection& pchits, TimeWindowingResults *out) {
+void TimeWindowingPC::assignPCHits(const TDCHitWPPtrCollection& inhits, TimeWindowingResults *out) {
+  TDCHitWPPtrCollection pchits(inhits);
+  std::sort(pchits.begin(), pchits.end(), TDCHitWPCmpTime());
+
   TimeWindowCollection winpcs;
 
   for(unsigned i=0; i < pchits.size(); ++i) {

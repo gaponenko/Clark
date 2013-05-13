@@ -440,8 +440,8 @@ class EventClass{
 		int			tb_e_firstdcvtx;	// Positron vertex index at the first DC
 		int			tb_e_lastdcvtx;		// Positron vertex index at the last DC
 
-  const TDCHitWPCollection& dc_hits_by_time() const { return dc_hits_by_time_; }
-  const TDCHitWPCollection& pc_hits_by_time() const { return pc_hits_by_time_; }
+  const TDCHitWPCollection& dc_hits() const { return dc_hits_; }
+  const TDCHitWPCollection& pc_hits() const { return pc_hits_; }
 
 private :
   map <std::string, bool>ExistList;
@@ -450,8 +450,8 @@ private :
   bool CheckBranchLeaf( TTree* T, const std::string& Leaf);
 
   // Muon capture variables and methods
-  TDCHitWPCollection dc_hits_by_time_;
-  TDCHitWPCollection pc_hits_by_time_;
+  TDCHitWPCollection dc_hits_;
+  TDCHitWPCollection pc_hits_;
 
   void LoadMuCapture();
   void InitMuCaptureVar(TTree* T);

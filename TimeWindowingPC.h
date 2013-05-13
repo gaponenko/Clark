@@ -21,7 +21,7 @@ public:
             const DetectorGeo& geom,
             const ConfigFile &conf);
 
-  void assignPCHits(const TDCHitWPPtrCollection& timeSortedHits, TimeWindowingResults *out);
+  void assignPCHits(const TDCHitWPPtrCollection& hits, TimeWindowingResults *out);
 
   TimeWindowingPC()
     : winPCLength_()
