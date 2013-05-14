@@ -98,6 +98,7 @@ public :
 
     , h_cuts_r()
     , h_cuts_p()
+    , hPCPreTrigSeparation_()
     , hNumAfterTrigWindows_()
 
     , hWinDCUnassignedCount_()
@@ -135,6 +136,7 @@ private :
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;
 
+  TH1 *hPCPreTrigSeparation_;
   TH1 *hNumAfterTrigWindows_;
 
   TH1 *hWinDCUnassignedCount_;

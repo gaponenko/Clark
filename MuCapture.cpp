@@ -81,6 +81,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
+  hPCPreTrigSeparation_ = H.DefineTH1D("MuCapture", "pcPreTrigSeparation", "PC win pre-trigger separation", 600, -6000., 0.);
+
   hNumAfterTrigWindows_ = H.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
 
   hWinDCUnassignedCount_ = H.DefineTH1D("MuCapture", "winDCUnassignedCount", "Count of unassigned DC hits", 101, -0.5, 100.5);
@@ -158,9 +160,13 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_NOTRIGWIN;
   }
 
-  // Trig time is 0, dt from that rather than from less precise trigWin time
-  if((wres.iTrigWin > 0) && (std::abs(wres.windows[wres.iTrigWin - 1].tstart) < winPCPreTrigSeparation_)) {
-    return CUT_PCWIN_TRIGSEPPAST;
+  if(wres.iTrigWin > 0) {
+    // Trig time is 0, dt from that rather than from less precise trigWin time
+    const double dt = wres.windows[wres.iTrigWin - 1].tstart;
+    hPCPreTrigSeparation_->Fill(dt);
+    if(std::abs(dt) < winPCPreTrigSeparation_) {
+      return CUT_PCWIN_TRIGSEPPAST;
+    }
   }
 
   const TimeWindow& trigWin = wres.windows[wres.iTrigWin];
