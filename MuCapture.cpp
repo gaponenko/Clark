@@ -158,6 +158,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_NOTRIGWIN;
   }
 
+  // Trig time is 0, dt from that rather than from less precise trigWin time
+  if((wres.iTrigWin > 0) && (std::abs(wres.windows[wres.iTrigWin - 1].tstart) < winPCPreTrigSeparation_)) {
+    return CUT_PCWIN_TRIGSEPPAST;
+  }
+
   const TimeWindow& trigWin = wres.windows[wres.iTrigWin];
   if(trigWin.stream != TimeWindow::UPSTREAM) {
     return CUT_TRIGPCWIN_TYPE;
@@ -171,16 +176,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   if((trigPCRange.min != 1) || (trigPCRange.max != 6)) {
     return CUT_TRIGPCWIN_RANGE;
-  }
-
-  hNumAfterTrigWindows_->Fill(int(wres.windows.size() - wres.iTrigWin - 1));
-  if(wres.iTrigWin + 2 != wres.windows.size()) {
-    return CUT_PCWIN_NUMAFTERTRIG;
-  }
-
-  // Trig time is 0, dt from that rather than from less precise trigWin time
-  if((wres.iTrigWin > 0) && (std::abs(wres.windows[wres.iTrigWin - 1].tstart) < winPCPreTrigSeparation_)) {
-    return CUT_PCWIN_TRIGSEPPAST;
   }
 
   //----------------
@@ -255,6 +250,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hMuUVLimitsDC_->Fill(uvdclimits.first, uvdclimits.second);
   if((uvdclimits.first < muUVDCCellMin_) || (muUVDCCellMax_ < uvdclimits.second)) {
     return CUT_MU_UV_DC;
+  }
+
+  //----------------------------------------------------------------
+  hNumAfterTrigWindows_->Fill(int(wres.windows.size() - wres.iTrigWin - 1));
+  if(wres.iTrigWin + 2 != wres.windows.size()) {
+    return CUT_PCWIN_NUMAFTERTRIG;
   }
 
   //----------------------------------------------------------------
