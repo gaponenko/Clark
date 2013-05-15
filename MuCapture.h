@@ -25,14 +25,10 @@ class MuCapture : public ModuleClass {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_NOPCHITS, "NoPCHits");
     ax->SetBinLabel(1+CUT_NOTRIGWIN, "NoTrigWin");
-
+    ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "Pre-trig hits");
     ax->SetBinLabel(1+CUT_TRIGPCWIN_TYPE, "TrigPCWinType");
     ax->SetBinLabel(1+CUT_TRIGPCWIN_GAPS, "TrigPCWinGaps");
     ax->SetBinLabel(1+CUT_TRIGPCWIN_RANGE, "TrigPCWinRange");
-
-    ax->SetBinLabel(1+CUT_PCWIN_NUMAFTERTRIG, "Num after-trig windows");
-
-    ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "PCTRIGSEP PAST");
 
     ax->SetBinLabel(1+CUT_TRIGDCWIN_TYPE, "TrigDCWinType");
     ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS, "Unassigned DC hits");
@@ -47,7 +43,13 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_MU_UV_PC, "mu UV PC");
     ax->SetBinLabel(1+CUT_MU_UV_DC, "mu UV DC");
 
-    ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
+    ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "mu stop accepted");
+
+    ax->SetBinLabel(1+CUT_WIN_NUMAFTERTRIG, "Num after-trig windows");
+
+    ax->SetBinLabel(1+CUT_PROTONWIN_TYPE, "Proton win type");
+
+    ax->SetBinLabel(1+CUTS_ACCEPTED, "mu int accepted");
   }
 
 public :
@@ -74,7 +76,10 @@ public :
     CUT_MU_UV_PC,
     CUT_MU_UV_DC,
 
-    CUT_PCWIN_NUMAFTERTRIG,
+    CUTS_MUSTOP_ACCEPTED,
+
+    CUT_WIN_NUMAFTERTRIG,
+    CUT_PROTONWIN_TYPE,
 
     CUTS_ACCEPTED,
     CUTS_END

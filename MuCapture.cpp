@@ -261,7 +261,14 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   hNumAfterTrigWindows_->Fill(int(wres.windows.size() - wres.iTrigWin - 1));
   if(wres.iTrigWin + 2 != wres.windows.size()) {
-    return CUT_PCWIN_NUMAFTERTRIG;
+    return CUT_WIN_NUMAFTERTRIG;
+  }
+
+  //----------------------------------------------------------------
+  const unsigned iProtonWin = 1 + wres.iTrigWin;
+  const TimeWindow& protonWin = wres.windows[iProtonWin];
+  if(protonWin.stream == TimeWindow::MIXED) {
+    return CUT_PROTONWIN_TYPE;
   }
 
   //----------------------------------------------------------------
