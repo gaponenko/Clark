@@ -298,10 +298,26 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/muUVDCCellMin", 34);
         SetKey(Conf, "MuCapture/muUVDCCellMax", 47);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
-        SetKey(Conf, "MuCapture/PACT/slopea", 1.634);
-        SetKey(Conf, "MuCapture/PACT/slopeb", -5.428);
-        SetKey(Conf, "MuCapture/PACT/intercepta", -61.26);
-        SetKey(Conf, "MuCapture/PACT/interceptb", 642.3);
+
+        SetKey(Conf, "MuCapture/PACT/slopea_11", 1.634);
+        SetKey(Conf, "MuCapture/PACT/slopeb_11", -1.59);
+        SetKey(Conf, "MuCapture/PACT/intercepta_11", -90);
+        SetKey(Conf, "MuCapture/PACT/interceptb_11", 350);
+
+        SetKey(Conf, "MuCapture/PACT/slopea_12", 2.941);
+        SetKey(Conf, "MuCapture/PACT/slopeb_12", -0.857);
+        SetKey(Conf, "MuCapture/PACT/intercepta_12", -235.3);
+        SetKey(Conf, "MuCapture/PACT/interceptb_12", 300);
+
+        SetKey(Conf, "MuCapture/PACT/slopea_21", 1.25);
+        SetKey(Conf, "MuCapture/PACT/slopeb_21", -1.40);
+        SetKey(Conf, "MuCapture/PACT/intercepta_21", -62.5);
+        SetKey(Conf, "MuCapture/PACT/interceptb_21", 350);
+
+        SetKey(Conf, "MuCapture/PACT/slopea_22", 1.852);
+        SetKey(Conf, "MuCapture/PACT/slopeb_22", -1.0);
+        SetKey(Conf, "MuCapture/PACT/intercepta_22", -148.1);
+        SetKey(Conf, "MuCapture/PACT/interceptb_22", 350);
 
         // make sure the planes are not adjacent at dz=0.4cm
         SetKey(Conf, "MuCapture/ProtonWindow/Containment1D/minPlanedz", 0.5);

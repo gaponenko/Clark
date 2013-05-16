@@ -8,7 +8,7 @@
 #include "TDCHitWP.h"
 #include "WireCluster.h"
 
-#include "MuCapPACT.h"
+#include "MuCapPACTCut.h"
 #include "MuCapProtonWindow.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
@@ -135,7 +135,7 @@ private :
 
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
-  MuCapPACT pactCut_;
+  MuCapPACTCut pactCut_;
   MuCapProtonWindow protonWindow_;
 
   TH1D *h_cuts_r;

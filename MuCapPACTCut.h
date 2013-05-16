@@ -1,18 +1,20 @@
 // Andrei Gaponenko, 2013
 
-#ifndef MuCapPACT_h
-#define MuCapPACT_h
+#ifndef MuCapPACTCut_h
+#define MuCapPACTCut_h
 
-#include "WireCluster.h"
+#include <vector>
+#include "MuCapPACTQuadrant.h"
 
 class TH1;
 class TH2;
 
 class HistogramFactory;
 class ConfigFile;
+class WireCluster;
 
 //================================================================
-class MuCapPACT {
+class MuCapPACTCut {
 public:
 
   // Does Clark allow book histograms in the constructor?  Perhaps not...
@@ -37,25 +39,12 @@ public:
 
   int quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster);
 
-  MuCapPACT()
-    : slopea_()
-    , intercepta_()
-    , slopeb_()
-    , interceptb_()
-    , hClusterSize_()
-    , hpc6vs5widthAll_()
-    , hpc6vs5widthQ1_()
-  {}
+  MuCapPACTCut() : hClusterSize_() {}
 
 private :
-  double slopea_;
-  double intercepta_;
-  double slopeb_;
-  double interceptb_;
-
   TH2 *hClusterSize_;
-  TH2 *hpc6vs5widthAll_;
-  TH2 *hpc6vs5widthQ1_;
+  typedef std::vector<std::vector<MuCapPACTQuadrant> > Quadrants;
+  Quadrants qq_;
 };
 
-#endif/*MuCapPACT_h*/
+#endif/*MuCapPACTCut_h*/
