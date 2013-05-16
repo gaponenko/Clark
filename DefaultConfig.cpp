@@ -288,9 +288,8 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winTrigMaxdt", 30.);
         SetKey(Conf, "MuCapture/winPCPreTrigSeparation", 1050.);
 
-        //# W.r.t PC win start
-        SetKey(Conf, "MuCapture/winDCEarlyMargin", 100.);
-        SetKey(Conf, "MuCapture/winDCLength", 1050.);
+        SetKey(Conf, "MuCapture/winDCStart", -100.); // W.r.t PC win start
+        SetKey(Conf, "MuCapture/winDCEnd", 1050.); // W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCDoHistos", true);
         SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm

@@ -25,16 +25,16 @@ public:
   void assignDCHits(const TDCHitWPPtrCollection& dcHits, TimeWindowingResults *inout);
 
   TimeWindowingDC()
-    : winDCLength_()
-    , winDCEarlyMargin_()
+    : winDCEnd_()
+    , winDCStart_()
     , winDCDoHistos_()
     , hWinDCUnassignedEarly_()
     , hWinDCUnassignedLate_()
   {}
 
 private:
-  double winDCLength_;
-  double winDCEarlyMargin_;
+  double winDCEnd_;
+  double winDCStart_;
   bool   winDCDoHistos_;
 
   HistOccupancy hWinDCMuMixStreamMap_;

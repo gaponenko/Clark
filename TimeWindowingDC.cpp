@@ -23,8 +23,8 @@ void TimeWindowingDC::init(HistogramFactory &hf,
                            const DetectorGeo& geom,
                            const ConfigFile &conf)
 {
-  winDCLength_ = conf.read<double>("MuCapture/winDCLength");
-  winDCEarlyMargin_ = conf.read<double>("MuCapture/winDCEarlyMargin");
+  winDCEnd_ = conf.read<double>("MuCapture/winDCEnd");
+  winDCStart_ = conf.read<double>("MuCapture/winDCStart");
   winDCDoHistos_ = conf.read<bool>("MuCapture/winDCDoHistos");
 
   hWinDCMuMixStreamMap_.init(hdir, "winDCMuMixStreamMap", 44, 80, hf, conf);
@@ -43,8 +43,8 @@ void TimeWindowingDC::assignDCHits(const TDCHitWPPtrCollection& dcHits,
 {
   TimeWindowCollection& windows = inout->windows;
   for(unsigned i=0; i < windows.size(); ++i) {
-    windows[i].tstartDC = windows[i].tstart - winDCEarlyMargin_;
-    windows[i].tendDC = windows[i].tstart + winDCLength_;
+    windows[i].tstartDC = windows[i].tstart + winDCStart_;
+    windows[i].tendDC = windows[i].tstart + winDCEnd_;
   }
 
   //----------------
