@@ -220,11 +220,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   const unsigned iProtonWin = 1 + wres.iTrigWin;
   const TimeWindow& protonWin = wres.windows[iProtonWin];
-  if(protonWin.stream == TimeWindow::MIXED) {
-    return CUT_PROTONWIN_TYPE;
-  }
 
-  //----------------------------------------------------------------
   protonWindow_.process(muStop, wres, evt);
 
   //----------------------------------------------------------------

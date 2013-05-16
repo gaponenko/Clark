@@ -44,8 +44,6 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_WIN_NUMAFTERTRIG, "Num after-trig windows");
 
-    ax->SetBinLabel(1+CUT_PROTONWIN_TYPE, "Proton win type");
-
     ax->SetBinLabel(1+CUTS_ACCEPTED, "mu int accepted");
   }
 
@@ -73,7 +71,6 @@ public :
     CUTS_MUSTOP_ACCEPTED,
 
     CUT_WIN_NUMAFTERTRIG,
-    CUT_PROTONWIN_TYPE,
 
     CUTS_ACCEPTED,
     CUTS_END
