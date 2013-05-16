@@ -293,10 +293,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winDCLength", 1100.);
         SetKey(Conf, "MuCapture/winDCDoHistos", true);
         SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
-        SetKey(Conf, "MuCapture/muUVPCCellMin", 70);
-        SetKey(Conf, "MuCapture/muUVPCCellMax", 90);
-        SetKey(Conf, "MuCapture/muUVDCCellMin", 34);
-        SetKey(Conf, "MuCapture/muUVDCCellMax", 47);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
 
         SetKey(Conf, "MuCapture/PACT/slopea_11", 1.634);

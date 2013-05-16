@@ -21,27 +21,6 @@
 //#define AGDEBUG(stuff)
 
 //================================================================
-namespace { // local helpers
-  //----------------------------------------------------------------
-  std::pair<int,int> uvminmax(const TDCHitWPPtrCollection& hits, const std::set<int>& onlyPlanes = std::set<int>()) {
-    int cmin=999, cmax=-1;
-    for(unsigned i=0; i<hits.size(); ++i) {
-      if(onlyPlanes.empty() || (onlyPlanes.find(hits[i]->plane()) != onlyPlanes.end())) {
-        if(hits[i]->cell() < cmin) {
-          cmin = hits[i]->cell();
-        }
-        if(cmax < hits[i]->cell()) {
-          cmax = hits[i]->cell();
-        }
-      }
-    }
-    return std::make_pair(cmin,cmax);
-  }
-
-  //----------------------------------------------------------------
-}
-
-//================================================================
 bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *Log) {
   if (not Conf.read<bool>("MuCapture/Do")) {
     Log->info( "MuCapture code will not be run");
@@ -58,11 +37,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   cutMinTDCWidthDC_ = Conf.read<double>("MuCapture/cutMinTDCWidthDC");
   winPCPreTrigSeparation_ = Conf.read<double>("MuCapture/winPCPreTrigSeparation");
   maxUnassignedDCHits_ = Conf.read<int>("MuCapture/maxUnassignedDCHits");
-
-  muUVPCCellMin_ = Conf.read<int>("MuCapture/muUVPCCellMin");
-  muUVPCCellMax_ = Conf.read<int>("MuCapture/muUVPCCellMax");
-  muUVDCCellMin_ = Conf.read<int>("MuCapture/muUVDCCellMin");
-  muUVDCCellMax_ = Conf.read<int>("MuCapture/muUVDCCellMax");
 
   muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
 
@@ -86,9 +60,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hNumAfterTrigWindows_ = H.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
 
   hWinDCUnassignedCount_ = H.DefineTH1D("MuCapture", "winDCUnassignedCount", "Count of unassigned DC hits", 101, -0.5, 100.5);
-
-  hMuUVLimitsPCUp_ = H.DefineTH2D("MuCapture", "MuUVLimitsPCUp", "Muon PC1234 max vs min coordinate", 160, 0.5, 160.5, 160, 0.5, 160.5);
-  hMuUVLimitsDC_ = H.DefineTH2D("MuCapture", "MuUVLimitsDC", "Muon DC up max vs min coordinate", 80, 0.5, 80.5, 80, 0.5, 80.5);
 
   // Make the bin size half a cell
   hMuStopUVCell_ = H.DefineTH2D("MuCapture", "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
@@ -238,24 +209,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   if(1 != pactCut_.quadrant(muonPCClusters[5].front(), muonPCClusters[6].front())) {
     return CUT_MUSTOP_PACT;
-  }
-
-  //----------------------------------------------------------------
-  // Extra muon UV cuts
-
-  std::set<int> pc1234;
-  pc1234.insert(1); pc1234.insert(2); pc1234.insert(3); pc1234.insert(4);
-  std::pair<int,int> uvpcuplimits = uvminmax(trigWin.pcHits, pc1234);
-  hMuUVLimitsPCUp_->Fill(uvpcuplimits.first, uvpcuplimits.second);
-
-  if( (uvpcuplimits.first < muUVPCCellMin_) || (muUVPCCellMax_ < uvpcuplimits.second)) {
-    return CUT_MU_UV_PC;
-  }
-
-  std::pair<int,int> uvdclimits = uvminmax(trigWin.dcHits);
-  hMuUVLimitsDC_->Fill(uvdclimits.first, uvdclimits.second);
-  if((uvdclimits.first < muUVDCCellMin_) || (muUVDCCellMax_ < uvdclimits.second)) {
-    return CUT_MU_UV_DC;
   }
 
   //----------------------------------------------------------------

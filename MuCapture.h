@@ -40,9 +40,6 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_MUSTOP_PACT, "Mu stop PACT");
 
-    ax->SetBinLabel(1+CUT_MU_UV_PC, "mu UV PC");
-    ax->SetBinLabel(1+CUT_MU_UV_DC, "mu UV DC");
-
     ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "mu stop accepted");
 
     ax->SetBinLabel(1+CUT_WIN_NUMAFTERTRIG, "Num after-trig windows");
@@ -73,9 +70,6 @@ public :
 
     CUT_MUSTOP_PACT,
 
-    CUT_MU_UV_PC,
-    CUT_MU_UV_DC,
-
     CUTS_MUSTOP_ACCEPTED,
 
     CUT_WIN_NUMAFTERTRIG,
@@ -95,10 +89,6 @@ public :
     , cutMinTDCWidthDC_()
     , winPCPreTrigSeparation_()
     , maxUnassignedDCHits_()
-    , muUVPCCellMin_()
-    , muUVPCCellMax_()
-    , muUVDCCellMin_()
-    , muUVDCCellMax_()
     , muStopRMax_()
 
     , h_cuts_r()
@@ -107,9 +97,6 @@ public :
     , hNumAfterTrigWindows_()
 
     , hWinDCUnassignedCount_()
-
-    , hMuUVLimitsPCUp_()
-    , hMuUVLimitsDC_()
 
     , hMuStopUVCell_()
     , hMuStopUVPos_()
@@ -127,10 +114,6 @@ private :
 
   int maxUnassignedDCHits_;
 
-  int muUVPCCellMin_;
-  int muUVPCCellMax_;
-  int muUVDCCellMin_;
-  int muUVDCCellMax_;
   double muStopRMax_;
 
   TimeWindowingPC pcWindowing_;
@@ -145,9 +128,6 @@ private :
   TH1 *hNumAfterTrigWindows_;
 
   TH1 *hWinDCUnassignedCount_;
-
-  TH2 *hMuUVLimitsPCUp_;
-  TH2 *hMuUVLimitsDC_;
 
   TH2 *hMuStopUVCell_;
   TH2 *hMuStopUVPos_;
