@@ -45,7 +45,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dcWindowing_.init(H, "MuCapture/WindowingDC", *E.geo, Conf);
 
   pactCut_.init(H, Conf);
-  protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1100./*FIXME*/);
+  protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
 
   h_cuts_r = H.DefineTH1D("MuCapture", "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);

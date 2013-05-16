@@ -286,11 +286,11 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winPCLength", 100.);
         // Trigger window has to be within max dt from 0
         SetKey(Conf, "MuCapture/winTrigMaxdt", 30.);
-        SetKey(Conf, "MuCapture/winPCPreTrigSeparation", 1100.);
+        SetKey(Conf, "MuCapture/winPCPreTrigSeparation", 1050.);
 
         //# W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCEarlyMargin", 100.);
-        SetKey(Conf, "MuCapture/winDCLength", 1100.);
+        SetKey(Conf, "MuCapture/winDCLength", 1050.);
         SetKey(Conf, "MuCapture/winDCDoHistos", true);
         SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
