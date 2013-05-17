@@ -8,21 +8,9 @@
 #include <limits>
 
 //================================================================
-TDCHitStats::TDCHitStats() {}
-
-//================================================================
 void TDCHitStats::fill(const TDCHitWPPtr& hit) {
   sw_.fill(hit->width());
   wm_[hit->cid()].push_back(hit);
-}
-
-//================================================================
-void TDCHitStats::fill(const WireClusterCollection& clusters) {
-  for(WireClusterCollection::const_iterator ic = clusters.begin(); ic != clusters.end(); ++ic) {
-    for(TDCHitWPPtrCollection::const_iterator ih = ic->hits().begin(); ih != ic->hits().end(); ++ih) {
-      fill(*ih);
-    }
-  }
 }
 
 //================================================================
@@ -32,6 +20,16 @@ int TDCHitStats::maxHitsPerWire() const {
     if(res < i->second.size()) res = i->second.size();
   }
   return res;
+}
+
+//================================================================
+void WireClusterStats::fill(const WireClusterCollection& clusters) {
+  for(WireClusterCollection::const_iterator ic = clusters.begin(); ic != clusters.end(); ++ic) {
+    clusterSizeStats_.fill(ic->numCells());
+    for(TDCHitWPPtrCollection::const_iterator ih = ic->hits().begin(); ih != ic->hits().end(); ++ih) {
+      hitStats_.fill(*ih);
+    }
+  }
 }
 
 //================================================================

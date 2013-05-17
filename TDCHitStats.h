@@ -15,7 +15,6 @@ public:
   typedef std::map<WireCellId,TDCHitWPPtrCollection> WireMap;
 
   void fill(const TDCHitWPPtr& hit);
-  void fill(const WireClusterCollection& clusters);
 
   const MuCapUtilities::Stats& widthStats() const { return sw_; }
 
@@ -23,11 +22,21 @@ public:
 
   int maxHitsPerWire() const;
 
-  TDCHitStats();
-
 private:
   MuCapUtilities::Stats sw_;
   WireMap wm_;
+};
+
+//================================================================
+class WireClusterStats {
+public:
+  void fill(const WireClusterCollection& clusters);
+  const TDCHitStats& hitStats() const { return hitStats_; }
+  const MuCapUtilities::Stats& clusterSizeStats() const { return clusterSizeStats_; }
+
+private:
+  TDCHitStats hitStats_;
+  MuCapUtilities::Stats clusterSizeStats_;
 };
 
 #endif/*TDCHitStats_h*/

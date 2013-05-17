@@ -29,6 +29,8 @@ public:
   HistTDCParticleClassifier()
     : geom_()
     , stream_(TimeWindow::MIXED)
+    , htgtnumclusters_()
+    , htgtmaxclustersize_()
     , hpc8vs7maxWidth_()
     , hpc8vs7meanWidth_()
     , hpc8vs7medianWidth_()
@@ -47,6 +49,8 @@ public:
 private :
   const DetectorGeo *geom_;
   TimeWindow::StreamType stream_;
+  TH2 *htgtnumclusters_;
+  TH2 *htgtmaxclustersize_;
   TH2 *hpc8vs7maxWidth_;
   TH2 *hpc8vs7meanWidth_;
   TH2 *hpc8vs7medianWidth_;
