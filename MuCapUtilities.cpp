@@ -66,6 +66,22 @@ namespace MuCapUtilities {
   }
 
   //================================================================
+  double Stats::min() const {
+    if(!numEntries_) {
+      throw std::runtime_error("Stats::min() called with numEntries==0");
+    }
+    return min_;
+  }
+
+  //================================================================
+  double Stats::max() const {
+    if(!numEntries_) {
+      throw std::runtime_error("Stats::max() called with numEntries==0");
+    }
+    return max_;
+  }
+
+  //================================================================
   void Stats::fill(double x) {
     ++numEntries_;
     sum_ += x;

@@ -18,8 +18,8 @@ namespace MuCapUtilities {
 
     double mean() const;
     double median() const;
-    double min() const { return min_; }
-    double max() const { return max_; }
+    double min() const;
+    double max() const;
 
     int numEntries() const { return numEntries_; }
 
