@@ -21,6 +21,9 @@ namespace MuCapUtilities {
     double min() const;
     double max() const;
 
+    double minOr(double defaultValue) const { return numEntries_ ? min_ : defaultValue; }
+    double maxOr(double defaultValue) const { return numEntries_ ? max_ : defaultValue; }
+
     int numEntries() const { return numEntries_; }
 
     Stats();
