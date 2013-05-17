@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 
+#include "TimeWindow.h"
 #include "WireCluster.h"
 
 #include "TAxis.h"
@@ -25,6 +26,7 @@ class MuCapUVAnalysis {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_IERROR, "ierror");
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
+    ax->SetBinLabel(1+CUT_STREAM, "stream");
     ax->SetBinLabel(1+CUT_TIME, "time");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
@@ -43,6 +45,7 @@ public:
   enum CutNumber {
     CUT_IERROR,
     CUT_CHARGE,
+    CUT_STREAM,
     CUT_TIME,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
@@ -56,7 +59,7 @@ public:
     CUTS_END
   };
 
-  void init(const std::string& hdir, HistogramFactory &hf, const ConfigFile &conf);
+  void init(const std::string& hdir, HistogramFactory &hf, const ConfigFile &conf, TimeWindow::StreamType cutStream);
 
   // Returns the number of accepted tracks
   unsigned process(const EventClass& evt,
@@ -105,6 +108,7 @@ public:
 
 private :
   int cutCharge_;
+  TimeWindow::StreamType cutStream_;
   double cutTrackWinTimeDiff_;
   double cutTrackRmax_;
   double cutCosThetaMin_;

@@ -89,7 +89,7 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
 
   hCCRvsPlaneProtons_->SetOption("colz");
 
-  uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf);
+  uvan_.init("MuCapture/ProtonWindow/UVAnalysis", hf, conf, cutStream_);
   hpw_.init(hf, "MuCapture/ProtonWindow/Final", geom, conf);
   rcheckDIO_.init(hf, "MuCapture/ProtonWindow/DIORCheck", geom, conf);
   rcheckProtonCandidates_.init(hf, "MuCapture/ProtonWindow/PCRCheck", geom, conf);

@@ -15,9 +15,11 @@
 //================================================================
 void MuCapUVAnalysis::init(const std::string& hdir,
                            HistogramFactory &hf,
-                           const ConfigFile& conf)
+                           const ConfigFile& conf,
+                           TimeWindow::StreamType cutStream)
 {
   cutCharge_ = -1;
+  cutStream_ = cutStream;
   cutTrackWinTimeDiff_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackTimeDiff");
   cutTrackRmax_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackRmax");
   cutCosThetaMin_ = conf.read<double>("MuCapture/UVAnalysis/cutCosThetaMin");
@@ -185,6 +187,12 @@ analyzeTrack(int i, const EventClass& evt,
   //----------------------------------------------------------------
   if(evt.hefit_q[i] != cutCharge_) {
     return CUT_CHARGE;
+  }
+
+  //----------------------------------------------------------------
+  if((cutStream_==TimeWindow::DOWNSTREAM)&&(evt.costh[i] < 0.) ||
+     (cutStream_==TimeWindow::UPSTREAM)&&(evt.costh[i] > 0.) ) {
+    return CUT_STREAM;
   }
 
   //----------------------------------------------------------------
