@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "WireCluster.h"
+#include "TimeWindow.h"
 
 class TH1;
 class TH2;
@@ -20,18 +21,21 @@ public:
   void init(HistogramFactory &hf,
             const std::string& hdir,
             const DetectorGeo& geom,
-            const ConfigFile &conf);
+            const ConfigFile &conf,
+            TimeWindow::StreamType stream);
 
   void fill(const ClustersByPlane& globalClusters);
 
   HistTDCParticleClassifier()
-    : hpc8vs7maxWidth_()
+    : geom_()
+    , stream_(TimeWindow::MIXED)
+    , hpc8vs7maxWidth_()
     , hpc8vs7meanWidth_()
     , hpc8vs7medianWidth_()
     , hpc8vs7maxHits_()
-    , hLastVsRestMaxWidthDC_()
-    , hLastVsRestMeanWidthDC_()
-    , hLastVsRestMedianWidthDC_()
+    , htgtpcmaxWidth_()
+    , htgtpcmeanWidth_()
+    , htgtpcmedianWidth_()
     , hMaxWidthDC_()
     , hMeanWidthDC_()
     , hMedianWidthDC_()
@@ -41,14 +45,15 @@ public:
   {}
 
 private :
+  const DetectorGeo *geom_;
+  TimeWindow::StreamType stream_;
   TH2 *hpc8vs7maxWidth_;
   TH2 *hpc8vs7meanWidth_;
   TH2 *hpc8vs7medianWidth_;
   TH2 *hpc8vs7maxHits_;
-
-  TH2 *hLastVsRestMaxWidthDC_;
-  TH2 *hLastVsRestMeanWidthDC_;
-  TH2 *hLastVsRestMedianWidthDC_;
+  TH1 *htgtpcmaxWidth_;
+  TH1 *htgtpcmeanWidth_;
+  TH1 *htgtpcmedianWidth_;
 
   TH1 *hMaxWidthDC_;
   TH1 *hMeanWidthDC_;

@@ -20,31 +20,27 @@
 void HistTDCParticleClassifier::init(HistogramFactory &hf,
                                      const std::string& hdir,
                                      const DetectorGeo& geom,
-                                     const ConfigFile &conf)
+                                     const ConfigFile &conf,
+                                     TimeWindow::StreamType stream)
 {
-  hpc8vs7maxWidth_ = hf.DefineTH2D(hdir, "pc8vs7maxWidth","pc8vs7maxWidth", 200, 0., 2000., 200, 0., 2000.);
+  geom_ = &geom;
+  stream_ = stream;
+
+  hpc8vs7maxWidth_ = hf.DefineTH2D(hdir, "tgtpc2vs1maxWidth","Target PC 2nd vs 1st max width", 200, 0., 2000., 200, 0., 2000.);
   hpc8vs7maxWidth_->SetOption("colz");
 
-  hpc8vs7meanWidth_ = hf.DefineTH2D(hdir, "pc8vs7meanWidth","pc8vs7meanWidth", 200, 0., 2000., 200, 0., 2000.);
+  hpc8vs7meanWidth_ = hf.DefineTH2D(hdir, "tgtpc2vs1meanWidth","Target PC 2nd vs 1st mean width", 200, 0., 2000., 200, 0., 2000.);
   hpc8vs7meanWidth_->SetOption("colz");
 
-  hpc8vs7medianWidth_ = hf.DefineTH2D(hdir, "pc8vs7medianWidth","pc8vs7medianWidth", 200, 0., 2000., 200, 0., 2000.);
+  hpc8vs7medianWidth_ = hf.DefineTH2D(hdir, "tgtpc2vs1medianWidth","Target PC 2nd vs 1st median width", 200, 0., 2000., 200, 0., 2000.);
   hpc8vs7medianWidth_->SetOption("colz");
 
-  hpc8vs7maxHits_ = hf.DefineTH2D(hdir, "pc8vs7maxHits","pc8vs7maxHits", 10, -0.5, 9.5, 10, -0.5, 9.5);
+  hpc8vs7maxHits_ = hf.DefineTH2D(hdir, "tgtpc2vs1maxHits","tgtpc2vs1maxHits per wire", 10, -0.5, 9.5, 10, -0.5, 9.5);
   hpc8vs7maxHits_->SetOption("colz");
 
-  hLastVsRestMaxWidthDC_ = hf.DefineTH2D(hdir, "LastVsRestMaxWidthDC","LastVsRestMaxWidthDC",
-                                       200, 0., 2000., 200, 0., 2000.);
-  hLastVsRestMaxWidthDC_->SetOption("colz");
-
-  hLastVsRestMeanWidthDC_ = hf.DefineTH2D(hdir, "LastVsRestMeanWidthDC","LastVsRestMeanWidthDC",
-                                        200, 0., 2000., 200, 0., 2000.);
-  hLastVsRestMeanWidthDC_->SetOption("colz");
-
-  hLastVsRestMedianWidthDC_ = hf.DefineTH2D(hdir, "LastVsRestMedianWidthDC","LastVsRestMedianWidthDC",
-                                          200, 0., 2000., 200, 0., 2000.);
-  hLastVsRestMedianWidthDC_->SetOption("colz");
+  htgtpcmaxWidth_ = hf.DefineTH1D(hdir, "tgtpcmaxWidth","Target PC max width", 200, 0., 2000.);
+  htgtpcmeanWidth_ = hf.DefineTH1D(hdir, "tgtpcmeanWidth","Target PC mean width", 200, 0., 2000.);
+  htgtpcmedianWidth_ = hf.DefineTH1D(hdir, "tgtpcmedianWidth","Target PC median width", 200, 0., 2000.);
 
   hMaxWidthDC_ = hf.DefineTH1D(hdir, "maxWidthDC", "maxWidthDC", 200, 0., 2000);
   hMeanWidthDC_ = hf.DefineTH1D(hdir, "meanWidthDC", "meanWidthDC", 200, 0., 2000);
@@ -57,48 +53,51 @@ void HistTDCParticleClassifier::init(HistogramFactory &hf,
 
 //================================================================
 void HistTDCParticleClassifier::fill(const ClustersByPlane& gc) {
-  const PlaneRange gr = findPlaneRange(gc);
 
-  if(gr.max >= 30) { // PC7 and 8
-    TDCHitStats stat7, stat8;
-    stat7.fill(gc[29]);
-    stat8.fill(gc[30]);
-
-    hpc8vs7maxWidth_->Fill(stat7.widthStats().max(), stat8.widthStats().max());
-    hpc8vs7meanWidth_->Fill(stat7.widthStats().mean(), stat8.widthStats().mean());
-    hpc8vs7medianWidth_->Fill(stat7.widthStats().median(), stat8.widthStats().median());
-    hpc8vs7maxHits_->Fill(stat7.maxHitsPerWire(), stat8.maxHitsPerWire());
+  TDCHitStats tgt1, tgt2, tgt12; // PCs closest to the target and the next one
+  switch(stream_) {
+  case TimeWindow::DOWNSTREAM:
+    tgt1.fill(gc[29]);
+    tgt2.fill(gc[30]);
+    tgt12.fill(gc[29]); tgt12.fill(gc[30]);
+    break;
+  case TimeWindow::UPSTREAM:
+    tgt1.fill(gc[28]);
+    tgt2.fill(gc[27]);
+    tgt12.fill(gc[28]); tgt12.fill(gc[27]);
+    break;
+  default:
+    throw std::runtime_error("HistTDCParticleClassifier does not support MIXED windows");
   }
 
-  if((gr.max >= 32) && // at least 2 DC planes hit
-     (gr.max <= 52)) { // DC stop
-    TDCHitStats last, rest;
-    last.fill(gc[gr.max]);
-    for(int i=31; i<gr.max; ++i) {
-      rest.fill(gc[i]);
-    }
-
-    hLastVsRestMaxWidthDC_->Fill(rest.widthStats().max(), last.widthStats().max());
-    hLastVsRestMeanWidthDC_->Fill(rest.widthStats().mean(), last.widthStats().mean());
-    hLastVsRestMedianWidthDC_->Fill(rest.widthStats().median(), last.widthStats().median());
+  if(tgt1.widthStats().numEntries() && tgt2.widthStats().numEntries()) {
+    hpc8vs7maxWidth_->Fill(tgt1.widthStats().max(), tgt2.widthStats().max());
+    hpc8vs7meanWidth_->Fill(tgt1.widthStats().mean(), tgt2.widthStats().mean());
+    hpc8vs7medianWidth_->Fill(tgt1.widthStats().median(), tgt2.widthStats().median());
+    hpc8vs7maxHits_->Fill(tgt1.maxHitsPerWire(), tgt2.maxHitsPerWire());
+  }
+  if(tgt12.widthStats().numEntries()) {
+    htgtpcmaxWidth_->Fill(tgt12.widthStats().max());
+    htgtpcmeanWidth_->Fill(tgt12.widthStats().mean());
+    htgtpcmedianWidth_->Fill(tgt12.widthStats().median());
   }
 
-  if(gr.max >= 31) { // have DC hits
-    TDCHitStats dcstats;
-    for(int i=31; i<=gr.max; ++i) {
-      dcstats.fill(gc[i]);
-    }
+  TDCHitStats dcstats;
+  TDCHitStats pcstats;
+  const unsigned first = (stream_ == TimeWindow::DOWNSTREAM) ? 1+geom_->numGlobal()/2 : 1;
+  const unsigned last  = (stream_ == TimeWindow::DOWNSTREAM) ? geom_->numGlobal() : geom_->numGlobal()/2;
+
+  for(unsigned i=first; i<=last; ++i) {
+    ((geom_->global(i).planeType() == WirePlane::PC) ? pcstats : dcstats).fill(gc[i]);
+  }
+
+  if(dcstats.widthStats().numEntries()) { // have DC hits
     hMaxWidthDC_->Fill(dcstats.widthStats().max());
     hMeanWidthDC_->Fill(dcstats.widthStats().mean());
     hMedianWidthDC_->Fill(dcstats.widthStats().median());
   }
 
-  if(gr.max >= 29) { // have PC hits
-    TDCHitStats pcstats;
-    for(int i=29; i<=30; ++i) {
-      pcstats.fill(gc[i]);
-    }
-
+  if(pcstats.widthStats().numEntries()) { // have PC hits
     hMaxWidthPC_->Fill(pcstats.widthStats().max());
     hMeanWidthPC_->Fill(pcstats.widthStats().mean());
     hMedianWidthPC_->Fill(pcstats.widthStats().median());

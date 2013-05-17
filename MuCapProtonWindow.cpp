@@ -73,9 +73,9 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   hwidthPCTightDIO_.init("MuCapture/ProtonWindow/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
   hwidthDCTightDIO_.init("MuCapture/ProtonWindow/dcWidthTightDIO", "dcpwidth", 44, hf, conf);
 
-  hcLooseProtons_.init(hf, "MuCapture/ProtonWindow/clLooseProtons", geom, conf);
-  hcTightProtons_.init(hf, "MuCapture/ProtonWindow/clTightProtons", geom, conf);
-  hcdio_.init(hf, "MuCapture/ProtonWindow/cldio", geom, conf);
+  hcLooseProtons_.init(hf, "MuCapture/ProtonWindow/clLooseProtons", geom, conf, cutStream_);
+  hcTightProtons_.init(hf, "MuCapture/ProtonWindow/clTightProtons", geom, conf, cutStream_);
+  hcdio_.init(hf, "MuCapture/ProtonWindow/cldio", geom, conf, cutStream_);
 
   hCCRvsPlaneDIO_ = hf.DefineTH2D("MuCapture/ProtonWindow", "RvsPlaneDIO",
                                   "Extrpolated Rmax vs plane for DIO",
