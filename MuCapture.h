@@ -10,6 +10,7 @@
 
 #include "MuCapPACTCut.h"
 #include "MuCapProtonWindow.h"
+#include "MuCapStreamAnalysis.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
 #include "HistMuCapTruth.h"
@@ -117,6 +118,9 @@ private :
   TimeWindowingDC dcWindowing_;
   MuCapPACTCut pactCut_;
   MuCapProtonWindow protonWindow_;
+  MuCapStreamAnalysis anUpLate_;
+  MuCapStreamAnalysis anDnLate_;
+  MuCapStreamAnalysis anDnEarly_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;

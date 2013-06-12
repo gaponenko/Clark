@@ -47,6 +47,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   pactCut_.init(H, Conf);
   protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
 
+  //anUpLate_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
+  anDnLate_.init(H, "MuCapture/dnLate", *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
+
   h_cuts_r = H.DefineTH1D("MuCapture", "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
   set_cut_bin_labels(h_cuts_r->GetXaxis());
@@ -220,8 +223,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   const unsigned iProtonWin = 1 + wres.iTrigWin;
   const TimeWindow& protonWin = wres.windows[iProtonWin];
+  const ClustersByPlane protonPCClusters = constructPlaneClusters(12, protonWin.pcHits);
+  const ClustersByPlane protonDCClusters = constructPlaneClusters(44, protonWin.dcHits);
+  const ClustersByPlane protonGlobalClusters = globalPlaneClusters(protonPCClusters, protonDCClusters);
 
   protonWindow_.process(muStop, wres, evt);
+  anDnLate_.process(evt, wres, iProtonWin, muStop, protonGlobalClusters);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

@@ -294,6 +294,8 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
 
+        SetKey(Conf, "MuCapture/cutWinTimeMax", 9000); // ns
+
         SetKey(Conf, "MuCapture/PACT/slopea_11", 1.634);
         SetKey(Conf, "MuCapture/PACT/slopeb_11", -1.59);
         SetKey(Conf, "MuCapture/PACT/intercepta_11", -90);
