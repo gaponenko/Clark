@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "HistOccupancy.h"
+
 class TH1;
 class TH2;
 
@@ -25,6 +27,7 @@ public:
     : cutPreTrigTimeMin_(), cutPreTrigTimeMax_()
     , htstartAll_(), htstartDn_()
     , hnumwinAll_(), hnumwinDn_()
+    , hnumhitsUp_(), hnumhitsMixed_(), hnumhitsDn_()
   {}
 
 private :
@@ -34,8 +37,15 @@ private :
 
   TH1 *htstartAll_;
   TH1 *htstartDn_;
+
   TH1 *hnumwinAll_;
   TH1 *hnumwinDn_;
+
+  TH2 *hnumhitsUp_;
+  TH2 *hnumhitsMixed_;
+  TH2 *hnumhitsDn_;
+
+  HistOccupancy hOccupancyPCNoDC_;
 };
 
 #endif/*HistAccidentals_h*/

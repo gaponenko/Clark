@@ -26,6 +26,15 @@ void HistAccidentals::init(const std::string& hdir,
 
   hnumwinAll_ = hf.DefineTH1D(hdir, "numWinAll", "number of all windows in range",11, -0.5, 10.5);
   hnumwinDn_ = hf.DefineTH1D(hdir, "numWinDn", "number of downstream windows in range",11, -0.5, 10.5);
+
+  hnumhitsUp_ = hf.DefineTH2D(hdir, "numHitsUp", "number of PC vs DC hits in upstream windows in range", 90, -0.5, 89.5, 30, -0.5, 29.5);
+  hnumhitsUp_->SetOption("colz");
+  hnumhitsMixed_ = hf.DefineTH2D(hdir, "numHitsMixed", "number of PC vs DC hits in mixed windows in range", 60, -0.5, 59.5, 30, -0.5, 29.5);
+  hnumhitsMixed_->SetOption("colz");
+  hnumhitsDn_ = hf.DefineTH2D(hdir, "numHitsDn", "number of PC vs DC hits in downstream windows in range", 60, -0.5, 59.5, 30, -0.5, 29.5);
+  hnumhitsDn_->SetOption("colz");
+
+  hOccupancyPCNoDC_.init(hdir, "hitMapPCNoDC", 12, 160, hf, conf);
 }
 
 //================================================================
@@ -44,8 +53,27 @@ void HistAccidentals::fill(const TimeWindowingResults& wres) {
       if(wres.windows[iwin].stream == TimeWindow::DOWNSTREAM) {
         ++numDn;
       }
-    }
-  }
+
+      switch(wres.windows[iwin].stream) {
+      case TimeWindow::UPSTREAM:
+        hnumhitsUp_->Fill(wres.windows[iwin].dcHits.size(), wres.windows[iwin].pcHits.size());
+        break;
+
+      case TimeWindow::MIXED:
+        hnumhitsMixed_->Fill(wres.windows[iwin].dcHits.size(), wres.windows[iwin].pcHits.size());
+        break;
+
+      case TimeWindow::DOWNSTREAM:
+        hnumhitsDn_->Fill(wres.windows[iwin].dcHits.size(), wres.windows[iwin].pcHits.size());
+        break;
+      } // switch
+
+      if(wres.windows[iwin].dcHits.empty()) {
+        hOccupancyPCNoDC_.fill(wres.windows[iwin].pcHits);
+      }
+
+    } // if(in range)
+  } // for(window)
 
   hnumwinAll_->Fill(numAll);
   hnumwinDn_->Fill(numDn);
