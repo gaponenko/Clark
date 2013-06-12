@@ -14,6 +14,7 @@
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
 #include "HistMuCapTruth.h"
+#include "HistAccidentals.h"
 #include "TimeWindowingPC.h"
 #include "TimeWindowingDC.h"
 
@@ -139,6 +140,7 @@ private :
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;
+  HistAccidentals haccidentals_;
   HistMuCapTruth hTruthAll_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);

@@ -76,6 +76,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   //----------------------------------------------------------------
   hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
+  haccidentals_.init("MuCapture/Accidentals", H, Conf);
 
   if(doMCTruth_) {
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
@@ -213,6 +214,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if(1 != pactCut_.quadrant(muonPCClusters[5].front(), muonPCClusters[6].front())) {
     return CUT_MUSTOP_PACT;
   }
+
+  // Here we have an accepted muon stop
+  haccidentals_.fill(wres);
 
   //----------------------------------------------------------------
   hNumAfterTrigWindows_->Fill(int(wres.windows.size() - wres.iTrigWin - 1));

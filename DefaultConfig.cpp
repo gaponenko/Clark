@@ -288,6 +288,10 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winTrigMaxdt", 30.);
         SetKey(Conf, "MuCapture/winPCPreTrigSeparation", 1050.);
 
+        SetKey(Conf, "MuCapture/Accidentals/tmax", -1110.);
+        SetKey(Conf, "MuCapture/Accidentals/cycleLength", 43.);
+        SetKey(Conf, "MuCapture/Accidentals/numCycles", 110);
+
         SetKey(Conf, "MuCapture/winDCStart", -100.); // W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCEnd", 1050.); // W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCDoHistos", true);
