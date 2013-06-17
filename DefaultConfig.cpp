@@ -291,7 +291,8 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/Accidentals/tmax", -1100.);
         // Cyclotron RF=25.058 MHz [Glen Marshall in the 2013-06-12 muminus meeting]
         SetKey(Conf, "MuCapture/Accidentals/cycleLength", 1000./23.058);
-        SetKey(Conf, "MuCapture/Accidentals/numCycles", 110);
+        SetKey(Conf, "MuCapture/Accidentals/numCycles", 104);
+        SetKey(Conf, "MuCapture/Accidentals/maxSubdivisions", 3);
 
         SetKey(Conf, "MuCapture/winDCStart", -100.); // W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCEnd", 1050.); // W.r.t PC win start

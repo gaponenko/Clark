@@ -4,6 +4,7 @@
 #define HistAccidentals_h
 
 #include <string>
+#include <vector>
 
 #include "HistOccupancy.h"
 
@@ -40,6 +41,7 @@ private :
 
   TH1 *hnumwinAll_;
   TH1 *hnumwinDn_;
+  std::vector<TH1*> hnumwinAllSubDiv_;
 
   TH2 *hnumhitsUp_;
   TH2 *hnumhitsMixed_;

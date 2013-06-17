@@ -1,12 +1,37 @@
 // Andrei Gaponenko, 2013
 
 #include "HistAccidentals.h"
+#include <sstream>
+#include <vector>
 
 #include "TH1.h"
 
 #include "HistogramFactory.h"
 #include "ConfigFile.h"
 #include "TimeWindow.h"
+
+//================================================================
+namespace {
+  // essentially a histogram
+  class Subdivision {
+    double xmin_;
+    double xmax_;
+    std::vector<int> bins_;
+  public:
+    Subdivision(int n, double xmin, double xmax) : xmin_(xmin), xmax_(xmax), bins_(1+n) {}
+    unsigned numIntervals() const { return bins_.size(); }
+    int numEntries(unsigned i) const { return bins_[i]; }
+    void fill(double x) {
+      if((xmin_ <= x)  && (x < xmax_)) {
+        const int i = int(bins_.size() * (x - xmin_)/(xmax_ - xmin_));
+        //std::cout<<"fill():  x = "<<x<<", i = "<<i<<" / "<<bins_.size()<<std::endl;
+        if(i < bins_.size()) {
+          ++bins_[i];
+        }
+      }
+    }
+  };
+}
 
 //================================================================
 void HistAccidentals::init(const std::string& hdir,
@@ -27,6 +52,14 @@ void HistAccidentals::init(const std::string& hdir,
   hnumwinAll_ = hf.DefineTH1D(hdir, "numWinAll", "number of all windows in range",11, -0.5, 10.5);
   hnumwinDn_ = hf.DefineTH1D(hdir, "numWinDn", "number of downstream windows in range",11, -0.5, 10.5);
 
+  const unsigned maxSubdivisions = conf.read<unsigned>("MuCapture/Accidentals/maxSubdivisions");
+  hnumwinAllSubDiv_.resize(1+maxSubdivisions);
+  for(unsigned i=0; i<1+maxSubdivisions; ++i) {
+    std::ostringstream os;
+    os<<"numWinAll_s"<<i;
+    hnumwinAllSubDiv_[i] = hf.DefineTH1D(hdir, os.str(), os.str(),11, -0.5, 10.5);
+  }
+
   hnumhitsUp_ = hf.DefineTH2D(hdir, "numHitsUp", "number of PC vs DC hits in upstream windows in range", 90, -0.5, 89.5, 30, -0.5, 29.5);
   hnumhitsUp_->SetOption("colz");
   hnumhitsMixed_ = hf.DefineTH2D(hdir, "numHitsMixed", "number of PC vs DC hits in mixed windows in range", 60, -0.5, 59.5, 30, -0.5, 29.5);
@@ -40,6 +73,11 @@ void HistAccidentals::init(const std::string& hdir,
 //================================================================
 void HistAccidentals::fill(const TimeWindowingResults& wres) {
   int numAll(0), numDn(0);
+  std::vector<Subdivision> subdivisions;
+  for(unsigned s=0; s < hnumwinAllSubDiv_.size(); ++s) {
+    subdivisions.emplace_back(s, cutPreTrigTimeMin_, cutPreTrigTimeMax_);
+  }
+
   for(unsigned iwin = 0; iwin < wres.iTrigWin; ++iwin) {
     htstartAll_->Fill(wres.windows[iwin].tstart);
     if(wres.windows[iwin].stream == TimeWindow::DOWNSTREAM) {
@@ -49,9 +87,12 @@ void HistAccidentals::fill(const TimeWindowingResults& wres) {
     if((cutPreTrigTimeMin_ < wres.windows[iwin].tstart ) && (wres.windows[iwin].tstart <= cutPreTrigTimeMax_)) {
 
       ++numAll;
-
       if(wres.windows[iwin].stream == TimeWindow::DOWNSTREAM) {
         ++numDn;
+      }
+
+      for(unsigned s=0; s<subdivisions.size(); ++s) {
+        subdivisions[s].fill(wres.windows[iwin].tstart);
       }
 
       switch(wres.windows[iwin].stream) {
@@ -77,6 +118,12 @@ void HistAccidentals::fill(const TimeWindowingResults& wres) {
 
   hnumwinAll_->Fill(numAll);
   hnumwinDn_->Fill(numDn);
+
+  for(unsigned s=0; s<hnumwinAllSubDiv_.size(); ++s) {
+    for(unsigned interval=0; interval < subdivisions[s].numIntervals(); ++interval) {
+      hnumwinAllSubDiv_[s]->Fill(subdivisions[s].numEntries(interval));
+    }
+  }
 }
 
 //================================================================
