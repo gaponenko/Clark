@@ -28,6 +28,7 @@ class ConfigFile;
 //================================================================
 class MuCapProtonWindow {
   void set_cut_bin_labels(TAxis* ax) {
+    ax->SetBinLabel(1+CUT_NUMAFTERTRIG, "num after trig");
     ax->SetBinLabel(1+CUT_TRIGSEP, "dt trig");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
     ax->SetBinLabel(1+CUT_NOPC7, "PC7");
@@ -46,6 +47,7 @@ class MuCapProtonWindow {
 
 public:
   enum EventCutNumber {
+    CUT_NUMAFTERTRIG,
     CUT_STREAM,
     CUT_TRIGSEP,
     CUT_NOPC7,
@@ -78,6 +80,7 @@ public:
     , cutRextMax_()
     , h_cuts_r()
     , h_cuts_p()
+    , hNumAfterTrigWindows_()
     , hStartPos_()
     , hStartOffset_()
     , hStartClusterSize_()
@@ -100,6 +103,8 @@ private :
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
+
+  TH1 *hNumAfterTrigWindows_;
 
   TH2 *hNumClusters_;
 

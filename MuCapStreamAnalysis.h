@@ -30,6 +30,7 @@ class ConfigFile;
 //================================================================
 class MuCapStreamAnalysis {
   void set_cut_bin_labels(TAxis* ax) {
+    ax->SetBinLabel(1+CUT_NUMAFTERTRIG, "num after trig");
     ax->SetBinLabel(1+CUT_WINTIME, "win time");
     ax->SetBinLabel(1+CUT_TGT_START, "tgt start");
     ax->SetBinLabel(1+CUT_MAX_RANGE, "MAX_RANGE");
@@ -43,6 +44,7 @@ class MuCapStreamAnalysis {
 
 public:
   enum EventCutNumber {
+    CUT_NUMAFTERTRIG,
     CUT_WINTIME,
     // UV analysis goes here
     CUT_TGT_START,
@@ -62,9 +64,8 @@ public:
 
   void process(const EventClass& evt,
                const TimeWindowingResults& wres,
-               unsigned iProtonWin,
                const ROOT::Math::XYPoint& muStopUV,
-               const ClustersByPlane& protonGlobalClusters);
+               const std::vector<ClustersByPlane>& afterTrigGlobalClusters);
 
   MuCapStreamAnalysis()
     : doMCTruth_(false)
@@ -75,6 +76,7 @@ public:
     , cutRextMax_()
     , h_cuts_r()
     , h_cuts_p()
+    , hNumAfterTrigWindows_()
     , hWindowTime_()
 //    , hStartPos_()
 //    , hStartOffset_()
@@ -97,6 +99,8 @@ private :
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
+
+  TH1 *hNumAfterTrigWindows_;
   TH1 *hWindowTime_;
 
 //  TH2 *hNumClusters_;
@@ -133,9 +137,8 @@ private :
 
   EventCutNumber analyze(const EventClass& evt,
                          const TimeWindowingResults& wres,
-                         unsigned iProtonWin,
                          const ROOT::Math::XYPoint& muStopUV,
-                         const ClustersByPlane& protonGlobalClusters);
+                         const std::vector<ClustersByPlane>& afterTrigGlobalClusters);
 };
 
 #endif/*MuCapStreamAnalysis_h*/

@@ -42,11 +42,7 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_MUSTOP_PACT, "Mu stop PACT");
 
-    ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "mu stop accepted");
-
-    ax->SetBinLabel(1+CUT_WIN_NUMAFTERTRIG, "Num after-trig windows");
-
-    ax->SetBinLabel(1+CUTS_ACCEPTED, "mu int accepted");
+    ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "Accepted stop");
   }
 
 public :
@@ -72,9 +68,6 @@ public :
 
     CUTS_MUSTOP_ACCEPTED,
 
-    CUT_WIN_NUMAFTERTRIG,
-
-    CUTS_ACCEPTED,
     CUTS_END
   };
 
@@ -93,7 +86,6 @@ public :
     , h_cuts_r()
     , h_cuts_p()
     , hPCPreTrigSeparation_()
-    , hNumAfterTrigWindows_()
 
     , hWinDCUnassignedCount_()
 
@@ -127,7 +119,6 @@ private :
   TH1D *h_cuts_p;
 
   TH1 *hPCPreTrigSeparation_;
-  TH1 *hNumAfterTrigWindows_;
 
   TH1 *hWinDCUnassignedCount_;
 

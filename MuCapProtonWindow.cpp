@@ -53,6 +53,7 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
+  hNumAfterTrigWindows_ = hf.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
   hNumClusters_ = hf.DefineTH2D("MuCapture/ProtonWindow", "numClustersVsPlane", "Num cluster vs plane", 56, 0.5, 56.5,  11, -0.5, 10.5);
   hNumClusters_->SetOption("colz");
 
@@ -143,6 +144,11 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
         const EventClass& evt
         )
 {
+  hNumAfterTrigWindows_->Fill(int(wres.windows.size() - wres.iTrigWin - 1));
+  if(wres.iTrigWin + 2 != wres.windows.size()) {
+    return CUT_NUMAFTERTRIG;
+  }
+
   const TimeWindow& protonWindow = wres.windows[1+wres.iTrigWin];
 
   // Trig time is 0, dt from that rather than from less precise trigWin time

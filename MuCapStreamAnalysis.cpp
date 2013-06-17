@@ -32,6 +32,8 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   hWindowTime_ = hf.DefineTH1D(hdir, "windowTime", "Proton window start time", 1000, 0., 10000.);
 
+  hNumAfterTrigWindows_ = hf.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
+
   //hNumClusters_ = hf.DefineTH2D(hdir, "numClustersVsPlane", "Num cluster vs plane", 56, 0.5, 56.5,  11, -0.5, 10.5);
   //hNumClusters_->SetOption("colz");
 
@@ -50,11 +52,10 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 //================================================================
 void MuCapStreamAnalysis::process(const EventClass& evt,
                                   const TimeWindowingResults& wres,
-                                  unsigned iProtonWin,
                                   const ROOT::Math::XYPoint& muStopUV,
-                                  const ClustersByPlane& protonGlobalClusters)
+                                  const std::vector<ClustersByPlane>& afterTrigGlobalClusters)
 {
-  EventCutNumber c = analyze(evt, wres, iProtonWin, muStopUV, protonGlobalClusters);
+  EventCutNumber c = analyze(evt, wres, muStopUV, afterTrigGlobalClusters);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -72,16 +73,24 @@ void MuCapStreamAnalysis::process(const EventClass& evt,
 MuCapStreamAnalysis::EventCutNumber MuCapStreamAnalysis::
 analyze(const EventClass& evt,
         const TimeWindowingResults& wres,
-        unsigned iProtonWin,
         const ROOT::Math::XYPoint& muStopUV,
-        const ClustersByPlane& protonGlobalClusters)
+        const std::vector<ClustersByPlane>& afterTrigGlobalClusters)
 {
+  //----------------------------------------------------------------
+  hNumAfterTrigWindows_->Fill(afterTrigGlobalClusters.size());
+  if(afterTrigGlobalClusters.size() != 1) {
+    return CUT_NUMAFTERTRIG;
+  }
+
+  const unsigned iProtonWin = 1 + wres.iTrigWin;
   const TimeWindow& protonWindow = wres.windows[iProtonWin];
 
   // Trig time is 0, dt from that rather than from less precise trigWin time
   if( (protonWindow.tstart < cutWinTimeMin_) || (cutWinTimeMax_ < protonWindow.tstart)) {
     return CUT_WINTIME;
   }
+
+  const ClustersByPlane& protonGlobalClusters = afterTrigGlobalClusters[0];
 
   const unsigned numDIO = uvan_.process(evt, protonWindow.tstart, protonGlobalClusters, muStopUV);
   if(numDIO) {

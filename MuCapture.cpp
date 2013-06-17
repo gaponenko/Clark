@@ -60,8 +60,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hPCPreTrigSeparation_ = H.DefineTH1D("MuCapture", "pcPreTrigSeparation", "PC win pre-trigger separation", 600, -6000., 0.);
 
-  hNumAfterTrigWindows_ = H.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
-
   hWinDCUnassignedCount_ = H.DefineTH1D("MuCapture", "winDCUnassignedCount", "Count of unassigned DC hits", 101, -0.5, 100.5);
 
   // Make the bin size half a cell
@@ -215,27 +213,25 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_MUSTOP_PACT;
   }
 
-  // Here we have an accepted muon stop
-  haccidentals_.fill(wres);
-
   //----------------------------------------------------------------
-  hNumAfterTrigWindows_->Fill(int(wres.windows.size() - wres.iTrigWin - 1));
-  if(wres.iTrigWin + 2 != wres.windows.size()) {
-    return CUT_WIN_NUMAFTERTRIG;
+  // Here we have an accepted muon stop
+
+  // Compute clusters for after-trigger windows
+  std::vector<ClustersByPlane> afterTrigClusters;
+  for(int iwin = 1 + wres.iTrigWin; iwin < wres.windows.size(); ++iwin) {
+    const TimeWindow& win = wres.windows[iwin];
+    const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
+    const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
+    afterTrigClusters.emplace_back(globalPlaneClusters(pcClusters, dcClusters));
   }
 
-  //----------------------------------------------------------------
-  const unsigned iProtonWin = 1 + wres.iTrigWin;
-  const TimeWindow& protonWin = wres.windows[iProtonWin];
-  const ClustersByPlane protonPCClusters = constructPlaneClusters(12, protonWin.pcHits);
-  const ClustersByPlane protonDCClusters = constructPlaneClusters(44, protonWin.dcHits);
-  const ClustersByPlane protonGlobalClusters = globalPlaneClusters(protonPCClusters, protonDCClusters);
-
+  // Call the subanalyses
+  haccidentals_.fill(wres);
   protonWindow_.process(muStop, wres, evt);
-  anDnLate_.process(evt, wres, iProtonWin, muStop, protonGlobalClusters);
+  anDnLate_.process(evt, wres, muStop, afterTrigClusters);
 
   //----------------------------------------------------------------
-  return CUTS_ACCEPTED;
+  return CUTS_MUSTOP_ACCEPTED;
 }
 
 //================================================================
