@@ -84,6 +84,7 @@ public:
     , h_cuts_r()
     , h_cuts_p()
     , hMultiWindowHits_()
+    , hMultiWindowRanges_()
     , hNumAfterTrigWindows_()
     , hWindowTimeBefore_()
     , hWindowTimeAfter_()
@@ -108,6 +109,7 @@ private :
   TH1 *h_cuts_p;
 
   TH2 *hMultiWindowHits_;
+  TH2 *hMultiWindowRanges_;
   TH1 *hNumAfterTrigWindows_;
 
   TH1 *hWindowTimeBefore_;

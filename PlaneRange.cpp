@@ -21,3 +21,14 @@ PlaneRange findPlaneRange(const ClustersByPlane& cp) {
 
   return PlaneRange(res);
 }
+
+//================================================================
+std::ostream& operator<<(std::ostream& os, const PlaneRange& r) {
+  os<<"PlaneRange(";
+  for(unsigned i=0; i<r.segments().size(); ++i) {
+    os<<"["<<r.segments()[i].min<<", "<<r.segments()[i].max<<"], ";
+  }
+  return os<<") ";
+}
+
+//================================================================

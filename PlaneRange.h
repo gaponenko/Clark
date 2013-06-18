@@ -3,6 +3,8 @@
 #ifndef PlaneRange_h
 #define PlaneRange_h
 
+#include <ostream>
+
 #include "WireCluster.h"
 
 struct PlaneRangeSegment {
@@ -26,5 +28,6 @@ private:
 
 PlaneRange findPlaneRange(const ClustersByPlane& clusters);
 
+std::ostream& operator<<(std::ostream& os, const PlaneRange& r);
 
 #endif/*PlaneRange_h*/

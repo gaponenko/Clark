@@ -44,6 +44,10 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
                                     57, -0.5, 56.5, 57, -0.5, 56.5);
   hMultiWindowHits_->SetOption("colz");
 
+  hMultiWindowRanges_ = hf.DefineTH2D(hdir, "multiWindowRanges", "min vs max num ranges in after-trig windows 1, 2",
+                                    10, -0.5, 9.5, 10, -0.5, 9.5);
+  hMultiWindowRanges_->SetOption("colz");
+
   hNumAfterTrigWindows_ = hf.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
   hWindowTimeBefore_ = hf.DefineTH1D(hdir, "windowTimeBeforeCut", "Proton window start time", 1000, 0., 10000.);
   hWindowTimeAfter_ = hf.DefineTH1D(hdir, "windowTimeAfterCut", "Proton window start time after the cut", 1000, 0., 10000.);
@@ -103,10 +107,21 @@ analyze(const EventClass& evt,
   if(afterTrigGlobalClusters.size() > 1) {
     const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
     const TimeWindow& win2 = wres.windows[wres.iTrigWin + 2];
-    if((cutWinTimeMin_ < win1.tstart) || (win2.tstart <= cutWinTimeMax_ )) {
-      const unsigned n1 = std::count_if(afterTrigGlobalClusters[0].begin(), afterTrigGlobalClusters[0].end(), nonEmpty<WireClusterCollection>);
-      const unsigned n2 = std::count_if(afterTrigGlobalClusters[1].begin(), afterTrigGlobalClusters[1].end(), nonEmpty<WireClusterCollection>);
-      hMultiWindowHits_->Fill(std::max(n1,n2), std::min(n1, n2));
+    if((cutWinTimeMin_ < win1.tstart) && (win2.tstart <= cutWinTimeMax_ )) {
+      // Avoid DC overlaps for these plots
+      if(win2.tstart - win1.tstart > 1050.) {
+
+        const unsigned n1 = std::count_if(afterTrigGlobalClusters[0].begin(), afterTrigGlobalClusters[0].end(), nonEmpty<WireClusterCollection>);
+        const unsigned n2 = std::count_if(afterTrigGlobalClusters[1].begin(), afterTrigGlobalClusters[1].end(), nonEmpty<WireClusterCollection>);
+        hMultiWindowHits_->Fill(std::max(n1,n2), std::min(n1, n2));
+
+        PlaneRange r1 = findPlaneRange(afterTrigGlobalClusters[0]);
+        PlaneRange r2 = findPlaneRange(afterTrigGlobalClusters[1]);
+        hMultiWindowRanges_->Fill(std::max(r1.segments().size(), r2.segments().size()),
+                                  std::min(r1.segments().size(), r2.segments().size()));
+
+        //std::cout<<"t1 = "<<win1.tstart<<", r1 = "<<r1<<",\tt2 = "<<win2.tstart<<", r2="<<r2<<std::endl;
+      }
     }
   }
 
