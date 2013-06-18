@@ -20,6 +20,7 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   cutStream_ = cutWinStream;
   cutWinTimeMin_ = cutWinTimeMin;
   cutWinTimeMax_ = conf.read<double>("MuCapture/cutWinTimeMax");
+  cutZContainedNumPlanes_ = conf.read<unsigned>("MuCapture/StreamAnalysis/cutZContainedNumPlanes");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "protonCuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -30,16 +31,20 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
-  hWindowTime_ = hf.DefineTH1D(hdir, "windowTime", "Proton window start time", 1000, 0., 10000.);
+  hNumAfterTrigWindows_ = hf.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
+  hWindowTimeBefore_ = hf.DefineTH1D(hdir, "windowTimeBeforeCut", "Proton window start time", 1000, 0., 10000.);
+  hWindowTimeAfter_ = hf.DefineTH1D(hdir, "windowTimeAfterCut", "Proton window start time after the cut", 1000, 0., 10000.);
 
-  hNumAfterTrigWindows_ = hf.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
+  hWinStream_ = hf.DefineTH1D(hdir, "winStream", "Time window stream type", 3, -1.5, +1.5);
 
-  //hNumClusters_ = hf.DefineTH2D(hdir, "numClustersVsPlane", "Num cluster vs plane", 56, 0.5, 56.5,  11, -0.5, 10.5);
-  //hNumClusters_->SetOption("colz");
+  hhsAfterTimeCuts_.init(hdir+"/hsAfterTimeCuts", hf, geom, conf);
+
+  hNumVetoHits_ = hf.DefineTH1D(hdir, "numZContainVetoHits", "Num hits in veto planes", 10, -0.5, 9.5);
+
+  hhsZContained_.init(hdir+"/hsZContained", hf, geom, conf);
 
   //----------------------------------------------------------------
   uvan_.init(hdir+"/UVAnalysis", hf, conf, cutStream_);
-
   hwidthPCTightProtons_.init(hdir+"/pcWidthTightProtons", "pcpwidth", 12, hf, conf);
   hwidthDCTightProtons_.init(hdir+"/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
   hwidthPCTightDIO_.init(hdir+"/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
@@ -84,13 +89,49 @@ analyze(const EventClass& evt,
 
   const unsigned iProtonWin = 1 + wres.iTrigWin;
   const TimeWindow& protonWindow = wres.windows[iProtonWin];
+  const ClustersByPlane& protonGlobalClusters = afterTrigGlobalClusters[0];
 
+  //----------------------------------------------------------------
   // Trig time is 0, dt from that rather than from less precise trigWin time
+  hWindowTimeBefore_->Fill(protonWindow.tstart);
   if( (protonWindow.tstart < cutWinTimeMin_) || (cutWinTimeMax_ < protonWindow.tstart)) {
     return CUT_WINTIME;
   }
+  hWindowTimeAfter_->Fill(protonWindow.tstart);
 
-  const ClustersByPlane& protonGlobalClusters = afterTrigGlobalClusters[0];
+  // Count the number of planes hit up and dn of the target
+  int nHitPlanesUp(0), nHitPlanesDn(0);
+  for(unsigned i=1; i<protonGlobalClusters.size(); ++i) {
+    if(!protonGlobalClusters[i].empty()) {
+      ++(i <= protonGlobalClusters.size()/2 ? nHitPlanesUp : nHitPlanesDn);
+    }
+  }
+  //std::cout<<"AG: nHitPlanesUp = "<<nHitPlanesUp<<", nHitPlanesDn = "<<nHitPlanesDn<<std::endl;
+  hWinStream_->Fill(protonWindow.stream);
+  hhsAfterTimeCuts_.fill(protonGlobalClusters);
+
+  //----------------------------------------------------------------
+  // Count the number of hit planes in the veto region
+  int numVetoHits(0);
+  for(unsigned i=1; i<=cutZContainedNumPlanes_; ++i) {
+    if(!protonGlobalClusters[i].empty()) {
+      ++numVetoHits;
+    }
+    if(!protonGlobalClusters[protonGlobalClusters.size() - i].empty()) {
+      ++numVetoHits;
+    }
+  }
+
+  hNumVetoHits_->Fill(numVetoHits);
+  if(numVetoHits) {
+    return CUT_Z_CONTAINED;
+  }
+
+  hhsZContained_.fill(protonGlobalClusters);
+
+//  if(protonWindow.stream != cutStream_) {
+//    return CUT_STREAM;
+//  }
 
   const unsigned numDIO = uvan_.process(evt, protonWindow.tstart, protonGlobalClusters, muStopUV);
   if(numDIO) {
@@ -100,10 +141,6 @@ analyze(const EventClass& evt,
   }
 
 
-//  if(protonWindow.stream != cutStream_) {
-//    return CUT_STREAM;
-//  }
-//
 //  if(clustersPC[7].empty()) {
 //    return CUT_NOPC7;
 //  }

@@ -300,7 +300,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
 
-        SetKey(Conf, "MuCapture/cutWinTimeMax", 9000); // ns
+        SetKey(Conf, "MuCapture/cutWinTimeMax", 10000. - 1050.); // ns, make sure DC window ends.
 
         SetKey(Conf, "MuCapture/PACT/slopea_11", 1.634);
         SetKey(Conf, "MuCapture/PACT/slopeb_11", -1.59);
@@ -348,6 +348,9 @@ void SetDefault(ConfigFile &Conf)
         // From purity vs eff Want proton eff~=0.2,
         // from slide 3 this is <~13 cm
         SetKey(Conf, "MuCapture/ProtonWindow/RextMax", 13.);
+
+        // Use outer PCs as a veto
+        SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedNumPlanes", 4);
 
         //================================================================
 }

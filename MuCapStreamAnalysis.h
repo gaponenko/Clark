@@ -17,6 +17,7 @@
 #include "HistMuCapRTruth.h"
 #include "HistMuCapTruth.h"
 #include "HistTDCParticleClassifier.h"
+#include "HistHitStream.h"
 
 #include "Math/Point2D.h"
 #include "TAxis.h"
@@ -32,10 +33,11 @@ class MuCapStreamAnalysis {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_NUMAFTERTRIG, "num after trig");
     ax->SetBinLabel(1+CUT_WINTIME, "win time");
-    ax->SetBinLabel(1+CUT_TGT_START, "tgt start");
-    ax->SetBinLabel(1+CUT_MAX_RANGE, "MAX_RANGE");
-    ax->SetBinLabel(1+CUT_RANGE_GAPS, "RANGE_GAPS");
-    ax->SetBinLabel(1+CUT_OTHER_SIDE, "other side");
+    ax->SetBinLabel(1+CUT_Z_CONTAINED, "Z contained");
+    //ax->SetBinLabel(1+CUT_TGT_START, "tgt start");
+    //ax->SetBinLabel(1+CUT_MAX_RANGE, "MAX_RANGE");
+    //ax->SetBinLabel(1+CUT_RANGE_GAPS, "RANGE_GAPS");
+    //ax->SetBinLabel(1+CUT_OTHER_SIDE, "other side");
     ax->SetBinLabel(1+CUTS_LOOSE_PROTONS, "Loose protons");
     ax->SetBinLabel(1+CUT_MIN_RANGE, "Min range");
     ax->SetBinLabel(1+CUT_REXT, "Rext");
@@ -46,11 +48,14 @@ public:
   enum EventCutNumber {
     CUT_NUMAFTERTRIG,
     CUT_WINTIME,
+    CUT_Z_CONTAINED,
     // UV analysis goes here
     CUT_TGT_START,
-    CUT_MAX_RANGE, // in the "stream" direction
     CUT_RANGE_GAPS, // in the "stream" direction
     CUT_OTHER_SIDE,
+
+    CUT_MAX_RANGE, // in the "stream" direction
+
     CUTS_LOOSE_PROTONS,
     CUT_MIN_RANGE,
     CUT_REXT,
@@ -72,19 +77,15 @@ public:
     , cutStream_(TimeWindow::DOWNSTREAM)
     , cutWinTimeMin_()
     , cutWinTimeMax_()
-    , cutMaxPlane_()
+    , cutZContainedNumPlanes_()
     , cutRextMax_()
     , h_cuts_r()
     , h_cuts_p()
     , hNumAfterTrigWindows_()
-    , hWindowTime_()
-//    , hStartPos_()
-//    , hStartOffset_()
-//    , hStartClusterSize_()
-//    , hLastPlane_()
-//    , hCCRvsPlaneDIO_()
-//    , hCCRvsPlaneProtons_()
-//    , hLastPlaneVsMCPstart_()
+    , hWindowTimeBefore_()
+    , hWindowTimeAfter_()
+    , hWinStream_()
+    , hNumVetoHits_()
   {}
 
 private :
@@ -94,27 +95,24 @@ private :
   double cutWinTimeMin_;
   double cutWinTimeMax_;
 
-  int cutMaxPlane_;
+  // The minimal required number of hit-free planes
+  // on both ends to treat an event as "z contained"
+  int cutZContainedNumPlanes_;
+
   double cutRextMax_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
   TH1 *hNumAfterTrigWindows_;
-  TH1 *hWindowTime_;
 
-//  TH2 *hNumClusters_;
-//
-//  TH2 *hStartPos_;
-//  TH2 *hStartOffset_; // from the muon stop position
-//  TH2 *hStartClusterSize_;
-//
-//  TH1 *hLastPlane_;
-//
-//  TH2 *hCCRvsPlaneDIO_;
-//  TH2 *hCCRvsPlaneProtons_;
-//
-//  TH2 *hLastPlaneVsMCPstart_;
+  TH1 *hWindowTimeBefore_;
+  TH1 *hWindowTimeAfter_;
+  TH1 *hWinStream_;
+  HistHitStream hhsAfterTimeCuts_;
+
+  TH1 *hNumVetoHits_;
+  HistHitStream hhsZContained_;
 
   HistTDCWidth hwidthPCTightProtons_;
   HistTDCWidth hwidthDCTightProtons_;
@@ -126,14 +124,6 @@ private :
   HistTDCParticleClassifier hcdio_;
 
   MuCapUVAnalysis uvan_;
-  //HistStreamAnalysis hpw_;
-
-//  MuCapContainmentCheck rcheckProtonCandidates_;
-//  HistMuCapRTruth hrtruth_;
-//  HistMuCapTruth htruthLoose_;
-//  HistMuCapTruth htruthPC8_;
-//  HistMuCapTruth htruthMinRange_;
-//  HistMuCapTruth htruthTight_;
 
   EventCutNumber analyze(const EventClass& evt,
                          const TimeWindowingResults& wres,
