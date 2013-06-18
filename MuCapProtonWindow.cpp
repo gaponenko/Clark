@@ -180,7 +180,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     hNumClusters_->Fill(plane, global[plane].size());
   }
 
-  if(!gr.noGaps) {
+  if(!gr.noGaps()) {
     return CUT_RANGE_GAPS;
   }
 
@@ -191,18 +191,18 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     hwidthDCTightDIO_.fill(protonDCHits);
     hcdio_.fill(global);
 
-    for(int plane=32; plane <= std::min(cutMaxPlane_, gr.max); ++plane) {
+    for(int plane=32; plane <= std::min(cutMaxPlane_, gr.max()); ++plane) {
       const double r = rcheckDIO_.rmax(plane, global);
       hCCRvsPlaneDIO_->Fill(plane, r);
     }
   }
 
-  hLastPlane_->Fill(gr.max);
+  hLastPlane_->Fill(gr.max());
   if(doMCTruth_ && (evt.nmcvtx == 2)) {
-    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max);
+    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max());
   }
 
-  if(gr.max > cutMaxPlane_) {
+  if(gr.max() > cutMaxPlane_) {
     return CUT_MAX_RANGE;
   }
 
@@ -223,7 +223,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   hpw_.fill(global, evt);
 
   //----------------------------------------------------------------
-  if(gr.max < 30) {
+  if(gr.max() < 30) {
     return CUT_NOPC8;
   }
 
@@ -233,7 +233,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
 
   //----------------------------------------------------------------
   // the containment check requires at least 2U and 2V planes
-  if(gr.max < 32) {
+  if(gr.max() < 32) {
     return CUT_MIN_RANGE;
   }
 
@@ -241,10 +241,10 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     htruthMinRange_.fill(evt);
   }
 
-  const double rext = rcheckProtonCandidates_.rmax(gr.max, global);
-  hCCRvsPlaneProtons_->Fill(gr.max, rext);
+  const double rext = rcheckProtonCandidates_.rmax(gr.max(), global);
+  hCCRvsPlaneProtons_->Fill(gr.max(), rext);
   if(doMCTruth_) {
-    hrtruth_.fill(evt, gr.max, rext);
+    hrtruth_.fill(evt, gr.max(), rext);
   }
   if(rext > cutRextMax_) {
     return CUT_REXT;

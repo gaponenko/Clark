@@ -3,29 +3,21 @@
 #include "PlaneRange.h"
 
 PlaneRange findPlaneRange(const ClustersByPlane& cp) {
-  PlaneRange res;
-  typedef ClustersByPlane::const_iterator Iter;
+  PlaneRange::Segments res;
+  unsigned currentPlane = 0;
 
-  int numHitPlanes(0);
-  for(unsigned  i = 0; i<cp.size(); ++i) {
-    if(!cp[i].empty()) {
-      ++numHitPlanes;
-      if(res.min == -1) {
-        res.min = i;
-        res.max = i;
-      }
-      else {
-        if(res.min > i) {
-          res.min = i;
-        }
-        if(i > res.max) {
-          res.max= i;
-        }
-      }
+  while(++currentPlane < cp.size()) {
+
+    if(!cp[currentPlane].empty()) { // start a new segment
+
+      const int pstart = currentPlane;
+      while(++currentPlane < cp.size() && !cp[currentPlane].empty())
+        {}
+
+      const int pend = currentPlane - 1;
+      res.emplace_back(pstart, pend);
     }
   }
 
-  res.noGaps = ((res.max - res.min + 1) == numHitPlanes);
-
-  return res;
+  return PlaneRange(res);
 }

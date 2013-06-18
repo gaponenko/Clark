@@ -149,11 +149,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   const ClustersByPlane muonPCClusters = constructPlaneClusters(12, trigWin.pcHits);
   const PlaneRange trigPCRange = findPlaneRange(muonPCClusters);
-  if(!trigPCRange.noGaps) {
+  if(!trigPCRange.noGaps()) {
     return CUT_TRIGPCWIN_GAPS;
   }
 
-  if((trigPCRange.min != 1) || (trigPCRange.max != 6)) {
+  if((trigPCRange.min() != 1) || (trigPCRange.max() != 6)) {
     return CUT_TRIGPCWIN_RANGE;
   }
 
@@ -180,7 +180,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   const PlaneRange muonRange = findPlaneRange(muonGlobalClusters);
-  if(!muonRange.noGaps) {
+  if(!muonRange.noGaps()) {
     return CUT_MU_RANGE_GAPS;
   }
 

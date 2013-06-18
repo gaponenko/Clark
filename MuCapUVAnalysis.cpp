@@ -249,7 +249,7 @@ analyzeTrack(int i, const EventClass& evt,
 
   //----------------------------------------------------------------
   const PlaneRange gr = findPlaneRange(globalClusters);
-  hHitRange_->Fill(gr.min, gr.max);
+  hHitRange_->Fill(gr.min(), gr.max());
 
   hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
   // Select tracks that go from tgt to the end of tracker

@@ -55,13 +55,13 @@ void HistProtonWindow::fill(const ClustersByPlane& globalPlaneClusters,
     maxClusters=std::max(maxClusters, numClusters);
     hClustersVsPlane_->Fill(plane, numClusters);
 
-    const int remainingRange = gr.max - plane;
+    const int remainingRange = gr.max() - plane;
     if(remainingRange >= 0) {
       hClustersVsRemainingRange_->Fill(remainingRange, numClusters);
     }
   }
 
-  hMaxClustersVsLastPlane_->Fill(gr.max, maxClusters);
+  hMaxClustersVsLastPlane_->Fill(gr.max(), maxClusters);
 }
 
 //================================================================
