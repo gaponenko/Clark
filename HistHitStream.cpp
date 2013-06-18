@@ -1,6 +1,8 @@
 // Andrei Gaponenko, 2013
 
 #include "HistHitStream.h"
+#include "PlaneRange.h"
+#include "TimeWindow.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -37,6 +39,20 @@ void HistHitStream::init(const std::string& hdir,
   hNumDCsUpVsDn_->SetOption("colz");
 
   hNumDCsDnMinusUp_ = hf.DefineTH1D(hdir, "dcsDnMinusUp", "Dn - Up DC planes", 45, -22.5, 22.5);
+
+  //----------------------------------------------------------------
+  hNumRanges_ = hf.DefineTH1D(hdir, "numRanges", "num ranges", 10, -0.5, 9.5);
+
+  hSingleRange_ = hf.DefineTH2D(hdir, "singleRange", "End vs begin for single range",
+                                57, -0.5, 56.5, 57, -0.5, 56.5);
+  hSingleRange_->SetOption("colz");
+
+  hDoubleRangeGap_ = hf.DefineTH2D(hdir, "doubleRangeGap", "Double range gap",
+                                   57, -0.5, 56.5, 57, -0.5, 56.5);
+  hDoubleRangeGap_->SetOption("colz");
+
+  //----------------------------------------------------------------
+  hWinStream_ = hf.DefineTH1D(hdir, "winStream", "Time window stream type", 3, -1.5, +1.5);
 }
 //================================================================
 void HistHitStream::fill(const ClustersByPlane& gc) {
@@ -73,6 +89,28 @@ void HistHitStream::fill(const ClustersByPlane& gc) {
   if(numDCsUp + numDCsDn) {
     hNumDCsDnMinusUp_->Fill(numDCsDn - numDCsUp);
   }
+
+  //----------------------------------------------------------------
+  PlaneRange gr = findPlaneRange(gc);
+  hNumRanges_->Fill(gr.segments().size());
+  switch(gr.segments().size()) {
+  case 1:
+    hSingleRange_->Fill(gr.max(), gr.min());
+    break;
+  case 2:
+    hDoubleRangeGap_->Fill(gr.segments()[1].min, gr.segments()[0].max);
+    break;
+  default:
+    break;
+  }
+
+  //----------------------------------------------------------------
+  const TimeWindow::StreamType stream =
+    (gr.max() <= 28) ? TimeWindow::UPSTREAM :
+    (29 <= gr.min()) ? TimeWindow::DOWNSTREAM :
+    TimeWindow::MIXED;
+
+  hWinStream_->Fill(stream);
 }
 
 //================================================================

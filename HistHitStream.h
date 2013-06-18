@@ -30,6 +30,8 @@ public:
     , hNumPlanesUpVsDn_() , hNumPlanesDnMinusUp_()
     , hNumPCsUpVsDn_() , hNumPCsDnMinusUp_()
     , hNumDCsUpVsDn_() , hNumDCsDnMinusUp_()
+    , hNumRanges_(), hSingleRange_(), hDoubleRangeGap_()
+    , hWinStream_()
   {}
 
 private :
@@ -43,6 +45,12 @@ private :
 
   TH2 *hNumDCsUpVsDn_;
   TH1 *hNumDCsDnMinusUp_;
+
+  TH1 *hNumRanges_;
+  TH2 *hSingleRange_;
+  TH2 *hDoubleRangeGap_;
+
+  TH1 *hWinStream_;
 };
 
 #endif/*HistHitStream_h*/

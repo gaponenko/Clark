@@ -52,8 +52,6 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   hWindowTimeBefore_ = hf.DefineTH1D(hdir, "windowTimeBeforeCut", "Proton window start time", 1000, 0., 10000.);
   hWindowTimeAfter_ = hf.DefineTH1D(hdir, "windowTimeAfterCut", "Proton window start time after the cut", 1000, 0., 10000.);
 
-  hWinStream_ = hf.DefineTH1D(hdir, "winStream", "Time window stream type", 3, -1.5, +1.5);
-
   hhsAfterTimeCuts_.init(hdir+"/hsAfterTimeCuts", hf, geom, conf);
 
   hNumVetoHits_ = hf.DefineTH1D(hdir, "numZContainVetoHits", "Num hits in veto planes", 10, -0.5, 9.5);
@@ -150,7 +148,6 @@ analyze(const EventClass& evt,
     }
   }
   //std::cout<<"AG: nHitPlanesUp = "<<nHitPlanesUp<<", nHitPlanesDn = "<<nHitPlanesDn<<std::endl;
-  hWinStream_->Fill(protonWindow.stream);
   hhsAfterTimeCuts_.fill(protonGlobalClusters);
 
   //----------------------------------------------------------------

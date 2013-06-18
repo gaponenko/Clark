@@ -88,7 +88,6 @@ public:
     , hNumAfterTrigWindows_()
     , hWindowTimeBefore_()
     , hWindowTimeAfter_()
-    , hWinStream_()
     , hNumVetoHits_()
   {}
 
@@ -114,7 +113,6 @@ private :
 
   TH1 *hWindowTimeBefore_;
   TH1 *hWindowTimeAfter_;
-  TH1 *hWinStream_;
   HistHitStream hhsAfterTimeCuts_;
 
   TH1 *hNumVetoHits_;
