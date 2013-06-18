@@ -31,7 +31,8 @@ class ConfigFile;
 //================================================================
 class MuCapStreamAnalysis {
   void set_cut_bin_labels(TAxis* ax) {
-    ax->SetBinLabel(1+CUT_NUMAFTERTRIG, "num after trig");
+    ax->SetBinLabel(1+CUT_NOHITS, "No hits");
+    ax->SetBinLabel(1+CUT_MULTIWIN, "Multiple windows");
     ax->SetBinLabel(1+CUT_WINTIME, "win time");
     ax->SetBinLabel(1+CUT_Z_CONTAINED, "Z contained");
     //ax->SetBinLabel(1+CUT_TGT_START, "tgt start");
@@ -46,7 +47,8 @@ class MuCapStreamAnalysis {
 
 public:
   enum EventCutNumber {
-    CUT_NUMAFTERTRIG,
+    CUT_NOHITS,
+    CUT_MULTIWIN,
     CUT_WINTIME,
     CUT_Z_CONTAINED,
     // UV analysis goes here
@@ -81,6 +83,7 @@ public:
     , cutRextMax_()
     , h_cuts_r()
     , h_cuts_p()
+    , hMultiWindowHits_()
     , hNumAfterTrigWindows_()
     , hWindowTimeBefore_()
     , hWindowTimeAfter_()
@@ -104,6 +107,7 @@ private :
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
+  TH2 *hMultiWindowHits_;
   TH1 *hNumAfterTrigWindows_;
 
   TH1 *hWindowTimeBefore_;

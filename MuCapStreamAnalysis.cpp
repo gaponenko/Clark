@@ -3,6 +3,8 @@
 #include "MuCapStreamAnalysis.h"
 
 #include <algorithm>
+#include <cmath>
+#include <cstdlib>
 
 #include "TH2.h"
 
@@ -10,6 +12,13 @@
 #include "ConfigFile.h"
 #include "PlaneRange.h"
 #include "EventList.h"
+
+//================================================================
+namespace {
+  template<class Container> bool nonEmpty(const Container& c) {
+    return !c.empty();
+  }
+}
 
 //================================================================
 void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
@@ -30,6 +39,10 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   h_cuts_p = hf.DefineTH1D(hdir, "protonCuts_p", "Events before cut", CUTS_END, -0.5, CUTS_END-0.5);
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
+
+  hMultiWindowHits_ = hf.DefineTH2D(hdir, "multiWindowHits", "min vs max num planes in after-trig windows 1, 2",
+                                    57, -0.5, 56.5, 57, -0.5, 56.5);
+  hMultiWindowHits_->SetOption("colz");
 
   hNumAfterTrigWindows_ = hf.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
   hWindowTimeBefore_ = hf.DefineTH1D(hdir, "windowTimeBeforeCut", "Proton window start time", 1000, 0., 10000.);
@@ -83,8 +96,23 @@ analyze(const EventClass& evt,
 {
   //----------------------------------------------------------------
   hNumAfterTrigWindows_->Fill(afterTrigGlobalClusters.size());
-  if(afterTrigGlobalClusters.size() != 1) {
-    return CUT_NUMAFTERTRIG;
+  if(afterTrigGlobalClusters.empty()) {
+    return CUT_NOHITS;
+  }
+
+  if(afterTrigGlobalClusters.size() > 1) {
+    const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
+    const TimeWindow& win2 = wres.windows[wres.iTrigWin + 2];
+    if((cutWinTimeMin_ < win1.tstart) || (win2.tstart <= cutWinTimeMax_ )) {
+      const unsigned n1 = std::count_if(afterTrigGlobalClusters[0].begin(), afterTrigGlobalClusters[0].end(), nonEmpty<WireClusterCollection>);
+      const unsigned n2 = std::count_if(afterTrigGlobalClusters[1].begin(), afterTrigGlobalClusters[1].end(), nonEmpty<WireClusterCollection>);
+      hMultiWindowHits_->Fill(std::max(n1,n2), std::min(n1, n2));
+    }
+  }
+
+  //----------------------------------------------------------------
+  if(afterTrigGlobalClusters.size() > 1) {
+    return CUT_MULTIWIN;
   }
 
   const unsigned iProtonWin = 1 + wres.iTrigWin;
