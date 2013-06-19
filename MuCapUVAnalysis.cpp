@@ -225,7 +225,7 @@ analyzeTrack(int i, const EventClass& evt,
     return CUT_PTMIN;
   }
 
-  if(evt.pz[i] < cutPzMin_) {
+  if(std::abs(evt.pz[i]) < cutPzMin_) {
     return CUT_PZMIN;
   }
 
