@@ -59,7 +59,7 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   hhsZContained_.init(hdir+"/hsZContained", hf, geom, conf);
 
   //----------------------------------------------------------------
-  uvan_.init(hdir+"/UVAnalysis", hf, conf, cutStream_);
+  uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::MIXED);
   hwidthPCTightProtons_.init(hdir+"/pcWidthTightProtons", "pcpwidth", 12, hf, conf);
   hwidthDCTightProtons_.init(hdir+"/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
   hwidthPCTightDIO_.init(hdir+"/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
@@ -150,6 +150,13 @@ analyze(const EventClass& evt,
   //std::cout<<"AG: nHitPlanesUp = "<<nHitPlanesUp<<", nHitPlanesDn = "<<nHitPlanesDn<<std::endl;
   hhsAfterTimeCuts_.fill(protonGlobalClusters);
 
+  const unsigned numDIO = uvan_.process(evt, protonWindow.tstart, protonGlobalClusters, muStopUV);
+  if(numDIO) {
+    hwidthPCTightDIO_.fill(protonWindow.pcHits);
+    hwidthDCTightDIO_.fill(protonWindow.dcHits);
+    hcdio_.fill(protonGlobalClusters);
+  }
+
   //----------------------------------------------------------------
   // Count the number of hit planes in the veto region
   int numVetoHits(0);
@@ -167,19 +174,23 @@ analyze(const EventClass& evt,
     return CUT_Z_CONTAINED;
   }
 
+
+  // Here we have a sample of events with charged particle emission from mu capture
+  // (plus some DIOs hitting the glass)
+  // Normalize to number of captures in accepted deltaT (corrected for accidental effects)
+  // and get a measurement of charged particles per capture.
   hhsZContained_.fill(protonGlobalClusters);
+
+
+  // FIXME: just do the downstream analysis, but at earlier times
+  // Can use the already-studies TDC width cut to select protons
+  // Can allow some upstream hits...  Note that upstream hits
+  // would be eaten by the muon window for early times anyway.
+
 
 //  if(protonWindow.stream != cutStream_) {
 //    return CUT_STREAM;
 //  }
-
-  const unsigned numDIO = uvan_.process(evt, protonWindow.tstart, protonGlobalClusters, muStopUV);
-  if(numDIO) {
-    hwidthPCTightDIO_.fill(protonWindow.pcHits);
-    hwidthDCTightDIO_.fill(protonWindow.dcHits);
-    hcdio_.fill(protonGlobalClusters);
-  }
-
 
 //  if(clustersPC[7].empty()) {
 //    return CUT_NOPC7;
