@@ -222,7 +222,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     const TimeWindow& win = wres.windows[iwin];
     const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
     const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
-    afterTrigClusters.emplace_back(globalPlaneClusters(pcClusters, dcClusters));
+    afterTrigClusters.push_back(globalPlaneClusters(pcClusters, dcClusters));
   }
 
   // Call the subanalyses

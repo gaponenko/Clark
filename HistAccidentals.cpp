@@ -75,7 +75,7 @@ void HistAccidentals::fill(const TimeWindowingResults& wres) {
   int numAll(0), numDn(0);
   std::vector<Subdivision> subdivisions;
   for(unsigned s=0; s < hnumwinAllSubDiv_.size(); ++s) {
-    subdivisions.emplace_back(s, cutPreTrigTimeMin_, cutPreTrigTimeMax_);
+    subdivisions.push_back(Subdivision(s, cutPreTrigTimeMin_, cutPreTrigTimeMax_));
   }
 
   for(unsigned iwin = 0; iwin < wres.iTrigWin; ++iwin) {
