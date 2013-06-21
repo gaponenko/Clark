@@ -83,7 +83,7 @@ public:
     , cutRextMax_()
     , h_cuts_r()
     , h_cuts_p()
-    , hMultiWindowHits_()
+    , hMultiWindowPlanes_()
     , hMultiWindowRanges_()
     , hNumAfterTrigWindows_()
     , hWindowTimeBefore_()
@@ -107,7 +107,7 @@ private :
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
-  TH2 *hMultiWindowHits_;
+  TH2 *hMultiWindowPlanes_;
   TH2 *hMultiWindowRanges_;
   TH1 *hNumAfterTrigWindows_;
 

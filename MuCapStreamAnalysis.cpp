@@ -40,9 +40,9 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
-  hMultiWindowHits_ = hf.DefineTH2D(hdir, "multiWindowHits", "min vs max num planes in after-trig windows 1, 2",
+  hMultiWindowPlanes_ = hf.DefineTH2D(hdir, "multiWindowPlanes", "min vs max num planes in after-trig windows 1, 2",
                                     57, -0.5, 56.5, 57, -0.5, 56.5);
-  hMultiWindowHits_->SetOption("colz");
+  hMultiWindowPlanes_->SetOption("colz");
 
   hMultiWindowRanges_ = hf.DefineTH2D(hdir, "multiWindowRanges", "min vs max num ranges in after-trig windows 1, 2",
                                     10, -0.5, 9.5, 10, -0.5, 9.5);
@@ -111,7 +111,7 @@ analyze(const EventClass& evt,
 
         const unsigned n1 = std::count_if(afterTrigGlobalClusters[0].begin(), afterTrigGlobalClusters[0].end(), nonEmpty<WireClusterCollection>);
         const unsigned n2 = std::count_if(afterTrigGlobalClusters[1].begin(), afterTrigGlobalClusters[1].end(), nonEmpty<WireClusterCollection>);
-        hMultiWindowHits_->Fill(std::max(n1,n2), std::min(n1, n2));
+        hMultiWindowPlanes_->Fill(std::max(n1,n2), std::min(n1, n2));
 
         PlaneRange r1 = findPlaneRange(afterTrigGlobalClusters[0]);
         PlaneRange r2 = findPlaneRange(afterTrigGlobalClusters[1]);
