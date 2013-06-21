@@ -16,6 +16,8 @@ public:
   bool requested(int run, int event) const;
   bool requested(const EventClass& evt) const;
 
+  bool empty() const { return list_.empty(); }
+
 private:
 
   struct EventID {

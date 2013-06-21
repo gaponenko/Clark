@@ -29,6 +29,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   Log->info( "Register MuCapture module");
 
   doMCTruth_ = Conf.read<bool>("TruthBank/Do");
+  inputNumberList_ = EventList(Conf.read<std::string>("MuCapture/inputEventNumberFile"));
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
   //       --------- Parameters initialization ---------          //
@@ -106,6 +107,12 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
 
 //================================================================
 MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &hist) {
+
+  // If input event numbers are defined we want to ignore everything else.
+  // Thus this cut is before filling the "all" histograms.
+  if(!inputNumberList_.empty() &&  !inputNumberList_.requested(evt)) {
+    return CUT_EVENT_NUMBER;
+  }
 
   // Fill the "all hits" histos
   hwidthPCall_.fill(evt.pc_hits());

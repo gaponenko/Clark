@@ -283,6 +283,11 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/cutMinTDCWidthPC", 40.);
         SetKey(Conf, "MuCapture/cutMinTDCWidthDC", 50.);
 
+        // If defined, ignore all other input events
+        SetKey(Conf, "MuCapture/inputEventNumberFile", "");
+        // Print out details about events on this list
+        SetKey(Conf, "MuCapture/debugEventList", "");
+
         SetKey(Conf, "MuCapture/winPCLength", 100.);
         // Trigger window has to be within max dt from 0
         SetKey(Conf, "MuCapture/winTrigMaxdt", 30.);

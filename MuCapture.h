@@ -17,6 +17,7 @@
 #include "HistAccidentals.h"
 #include "TimeWindowingPC.h"
 #include "TimeWindowingDC.h"
+#include "EventList.h"
 
 #include "TAxis.h"
 class TH1;
@@ -25,6 +26,7 @@ class TH2;
 //================================================================
 class MuCapture : public ModuleClass {
   void set_cut_bin_labels(TAxis* ax) {
+    ax->SetBinLabel(1+CUT_EVENT_NUMBER, "Event number");
     ax->SetBinLabel(1+CUT_NOPCHITS, "NoPCHits");
     ax->SetBinLabel(1+CUT_NOTRIGWIN, "NoTrigWin");
     ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "Pre-trig hits");
@@ -48,6 +50,7 @@ class MuCapture : public ModuleClass {
 public :
 
   enum EventCutNumber {
+    CUT_EVENT_NUMBER,
     CUT_NOPCHITS,
     CUT_NOTRIGWIN,
     CUT_PCWIN_TRIGSEPPAST,
@@ -97,6 +100,7 @@ public :
 private :
   bool doMCTruth_;
   bool doDefaultTWIST_;
+  EventList inputNumberList_;
 
   double cutMinTDCWidthPC_;
   double cutMinTDCWidthDC_;
