@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cassert>
 #include <utility>
+#include <stdexcept>
 
 #include "TH1.h"
 #include "TH2.h"
@@ -31,6 +32,13 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   doMCTruth_ = Conf.read<bool>("TruthBank/Do");
   inputNumberList_ = EventList(Conf.read<std::string>("MuCapture/inputEventNumberFile"));
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
+  muStopOutFileName_ = Conf.read<std::string>("MuCapture/muStopOutFileName", "");
+  if(!muStopOutFileName_.empty()) {
+    muStopOutFile_.open(muStopOutFileName_.c_str());
+    if(!muStopOutFile_) {
+      throw std::runtime_error("Error opening output file "+muStopOutFileName_);
+    }
+  }
 
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
@@ -236,6 +244,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   haccidentals_.fill(wres);
   protonWindow_.process(muStop, wres, evt);
   anDnLate_.process(evt, wres, muStop, afterTrigClusters);
+
+  if(muStopOutFile_) {
+    muStopOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
+  }
 
   //----------------------------------------------------------------
   return CUTS_MUSTOP_ACCEPTED;

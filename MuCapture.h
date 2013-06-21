@@ -3,6 +3,9 @@
 #ifndef MuCapture_h
 #define MuCapture_h
 
+#include <string>
+#include <fstream>
+
 #include "ModuleClass.h"
 
 #include "TDCHitWP.h"
@@ -101,6 +104,9 @@ private :
   bool doMCTruth_;
   bool doDefaultTWIST_;
   EventList inputNumberList_;
+
+  std::string muStopOutFileName_;
+  std::ofstream muStopOutFile_;
 
   double cutMinTDCWidthPC_;
   double cutMinTDCWidthDC_;
