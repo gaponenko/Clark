@@ -15,7 +15,7 @@ PlaneRange findPlaneRange(const ClustersByPlane& cp) {
         {}
 
       const int pend = currentPlane - 1;
-      res.emplace_back(pstart, pend);
+      res.push_back(PlaneRangeSegment(pstart, pend));
     }
   }
 
