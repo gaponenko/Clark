@@ -4,14 +4,18 @@
 #define MuCapUtilities_h
 
 #include <vector>
+#include "TDCHitWP.h"
 
 namespace MuCapUtilities {
+
   // TWIST units are MeV/c^2
   double mass(int pdgId);
 
   double kineticEnergy(int pdgId, double ptot);
 
+  unsigned numPlanes(const TDCHitWPPtrCollection& hits);
 
+  //================================================================
   class Stats {
   public:
     void fill(double x);
@@ -35,6 +39,9 @@ namespace MuCapUtilities {
     double max_;
     int numEntries_;
   };
+
+  //================================================================
+
 }
 
 #endif/*MuCapUtilities_h*/

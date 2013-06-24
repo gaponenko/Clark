@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <limits>
+#include <set>
 
 namespace MuCapUtilities {
   //================================================================
@@ -28,6 +29,15 @@ namespace MuCapUtilities {
     const double m = mass(pdgId);
     const double etot = std::sqrt(std::pow(ptot,2) + std::pow(m, 2));
     return etot - m;
+  }
+
+  //================================================================
+  unsigned numPlanes(const TDCHitWPPtrCollection& hits) {
+    std::set<int> planes;
+    for(TDCHitWPPtrCollection::const_iterator i = hits.begin(); i!=hits.end(); ++i) {
+      planes.insert((**i).plane());
+    }
+    return planes.size();
   }
 
   //================================================================
