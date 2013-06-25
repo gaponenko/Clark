@@ -18,6 +18,7 @@
 #include "HistMuCapTruth.h"
 #include "HistTDCParticleClassifier.h"
 #include "HistHitStream.h"
+#include "HistOccupancy.h"
 
 #include "Math/Point2D.h"
 #include "TAxis.h"
@@ -83,7 +84,11 @@ public:
     , cutRextMax_()
     , h_cuts_r()
     , h_cuts_p()
-    , hMultiWindowPlanes_()
+    , hMultiWindowPCHits_()
+    , hMultiWindowHits_()
+    , hMultiWindowPCPlanes_()
+    , hMultiWindowPCPlanesmm_()
+    , hMultiWindowPlanesmm_()
     , hMultiWindowRanges_()
     , hNumAfterTrigWindows_()
     , hWindowTimeBefore_()
@@ -107,8 +112,16 @@ private :
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
-  TH2 *hMultiWindowPlanes_;
+  TH2 *hMultiWindowPCHits_;
+  TH2 *hMultiWindowHits_;
+  TH2 *hMultiWindowPCPlanes_;
+  TH2 *hMultiWindowPCPlanesmm_;
+  TH2 *hMultiWindowPlanesmm_;
   TH2 *hMultiWindowRanges_;
+
+  HistOccupancy hOccupancyPCwin1_;
+  HistOccupancy hOccupancyPCwin2_;
+
   TH1 *hNumAfterTrigWindows_;
 
   TH1 *hWindowTimeBefore_;

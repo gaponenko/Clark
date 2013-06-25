@@ -12,6 +12,7 @@
 #include "ConfigFile.h"
 #include "PlaneRange.h"
 #include "EventList.h"
+#include "MuCapUtilities.h"
 
 //================================================================
 namespace {
@@ -40,13 +41,32 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
-  hMultiWindowPlanes_ = hf.DefineTH2D(hdir, "multiWindowPlanes", "min vs max num planes in after-trig windows 1, 2",
+  hMultiWindowPCHits_ = hf.DefineTH2D(hdir, "multiWindowPCHits", "after trig PC hits2 vs hits1",
+                                      20, -0.5, 19.5, 20, -0.5, 19.5);
+  hMultiWindowPCHits_->SetOption("colz");
+
+  hMultiWindowHits_ = hf.DefineTH2D(hdir, "multiWindowHits", "after trig hits2 vs hits1",
+                                    140, -0.5, 139.5, 140, -0.5, 139.5);
+  hMultiWindowHits_->SetOption("colz");
+
+  hMultiWindowPCPlanes_ = hf.DefineTH2D(hdir, "multiWindowPCPlanes", "after trig PC planes2 vs planes1",
+                                        13, -0.5, 12.5, 13, -0.5, 12.5);
+  hMultiWindowPCPlanes_->SetOption("colz");
+
+  hMultiWindowPCPlanesmm_ = hf.DefineTH2D(hdir, "multiWindowPCPlanesmm", "min vs max PC planes in after trig win1, 2",
+                                          13, -0.5, 12.5, 13, -0.5, 12.5);
+  hMultiWindowPCPlanesmm_->SetOption("colz");
+
+  hMultiWindowPlanesmm_ = hf.DefineTH2D(hdir, "multiWindowPlanesmm", "min vs max num planes in after-trig windows 1, 2",
                                     57, -0.5, 56.5, 57, -0.5, 56.5);
-  hMultiWindowPlanes_->SetOption("colz");
+  hMultiWindowPlanesmm_->SetOption("colz");
 
   hMultiWindowRanges_ = hf.DefineTH2D(hdir, "multiWindowRanges", "min vs max num ranges in after-trig windows 1, 2",
                                     10, -0.5, 9.5, 10, -0.5, 9.5);
   hMultiWindowRanges_->SetOption("colz");
+
+  hOccupancyPCwin1_.init(hdir, "multiWindowPCMap1", 12, 160, hf, conf);
+  hOccupancyPCwin2_.init(hdir, "multiWindowPCMap2", 12, 160, hf, conf);
 
   hNumAfterTrigWindows_ = hf.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
   hWindowTimeBefore_ = hf.DefineTH1D(hdir, "windowTimeBeforeCut", "Proton window start time", 1000, 0., 10000.);
@@ -105,13 +125,27 @@ analyze(const EventClass& evt,
   if(afterTrigGlobalClusters.size() > 1) {
     const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
     const TimeWindow& win2 = wres.windows[wres.iTrigWin + 2];
+
+    hMultiWindowPCHits_->Fill(win1.pcHits.size(), win2.pcHits.size());
+
+    hMultiWindowHits_->Fill(win1.pcHits.size() + win1.dcHits.size(),
+                            win2.pcHits.size() + win2.dcHits.size());
+
+    unsigned const planes1 = MuCapUtilities::numPlanes(win1.pcHits);
+    unsigned const planes2 = MuCapUtilities::numPlanes(win2.pcHits);
+    hMultiWindowPCPlanes_->Fill(planes1, planes2);
+    hMultiWindowPCPlanesmm_->Fill(std::max(planes1,planes2), std::min(planes1, planes2));
+
+    hOccupancyPCwin1_.fill(win1.pcHits);
+    hOccupancyPCwin2_.fill(win2.pcHits);
+
     if((cutWinTimeMin_ < win1.tstart) && (win2.tstart <= cutWinTimeMax_ )) {
       // Avoid DC overlaps for these plots
       if(win2.tstart - win1.tstart > 1050.) {
 
         const unsigned n1 = std::count_if(afterTrigGlobalClusters[0].begin(), afterTrigGlobalClusters[0].end(), nonEmpty<WireClusterCollection>);
         const unsigned n2 = std::count_if(afterTrigGlobalClusters[1].begin(), afterTrigGlobalClusters[1].end(), nonEmpty<WireClusterCollection>);
-        hMultiWindowPlanes_->Fill(std::max(n1,n2), std::min(n1, n2));
+        hMultiWindowPlanesmm_->Fill(std::max(n1,n2), std::min(n1, n2));
 
         PlaneRange r1 = findPlaneRange(afterTrigGlobalClusters[0]);
         PlaneRange r2 = findPlaneRange(afterTrigGlobalClusters[1]);
