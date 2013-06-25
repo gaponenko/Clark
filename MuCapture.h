@@ -95,6 +95,7 @@ public :
     , h_cuts_r()
     , h_cuts_p()
     , hPCPreTrigSeparation_()
+    , hTrigPCWinStartPlane_()
 
     , hWinDCUnassignedCount_()
 
@@ -135,6 +136,7 @@ private :
   TH1D *h_cuts_p;
 
   TH1 *hPCPreTrigSeparation_;
+  TH1 *hTrigPCWinStartPlane_;
 
   TH1 *hWinDCUnassignedCount_;
 

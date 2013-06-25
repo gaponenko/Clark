@@ -71,6 +71,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hPCPreTrigSeparation_ = H.DefineTH1D("MuCapture", "pcPreTrigSeparation", "PC win pre-trigger separation", 600, -6000., 0.);
 
+  hTrigPCWinStartPlane_ = H.DefineTH1D("MuCapture", "trigPCWinStartPlane", "Trig win start PC plane", 12, 0.5, 12.5);
+
   hWinDCUnassignedCount_ = H.DefineTH1D("MuCapture", "winDCUnassignedCount", "Count of unassigned DC hits", 101, -0.5, 100.5);
 
   // Make the bin size half a cell
@@ -186,6 +188,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   winTimeBeforeTrigPCWinStartPlane_.fill(wres);
+  hTrigPCWinStartPlane_->Fill(trigPCRange.min());
   if(cutTrigPCWinStartPlane_ < trigPCRange.min()) {
     return CUT_TRIGPCWIN_START_PLANE;
   }
