@@ -85,6 +85,13 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
   haccidentals_.init("MuCapture/Accidentals", H, Conf);
 
+  winTimeBeforeNoTrigWin_.init("MuCapture/winTime", "beforeNoTrigWin", H, Conf);
+  winTimeBeforeTrigPCWinType_.init("MuCapture/winTime", "beforeTrigPCWinType", H, Conf);
+  winTimeBeforeTrigPCWinGaps_.init("MuCapture/winTime", "beforeTrigPCWinGaps", H, Conf);
+  winTimeBeforeTrigPCWinRange_.init("MuCapture/winTime", "beforeTrigPCWinRange", H, Conf);
+  winTimeBeforeTrigDCWinType_.init("MuCapture/winTime", "beforeTrigDCWinType", H, Conf);
+  winTimeMuStop_.init("MuCapture/winTime", "muStop", H, Conf);
+
   if(doMCTruth_) {
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
   }
@@ -143,6 +150,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   TimeWindowingResults wres;
   pcWindowing_.assignPCHits(filteredPChits, &wres);
+  winTimeBeforeNoTrigWin_.fill(wres);
 
   if(wres.iTrigWin == -1u) {
     return CUT_NOTRIGWIN;
@@ -157,10 +165,14 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
+  winTimeBeforeTrigPCWinType_.fill(wres);
+
   const TimeWindow& trigWin = wres.windows[wres.iTrigWin];
   if(trigWin.stream != TimeWindow::UPSTREAM) {
     return CUT_TRIGPCWIN_TYPE;
   }
+
+  winTimeBeforeTrigPCWinGaps_.fill(wres);
 
   const ClustersByPlane muonPCClusters = constructPlaneClusters(12, trigWin.pcHits);
   const PlaneRange trigPCRange = findPlaneRange(muonPCClusters);
@@ -168,9 +180,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_TRIGPCWIN_GAPS;
   }
 
+  winTimeBeforeTrigPCWinRange_.fill(wres);
   if((trigPCRange.min() != 1) || (trigPCRange.max() != 6)) {
     return CUT_TRIGPCWIN_RANGE;
   }
+
+  winTimeBeforeTrigDCWinType_.fill(wres);
 
   //----------------
   // Process DC hits
@@ -241,6 +256,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   // Call the subanalyses
+  winTimeMuStop_.fill(wres);
   haccidentals_.fill(wres);
   protonWindow_.process(muStop, wres, evt);
   anDnLate_.process(evt, wres, muStop, afterTrigClusters);

@@ -18,6 +18,7 @@
 #include "HistOccupancy.h"
 #include "HistMuCapTruth.h"
 #include "HistAccidentals.h"
+#include "HistWinTime.h"
 #include "TimeWindowingPC.h"
 #include "TimeWindowingDC.h"
 #include "EventList.h"
@@ -142,6 +143,14 @@ private :
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;
   HistAccidentals haccidentals_;
+
+  HistWinTime winTimeBeforeNoTrigWin_;
+  HistWinTime winTimeBeforeTrigPCWinType_;
+  HistWinTime winTimeBeforeTrigPCWinGaps_;
+  HistWinTime winTimeBeforeTrigPCWinRange_;
+  HistWinTime winTimeBeforeTrigDCWinType_;
+  HistWinTime winTimeMuStop_;
+
   HistMuCapTruth hTruthAll_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
