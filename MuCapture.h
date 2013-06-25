@@ -36,7 +36,8 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "Pre-trig hits");
     ax->SetBinLabel(1+CUT_TRIGPCWIN_TYPE, "TrigPCWinType");
     ax->SetBinLabel(1+CUT_TRIGPCWIN_GAPS, "TrigPCWinGaps");
-    ax->SetBinLabel(1+CUT_TRIGPCWIN_RANGE, "TrigPCWinRange");
+    ax->SetBinLabel(1+CUT_TRIGPCWIN_END_PLANE, "TrigPCWinEndPlane");
+    ax->SetBinLabel(1+CUT_TRIGPCWIN_START_PLANE, "TrigPCWinStartPlane");
 
     ax->SetBinLabel(1+CUT_TRIGDCWIN_TYPE, "TrigDCWinType");
     ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS, "Unassigned DC hits");
@@ -60,8 +61,9 @@ public :
     CUT_PCWIN_TRIGSEPPAST,
 
     CUT_TRIGPCWIN_TYPE,
+    CUT_TRIGPCWIN_END_PLANE,
+    CUT_TRIGPCWIN_START_PLANE,
     CUT_TRIGPCWIN_GAPS,
-    CUT_TRIGPCWIN_RANGE,
 
     CUT_TRIGDCWIN_TYPE,
     CUT_UNASSIGNEDDCHITS,
@@ -114,6 +116,9 @@ private :
 
   double winPCPreTrigSeparation_;
 
+  bool cutTrigPCWinGapsEnabled_;
+  int cutTrigPCWinStartPlane_;
+
   int maxUnassignedDCHits_;
 
   double muStopRMax_;
@@ -147,7 +152,10 @@ private :
   HistWinTime winTimeBeforeNoTrigWin_;
   HistWinTime winTimeBeforeTrigPCWinType_;
   HistWinTime winTimeBeforeTrigPCWinGaps_;
-  HistWinTime winTimeBeforeTrigPCWinRange_;
+
+  HistWinTime winTimeBeforeTrigPCWinEndPlane_;
+  HistWinTime winTimeBeforeTrigPCWinStartPlane_;
+
   HistWinTime winTimeBeforeTrigDCWinType_;
   HistWinTime winTimeMuStop_;
 

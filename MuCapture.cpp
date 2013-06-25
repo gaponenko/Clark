@@ -45,6 +45,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   cutMinTDCWidthPC_ = Conf.read<double>("MuCapture/cutMinTDCWidthPC");
   cutMinTDCWidthDC_ = Conf.read<double>("MuCapture/cutMinTDCWidthDC");
   winPCPreTrigSeparation_ = Conf.read<double>("MuCapture/winPCPreTrigSeparation");
+  cutTrigPCWinGapsEnabled_ = Conf.read<bool>("MuCapture/cutTrigPCWinGapsEnabled");
+  cutTrigPCWinStartPlane_ = Conf.read<int>("MuCapture/cutTrigPCWinStartPlane");
   maxUnassignedDCHits_ = Conf.read<int>("MuCapture/maxUnassignedDCHits");
 
   muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
@@ -88,7 +90,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   winTimeBeforeNoTrigWin_.init("MuCapture/winTime", "beforeNoTrigWin", H, Conf);
   winTimeBeforeTrigPCWinType_.init("MuCapture/winTime", "beforeTrigPCWinType", H, Conf);
   winTimeBeforeTrigPCWinGaps_.init("MuCapture/winTime", "beforeTrigPCWinGaps", H, Conf);
-  winTimeBeforeTrigPCWinRange_.init("MuCapture/winTime", "beforeTrigPCWinRange", H, Conf);
+
+  winTimeBeforeTrigPCWinEndPlane_.init("MuCapture/winTime", "beforeTrigPCEndPlane", H, Conf);
+  winTimeBeforeTrigPCWinStartPlane_.init("MuCapture/winTime", "beforeTrigPCStartPlane", H, Conf);
+
   winTimeBeforeTrigDCWinType_.init("MuCapture/winTime", "beforeTrigDCWinType", H, Conf);
   winTimeMuStop_.init("MuCapture/winTime", "muStop", H, Conf);
 
@@ -172,17 +177,22 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_TRIGPCWIN_TYPE;
   }
 
-  winTimeBeforeTrigPCWinGaps_.fill(wres);
-
   const ClustersByPlane muonPCClusters = constructPlaneClusters(12, trigWin.pcHits);
   const PlaneRange trigPCRange = findPlaneRange(muonPCClusters);
-  if(!trigPCRange.noGaps()) {
-    return CUT_TRIGPCWIN_GAPS;
+
+  winTimeBeforeTrigPCWinEndPlane_.fill(wres);
+  if(trigPCRange.max() != 6) {
+    return CUT_TRIGPCWIN_END_PLANE;
   }
 
-  winTimeBeforeTrigPCWinRange_.fill(wres);
-  if((trigPCRange.min() != 1) || (trigPCRange.max() != 6)) {
-    return CUT_TRIGPCWIN_RANGE;
+  winTimeBeforeTrigPCWinStartPlane_.fill(wres);
+  if(cutTrigPCWinStartPlane_ < trigPCRange.min()) {
+    return CUT_TRIGPCWIN_START_PLANE;
+  }
+
+  winTimeBeforeTrigPCWinGaps_.fill(wres);
+  if(cutTrigPCWinGapsEnabled_ && !trigPCRange.noGaps()) {
+    return CUT_TRIGPCWIN_GAPS;
   }
 
   winTimeBeforeTrigDCWinType_.fill(wres);
