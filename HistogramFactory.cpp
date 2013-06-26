@@ -43,6 +43,13 @@ TH2D* HistogramFactory::DefineTH2D(string Path, string Name, string Title, int x
         return H2D[Name];
 }
 
+TProfile2D* HistogramFactory::DefineTProfile2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, const std::string& options)
+{
+  TProfile2D *res = new TProfile2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax, options.c_str());
+  Store(H2D[Name] = res, Name, Path, "TH2D");
+  return res;
+}
+
 TH2D* HistogramFactory::DefineTH2D_Yvarwidth(string Path, string Name, string Title, int xBins, double xMin, double xMax, vector<double> yBinVect)
 {
 	double *ybins = new double[yBinVect.size()];
