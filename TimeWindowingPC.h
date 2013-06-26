@@ -27,6 +27,7 @@ public:
     : winPCLength_()
     , winTrigMaxdt_()
     , hNumPCWin_()
+    , hNumPCHitsPerWin_()
     , hWinPCTimeAll_()
     , hWinPCTimeTrig_()
     , hWinPCTStartBeforeTrig_()
@@ -39,6 +40,7 @@ private:
   double winPCLength_;
   double winTrigMaxdt_;
   TH1* hNumPCWin_;
+  TH1* hNumPCHitsPerWin_;
   TH1* hWinPCTimeAll_;
   TH1* hWinPCTimeTrig_;
   TH1* hWinPCTStartBeforeTrig_;

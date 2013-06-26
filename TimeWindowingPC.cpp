@@ -21,6 +21,9 @@ void TimeWindowingPC::init(HistogramFactory &hf,
   winTrigMaxdt_ = conf.read<double>("MuCapture/winTrigMaxdt");
 
   hNumPCWin_ = hf.DefineTH1D(hdir, "numPCWin",   "Number of PC time windows", 10, -0.5, 9.5);
+
+  hNumPCHitsPerWin_ = hf.DefineTH1D(hdir, "numPCHitsPerWin", "numPCHitsPerWin", 25, -0.5, 24.5);
+
   hWinPCTimeAll_ = hf.DefineTH1D(hdir, "winPCTimeAll",   "PC time window start, all", 1600, -6000., 10000.);
 
   hWinPCTimeTrig_ = hf.DefineTH1D(hdir, "winPCTimeTrig",   "PC time window start, trig", 200, -50., 50.);
@@ -63,6 +66,8 @@ void TimeWindowingPC::assignPCHits(const TDCHitWPPtrCollection& inhits, TimeWind
     const int pmax = win.pcHits.back()->plane();
     win.stream = (pmax <= 6) ? TimeWindow::UPSTREAM :
       ((7 <= pmin) ? TimeWindow::DOWNSTREAM : TimeWindow::MIXED);
+
+    hNumPCHitsPerWin_->Fill(win.pcHits.size());
 
     winpcs.push_back(win);
   }
