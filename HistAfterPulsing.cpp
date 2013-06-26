@@ -20,13 +20,7 @@ void HistAfterPulsing::init(const std::string& hdir,
                             HistogramFactory &hf,
                             const ConfigFile& conf)
 {
-  for(int plane = 0; plane <= maxPlaneNumber; ++plane) {
-    std::ostringstream os;
-    os<<"numHitsPerCell"<<std::setw(2)<<std::setfill('0')<<plane;
-    hNumHitsPerCell_.push_back(hf.DefineTH1D(hdir, os.str(), os.str(), 10, -0.5, 9.5));
-  }
-
-  for(int plane = 0; plane <= maxPlaneNumber; ++plane) {
+  for(int plane = 1; plane <= maxPlaneNumber; ++plane) {
     std::ostringstream os;
     os<<"sameCellDt"<<std::setw(2)<<std::setfill('0')<<plane;
     hSameCellDt_.push_back(hf.DefineTH1D(hdir, os.str(), os.str(), 1600, 0., 16000.));
@@ -34,7 +28,7 @@ void HistAfterPulsing::init(const std::string& hdir,
 
   for(int plane = 1; plane <= maxPlaneNumber; ++plane) {
     std::ostringstream os;
-    os<<"sameCellTDCWidth2VsWidth1"<<std::setw(2)<<std::setfill('0')<<plane;
+    os<<"sameCellTDCWidth2VsWidth1_"<<std::setw(2)<<std::setfill('0')<<plane;
     hSameCellTDCWidthVsWidth_.push_back(hf.DefineTH2D(hdir, os.str(), os.str(), 200, 0., 1000., 200, 0., 1000.));
     hSameCellTDCWidthVsWidth_.back()->SetOption("colz");
   }
@@ -69,19 +63,17 @@ void HistAfterPulsing::fill(TDCHitWPPtrCollection hits) {
       hOccupancyMultiHit_.fill(hits[ihit]->cid());
       const int plane = hits[ihit]->plane();
       const double dt = hits[ihit+1]->time() - hits[ihit]->time();
-      hSameCellDt_[plane]->Fill(dt);
-      hSameCellTDCWidthVsWidth_[plane]->Fill(hits[ihit]->width(), hits[ihit+1]->width());
-      hSameCellTDCWidthVsDt_[plane]->Fill(dt, hits[ihit+1]->width());
+      hSameCellDt_[plane-1]->Fill(dt);
+      hSameCellTDCWidthVsWidth_[plane-1]->Fill(hits[ihit]->width(), hits[ihit+1]->width());
+      hSameCellTDCWidthVsDt_[plane-1]->Fill(dt, hits[ihit+1]->width());
     }
     else {
-      hNumHitsPerCell_[hits[ihit]->plane()]->Fill(extraHitCount);
       hcellHitMultiplicity_->Fill(hits[ihit]->plane(), hits[ihit]->cell(), extraHitCount);
       extraHitCount = 0;
     }
   }
 
   if(!hits.empty()) {
-    hNumHitsPerCell_[hits.back()->plane()]->Fill(extraHitCount);
     hcellHitMultiplicity_->Fill(hits.back()->plane(), hits.back()->cell(), extraHitCount);
   }
 }

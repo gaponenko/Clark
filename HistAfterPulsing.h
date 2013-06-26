@@ -31,7 +31,6 @@ public:
   HistAfterPulsing() : hcellHitMultiplicity_() {}
 
 private :
-  std::vector<TH1*> hNumHitsPerCell_;
   std::vector<TH1*> hSameCellDt_;
   std::vector<TH2*> hSameCellTDCWidthVsWidth_;
   std::vector<TH2*> hSameCellTDCWidthVsDt_;
