@@ -26,11 +26,24 @@ void HistAfterPulsing::init(const std::string& hdir,
     hNumHitsPerCell_.push_back(hf.DefineTH1D(hdir, os.str(), os.str(), 10, -0.5, 9.5));
   }
 
-
   for(int plane = 0; plane <= maxPlaneNumber; ++plane) {
     std::ostringstream os;
     os<<"sameCellDt"<<std::setw(2)<<std::setfill('0')<<plane;
     hSameCellDt_.push_back(hf.DefineTH1D(hdir, os.str(), os.str(), 1600, 0., 16000.));
+  }
+
+  for(int plane = 1; plane <= maxPlaneNumber; ++plane) {
+    std::ostringstream os;
+    os<<"sameCellTDCWidth2VsWidth1"<<std::setw(2)<<std::setfill('0')<<plane;
+    hSameCellTDCWidthVsWidth_.push_back(hf.DefineTH2D(hdir, os.str(), os.str(), 200, 0., 1000., 200, 0., 1000.));
+    hSameCellTDCWidthVsWidth_.back()->SetOption("colz");
+  }
+
+  for(int plane = 1; plane <= maxPlaneNumber; ++plane) {
+    std::ostringstream os;
+    os<<"sameCellTDCWidth2VsDt"<<std::setw(2)<<std::setfill('0')<<plane;
+    hSameCellTDCWidthVsDt_.push_back(hf.DefineTH2D(hdir, os.str(), os.str(), 200, 0., 1000., 200, 0., 1000.));
+    hSameCellTDCWidthVsDt_.back()->SetOption("colz");
   }
 
   hOccupancyMultiHit_.init(hdir, "mutiHitCells", maxPlaneNumber, maxCellNumber, hf, conf);
@@ -54,7 +67,11 @@ void HistAfterPulsing::fill(TDCHitWPPtrCollection hits) {
       ++extraHitCount;
       //std::cout<<"hits = "<<hits<<std::endl;
       hOccupancyMultiHit_.fill(hits[ihit]->cid());
-      hSameCellDt_[hits[ihit]->plane()]->Fill(hits[ihit+1]->time() - hits[ihit]->time());
+      const int plane = hits[ihit]->plane();
+      const double dt = hits[ihit+1]->time() - hits[ihit]->time();
+      hSameCellDt_[plane]->Fill(dt);
+      hSameCellTDCWidthVsWidth_[plane]->Fill(hits[ihit]->width(), hits[ihit+1]->width());
+      hSameCellTDCWidthVsDt_[plane]->Fill(dt, hits[ihit+1]->width());
     }
     else {
       hNumHitsPerCell_[hits[ihit]->plane()]->Fill(extraHitCount);

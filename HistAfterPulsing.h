@@ -33,6 +33,8 @@ public:
 private :
   std::vector<TH1*> hNumHitsPerCell_;
   std::vector<TH1*> hSameCellDt_;
+  std::vector<TH2*> hSameCellTDCWidthVsWidth_;
+  std::vector<TH2*> hSameCellTDCWidthVsDt_;
   HistOccupancy hOccupancyMultiHit_;
   TProfile2D *hcellHitMultiplicity_;
 };
