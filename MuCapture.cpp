@@ -9,6 +9,7 @@
 #include <cassert>
 #include <utility>
 #include <stdexcept>
+#include <limits>
 
 #include "TH1.h"
 #include "TH2.h"
@@ -84,6 +85,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hwidthPCall_.init("MuCapture/pcWidthAll", "pcwidth", 12, H, Conf);
   hwidthDCall_.init("MuCapture/dcWidthAll", "dcwidth", 44, H, Conf);
 
+  hAfterPulsingPCAll_.init("MuCapture/afterPulsingPCAll", 12, 160, H, Conf);
+  hAfterPulsingPCFiltered_.init("MuCapture/afterPulsingPCFiltered", 12, 160, H, Conf);
+
   //----------------------------------------------------------------
   hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
@@ -140,6 +144,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthPCall_.fill(evt.pc_hits());
   hwidthDCall_.fill(evt.dc_hits());
 
+  hAfterPulsingPCAll_.fill(selectHits(evt.pc_hits(), std::numeric_limits<double>::min()));
+
   hOccupancyPCAll_.fill(evt.pc_hits());
   hOccupancyDCAll_.fill(evt.dc_hits());
 
@@ -151,6 +157,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // Sort PC hits into time windows
 
   const TDCHitWPPtrCollection filteredPChits = selectHits(evt.pc_hits(), cutMinTDCWidthPC_);
+  hAfterPulsingPCFiltered_.fill(filteredPChits);
   if(filteredPChits.empty()) {
     return CUT_NOPCHITS;
   }

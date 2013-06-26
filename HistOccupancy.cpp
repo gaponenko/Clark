@@ -30,8 +30,13 @@ void HistOccupancy::init(const std::string& hdir,
 }
 
 //================================================================
+void HistOccupancy::fill(const WireCellId& cid) {
+  hitMap_->Fill(cid.plane, cid.cell);
+}
+
+//================================================================
 void HistOccupancy::fill(const TDCHitWP& hit) {
-  hitMap_->Fill(hit.plane(), hit.cell());
+  fill(hit.cid());
 }
 
 //================================================================

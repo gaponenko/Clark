@@ -16,6 +16,7 @@
 #include "MuCapStreamAnalysis.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
+#include "HistAfterPulsing.h"
 #include "HistMuCapTruth.h"
 #include "HistAccidentals.h"
 #include "HistWinTime.h"
@@ -146,6 +147,9 @@ private :
 
   HistTDCWidth hwidthPCall_;
   HistTDCWidth hwidthDCall_;
+
+  HistAfterPulsing hAfterPulsingPCAll_;
+  HistAfterPulsing hAfterPulsingPCFiltered_;
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;

@@ -1,11 +1,13 @@
 // Andrei Gaponenko, 2013
 
-#ifndef HistOccupancy_h
-#define HistOccupancy_h
+#ifndef HistAfterPulsing_h
+#define HistAfterPulsing_h
 
+#include <string>
 #include <vector>
 
 #include "TDCHitWP.h"
+#include "HistOccupancy.h"
 
 class TH1;
 class TH2;
@@ -13,25 +15,23 @@ class TH2;
 class HistogramFactory;
 class ConfigFile;
 
+
 //================================================================
-class HistOccupancy {
+class HistAfterPulsing {
 public:
   void init(const std::string& hdir,
-            const std::string& namePrefix,
             unsigned maxPlaneNumber,
             unsigned maxCellNumber,
             HistogramFactory &hf,
             const ConfigFile &conf);
 
-  void fill(const WireCellId& cid);
-  void fill(const TDCHitWP& hit);
-  void fill(const TDCHitWPCollection& hits);
-  void fill(const TDCHitWPPtrCollection& hits);
-
-  HistOccupancy() : hitMap_() {}
+  // pass by value because the method needs a copy anyway
+  void fill(TDCHitWPPtrCollection hits);
 
 private :
-  TH2 *hitMap_;
+  std::vector<TH1*> hNumHitsPerCell_;
+  std::vector<TH1*> hSameCellDt_;
+  HistOccupancy hOccupancyMultiHit_;
 };
 
-#endif/*HistOccupancy_h*/
+#endif/*HistAfterPulsing_h*/

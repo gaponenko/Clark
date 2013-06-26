@@ -17,6 +17,14 @@ struct WireCellId {
     return (plane < b.plane) ||
       (plane == b.plane) && (cell < b.cell);
   }
+
+  bool operator==(const WireCellId& b) const {
+    return (plane == b.plane) && (cell == b.cell);
+  }
+
+  bool operator!=(const WireCellId& b) const {
+    return !(*this == b);
+  }
 };
 
 //================================================================
