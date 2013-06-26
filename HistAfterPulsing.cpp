@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "TH1.h"
+#include "TProfile2D.h"
 
 #include "HistogramFactory.h"
 #include "ConfigFile.h"
@@ -33,6 +34,11 @@ void HistAfterPulsing::init(const std::string& hdir,
   }
 
   hOccupancyMultiHit_.init(hdir, "mutiHitCells", maxPlaneNumber, maxCellNumber, hf, conf);
+
+  hcellHitMultiplicity_ = hf.DefineTProfile2D(hdir, "extraHitMultiplicity", "extraHitMultiplicity",
+                                              1+maxPlaneNumber, -0.5, maxPlaneNumber+0.5,
+                                              1+maxCellNumber, -0.5, maxCellNumber+0.5);
+  hcellHitMultiplicity_->SetOption("colz");
 }
 
 //================================================================
@@ -52,12 +58,14 @@ void HistAfterPulsing::fill(TDCHitWPPtrCollection hits) {
     }
     else {
       hNumHitsPerCell_[hits[ihit]->plane()]->Fill(extraHitCount);
+      hcellHitMultiplicity_->Fill(hits[ihit]->plane(), hits[ihit]->cell(), extraHitCount);
       extraHitCount = 0;
     }
   }
 
   if(!hits.empty()) {
     hNumHitsPerCell_[hits.back()->plane()]->Fill(extraHitCount);
+    hcellHitMultiplicity_->Fill(hits.back()->plane(), hits.back()->cell(), extraHitCount);
   }
 }
 

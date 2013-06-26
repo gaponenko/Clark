@@ -11,6 +11,7 @@
 
 class TH1;
 class TH2;
+class TProfile2D;
 
 class HistogramFactory;
 class ConfigFile;
@@ -27,11 +28,13 @@ public:
 
   // pass by value because the method needs a copy anyway
   void fill(TDCHitWPPtrCollection hits);
+  HistAfterPulsing() : hcellHitMultiplicity_() {}
 
 private :
   std::vector<TH1*> hNumHitsPerCell_;
   std::vector<TH1*> hSameCellDt_;
   HistOccupancy hOccupancyMultiHit_;
+  TProfile2D *hcellHitMultiplicity_;
 };
 
 #endif/*HistAfterPulsing_h*/
