@@ -74,6 +74,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hTrigPCWinStartPlane_ = H.DefineTH1D("MuCapture", "trigPCWinStartPlane", "Trig win start PC plane", 12, 0.5, 12.5);
 
+  hTrigPCWinGaps_ = H.DefineTH2D("MuCapture", "trigPCWinGaps", "Trig win PC gap end vs start", 13, -0.5, 12.5, 13, -0.5, 12.5);
+  hTrigPCWinGaps_->SetOption("colz");
+
   hWinDCUnassignedCount_ = H.DefineTH1D("MuCapture", "winDCUnassignedCount", "Count of unassigned DC hits", 101, -0.5, 100.5);
 
   // Make the bin size half a cell
@@ -201,6 +204,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   winTimeBeforeTrigPCWinGaps_.fill(wres);
+  for(int i = 0; i + 1 < trigPCRange.segments().size(); ++i) {
+    hTrigPCWinGaps_->Fill(trigPCRange.segments()[i].max, trigPCRange.segments()[i+1].min);
+  }
   if(cutTrigPCWinGapsEnabled_ && !trigPCRange.noGaps()) {
     return CUT_TRIGPCWIN_GAPS;
   }
