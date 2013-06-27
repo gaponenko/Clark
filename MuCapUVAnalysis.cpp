@@ -13,6 +13,23 @@
 #include "PlaneRange.h"
 
 //================================================================
+namespace {
+  std::string formatTrack(const EventClass& evt, unsigned i) {
+    std::ostringstream os;
+    os<<"track["<<i<<"]: ptot="<<evt.ptot[i]
+      <<", costh="<<evt.costh[i]
+      <<", time="<<evt.hefit_time[i]
+      <<", z="<<evt.hefit_z[i]
+      <<", start="<<evt.hefit_pstart[i]
+      <<", stop="<<evt.hefit_pstop[i]
+      <<", u0="<<evt.hefit_u0[i]
+      <<", v0="<<evt.hefit_v0[i]
+      ;
+    return os.str();
+  }
+}
+
+//================================================================
 void MuCapUVAnalysis::init(const std::string& hdir,
                            HistogramFactory &hf,
                            const ConfigFile& conf,
@@ -145,14 +162,23 @@ unsigned MuCapUVAnalysis::process(const EventClass& evt,
                                   const ROOT::Math::XYPoint& muStopUV
                                   )
 {
-  unsigned numSelected(0);
+  std::vector<unsigned> selected;
   for(int i = 0; i < evt.ntr; ++i) {
-    if(processTrack(i, evt, timeWinStart, globalClusters, muStopUV)) {
-      ++numSelected;
+   if(processTrack(i, evt, timeWinStart, globalClusters, muStopUV)) {
+      selected.push_back(i);
     }
   }
-  hNumTracks_->Fill(numSelected);
-  return numSelected;
+  hNumTracks_->Fill(selected.size());
+
+  //// Look at the multiple-track events
+  // if(selected.size() > 1) {
+  //   std::cout<<"Multiple selected tracks in run "<<evt.nrun<<", event "<<evt.nevt<<std::endl;
+  //   for(unsigned i=0; i < selected.size(); ++i) {
+  //     std::cout<<"\t"<<formatTrack(evt, selected[i])<<std::endl;
+  //   }
+  // }
+
+  return selected.size();
 }
 
 //================================================================
