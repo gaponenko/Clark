@@ -79,7 +79,7 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   hhsZContained_.init(hdir+"/hsZContained", hf, geom, conf);
 
   //----------------------------------------------------------------
-  uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::MIXED);
+  uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::MIXED, cutWinTimeMin - 100./*FIXME*/);
   hwidthPCTightProtons_.init(hdir+"/pcWidthTightProtons", "pcpwidth", 12, hf, conf);
   hwidthDCTightProtons_.init(hdir+"/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
   hwidthPCTightDIO_.init(hdir+"/pcWidthTightDIO", "pcpwidth", 12, hf, conf);

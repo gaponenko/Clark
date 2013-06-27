@@ -27,6 +27,7 @@ class MuCapUVAnalysis {
     ax->SetBinLabel(1+CUT_IERROR, "ierror");
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
+    ax->SetBinLabel(1+CUT_TIME, "time");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
     ax->SetBinLabel(1+CUT_COSTHETAMIN, "cos(theta) min");
@@ -45,6 +46,7 @@ public:
     CUT_IERROR,
     CUT_CHARGE,
     CUT_STREAM,
+    CUT_TIME,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
     CUT_COSTHETAMAX,
@@ -57,14 +59,18 @@ public:
     CUTS_END
   };
 
-  void init(const std::string& hdir, HistogramFactory &hf, const ConfigFile &conf, TimeWindow::StreamType cutStream);
+  void init(const std::string& hdir,
+            HistogramFactory &hf,
+            const ConfigFile &conf,
+            TimeWindow::StreamType cutStream,
+            double cutTrackMinTime);
 
   // Returns the index of an accepted track in the event, or -1
   int process(const EventClass& evt, const ROOT::Math::XYPoint& muStopUV);
 
   MuCapUVAnalysis()
     : cutCharge_()
-    , cutTrackWinTimeDiff_()
+    , cutTrackMinTime_()
     , cutTrackRmax_()
     , cutCosThetaMin_()
     , cutCosThetaMax_()
@@ -77,9 +83,7 @@ public:
     , h_cuts_r()
     , h_cuts_p()
 
-    , trackwintimeLargeScale_()
-    , trackwintime_()
-
+    , trackTime_()
     , trackRL_()
     , costhVsPtot_()
 
@@ -95,6 +99,7 @@ public:
     , final_costhVsPtot_()
     , final_u0v0_()
     , final_trackROut_()
+    , final_trackTime_()
 
     , hNumTracks_()
   {}
@@ -102,7 +107,7 @@ public:
 private :
   int cutCharge_;
   TimeWindow::StreamType cutStream_;
-  double cutTrackWinTimeDiff_;
+  double cutTrackMinTime_;
   double cutTrackRmax_;
   double cutCosThetaMin_;
   double cutCosThetaMax_;
@@ -115,8 +120,7 @@ private :
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
-  TH1 *trackwintimeLargeScale_;
-  TH1 *trackwintime_;
+  TH1 *trackTime_;
 
   TH2 *trackRL_;
   TH2 *costhVsPtot_;
@@ -132,6 +136,7 @@ private :
   TH2 *final_costhVsPtot_;
   TH2 *final_u0v0_;
   TH1 *final_trackROut_;
+  TH1 *final_trackTime_;
 
   TH1 *hNumTracks_;
 

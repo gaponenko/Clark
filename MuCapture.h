@@ -14,6 +14,7 @@
 #include "MuCapPACTCut.h"
 #include "MuCapProtonWindow.h"
 #include "MuCapStreamAnalysis.h"
+#include "MuCapUVAnalysis.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
 #include "HistAfterPulsing.h"
@@ -170,6 +171,9 @@ private :
 
   HistWinTime winTimeBeforeTrigDCWinType_;
   HistWinTime winTimeMuStop_;
+
+  MuCapUVAnalysis dioUp_;
+  MuCapUVAnalysis dioDn_;
 
   HistMuCapTruth hTruthAll_;
 

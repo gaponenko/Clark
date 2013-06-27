@@ -110,6 +110,14 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   winTimeBeforeTrigDCWinType_.init("MuCapture/winTime", "beforeTrigDCWinType", H, Conf);
   winTimeMuStop_.init("MuCapture/winTime", "muStop", H, Conf);
 
+  dioUp_.init("MuCapture/DIOUp", H, Conf,
+              TimeWindow::UPSTREAM,
+              Conf.read<double>("MuCapture/DIOUp/cutMinTime"));
+
+  dioDn_.init("MuCapture/DIODn", H, Conf,
+              TimeWindow::DOWNSTREAM,
+              Conf.read<double>("MuCapture/DIODn/cutMinTime"));
+
   if(doMCTruth_) {
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
   }
@@ -295,6 +303,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   haccidentals_.fill(wres);
   protonWindow_.process(muStop, wres, evt);
   anDnLate_.process(evt, wres, muStop, afterTrigClusters);
+
+  dioUp_.process(evt, muStop);
+  dioDn_.process(evt, muStop);
 
   if(muStopOutFile_) {
     muStopOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;

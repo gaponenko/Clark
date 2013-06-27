@@ -39,10 +39,12 @@ namespace {
 void MuCapUVAnalysis::init(const std::string& hdir,
                            HistogramFactory &hf,
                            const ConfigFile& conf,
-                           TimeWindow::StreamType cutStream)
+                           TimeWindow::StreamType cutStream,
+                           double cutMinTime)
 {
   cutCharge_ = -1;
   cutStream_ = cutStream;
+  cutTrackMinTime_ = cutMinTime;
   cutTrackRmax_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackRmax");
   cutCosThetaMin_ = conf.read<double>("MuCapture/UVAnalysis/cutCosThetaMin");
   cutCosThetaMax_ = conf.read<double>("MuCapture/UVAnalysis/cutCosThetaMax");
@@ -132,6 +134,13 @@ void MuCapUVAnalysis::init(const std::string& hdir,
                                    "max track distance from the Z axis",
                                    400, 0, 40.);
 
+  trackTime_ = hf.DefineTH1D(hdir, "trackTime", "track time",
+                             1100, -1000., 10000.);
+
+  final_trackTime_ = hf.DefineTH1D(hdir, "final_trackTime",
+                                   "final track time",
+                                   1100, -1000., 10000.);
+
   hNumTracks_ = hf.DefineTH1D(hdir, "numAcceptedTracks",
                               "numAcceptedTracks",
                               10, -0.5, 9.5);
@@ -206,6 +215,12 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
+  trackTime_->Fill(evt.hefit_time[i]);
+  if(evt.hefit_time[i] < cutTrackMinTime_) {
+    return CUT_TIME;
+  }
+
+  //----------------------------------------------------------------
   // Make sure the tracks are fully contained in the transverse direction
   trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
@@ -265,6 +280,7 @@ analyzeTrack(int i, const EventClass& evt,
   final_costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
   final_trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
+  final_trackTime_->Fill(evt.hefit_time[i]);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;

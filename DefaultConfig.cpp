@@ -332,12 +332,12 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/PACT/intercepta_22", -148.1);
         SetKey(Conf, "MuCapture/PACT/interceptb_22", 350);
 
+        SetKey(Conf, "MuCapture/DIOUp/cutMinTime", 300.);
+        SetKey(Conf, "MuCapture/DIODn/cutMinTime", 300.);
+
         // make sure the planes are not adjacent at dz=0.4cm
         SetKey(Conf, "MuCapture/ProtonWindow/Containment1D/minPlanedz", 0.5);
 
-        //# this must be very loose to use DIOs for proton normalization,
-        //# because there is no similar cut for protons
-        //        SetKey(Conf, "MuCapture/UVAnalysis/cutTrackTimeDiff", 100.);
         SetKey(Conf, "MuCapture/UVAnalysis/cutTrackRmax", 6.3);//cm
         // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
         SetKey(Conf, "MuCapture/UVAnalysis/cutCosThetaMin", 0.54);
