@@ -116,6 +116,9 @@ private :
   std::string muStopOutFileName_;
   std::ofstream muStopOutFile_;
 
+  std::string uvOutFileName_;
+  std::ofstream uvOutFile_;
+
   double cutMinTDCWidthPC_;
   double cutMinTDCWidthDC_;
 

@@ -10,6 +10,7 @@
 #include <utility>
 #include <stdexcept>
 #include <limits>
+#include <iomanip>
 
 #include "TH1.h"
 #include "TH2.h"
@@ -33,11 +34,20 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   doMCTruth_ = Conf.read<bool>("TruthBank/Do");
   inputNumberList_ = EventList(Conf.read<std::string>("MuCapture/inputEventNumberFile"));
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
+
   muStopOutFileName_ = Conf.read<std::string>("MuCapture/muStopOutFileName", "");
   if(!muStopOutFileName_.empty()) {
     muStopOutFile_.open(muStopOutFileName_.c_str());
     if(!muStopOutFile_) {
       throw std::runtime_error("Error opening output file "+muStopOutFileName_);
+    }
+  }
+
+  uvOutFileName_ = Conf.read<std::string>("MuCapture/uvOutFileName", "");
+  if(!uvOutFileName_.empty()) {
+    uvOutFile_.open(uvOutFileName_.c_str());
+    if(!uvOutFile_) {
+      throw std::runtime_error("Error opening output file "+uvOutFileName_);
     }
   }
 
@@ -304,8 +314,14 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   protonWindow_.process(muStop, wres, evt);
   anDnLate_.process(evt, wres, muStop, afterTrigClusters);
 
-  dioUp_.process(evt, muStop);
-  dioDn_.process(evt, muStop);
+  int idio = dioUp_.process(evt, muStop);
+  if(idio >= 0 && uvOutFile_) {
+    uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+  }
+  idio = dioDn_.process(evt, muStop);
+  if(idio >= 0 && uvOutFile_) {
+    uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+  }
 
   if(muStopOutFile_) {
     muStopOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;

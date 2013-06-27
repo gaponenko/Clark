@@ -4,3 +4,4 @@ Detector/GeometryFile = 61
 Detector/Geometry/dc_ppc = 25
 Detector/Geometry/pc_ppc = 5
 MuCapture/ProtonWindow/TightProtonsFileName = tightProtons.txt
+# MuCapture/uvOutFileName = muStopUV.txt
