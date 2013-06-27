@@ -1,3 +1,5 @@
+// Look at multiple hits per readout channel.
+//
 // Andrei Gaponenko, 2013
 
 #ifndef HistAfterPulsing_h

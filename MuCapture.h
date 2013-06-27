@@ -17,6 +17,7 @@
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
 #include "HistAfterPulsing.h"
+#include "HistXtalk.h"
 #include "HistMuCapTruth.h"
 #include "HistAccidentals.h"
 #include "HistWinTime.h"
@@ -152,6 +153,9 @@ private :
 
   HistAfterPulsing hAfterPulsingPCAll_;
   HistAfterPulsing hAfterPulsingPCFiltered_;
+  HistXtalk hXtalkSameWirePC_;
+  HistXtalk hXtalk1PC_;
+  HistXtalk hXtalkPlanePC_;
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;

@@ -55,6 +55,11 @@ void HistAfterPulsing::fill(TDCHitWPPtrCollection hits) {
   // here we have hits sorted by cell then time
   //std::cout<<"hits = "<<hits<<std::endl;
 
+  //----------------------------------------------------------------
+  // Note that here we consider hit1-hit2 combinations only for hits
+  // that are on the same wire and adjacent in time.  We don't look at
+  // all possible combinations of same-wire hits.
+
   int extraHitCount = 0;
   for(int ihit = 0; ihit + 1 < hits.size(); ++ihit) {
     if(hits[ihit]->cid() == hits[ihit+1]->cid()) {

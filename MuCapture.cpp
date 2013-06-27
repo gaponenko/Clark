@@ -91,6 +91,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hAfterPulsingPCAll_.init("MuCapture/afterPulsingPCAll", 12, 160, H, Conf);
   hAfterPulsingPCFiltered_.init("MuCapture/afterPulsingPCFiltered", 12, 160, H, Conf);
 
+  hXtalkSameWirePC_.init("MuCapture/xtalkSameWirePC", 12, 0, 0, H, Conf);
+  hXtalk1PC_.init("MuCapture/xtalk1PC", 12, 1, 1, H, Conf);
+  hXtalkPlanePC_.init("MuCapture/xtalkPlanePC", 12, 1, 999, H, Conf);
+
   //----------------------------------------------------------------
   hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
@@ -147,7 +151,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthPCall_.fill(evt.pc_hits());
   hwidthDCall_.fill(evt.dc_hits());
 
-  hAfterPulsingPCAll_.fill(selectHits(evt.pc_hits(), std::numeric_limits<double>::min()));
+  const TDCHitWPPtrCollection allPCHits = selectHits(evt.pc_hits(), std::numeric_limits<double>::min());
+  hAfterPulsingPCAll_.fill(allPCHits);
+
+  hXtalkSameWirePC_.fill(allPCHits);
+  hXtalk1PC_.fill(allPCHits);
+  hXtalkPlanePC_.fill(allPCHits);
 
   hOccupancyPCAll_.fill(evt.pc_hits());
   hOccupancyDCAll_.fill(evt.dc_hits());
