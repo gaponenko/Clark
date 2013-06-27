@@ -337,7 +337,7 @@ void SetDefault(ConfigFile &Conf)
 
         //# this must be very loose to use DIOs for proton normalization,
         //# because there is no similar cut for protons
-        SetKey(Conf, "MuCapture/UVAnalysis/cutTrackTimeDiff", 100.);
+        //        SetKey(Conf, "MuCapture/UVAnalysis/cutTrackTimeDiff", 100.);
         SetKey(Conf, "MuCapture/UVAnalysis/cutTrackRmax", 6.3);//cm
         // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
         SetKey(Conf, "MuCapture/UVAnalysis/cutCosThetaMin", 0.54);
@@ -349,7 +349,7 @@ void SetDefault(ConfigFile &Conf)
         //
         SetKey(Conf, "MuCapture/UVAnalysis/cutTrackMuonOffset", 0.4);//cm
         // Empty file name disables the output
-        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
+        //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
         //# Use downstream PC planes as a veto
         //NB: need implement ganged wires to include PC9,10 in the range.

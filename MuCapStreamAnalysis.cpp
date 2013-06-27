@@ -184,8 +184,8 @@ analyze(const EventClass& evt,
   //std::cout<<"AG: nHitPlanesUp = "<<nHitPlanesUp<<", nHitPlanesDn = "<<nHitPlanesDn<<std::endl;
   hhsAfterTimeCuts_.fill(protonGlobalClusters);
 
-  const unsigned numDIO = uvan_.process(evt, protonWindow.tstart, protonGlobalClusters, muStopUV);
-  if(numDIO) {
+  const int iDIO = uvan_.process(evt, muStopUV);
+  if(iDIO >= 0) {
     hwidthPCTightDIO_.fill(protonWindow.pcHits);
     hwidthDCTightDIO_.fill(protonWindow.dcHits);
     hcdio_.fill(protonGlobalClusters);

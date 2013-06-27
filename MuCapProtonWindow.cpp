@@ -184,8 +184,8 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
     return CUT_RANGE_GAPS;
   }
 
-  const unsigned numDIO = uvan_.process(evt,  protonWindow.tstart, global, muStopUV);
-  if(numDIO) {
+  const int iDIO = uvan_.process(evt, muStopUV);
+  if(iDIO >= 0) {
 
     hwidthPCTightDIO_.fill(protonPCHits);
     hwidthDCTightDIO_.fill(protonDCHits);

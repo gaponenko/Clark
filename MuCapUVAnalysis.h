@@ -1,4 +1,5 @@
-// Extract (uv) distribution of selected muons using reconstructed DIO tracks.
+// Select good DIO tracks.  In case of multiple tracks prefer those
+// that start closer to the target.
 //
 // Andrei Gaponenko, 2013
 
@@ -6,7 +7,6 @@
 #define MuCapUVAnalysis_h
 
 #include <string>
-#include <fstream>
 
 #include "TimeWindow.h"
 #include "WireCluster.h"
@@ -27,7 +27,6 @@ class MuCapUVAnalysis {
     ax->SetBinLabel(1+CUT_IERROR, "ierror");
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
-    ax->SetBinLabel(1+CUT_TIME, "time");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
     ax->SetBinLabel(1+CUT_COSTHETAMIN, "cos(theta) min");
@@ -46,7 +45,6 @@ public:
     CUT_IERROR,
     CUT_CHARGE,
     CUT_STREAM,
-    CUT_TIME,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
     CUT_COSTHETAMAX,
@@ -61,12 +59,8 @@ public:
 
   void init(const std::string& hdir, HistogramFactory &hf, const ConfigFile &conf, TimeWindow::StreamType cutStream);
 
-  // Returns the number of accepted tracks
-  unsigned process(const EventClass& evt,
-                   double timeWinStart,
-                   const ClustersByPlane& globalClusters,
-                   const ROOT::Math::XYPoint& muStopUV
-                   );
+  // Returns the index of an accepted track in the event, or -1
+  int process(const EventClass& evt, const ROOT::Math::XYPoint& muStopUV);
 
   MuCapUVAnalysis()
     : cutCharge_()
@@ -90,7 +84,6 @@ public:
     , costhVsPtot_()
 
     , hStartStop_()
-    , hHitRange_()
     , trackz_()
 
     , trackMuonOffset_()
@@ -119,9 +112,6 @@ private :
   double cutPtotMax_;
   double cutTrackMuonOffset_;
 
-  std::string uvOutFileName_;
-  std::ofstream uvOutFile_;
-
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
@@ -132,7 +122,6 @@ private :
   TH2 *costhVsPtot_;
 
   TH2 *hStartStop_;
-  TH2 *hHitRange_;
   TH1 *trackz_;
   TH2 *trackMuonOffset_;
   TH1 *trackMuondr_;
@@ -149,15 +138,11 @@ private :
   // true iff the track passed the cuts
   bool processTrack(int itrack,
                     const EventClass& evt,
-                    double timeWinStart,
-                    const ClustersByPlane& globalClusters,
                     const ROOT::Math::XYPoint& muStopUV
                     );
 
   CutNumber analyzeTrack(int itrack,
                          const EventClass& evt,
-                         double timeWinStart,
-                         const ClustersByPlane& globalClusters,
                          const ROOT::Math::XYPoint& muStopUV
                          );
 };

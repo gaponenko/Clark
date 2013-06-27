@@ -1,7 +1,9 @@
 // Andrei Gaponenko, 2013
 
 #include "MuCapUVAnalysis.h"
-#include <iomanip>
+
+#include <cmath>
+#include <sstream>
 
 #include "TH1.h"
 #include "TH2.h"
@@ -27,6 +29,10 @@ namespace {
       ;
     return os.str();
   }
+
+  int distanceToTarget(int globalPlane) {
+    return int(std::abs((globalPlane - 28.5)));
+  }
 }
 
 //================================================================
@@ -37,7 +43,6 @@ void MuCapUVAnalysis::init(const std::string& hdir,
 {
   cutCharge_ = -1;
   cutStream_ = cutStream;
-  cutTrackWinTimeDiff_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackTimeDiff");
   cutTrackRmax_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackRmax");
   cutCosThetaMin_ = conf.read<double>("MuCapture/UVAnalysis/cutCosThetaMin");
   cutCosThetaMax_ = conf.read<double>("MuCapture/UVAnalysis/cutCosThetaMax");
@@ -46,7 +51,6 @@ void MuCapUVAnalysis::init(const std::string& hdir,
   cutPtotMin_ = conf.read<double>("MuCapture/UVAnalysis/cutPtotMin");
   cutPtotMax_ = conf.read<double>("MuCapture/UVAnalysis/cutPtotMax");
   cutTrackMuonOffset_ = conf.read<double>("MuCapture/UVAnalysis/cutTrackMuonOffset");
-  uvOutFileName_ = conf.read<std::string>("MuCapture/UVAnalysis/uvOutFileName");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Tracks rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -58,27 +62,12 @@ void MuCapUVAnalysis::init(const std::string& hdir,
   h_cuts_p->SetStats(kFALSE);
 
   //----------------------------------------------------------------
-  trackwintimeLargeScale_ = hf.DefineTH1D(hdir, "trackWinTimeLS",
-                                          "t(track) - t(win)",
-                                          1100, -10000., 1000.);
-
-  trackwintime_ = hf.DefineTH1D(hdir, "trackWinTime",
-                                "t(track) - t(win)",
-                                700, -200., 500.);
-
   hStartStop_ = hf.DefineTH2D(hdir,
                               "startStopPlane",
                               "Track stop vs start plane",
                               56, 0.5, 56.5, 56, 0.5, 56.5);
 
   hStartStop_->SetOption("colz");
-
-  hHitRange_ = hf.DefineTH2D(hdir,
-                             "hitRange",
-                             "time window hit range stop vs start",
-                             56, 0.5, 56.5, 56, 0.5, 56.5);
-
-  hHitRange_->SetOption("colz");
 
   trackz_ = hf.DefineTH1D(hdir, "trackz",
                           "trackz",
@@ -143,53 +132,50 @@ void MuCapUVAnalysis::init(const std::string& hdir,
                                    "max track distance from the Z axis",
                                    400, 0, 40.);
 
-  hNumTracks_ = hf.DefineTH1D(hdir, "numSelectedTracks",
-                              "numSelectedTracks",
+  hNumTracks_ = hf.DefineTH1D(hdir, "numAcceptedTracks",
+                              "numAcceptedTracks",
                               10, -0.5, 9.5);
-
-  if(!uvOutFileName_.empty()) {
-    uvOutFile_.open(uvOutFileName_.c_str());
-    if(!uvOutFile_) {
-      throw std::runtime_error("Error opening output file "+uvOutFileName_);
-    }
-  }
 }
 
 //================================================================
-unsigned MuCapUVAnalysis::process(const EventClass& evt,
-                                  double timeWinStart,
-                                  const ClustersByPlane& globalClusters,
-                                  const ROOT::Math::XYPoint& muStopUV
-                                  )
+int MuCapUVAnalysis::process(const EventClass& evt,
+                             const ROOT::Math::XYPoint& muStopUV
+                             )
 {
-  std::vector<unsigned> selected;
+  std::vector<unsigned> accepted;
   for(int i = 0; i < evt.ntr; ++i) {
-   if(processTrack(i, evt, timeWinStart, globalClusters, muStopUV)) {
-      selected.push_back(i);
+    if(processTrack(i, evt, muStopUV)) {
+      accepted.push_back(i);
     }
   }
-  hNumTracks_->Fill(selected.size());
+  hNumTracks_->Fill(accepted.size());
 
   //// Look at the multiple-track events
-  // if(selected.size() > 1) {
-  //   std::cout<<"Multiple selected tracks in run "<<evt.nrun<<", event "<<evt.nevt<<std::endl;
-  //   for(unsigned i=0; i < selected.size(); ++i) {
-  //     std::cout<<"\t"<<formatTrack(evt, selected[i])<<std::endl;
+  // if(accepted.size() > 1) {
+  //   std::cout<<"Multiple accepted tracks in run "<<evt.nrun<<", event "<<evt.nevt<<std::endl;
+  //   for(unsigned i=0; i < accepted.size(); ++i) {
+  //     std::cout<<"\t"<<formatTrack(evt, accepted[i])<<std::endl;
   //   }
   // }
 
-  return selected.size();
+  int selected = accepted.empty() ? -1 : 0;
+  // find a track that starts closer to the target
+  for(int i=1; i<accepted.size(); ++i) {
+    if(distanceToTarget(evt.hefit_pstart[i]) < distanceToTarget(evt.hefit_pstart[selected])) {
+      selected = i;
+    }
+  }
+
+  return selected;
 }
 
 //================================================================
 bool MuCapUVAnalysis::processTrack(int itrack,
                                    const EventClass& evt,
-                                   double timeWinStart,
-                                   const ClustersByPlane& globalClusters,
                                    const ROOT::Math::XYPoint& muStopUV
                                    )
 {
-  CutNumber c = analyzeTrack(itrack, evt, timeWinStart, globalClusters, muStopUV);
+  CutNumber c = analyzeTrack(itrack, evt, muStopUV);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -200,8 +186,6 @@ bool MuCapUVAnalysis::processTrack(int itrack,
 //================================================================
 MuCapUVAnalysis::CutNumber MuCapUVAnalysis::
 analyzeTrack(int i, const EventClass& evt,
-             double timeWinStart,
-             const ClustersByPlane& globalClusters,
              const ROOT::Math::XYPoint& muStopUV
              )
 {
@@ -219,14 +203,6 @@ analyzeTrack(int i, const EventClass& evt,
   if((cutStream_==TimeWindow::DOWNSTREAM)&&(evt.costh[i] < 0.) ||
      (cutStream_==TimeWindow::UPSTREAM)&&(evt.costh[i] > 0.) ) {
     return CUT_STREAM;
-  }
-
-  //----------------------------------------------------------------
-  const double dt = evt.hefit_time[i] - timeWinStart;
-  trackwintimeLargeScale_->Fill(dt);
-  trackwintime_->Fill(dt);
-  if(std::abs(dt) > cutTrackWinTimeDiff_) {
-    return CUT_TIME;
   }
 
   //----------------------------------------------------------------
@@ -274,9 +250,6 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  const PlaneRange gr = findPlaneRange(globalClusters);
-  hHitRange_->Fill(gr.min(), gr.max());
-
   hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
   // Select tracks that go from tgt to the end of tracker
   // if( (31== evt.hefit_pstart[i]) && (52 == evt.hefit_pstop[i])) {}
@@ -292,10 +265,6 @@ analyzeTrack(int i, const EventClass& evt,
   final_costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
   final_trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
-
-  if(uvOutFile_) {
-    uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[i]<<"\t"<<evt.hefit_v0[i]<<std::endl;
-  }
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;
