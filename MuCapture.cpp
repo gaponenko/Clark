@@ -31,6 +31,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   }
   Log->info( "Register MuCapture module");
 
+  fillXtalkPC_ = Conf.read<bool>("MuCapture/fillXtalkPC");
+  fillXtalkDC_ = Conf.read<bool>("MuCapture/fillXtalkDC");
   doMCTruth_ = Conf.read<bool>("TruthBank/Do");
   inputNumberList_ = EventList(Conf.read<std::string>("MuCapture/inputEventNumberFile"));
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
@@ -98,12 +100,21 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hwidthPCall_.init("MuCapture/pcWidthAll", "pcwidth", 12, H, Conf);
   hwidthDCall_.init("MuCapture/dcWidthAll", "dcwidth", 44, H, Conf);
 
-  hAfterPulsingPCAll_.init("MuCapture/afterPulsingPCAll", 12, 160, H, Conf);
-  hAfterPulsingPCFiltered_.init("MuCapture/afterPulsingPCFiltered", 12, 160, H, Conf);
+  if(fillXtalkPC_) {
+    hAfterPulsingPCAll_.init("MuCapture/afterPulsingPCAll", 12, 160, H, Conf);
+    hAfterPulsingPCFiltered_.init("MuCapture/afterPulsingPCFiltered", 12, 160, H, Conf);
+    hXtalkSameWirePC_.init("MuCapture/xtalkSameWirePC", 12, 0, 0, H, Conf);
+    hXtalk1PC_.init("MuCapture/xtalk1PC", 12, 1, 1, H, Conf);
+    hXtalkPlanePC_.init("MuCapture/xtalkPlanePC", 12, 1, 999, H, Conf);
+  }
 
-  hXtalkSameWirePC_.init("MuCapture/xtalkSameWirePC", 12, 0, 0, H, Conf);
-  hXtalk1PC_.init("MuCapture/xtalk1PC", 12, 1, 1, H, Conf);
-  hXtalkPlanePC_.init("MuCapture/xtalkPlanePC", 12, 1, 999, H, Conf);
+  if(fillXtalkDC_) {
+    hAfterPulsingDCAll_.init("MuCapture/afterPulsingDCAll", 44, 80, H, Conf);
+    hAfterPulsingDCFiltered_.init("MuCapture/afterPulsingDCFiltered", 44, 80, H, Conf);
+    hXtalkSameWireDC_.init("MuCapture/xtalkSameWireDC", 44, 0, 0, H, Conf);
+    hXtalk1DC_.init("MuCapture/xtalk1DC", 44, 1, 1, H, Conf);
+    hXtalkPlaneDC_.init("MuCapture/xtalkPlaneDC", 44, 1, 999, H, Conf);
+  }
 
   //----------------------------------------------------------------
   hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
@@ -178,12 +189,24 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthDCall_.fill(evt.dc_hits());
 
   const TDCHitWPPtrCollection allPCHits = selectHits(evt.pc_hits(), std::numeric_limits<double>::min());
-  const TDCHitWPPtrCollection allDCHits = selectHits(evt.dc_hits(), std::numeric_limits<double>::min());
-  hAfterPulsingPCAll_.fill(allPCHits);
+  const TDCHitWPPtrCollection filteredPChits = selectHits(evt.pc_hits(), cutMinTDCWidthPC_);
+  if(fillXtalkPC_) {
+    hAfterPulsingPCAll_.fill(allPCHits);
+    hAfterPulsingPCFiltered_.fill(filteredPChits);
+    hXtalkSameWirePC_.fill(allPCHits);
+    hXtalk1PC_.fill(allPCHits);
+    hXtalkPlanePC_.fill(allPCHits);
+  }
 
-  hXtalkSameWirePC_.fill(allPCHits);
-  hXtalk1PC_.fill(allPCHits);
-  hXtalkPlanePC_.fill(allPCHits);
+  const TDCHitWPPtrCollection allDCHits = selectHits(evt.dc_hits(), std::numeric_limits<double>::min());
+  const TDCHitWPPtrCollection filteredDChits = selectHits(evt.dc_hits(), cutMinTDCWidthDC_);
+  if(fillXtalkDC_) {
+    hAfterPulsingDCAll_.fill(allDCHits);
+    hAfterPulsingDCFiltered_.fill(filteredDChits);
+    hXtalkSameWireDC_.fill(allDCHits);
+    hXtalk1DC_.fill(allDCHits);
+    hXtalkPlaneDC_.fill(allDCHits);
+  }
 
   hOccupancyPCAll_.fill(evt.pc_hits());
   hOccupancyDCAll_.fill(evt.dc_hits());
@@ -195,8 +218,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Sort PC hits into time windows
 
-  const TDCHitWPPtrCollection filteredPChits = selectHits(evt.pc_hits(), cutMinTDCWidthPC_);
-  hAfterPulsingPCFiltered_.fill(filteredPChits);
   if(filteredPChits.empty()) {
     return CUT_NOPCHITS;
   }
@@ -251,7 +272,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------
   // Process DC hits
-  dcWindowing_.assignDCHits(selectHits(evt.dc_hits(), cutMinTDCWidthDC_), &wres);
+  dcWindowing_.assignDCHits(filteredDChits, &wres);
   if(trigWin.stream != TimeWindow::UPSTREAM) {
     return CUT_TRIGDCWIN_TYPE;
   }

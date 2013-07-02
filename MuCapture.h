@@ -88,7 +88,9 @@ public :
   virtual bool Process(EventClass &E, HistogramFactory &H);
 
   MuCapture()
-    : doMCTruth_(false)
+    : fillXtalkPC_(true)
+    , fillXtalkDC_(false)
+    , doMCTruth_(false)
     , doDefaultTWIST_(false)
     , cutMinTDCWidthPC_()
     , cutMinTDCWidthDC_()
@@ -110,6 +112,8 @@ public :
   {}
 
 private :
+  bool fillXtalkPC_;
+  bool fillXtalkDC_;
   bool doMCTruth_;
   bool doDefaultTWIST_;
   EventList inputNumberList_;
@@ -158,9 +162,15 @@ private :
 
   HistAfterPulsing hAfterPulsingPCAll_;
   HistAfterPulsing hAfterPulsingPCFiltered_;
+  HistAfterPulsing hAfterPulsingDCAll_;
+  HistAfterPulsing hAfterPulsingDCFiltered_;
+
   HistXtalk hXtalkSameWirePC_;
   HistXtalk hXtalk1PC_;
   HistXtalk hXtalkPlanePC_;
+  HistXtalk hXtalkSameWireDC_;
+  HistXtalk hXtalk1DC_;
+  HistXtalk hXtalkPlaneDC_;
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;
