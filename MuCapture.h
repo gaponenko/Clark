@@ -15,6 +15,7 @@
 #include "MuCapProtonWindow.h"
 #include "MuCapStreamAnalysis.h"
 #include "MuCapUVAnalysis.h"
+#include "HistDriftTime.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
 #include "HistAfterPulsing.h"
@@ -177,6 +178,8 @@ private :
 
   MuCapUVAnalysis dioUp_;
   MuCapUVAnalysis dioDn_;
+
+  HistDriftTime hdrift_;
 
   HistMuCapTruth hTruthAll_;
 

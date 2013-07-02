@@ -128,6 +128,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
               TimeWindow::DOWNSTREAM,
               Conf.read<double>("MuCapture/DIODn/cutMinTime"));
 
+  hdrift_.init("MuCapture/driftTimePC", H, 12, 1000./*ns*/, Conf);
+
   if(doMCTruth_) {
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
   }
@@ -315,12 +317,18 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   anDnLate_.process(evt, wres, muStop, afterTrigClusters);
 
   int idio = dioUp_.process(evt, muStop);
-  if(idio >= 0 && uvOutFile_) {
-    uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+  if(idio >= 0) {
+    hdrift_.fill(evt, idio, allPCHits);
+    if(uvOutFile_) {
+      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+    }
   }
   idio = dioDn_.process(evt, muStop);
-  if(idio >= 0 && uvOutFile_) {
-    uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+  if(idio >= 0) {
+    hdrift_.fill(evt, idio, allPCHits);
+    if(uvOutFile_) {
+      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+    }
   }
 
   if(muStopOutFile_) {
