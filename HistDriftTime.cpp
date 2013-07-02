@@ -32,6 +32,16 @@ void HistDriftTime::init(const std::string& hdir,
                                       maxPlaneNumber, 0.5, maxPlaneNumber+0.5);
   hobservedPlaneHits_ = hf.DefineTH1D(hdir, "observedPlaneHits", "observedPlaneHits",
                                       maxPlaneNumber, 0.5, maxPlaneNumber+0.5);
+
+  hexpectedPlaneHitsVsTime_ = hf.DefineTH2D(hdir, "expectedPlaneHitsVsTime", "expectedPlaneHitsVsTime",
+                                            20, 0., 10000.,
+                                            maxPlaneNumber, 0.5, maxPlaneNumber+0.5);
+  hexpectedPlaneHitsVsTime_->SetOption("colz");
+
+  hobservedPlaneHitsVsTime_ = hf.DefineTH2D(hdir, "observedPlaneHitsVsTime", "observedPlaneHitsVsTime",
+                                            20, 0., 10000.,
+                                            maxPlaneNumber, 0.5, maxPlaneNumber+0.5);
+  hobservedPlaneHitsVsTime_->SetOption("colz");
 }
 
 //================================================================
@@ -56,6 +66,7 @@ void HistDriftTime::fill(const EventClass& evt, int idio, const TDCHitWPPtrColle
 
     for(unsigned iplane = planeRange.first; iplane < planeRange.second; ++iplane) {
       hexpectedPlaneHits_->Fill(iplane);
+      hexpectedPlaneHitsVsTime_->Fill(evt.hefit_time[idio], iplane);
       bool observed = false;
       for(TDCHitWPPtrCollection::const_iterator ihit = planeHits[iplane - planeRange.first].begin();
           ihit != planeHits[iplane - planeRange.first].end(); ++ihit)
@@ -67,6 +78,7 @@ void HistDriftTime::fill(const EventClass& evt, int idio, const TDCHitWPPtrColle
         }
       if(observed) {
         hobservedPlaneHits_->Fill(iplane);
+        hobservedPlaneHitsVsTime_->Fill(evt.hefit_time[idio], iplane);
       }
     }
 

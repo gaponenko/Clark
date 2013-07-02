@@ -36,6 +36,9 @@ private :
   double cutEffTrackHitDt_;
   TH1 *hexpectedPlaneHits_;
   TH1 *hobservedPlaneHits_;
+
+  TH2 *hexpectedPlaneHitsVsTime_;
+  TH2 *hobservedPlaneHitsVsTime_;
 };
 
 #endif/*HistDriftTime_h*/
