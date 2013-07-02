@@ -167,7 +167,7 @@ int MuCapUVAnalysis::process(const EventClass& evt,
   //   }
   // }
 
-  int selected = accepted.empty() ? -1 : 0;
+  int selected = accepted.empty() ? -1 : accepted[0];
   // find a track that starts closer to the target
   for(int i=1; i<accepted.size(); ++i) {
     if(distanceToTarget(evt.hefit_pstart[i]) < distanceToTarget(evt.hefit_pstart[selected])) {
