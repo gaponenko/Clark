@@ -28,8 +28,14 @@ public:
 
   void fill(const EventClass& evt, int idio, const TDCHitWPPtrCollection& hits);
 
+  HistDriftTime() : cutEffTrackHitDt_(), hexpectedPlaneHits_(), hobservedPlaneHits_() {}
+
 private :
   std::vector<TH1*> hdriftTime_;
+
+  double cutEffTrackHitDt_;
+  TH1 *hexpectedPlaneHits_;
+  TH1 *hobservedPlaneHits_;
 };
 
 #endif/*HistDriftTime_h*/

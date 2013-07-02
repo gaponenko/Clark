@@ -20,11 +20,18 @@ void HistDriftTime::init(const std::string& hdir,
                          double driftTimeHistLimit,
                          const ConfigFile& conf)
 {
+  cutEffTrackHitDt_ = conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDt");
+
   for(int plane = 1; plane <= maxPlaneNumber; ++plane) {
     std::ostringstream os;
     os<<"driftTime"<<std::setw(2)<<std::setfill('0')<<plane;
     hdriftTime_.push_back(hf.DefineTH1D(hdir, os.str(), os.str(), 200, 0., driftTimeHistLimit));
   }
+
+  hexpectedPlaneHits_ = hf.DefineTH1D(hdir, "expectedPlaneHits", "expectedPlaneHits",
+                                      maxPlaneNumber, 0.5, maxPlaneNumber+0.5);
+  hobservedPlaneHits_ = hf.DefineTH1D(hdir, "observedPlaneHits", "observedPlaneHits",
+                                      maxPlaneNumber, 0.5, maxPlaneNumber+0.5);
 }
 
 //================================================================
@@ -37,12 +44,32 @@ void HistDriftTime::fill(const EventClass& evt, int idio, const TDCHitWPPtrColle
       std::make_pair(1UL, 1 + hdriftTime_.size()/2) :
       std::make_pair(1 + hdriftTime_.size()/2, 1 + hdriftTime_.size());
 
+    std::vector<TDCHitWPPtrCollection> planeHits(hdriftTime_.size()/2);
+
     const double t0 = evt.hefit_time[idio];
     for(unsigned i=0; i<hits.size(); ++i) {
       if((planeRange.first <= hits[i]->plane()) && (hits[i]->plane() < planeRange.second)) {
         hdriftTime_.at(hits[i]->plane() - 1)->Fill(hits[i]->time() - t0);
+        planeHits[hits[i]->plane() - planeRange.first].push_back(hits[i]);
       }
     }
+
+    for(unsigned iplane = planeRange.first; iplane < planeRange.second; ++iplane) {
+      hexpectedPlaneHits_->Fill(iplane);
+      bool observed = false;
+      for(TDCHitWPPtrCollection::const_iterator ihit = planeHits[iplane - planeRange.first].begin();
+          ihit != planeHits[iplane - planeRange.first].end(); ++ihit)
+        {
+          if( std::abs((**ihit).time() - evt.hefit_time[idio]) < cutEffTrackHitDt_) {
+            observed = true;
+            break;
+          }
+        }
+      if(observed) {
+        hobservedPlaneHits_->Fill(iplane);
+      }
+    }
+
   }
 }
 
