@@ -179,7 +179,8 @@ private :
   MuCapUVAnalysis dioUp_;
   MuCapUVAnalysis dioDn_;
 
-  HistDriftTime hdrift_;
+  HistDriftTime hdriftPC_;
+  HistDriftTime hdriftDC_;
 
   HistMuCapTruth hTruthAll_;
 

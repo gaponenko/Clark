@@ -24,6 +24,7 @@ public:
             HistogramFactory& hf,
             unsigned maxPlaneNumber,
             double driftTimeHistLimit,
+            double cutEffTrackHitDt,
             const ConfigFile &conf);
 
   void fill(const EventClass& evt, int idio, const TDCHitWPPtrCollection& hits);

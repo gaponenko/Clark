@@ -335,7 +335,8 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/DIOUp/cutMinTime", 300.);
         SetKey(Conf, "MuCapture/DIODn/cutMinTime", 300.);
 
-        SetKey(Conf, "MuCapture/HistDriftTime/cutEffTrackHitDt", 100.);
+        SetKey(Conf, "MuCapture/HistDriftTime/cutEffTrackHitDtPC", 100.);
+        SetKey(Conf, "MuCapture/HistDriftTime/cutEffTrackHitDtDC", 1500.);
 
         // make sure the planes are not adjacent at dz=0.4cm
         SetKey(Conf, "MuCapture/ProtonWindow/Containment1D/minPlanedz", 0.5);

@@ -18,9 +18,10 @@ void HistDriftTime::init(const std::string& hdir,
                          HistogramFactory &hf,
                          unsigned maxPlaneNumber,
                          double driftTimeHistLimit,
+                         double cutEffTrackHitDt,
                          const ConfigFile& conf)
 {
-  cutEffTrackHitDt_ = conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDt");
+  cutEffTrackHitDt_ = cutEffTrackHitDt;
 
   for(int plane = 1; plane <= maxPlaneNumber; ++plane) {
     std::ostringstream os;
