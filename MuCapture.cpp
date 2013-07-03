@@ -139,13 +139,19 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
               TimeWindow::DOWNSTREAM,
               Conf.read<double>("MuCapture/DIODn/cutMinTime"));
 
-  hdriftPC_.init("MuCapture/driftTimePC", H, 12, 1000./*ns*/,
-                 Conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtPC"),
-                 Conf);
+  hdriftPCAll_.init("MuCapture/driftTimePCAll", H, 12, 1000./*ns*/,
+                    Conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtPC"),
+                    Conf);
+  hdriftPCFiltered_.init("MuCapture/driftTimePCFiltered", H, 12, 1000./*ns*/,
+                         Conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtPC"),
+                         Conf);
 
-  hdriftDC_.init("MuCapture/driftTimeDC", H, 44, 5000./*ns*/,
-                 Conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtDC"),
-                 Conf);
+  hdriftDCAll_.init("MuCapture/driftTimeDCAll", H, 44, 5000./*ns*/,
+                    Conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtDC"),
+                    Conf);
+  hdriftDCFiltered_.init("MuCapture/driftTimeDCFiltered", H, 44, 5000./*ns*/,
+                         Conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtDC"),
+                         Conf);
 
   if(doMCTruth_) {
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
@@ -189,20 +195,20 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthDCall_.fill(evt.dc_hits());
 
   const TDCHitWPPtrCollection allPCHits = selectHits(evt.pc_hits(), std::numeric_limits<double>::min());
-  const TDCHitWPPtrCollection filteredPChits = selectHits(evt.pc_hits(), cutMinTDCWidthPC_);
+  const TDCHitWPPtrCollection filteredPCHits = selectHits(evt.pc_hits(), cutMinTDCWidthPC_);
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.fill(allPCHits);
-    hAfterPulsingPCFiltered_.fill(filteredPChits);
+    hAfterPulsingPCFiltered_.fill(filteredPCHits);
     hXtalkSameWirePC_.fill(allPCHits);
     hXtalk1PC_.fill(allPCHits);
     hXtalkPlanePC_.fill(allPCHits);
   }
 
   const TDCHitWPPtrCollection allDCHits = selectHits(evt.dc_hits(), std::numeric_limits<double>::min());
-  const TDCHitWPPtrCollection filteredDChits = selectHits(evt.dc_hits(), cutMinTDCWidthDC_);
+  const TDCHitWPPtrCollection filteredDCHits = selectHits(evt.dc_hits(), cutMinTDCWidthDC_);
   if(fillXtalkDC_) {
     hAfterPulsingDCAll_.fill(allDCHits);
-    hAfterPulsingDCFiltered_.fill(filteredDChits);
+    hAfterPulsingDCFiltered_.fill(filteredDCHits);
     hXtalkSameWireDC_.fill(allDCHits);
     hXtalk1DC_.fill(allDCHits);
     hXtalkPlaneDC_.fill(allDCHits);
@@ -218,12 +224,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Sort PC hits into time windows
 
-  if(filteredPChits.empty()) {
+  if(filteredPCHits.empty()) {
     return CUT_NOPCHITS;
   }
 
   TimeWindowingResults wres;
-  pcWindowing_.assignPCHits(filteredPChits, &wres);
+  pcWindowing_.assignPCHits(filteredPCHits, &wres);
   winTimeBeforeNoTrigWin_.fill(wres);
 
   if(wres.iTrigWin == -1u) {
@@ -272,7 +278,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------
   // Process DC hits
-  dcWindowing_.assignDCHits(filteredDChits, &wres);
+  dcWindowing_.assignDCHits(filteredDCHits, &wres);
   if(trigWin.stream != TimeWindow::UPSTREAM) {
     return CUT_TRIGDCWIN_TYPE;
   }
@@ -346,16 +352,20 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   int idio = dioUp_.process(evt, muStop);
   if(idio >= 0) {
-    hdriftPC_.fill(evt, idio, allPCHits);
-    hdriftDC_.fill(evt, idio, allDCHits);
+    hdriftPCAll_.fill(evt, idio, allPCHits);
+    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
+    hdriftDCAll_.fill(evt, idio, allDCHits);
+    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
     if(uvOutFile_) {
       uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
     }
   }
   idio = dioDn_.process(evt, muStop);
   if(idio >= 0) {
-    hdriftPC_.fill(evt, idio, allPCHits);
-    hdriftDC_.fill(evt, idio, allDCHits);
+    hdriftPCAll_.fill(evt, idio, allPCHits);
+    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
+    hdriftDCAll_.fill(evt, idio, allDCHits);
+    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
     if(uvOutFile_) {
       uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
     }
