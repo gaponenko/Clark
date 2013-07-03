@@ -103,6 +103,7 @@ public :
     , hPCPreTrigSeparation_()
     , hTrigPCWinStartPlane_()
     , hTrigPCWinGaps_()
+    , hTrigPCWinMissingPlanes_()
 
     , hWinDCUnassignedCount_()
 
@@ -150,6 +151,7 @@ private :
   TH1 *hPCPreTrigSeparation_;
   TH1 *hTrigPCWinStartPlane_;
   TH2 *hTrigPCWinGaps_;
+  TH1 *hTrigPCWinMissingPlanes_;
 
   TH1 *hWinDCUnassignedCount_;
 
