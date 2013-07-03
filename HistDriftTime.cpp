@@ -52,7 +52,7 @@ void HistDriftTime::fill(const EventClass& evt, int idio, const TDCHitWPPtrColle
     // The selected DIO tracks are supposed to start at the stopping target.
     // Look at the planes that should be crossed by the found track.
     std::pair<int,int> planeRange = (evt.costh[idio] < 0.) ?
-      std::make_pair(1UL, 1 + hdriftTime_.size()/2) :
+      std::make_pair(std::vector<TH1*>::size_type(1), 1 + hdriftTime_.size()/2) :
       std::make_pair(1 + hdriftTime_.size()/2, 1 + hdriftTime_.size());
 
     std::vector<TDCHitWPPtrCollection> planeHits(hdriftTime_.size()/2);
