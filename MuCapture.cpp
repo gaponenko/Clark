@@ -31,12 +31,24 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   }
   Log->info( "Register MuCapture module");
 
+  //       --------- Parameters initialization ---------          //
+  doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
+  cutMinTDCWidthPC_ = Conf.read<double>("MuCapture/cutMinTDCWidthPC");
+  cutMinTDCWidthDC_ = Conf.read<double>("MuCapture/cutMinTDCWidthDC");
+  winPCPreTrigSeparation_ = Conf.read<double>("MuCapture/winPCPreTrigSeparation");
+  cutTrigPCWinGapsEnabled_ = Conf.read<bool>("MuCapture/cutTrigPCWinGapsEnabled");
+  cutTrigPCWinStartPlane_ = Conf.read<int>("MuCapture/cutTrigPCWinStartPlane");
+  maxUnassignedDCHits_ = Conf.read<int>("MuCapture/maxUnassignedDCHits");
+
+  muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
+
   fillXtalkPC_ = Conf.read<bool>("MuCapture/fillXtalkPC");
   fillXtalkDC_ = Conf.read<bool>("MuCapture/fillXtalkDC");
   doMCTruth_ = Conf.read<bool>("TruthBank/Do");
   inputNumberList_ = EventList(Conf.read<std::string>("MuCapture/inputEventNumberFile"));
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
+  //----------------------------------------------------------------
   muStopOutFileName_ = Conf.read<std::string>("MuCapture/muStopOutFileName", "");
   if(!muStopOutFileName_.empty()) {
     muStopOutFile_.open(muStopOutFileName_.c_str());
@@ -52,17 +64,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
       throw std::runtime_error("Error opening output file "+uvOutFileName_);
     }
   }
-
-  //       --------- Parameters initialization ---------          //
-  doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
-  cutMinTDCWidthPC_ = Conf.read<double>("MuCapture/cutMinTDCWidthPC");
-  cutMinTDCWidthDC_ = Conf.read<double>("MuCapture/cutMinTDCWidthDC");
-  winPCPreTrigSeparation_ = Conf.read<double>("MuCapture/winPCPreTrigSeparation");
-  cutTrigPCWinGapsEnabled_ = Conf.read<bool>("MuCapture/cutTrigPCWinGapsEnabled");
-  cutTrigPCWinStartPlane_ = Conf.read<int>("MuCapture/cutTrigPCWinStartPlane");
-  maxUnassignedDCHits_ = Conf.read<int>("MuCapture/maxUnassignedDCHits");
-
-  muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
 
   //       --------- Histograms initialization ---------          //
   pcWindowing_.init(H, "MuCapture/WindowingPC", *E.geo, Conf);
