@@ -39,6 +39,15 @@ WirePlane::WirePlane(WirePlane::DetType d,
 }
 
 //================================================================
+std::string WirePlane::detName(WirePlane::DetType d) {
+  switch(d) {
+  case PC: return "PC";
+  case DC: return "DC";
+  default: throw std::runtime_error("WirePlane::detName(DetType d): invalid input");
+  }
+}
+
+//================================================================
 WirePlane::Measurement WirePlane::measurement(double wireNumber) const {
   ROOT::Math::XYZPoint wireCenter = center_ +
     mvector_ * wireSpacing_ * (wireNumber - centralWire_);
@@ -83,6 +92,24 @@ DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger) {
   std::copy(pcplanes_.begin(), pcplanes_.end(), std::back_inserter(globalplanes_));
   std::copy(dcplanes_.begin(), dcplanes_.end(), std::back_inserter(globalplanes_));
   std::sort(globalplanes_.begin(), globalplanes_.end(), WirePlaneZSorter());
+}
+
+//================================================================
+const std::vector<WirePlane>& DetectorGeo::planes(WirePlane::DetType d) const {
+  switch(d) {
+  case WirePlane::PC: return pcplanes_;
+  case WirePlane::DC: return dcplanes_;
+  default: throw std::runtime_error("DetectorGeo::planes(DetType d): invalid input");
+  }
+}
+
+//================================================================
+unsigned DetectorGeo::maxCellNumber(WirePlane::DetType d) const {
+  switch(d) {
+  case WirePlane::PC: return 160;
+  case WirePlane::DC: return 80;
+  default: throw std::runtime_error("DetectorGeo::maxCellNumber(DetType d): invalid input");
+  }
 }
 
 //================================================================

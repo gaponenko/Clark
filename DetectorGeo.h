@@ -37,6 +37,8 @@ public:
   enum DetType { PC, DC };
   enum UVType { U, V };
 
+  static std::string detName(DetType t);
+
   DetType planeType() const { return det_; }
   UVType direction() const { return dir_; }
 
@@ -86,6 +88,11 @@ public:
   const WirePlane& pc(unsigned ipc) const { return pcplanes_.at(ipc - 1); }
   const WirePlane& dc(unsigned idc) const { return dcplanes_.at(idc - 1); }
   const WirePlane& global(unsigned iglobal) const { return globalplanes_.at(iglobal - 1); }
+
+  // vector of PCs or DCs (zero based!)
+  const std::vector<WirePlane>& planes(WirePlane::DetType d) const;
+
+  unsigned maxCellNumber(WirePlane::DetType d) const;
 
 private:
   // (1) DC variables
