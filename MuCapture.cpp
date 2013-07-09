@@ -103,7 +103,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   //----------------------------------------------------------------
   hwidthPCall_.init("MuCapture/pcWidthAll", "pcwidth", 12, H, Conf);
+  hwidthPCfiltered_.init("MuCapture/pcWidthFiltered", "pcwidth", 12, H, Conf);
   hwidthDCall_.init("MuCapture/dcWidthAll", "dcwidth", 44, H, Conf);
+  hwidthDCfiltered_.init("MuCapture/dcWidthFiltered", "dcwidth", 44, H, Conf);
 
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.init("MuCapture/afterPulsingPCAll", 12, 160, H, Conf);
@@ -195,16 +197,15 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_EVENT_NUMBER;
   }
 
-  // Fill the "all hits" histos
-  hwidthPCall_.fill(evt.pc_hits());
-  hwidthDCall_.fill(evt.dc_hits());
-
   TDCHitPreprocessing::PassThrough hitpass;
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits(), hitpass);
   const TDCHitWPPtrCollection allPCHits = allPCHitsBuf.get();
 
   TDCHitPreprocessing::Hits filteredPCHitsBuf(evt.pc_hits(), *pcHitProcessor_);
   const TDCHitWPPtrCollection& filteredPCHits = filteredPCHitsBuf.get();
+
+  hwidthPCall_.fill(allPCHits);
+  hwidthPCfiltered_.fill(filteredPCHits);
 
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.fill(allPCHits);
@@ -219,6 +220,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   TDCHitPreprocessing::Hits filteredDCHitsBuf(evt.dc_hits(), *dcHitProcessor_);
   const TDCHitWPPtrCollection filteredDCHits = filteredDCHitsBuf.get();
+
+  hwidthDCall_.fill(allDCHits);
+  hwidthDCfiltered_.fill(filteredDCHits);
 
   if(fillXtalkDC_) {
     hAfterPulsingDCAll_.fill(allDCHits);

@@ -162,7 +162,10 @@ private :
   TH1 *hMuStopRadius_;
 
   HistTDCWidth hwidthPCall_;
+  HistTDCWidth hwidthPCfiltered_;
+
   HistTDCWidth hwidthDCall_;
+  HistTDCWidth hwidthDCfiltered_;
 
   HistAfterPulsing hAfterPulsingPCAll_;
   HistAfterPulsing hAfterPulsingPCFiltered_;
