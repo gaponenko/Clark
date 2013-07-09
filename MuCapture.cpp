@@ -47,8 +47,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
   //----------------------------------------------------------------
-  pcHitProcessor_ = new TDCHitPreprocessing::NarrowHitDiscarder("MuCapture/HitPreProc", WirePlane::PC, H, *E.geo, Conf);
-  dcHitProcessor_ = new TDCHitPreprocessing::NarrowHitDiscarder("MuCapture/HitPreProc", WirePlane::DC, H, *E.geo, Conf);
+  pcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::PC, H, *E.geo, Conf);
+  dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
 
   //----------------------------------------------------------------
   muStopOutFileName_ = Conf.read<std::string>("MuCapture/muStopOutFileName", "");
@@ -396,6 +396,23 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   return CUTS_MUSTOP_ACCEPTED;
+}
+
+//================================================================
+TDCHitPreprocessing::IProcessor *
+MuCapture::makeTDCHitPreprocessor(WirePlane::DetType d,
+                                  HistogramFactory& hf,
+                                  const DetectorGeo& geom,
+                                  ConfigFile& conf)
+{
+  const std::string proc = conf.read<std::string>("MuCapture/HitPreproc/"+WirePlane::detName(d)+"/processor");
+  if(proc == "NarrowHitDiscarder") {
+    return new TDCHitPreprocessing::NarrowHitDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
+  }
+  if(proc == "SameWireHitDiscarder") {
+    return new TDCHitPreprocessing::SameWireHitDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
+  }
+  throw std::runtime_error("MuCapture::makeTDCHitPreprocessor(): unknown processor name \""+proc+"\"");
 }
 
 //================================================================

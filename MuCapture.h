@@ -201,6 +201,9 @@ private :
   HistMuCapTruth hTruthAll_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
+
+  static TDCHitPreprocessing::IProcessor*
+  makeTDCHitPreprocessor(WirePlane::DetType d, HistogramFactory& hf, const DetectorGeo& geom, ConfigFile& conf);
 };
 
 #endif/*MuCapture_h*/

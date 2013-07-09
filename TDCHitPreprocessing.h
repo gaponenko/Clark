@@ -59,6 +59,29 @@ namespace  TDCHitPreprocessing {
     float cutMinTDCWidth_;
   };
 
+  //----------------------------------------------------------------
+  class SameWireHitDiscarder : public IProcessor {
+  public:
+    SameWireHitDiscarder(const std::string& topdir,
+                         WirePlane::DetType det,
+                         HistogramFactory& hf,
+                         const DetectorGeo& geom,
+                         const ConfigFile& conf);
+
+    virtual void process(TDCHitWPPtrCollection *res,
+                         TDCHitWPCollection *buf,
+                         const TDCHitWPCollection& inputs);
+
+  private:
+    float cutSameWireDt_;
+    std::vector<TH1*> hSameCellDtAll_;
+    std::vector<TH1*> hSameCellDtDropped_;
+    std::vector<TH1*> hSameCellWidthDropped_;
+    std::vector<TH1*> hSameCellWidthKept_;
+    HistOccupancy hSameCellOccupancyDropped_;
+    HistOccupancy hSameCellOccupancyKept_;
+  };
+
   //================================================================
   // The "data" class
 
