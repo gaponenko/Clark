@@ -283,7 +283,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "Detector/Geometry/pc_ppc", 5);
         SetKey(Conf, "MuCapture/killPC6DeadWire", true);
 
-        SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "NarrowHitDiscarder");
+        SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "SameWireHitDiscarder");
         SetKey(Conf, "MuCapture/HitPreproc/PC/NarrowHitDiscarder/cutMinTDCWidth", 40.);
         SetKey(Conf, "MuCapture/HitPreproc/PC/SameWireHitDiscarder/cutSameWireDt", 200.);
 
