@@ -26,6 +26,7 @@
 #include "TimeWindowingPC.h"
 #include "TimeWindowingDC.h"
 #include "EventList.h"
+#include "TDCHitPreprocessing.h"
 
 #include "TAxis.h"
 class TH1;
@@ -92,11 +93,12 @@ public :
     , fillXtalkDC_(false)
     , doMCTruth_(false)
     , doDefaultTWIST_(false)
-    , cutMinTDCWidthPC_()
-    , cutMinTDCWidthDC_()
     , winPCPreTrigSeparation_()
     , maxUnassignedDCHits_()
     , muStopRMax_()
+
+    , pcHitProcessor_()
+    , dcHitProcessor_()
 
     , h_cuts_r()
     , h_cuts_p()
@@ -125,9 +127,6 @@ private :
   std::string uvOutFileName_;
   std::ofstream uvOutFile_;
 
-  double cutMinTDCWidthPC_;
-  double cutMinTDCWidthDC_;
-
   double winPCPreTrigSeparation_;
 
   bool cutTrigPCWinGapsEnabled_;
@@ -136,6 +135,9 @@ private :
   int maxUnassignedDCHits_;
 
   double muStopRMax_;
+
+  TDCHitPreprocessing::IProcessor *pcHitProcessor_;
+  TDCHitPreprocessing::IProcessor *dcHitProcessor_;
 
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
@@ -199,7 +201,6 @@ private :
   HistMuCapTruth hTruthAll_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
-  TDCHitWPPtrCollection selectHits(const TDCHitWPCollection& hits, double minWidthCut);
 };
 
 #endif/*MuCapture_h*/

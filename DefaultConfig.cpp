@@ -282,8 +282,9 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "Detector/Geometry/dc_ppc", 25);
         SetKey(Conf, "Detector/Geometry/pc_ppc", 5);
         SetKey(Conf, "MuCapture/killPC6DeadWire", true);
-        SetKey(Conf, "MuCapture/cutMinTDCWidthPC", 40.);
-        SetKey(Conf, "MuCapture/cutMinTDCWidthDC", 50.);
+
+        SetKey(Conf, "MuCapture/TDCHitPreproc/NarrowHitDiscarder/PC/cutMinTDCWidth", 40.);
+        SetKey(Conf, "MuCapture/TDCHitPreproc/NarrowHitDiscarder/DC/cutMinTDCWidth", 50.);
 
         // If defined, ignore all other input events
         SetKey(Conf, "MuCapture/inputEventNumberFile", "");

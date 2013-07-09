@@ -33,8 +33,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
-  cutMinTDCWidthPC_ = Conf.read<double>("MuCapture/cutMinTDCWidthPC");
-  cutMinTDCWidthDC_ = Conf.read<double>("MuCapture/cutMinTDCWidthDC");
   winPCPreTrigSeparation_ = Conf.read<double>("MuCapture/winPCPreTrigSeparation");
   cutTrigPCWinGapsEnabled_ = Conf.read<bool>("MuCapture/cutTrigPCWinGapsEnabled");
   cutTrigPCWinStartPlane_ = Conf.read<int>("MuCapture/cutTrigPCWinStartPlane");
@@ -47,6 +45,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   doMCTruth_ = Conf.read<bool>("TruthBank/Do");
   inputNumberList_ = EventList(Conf.read<std::string>("MuCapture/inputEventNumberFile"));
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
+
+  //----------------------------------------------------------------
+  pcHitProcessor_ = new TDCHitPreprocessing::NarrowHitDiscarder("MuCapture/HitPreProc", WirePlane::PC, H, *E.geo, Conf);
+  dcHitProcessor_ = new TDCHitPreprocessing::NarrowHitDiscarder("MuCapture/HitPreProc", WirePlane::DC, H, *E.geo, Conf);
 
   //----------------------------------------------------------------
   muStopOutFileName_ = Conf.read<std::string>("MuCapture/muStopOutFileName", "");
@@ -197,8 +199,13 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthPCall_.fill(evt.pc_hits());
   hwidthDCall_.fill(evt.dc_hits());
 
-  const TDCHitWPPtrCollection allPCHits = selectHits(evt.pc_hits(), std::numeric_limits<double>::min());
-  const TDCHitWPPtrCollection filteredPCHits = selectHits(evt.pc_hits(), cutMinTDCWidthPC_);
+  TDCHitPreprocessing::PassThrough hitpass;
+  TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits(), hitpass);
+  const TDCHitWPPtrCollection allPCHits = allPCHitsBuf.get();
+
+  TDCHitPreprocessing::Hits filteredPCHitsBuf(evt.pc_hits(), *pcHitProcessor_);
+  const TDCHitWPPtrCollection& filteredPCHits = filteredPCHitsBuf.get();
+
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.fill(allPCHits);
     hAfterPulsingPCFiltered_.fill(filteredPCHits);
@@ -207,8 +214,12 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     hXtalkPlanePC_.fill(allPCHits);
   }
 
-  const TDCHitWPPtrCollection allDCHits = selectHits(evt.dc_hits(), std::numeric_limits<double>::min());
-  const TDCHitWPPtrCollection filteredDCHits = selectHits(evt.dc_hits(), cutMinTDCWidthDC_);
+  TDCHitPreprocessing::Hits allDCHitsBuf(evt.dc_hits(), hitpass);
+  const TDCHitWPPtrCollection allDCHits = allDCHitsBuf.get();
+
+  TDCHitPreprocessing::Hits filteredDCHitsBuf(evt.dc_hits(), *dcHitProcessor_);
+  const TDCHitWPPtrCollection filteredDCHits = filteredDCHitsBuf.get();
+
   if(fillXtalkDC_) {
     hAfterPulsingDCAll_.fill(allDCHits);
     hAfterPulsingDCFiltered_.fill(filteredDCHits);
@@ -385,17 +396,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   return CUTS_MUSTOP_ACCEPTED;
-}
-
-//================================================================
-TDCHitWPPtrCollection MuCapture::selectHits(const TDCHitWPCollection& hits, double minWidthCut) {
-  TDCHitWPPtrCollection res;
-  for(unsigned i=0; i<hits.size(); ++i) {
-    if(hits[i].width() > minWidthCut) {
-      res.push_back(TDCHitWPPtr(hits, i));
-    }
-  }
-  return res;
 }
 
 //================================================================
