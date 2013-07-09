@@ -181,7 +181,8 @@ private :
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;
-  HistAccidentals haccidentals_;
+  HistAccidentals haccidentalsTrig_;
+  HistAccidentals haccidentalsStop_;
 
   HistWinTime winTimeBeforeNoTrigWin_;
   HistWinTime winTimeBeforeTrigPCWinType_;

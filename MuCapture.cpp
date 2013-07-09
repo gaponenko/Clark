@@ -126,7 +126,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   //----------------------------------------------------------------
   hOccupancyPCAll_.init("MuCapture", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init("MuCapture", "hitMapDCAll", 44, 80, H, Conf);
-  haccidentals_.init("MuCapture/Accidentals", H, Conf);
+  haccidentalsTrig_.init("MuCapture/AccidentalsTrig", H, Conf);
+  haccidentalsStop_.init("MuCapture/AccidentalsStop", H, Conf);
 
   winTimeBeforeNoTrigWin_.init("MuCapture/winTime", "beforeNoTrigWin", H, Conf);
   winTimeBeforeTrigPCWinType_.init("MuCapture/winTime", "beforeTrigPCWinType", H, Conf);
@@ -254,6 +255,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_NOTRIGWIN;
   }
 
+  haccidentalsTrig_.fill(wres);
+
   if(wres.iTrigWin > 0) {
     // Trig time is 0, dt from that rather than from less precise trigWin time
     const double dt = wres.windows[wres.iTrigWin - 1].tstart;
@@ -369,7 +372,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   // Call the subanalyses
   winTimeMuStop_.fill(wres);
-  haccidentals_.fill(wres);
+  haccidentalsStop_.fill(wres);
   protonWindow_.process(muStop, wres, evt);
   anDnLate_.process(evt, wres, muStop, afterTrigClusters);
 
