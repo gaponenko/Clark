@@ -31,6 +31,7 @@ public:
     , hNumPCsUpVsDn_() , hNumPCsDnMinusUp_()
     , hNumDCsUpVsDn_() , hNumDCsDnMinusUp_()
     , hNumRanges_(), hSingleRange_(), hDoubleRangeGap_()
+    , hDoubleRangeMissingPlanes_(), hDoubleRangeSizes_()
     , hWinStream_()
   {}
 
@@ -49,6 +50,8 @@ private :
   TH1 *hNumRanges_;
   TH2 *hSingleRange_;
   TH2 *hDoubleRangeGap_;
+  TH1 *hDoubleRangeMissingPlanes_;
+  TH2 *hDoubleRangeSizes_;
 
   TH1 *hWinStream_;
 };

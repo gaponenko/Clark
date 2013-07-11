@@ -1,6 +1,8 @@
 // Andrei Gaponenko, 2013
 
 #include "HistHitStream.h"
+#include <cassert>
+
 #include "PlaneRange.h"
 #include "TimeWindow.h"
 
@@ -51,6 +53,13 @@ void HistHitStream::init(const std::string& hdir,
                                    57, -0.5, 56.5, 57, -0.5, 56.5);
   hDoubleRangeGap_->SetOption("colz");
 
+  hDoubleRangeMissingPlanes_ = hf.DefineTH1D(hdir, "doubleRangeMissingPlanes", "doubleRangeMissingPlanes", 57, -0.5, 56.5);
+
+  hDoubleRangeSizes_ = hf.DefineTH2D(hdir, "doubleRangeSizes", "doubleRangeSizes",
+                                     57, -0.5, 56.5, 57, -0.5, 56.5);
+
+  hDoubleRangeSizes_->SetOption("colz");
+
   //----------------------------------------------------------------
   hWinStream_ = hf.DefineTH1D(hdir, "winStream", "Time window stream type", 3, -1.5, +1.5);
 }
@@ -99,6 +108,14 @@ void HistHitStream::fill(const ClustersByPlane& gc) {
     break;
   case 2:
     hDoubleRangeGap_->Fill(gr.segments()[0].max, gr.segments()[1].min);
+    assert(gr.segments()[0].max + 1 < gr.segments()[1].min);
+    for(int i = gr.segments()[0].max + 1; i < gr.segments()[1].min; ++i) {
+      hDoubleRangeMissingPlanes_->Fill(i);
+    }
+
+    hDoubleRangeSizes_->Fill(1 + gr.segments()[0].max - gr.segments()[0].min,
+                             1 + gr.segments()[1].max - gr.segments()[1].min);
+
     break;
   default:
     break;
