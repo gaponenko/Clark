@@ -24,6 +24,21 @@
 //#define AGDEBUG(stuff)
 
 //================================================================
+namespace {
+  struct WinHitCounter {
+    unsigned numPCHits;
+    unsigned numDCHits;
+    WinHitCounter() : numPCHits(0), numDCHits(0) {}
+    WinHitCounter(unsigned p, unsigned d) : numPCHits(p), numDCHits(d) {}
+
+    WinHitCounter operator+(const TimeWindow& w) const {
+      return WinHitCounter(numPCHits + w.pcHits.size(),
+                           numDCHits + w.dcHits.size());
+    }
+  };
+}
+
+//================================================================
 bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *Log) {
   if (not Conf.read<bool>("MuCapture/Do")) {
     Log->info( "MuCapture code will not be run");
@@ -249,6 +264,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   TimeWindowingResults wres;
   pcWindowing_.assignPCHits(filteredPCHits, &wres);
+  assert(filteredPCHits.size() ==
+         std::accumulate(wres.windows.begin(), wres.windows.end(), WinHitCounter()).numPCHits);
+
   winTimeBeforeNoTrigWin_.fill(wres);
 
   if(wres.iTrigWin == -1u) {
