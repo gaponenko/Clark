@@ -21,6 +21,10 @@ void HistHitStream::init(const std::string& hdir,
 {
   geom_ = &geom;
 
+  hrGlobal_.init(hdir+"/rangeGlobal", hf, geom, conf);
+  hrUp_.init(hdir+"/rangeUp", hf, geom, conf);
+  hrDn_.init(hdir+"/rangeDn", hf, geom, conf);
+
   //----------------
   hNumPlanesUpVsDn_ = hf.DefineTH2D(hdir, "planesUpVsDn", "Number of hit planes upstream vs downstream",
                                     29, -0.5, 28.5, 29, -0.5, 28.5);
@@ -41,25 +45,6 @@ void HistHitStream::init(const std::string& hdir,
   hNumDCsUpVsDn_->SetOption("colz");
 
   hNumDCsDnMinusUp_ = hf.DefineTH1D(hdir, "dcsDnMinusUp", "Dn - Up DC planes", 45, -22.5, 22.5);
-
-  //----------------------------------------------------------------
-  hNumRanges_ = hf.DefineTH1D(hdir, "numRanges", "num ranges", 10, -0.5, 9.5);
-
-  hSingleRange_ = hf.DefineTH2D(hdir, "singleRange", "End vs begin for single range",
-                                57, -0.5, 56.5, 57, -0.5, 56.5);
-  hSingleRange_->SetOption("colz");
-
-  hDoubleRangeGap_ = hf.DefineTH2D(hdir, "doubleRangeGap", "Double range gap",
-                                   57, -0.5, 56.5, 57, -0.5, 56.5);
-  hDoubleRangeGap_->SetOption("colz");
-
-  hDoubleRangeMissingPlanes_ = hf.DefineTH1D(hdir, "doubleRangeMissingPlanes", "doubleRangeMissingPlanes", 57, -0.5, 56.5);
-
-  hDoubleRangeSizes_ = hf.DefineTH2D(hdir, "doubleRangeSizes", "doubleRangeSizes",
-                                     57, -0.5, 56.5, 57, -0.5, 56.5);
-
-  hDoubleRangeSizes_->SetOption("colz");
-
 
   //----------------------------------------------------------------
   hNumRangesUpVsDn_ = hf.DefineTH2D(hdir, "numRangesUpVsDn", "num ranges upstream vs downstream", 10, -0.5, 9.5, 10, -0.5, 9.5);
@@ -106,30 +91,14 @@ void HistHitStream::fill(const ClustersByPlane& gc) {
 
   //----------------------------------------------------------------
   const PlaneRange gr = findPlaneRange(gc);
-  hNumRanges_->Fill(gr.segments().size());
-  switch(gr.segments().size()) {
-  case 1:
-    hSingleRange_->Fill(gr.min(), gr.max());
-    break;
-  case 2:
-    hDoubleRangeGap_->Fill(gr.segments()[0].max, gr.segments()[1].min);
-    assert(gr.segments()[0].max + 1 < gr.segments()[1].min);
-    for(int i = gr.segments()[0].max + 1; i < gr.segments()[1].min; ++i) {
-      hDoubleRangeMissingPlanes_->Fill(i);
-    }
-
-    hDoubleRangeSizes_->Fill(1 + gr.segments()[0].max - gr.segments()[0].min,
-                             1 + gr.segments()[1].max - gr.segments()[1].min);
-
-    break;
-  default:
-    break;
-  }
-
-  //----------------------------------------------------------------
   const PlaneRange rup = findUpstreamPlaneRange(gc);
   const PlaneRange rdn = findDownstreamPlaneRange(gc);
+
   hNumRangesUpVsDn_->Fill(rdn.segments().size(), rup.segments().size());
+
+  hrGlobal_.fill(gr);
+  hrUp_.fill(rup);
+  hrDn_.fill(rdn);
 
   //----------------------------------------------------------------
   const TimeWindow::StreamType stream =
