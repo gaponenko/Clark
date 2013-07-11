@@ -1,17 +1,22 @@
 // Andrei Gaponenko, 2013
 
 #include "PlaneRange.h"
+#include <cassert>
 
-PlaneRange findPlaneRange(const ClustersByPlane& cp) {
+//================================================================
+PlaneRange findRestrictedPlaneRange(const ClustersByPlane& cp, int begin, int end) {
+  assert(begin >= 0);
+  assert(end <= cp.size());
+
   PlaneRange::Segments res;
-  unsigned currentPlane = 0;
+  int currentPlane = begin - 1;
 
-  while(++currentPlane < cp.size()) {
+  while(++currentPlane < end) {
 
     if(!cp[currentPlane].empty()) { // start a new segment
 
       const int pstart = currentPlane;
-      while(++currentPlane < cp.size() && !cp[currentPlane].empty())
+      while(++currentPlane < end && !cp[currentPlane].empty())
         {}
 
       const int pend = currentPlane - 1;
@@ -20,6 +25,23 @@ PlaneRange findPlaneRange(const ClustersByPlane& cp) {
   }
 
   return PlaneRange(res);
+}
+
+//================================================================
+PlaneRange findPlaneRange(const ClustersByPlane& cp) {
+  return findRestrictedPlaneRange(cp, 0, cp.size());
+}
+
+//================================================================
+PlaneRange findUpstreamPlaneRange(const ClustersByPlane& cp) {
+  assert(cp.size() == 57);
+  return findRestrictedPlaneRange(cp, 1, 29);
+}
+
+//================================================================
+PlaneRange findDownstreamPlaneRange(const ClustersByPlane& cp) {
+  assert(cp.size() == 57);
+  return findRestrictedPlaneRange(cp, 29, cp.size());
 }
 
 //================================================================

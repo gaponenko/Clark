@@ -26,7 +26,13 @@ private:
   std::vector<PlaneRangeSegment> segments_;
 };
 
+// end is one-past-end, a la STL
+PlaneRange findRestrictedPlaneRange(const ClustersByPlane& clusters, int begin, int end);
+
 PlaneRange findPlaneRange(const ClustersByPlane& clusters);
+PlaneRange findUpstreamPlaneRange(const ClustersByPlane& clusters);
+PlaneRange findDownstreamPlaneRange(const ClustersByPlane& clusters);
+
 
 std::ostream& operator<<(std::ostream& os, const PlaneRange& r);
 
