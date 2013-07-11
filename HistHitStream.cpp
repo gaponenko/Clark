@@ -60,6 +60,11 @@ void HistHitStream::init(const std::string& hdir,
 
   hDoubleRangeSizes_->SetOption("colz");
 
+
+  //----------------------------------------------------------------
+  hNumRangesUpVsDn_ = hf.DefineTH2D(hdir, "numRangesUpVsDn", "num ranges upstream vs downstream", 10, -0.5, 9.5, 10, -0.5, 9.5);
+  hNumRangesUpVsDn_->SetOption("colz");
+
   //----------------------------------------------------------------
   hWinStream_ = hf.DefineTH1D(hdir, "winStream", "Time window stream type", 3, -1.5, +1.5);
 }
@@ -100,7 +105,7 @@ void HistHitStream::fill(const ClustersByPlane& gc) {
   }
 
   //----------------------------------------------------------------
-  PlaneRange gr = findPlaneRange(gc);
+  const PlaneRange gr = findPlaneRange(gc);
   hNumRanges_->Fill(gr.segments().size());
   switch(gr.segments().size()) {
   case 1:
@@ -120,6 +125,11 @@ void HistHitStream::fill(const ClustersByPlane& gc) {
   default:
     break;
   }
+
+  //----------------------------------------------------------------
+  const PlaneRange rup = findUpstreamPlaneRange(gc);
+  const PlaneRange rdn = findDownstreamPlaneRange(gc);
+  hNumRangesUpVsDn_->Fill(rdn.segments().size(), rup.segments().size());
 
   //----------------------------------------------------------------
   const TimeWindow::StreamType stream =
