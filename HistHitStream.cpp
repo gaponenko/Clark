@@ -95,10 +95,10 @@ void HistHitStream::fill(const ClustersByPlane& gc) {
   hNumRanges_->Fill(gr.segments().size());
   switch(gr.segments().size()) {
   case 1:
-    hSingleRange_->Fill(gr.max(), gr.min());
+    hSingleRange_->Fill(gr.min(), gr.max());
     break;
   case 2:
-    hDoubleRangeGap_->Fill(gr.segments()[1].min, gr.segments()[0].max);
+    hDoubleRangeGap_->Fill(gr.segments()[0].max, gr.segments()[1].min);
     break;
   default:
     break;
