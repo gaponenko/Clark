@@ -45,7 +45,7 @@ void TimeWindowingPC::assignPCHits(const TDCHitWPPtrCollection& inhits, TimeWind
 
   TimeWindowCollection winpcs;
 
-  for(unsigned i=0; i < pchits.size(); ++i) {
+  for(unsigned i=0; i < pchits.size(); ) {
 
     // This hit starts a new window
     TimeWindow win;
