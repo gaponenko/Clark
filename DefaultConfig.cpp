@@ -370,7 +370,13 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/ProtonWindow/RextMax", 13.);
 
         // Use outer PCs as a veto
+        SetKey(Conf, "MuCapture/StreamAnalysis/cutBeamVetoMaxPCplanes", 1);
         SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedNumPlanes", 4);
+        SetKey(Conf, "MuCapture/StreamAnalysis/cutMultiwinNextdt", 1050.);
+
+        SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedNumToCheck", 4);
+        SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedMaxHitPlanes", 1);
+        SetKey(Conf, "MuCapture/StreamAnalysis/cutRextMax", 13.);
 
         //================================================================
 }

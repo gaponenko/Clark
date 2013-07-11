@@ -6,7 +6,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "TH2.h"
+#include "TH1.h"
 
 #include "HistogramFactory.h"
 #include "ConfigFile.h"
@@ -15,22 +15,21 @@
 #include "MuCapUtilities.h"
 
 //================================================================
-namespace {
-  template<class Container> bool nonEmpty(const Container& c) {
-    return !c.empty();
-  }
-}
-
-//================================================================
 void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
                                const DetectorGeo& geom, const ConfigFile& conf,
                                TimeWindow::StreamType cutWinStream, double cutWinTimeMin)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
   cutStream_ = cutWinStream;
+
+  cutBeamVetoMaxPCplanes_ = conf.read<double>("MuCapture/StreamAnalysis/cutBeamVetoMaxPCplanes");
   cutWinTimeMin_ = cutWinTimeMin;
   cutWinTimeMax_ = conf.read<double>("MuCapture/cutWinTimeMax");
-  cutZContainedNumPlanes_ = conf.read<unsigned>("MuCapture/StreamAnalysis/cutZContainedNumPlanes");
+  cutMultiwinNextdt_ = conf.read<double>("MuCapture/StreamAnalysis/cutMultiwinNextdt");
+
+  cutZContainedNumToCheck_ = conf.read<unsigned>("MuCapture/StreamAnalysis/cutZContainedNumToCheck");
+  cutZContainedMaxHitPlanes_ = conf.read<unsigned>("MuCapture/StreamAnalysis/cutZContainedMaxHitPlanes");
+  cutRextMax_ = conf.read<double>("MuCapture/StreamAnalysis/cutRextMax");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "protonCuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -41,52 +40,44 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
-  hMultiWindowPCHits_ = hf.DefineTH2D(hdir, "multiWindowPCHits", "after trig PC hits2 vs hits1",
-                                      20, -0.5, 19.5, 20, -0.5, 19.5);
-  hMultiWindowPCHits_->SetOption("colz");
+  hBeamVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "beamVetoNumHitPlanes", "beamVetoNumHitPlanes", 6, -0.5, 5.5);
+  hHitPCsAterBeamVeto_ = hf.DefineTH1D(hdir, "hitUpsteamPCsAfterBeamVeto", "hitUpsteamPCsAfterBeamVeto", 6, -0.5, 5.5);
 
-  hMultiWindowHits_ = hf.DefineTH2D(hdir, "multiWindowHits", "after trig hits2 vs hits1",
-                                    140, -0.5, 139.5, 140, -0.5, 139.5);
-  hMultiWindowHits_->SetOption("colz");
-
-  hMultiWindowPCPlanes_ = hf.DefineTH2D(hdir, "multiWindowPCPlanes", "after trig PC planes2 vs planes1",
-                                        13, -0.5, 12.5, 13, -0.5, 12.5);
-  hMultiWindowPCPlanes_->SetOption("colz");
-
-  hMultiWindowPCPlanesmm_ = hf.DefineTH2D(hdir, "multiWindowPCPlanesmm", "min vs max PC planes in after trig win1, 2",
-                                          13, -0.5, 12.5, 13, -0.5, 12.5);
-  hMultiWindowPCPlanesmm_->SetOption("colz");
-
-  hMultiWindowPlanesmm_ = hf.DefineTH2D(hdir, "multiWindowPlanesmm", "min vs max num planes in after-trig windows 1, 2",
-                                    57, -0.5, 56.5, 57, -0.5, 56.5);
-  hMultiWindowPlanesmm_->SetOption("colz");
-
-  hMultiWindowRanges_ = hf.DefineTH2D(hdir, "multiWindowRanges", "min vs max num ranges in after-trig windows 1, 2",
-                                    10, -0.5, 9.5, 10, -0.5, 9.5);
-  hMultiWindowRanges_->SetOption("colz");
-
-  hOccupancyPCwin1_.init(hdir, "multiWindowPCMap1", 12, 160, hf, conf);
-  hOccupancyPCwin2_.init(hdir, "multiWindowPCMap2", 12, 160, hf, conf);
-
-  hNumAfterTrigWindows_ = hf.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
   hWindowTimeBefore_ = hf.DefineTH1D(hdir, "windowTimeBeforeCut", "Proton window start time", 1000, 0., 10000.);
   hWindowTimeAfter_ = hf.DefineTH1D(hdir, "windowTimeAfterCut", "Proton window start time after the cut", 1000, 0., 10000.);
 
-  hhsAfterTimeCuts_.init(hdir+"/hsAfterTimeCuts", hf, geom, conf);
+  hNumAfterTrigWindows_ = hf.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
 
-  hNumVetoHits_ = hf.DefineTH1D(hdir, "numZContainVetoHits", "Num hits in veto planes", 10, -0.5, 9.5);
+  hWindow2Time_ = hf.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
+  hWindow2dt_ = hf.DefineTH1D(hdir, "window2dt", "Second window time - proton win time", 1000, 0., 10000.);
 
-  hhsZContained_.init(hdir+"/hsZContained", hf, geom, conf);
+  hZContaintedNumHitPlanesUp_ = hf.DefineTH1D(hdir, "hZContaintedNumHitPlanesUp", "hZContaintedNumHitPlanesUp", 10, -0.5, 9.5);
+  hZContaintedNumHitPlanesDn_ = hf.DefineTH1D(hdir, "hZContaintedNumHitPlanesDn", "hZContaintedNumHitPlanesDn", 10, -0.5, 9.5);
+
+  hLastPlaneLoose_ = hf.DefineTH1D(hdir, "lastPlaneLoose", "Loose proton last plane", 56, 0.5, 56.5);
 
   //----------------------------------------------------------------
-  uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::MIXED, cutWinTimeMin - 100./*FIXME*/);
-  hwidthPCTightProtons_.init(hdir+"/pcWidthTightProtons", "pcpwidth", 12, hf, conf);
-  hwidthDCTightProtons_.init(hdir+"/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
+  uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/);
+  hRangeDIO_.init(hdir+"/rangeDIO", hf, geom, conf);
+  hdriftPCFiltered_.init(hdir+"/driftTimePCFiltered", hf, geom.numPCs(), 1000./*ns*/,
+                         conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtPC"),
+                         conf);
+
+  //----------------------------------------------------------------
+  hhsZContained_.init(hdir+"/hsZContained", hf, geom, conf);
+  hRangeAfterPC7Cuts_.init(hdir+"/rangeAfterPC7Cuts", hf, geom, conf);
+
+  //----------------------------------------------------------------
   hwidthPCTightDIO_.init(hdir+"/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
   hwidthDCTightDIO_.init(hdir+"/dcWidthTightDIO", "dcpwidth", 44, hf, conf);
-  hcLooseProtons_.init(hf, hdir+"/TDCLooseProtons", geom, conf, cutStream_);
-  hcTightProtons_.init(hf, hdir+"/TDCTightProtons", geom, conf, cutStream_);
-  hcdio_.init(hf, hdir+"/TDCDIO", geom, conf, cutStream_);
+  hwidthPCLooseProtons_.init(hdir+"/pcWidthLooseProtons", "pcpwidth", 12, hf, conf);
+  hwidthDCLooseProtons_.init(hdir+"/dcWidthLooseProtons", "dcpwidth", 44, hf, conf);
+  hwidthPCTightProtons_.init(hdir+"/pcWidthTightProtons", "pcpwidth", 12, hf, conf);
+  hwidthDCTightProtons_.init(hdir+"/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
+
+  hcdio_.init(hf, hdir+"/clDIO", geom, conf, cutStream_);
+  hcLooseProtons_.init(hf, hdir+"/clLooseProtons", geom, conf, cutStream_);
+  hcTightProtons_.init(hf, hdir+"/clTightProtons", geom, conf, cutStream_);
 }
 
 //================================================================
@@ -117,54 +108,35 @@ analyze(const EventClass& evt,
         const std::vector<ClustersByPlane>& afterTrigGlobalClusters)
 {
   //----------------------------------------------------------------
-  hNumAfterTrigWindows_->Fill(afterTrigGlobalClusters.size());
   if(afterTrigGlobalClusters.empty()) {
     return CUT_NOHITS;
-  }
-
-  if(afterTrigGlobalClusters.size() > 1) {
-    const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
-    const TimeWindow& win2 = wres.windows[wres.iTrigWin + 2];
-
-    hMultiWindowPCHits_->Fill(win1.pcHits.size(), win2.pcHits.size());
-
-    hMultiWindowHits_->Fill(win1.pcHits.size() + win1.dcHits.size(),
-                            win2.pcHits.size() + win2.dcHits.size());
-
-    unsigned const planes1 = MuCapUtilities::numPlanes(win1.pcHits);
-    unsigned const planes2 = MuCapUtilities::numPlanes(win2.pcHits);
-    hMultiWindowPCPlanes_->Fill(planes1, planes2);
-    hMultiWindowPCPlanesmm_->Fill(std::max(planes1,planes2), std::min(planes1, planes2));
-
-    hOccupancyPCwin1_.fill(win1.pcHits);
-    hOccupancyPCwin2_.fill(win2.pcHits);
-
-    if((cutWinTimeMin_ < win1.tstart) && (win2.tstart <= cutWinTimeMax_ )) {
-      // Avoid DC overlaps for these plots
-      if(win2.tstart - win1.tstart > 1050.) {
-
-        const unsigned n1 = std::count_if(afterTrigGlobalClusters[0].begin(), afterTrigGlobalClusters[0].end(), nonEmpty<WireClusterCollection>);
-        const unsigned n2 = std::count_if(afterTrigGlobalClusters[1].begin(), afterTrigGlobalClusters[1].end(), nonEmpty<WireClusterCollection>);
-        hMultiWindowPlanesmm_->Fill(std::max(n1,n2), std::min(n1, n2));
-
-        PlaneRange r1 = findPlaneRange(afterTrigGlobalClusters[0]);
-        PlaneRange r2 = findPlaneRange(afterTrigGlobalClusters[1]);
-        hMultiWindowRanges_->Fill(std::max(r1.segments().size(), r2.segments().size()),
-                                  std::min(r1.segments().size(), r2.segments().size()));
-
-        //std::cout<<"t1 = "<<win1.tstart<<", r1 = "<<r1<<",\tt2 = "<<win2.tstart<<", r2="<<r2<<std::endl;
-      }
-    }
-  }
-
-  //----------------------------------------------------------------
-  if(afterTrigGlobalClusters.size() > 1) {
-    return CUT_MULTIWIN;
   }
 
   const unsigned iProtonWin = 1 + wres.iTrigWin;
   const TimeWindow& protonWindow = wres.windows[iProtonWin];
   const ClustersByPlane& protonGlobalClusters = afterTrigGlobalClusters[0];
+  const PlaneRange protonDnClusters = findDownstreamPlaneRange(protonGlobalClusters);
+
+  //----------------------------------------------------------------
+  // Veto accidental beam particles (also upstream DIOs and some protons)
+
+  int numBeamVetoHitPlanes(0);
+  for(int i=1; i<=4; ++i) {
+    if(!protonGlobalClusters[i].empty()) {
+      ++numBeamVetoHitPlanes;
+    }
+  }
+
+  hBeamVetoNumHitPlanes_->Fill(numBeamVetoHitPlanes);
+  if(numBeamVetoHitPlanes > cutBeamVetoMaxPCplanes_) {
+    return CUT_BEAM_VETO;
+  }
+
+  for(int i=1; i<=4; ++i) {
+    if(!protonGlobalClusters[i].empty()) {
+      hHitPCsAterBeamVeto_->Fill(i);
+    }
+  }
 
   //----------------------------------------------------------------
   // Trig time is 0, dt from that rather than from less precise trigWin time
@@ -174,132 +146,121 @@ analyze(const EventClass& evt,
   }
   hWindowTimeAfter_->Fill(protonWindow.tstart);
 
-  // Count the number of planes hit up and dn of the target
-  int nHitPlanesUp(0), nHitPlanesDn(0);
-  for(unsigned i=1; i<protonGlobalClusters.size(); ++i) {
-    if(!protonGlobalClusters[i].empty()) {
-      ++(i <= protonGlobalClusters.size()/2 ? nHitPlanesUp : nHitPlanesDn);
+  //----------------------------------------------------------------
+  hNumAfterTrigWindows_->Fill(afterTrigGlobalClusters.size());
+  if(afterTrigGlobalClusters.size() > 1) {
+    const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
+    const TimeWindow& win2 = wres.windows[wres.iTrigWin + 2];
+    const double dt2 = win2.tstart - win1.tstart;
+    hWindow2Time_->Fill(win2.tstart);
+    hWindow2dt_->Fill(dt2);
+    if(dt2 < cutMultiwinNextdt_) {
+      return CUT_MULTIWIN_NEXTDT;
     }
   }
-  //std::cout<<"AG: nHitPlanesUp = "<<nHitPlanesUp<<", nHitPlanesDn = "<<nHitPlanesDn<<std::endl;
-  hhsAfterTimeCuts_.fill(protonGlobalClusters);
 
+  //----------------------------------------------------------------
+  // UVAnalysis: DIOs for normalization
   const int iDIO = uvan_.process(evt, muStopUV);
   if(iDIO >= 0) {
     hwidthPCTightDIO_.fill(protonWindow.pcHits);
     hwidthDCTightDIO_.fill(protonWindow.dcHits);
     hcdio_.fill(protonGlobalClusters);
+
+    hRangeDIO_.fill(protonDnClusters);
+    hdriftPCFiltered_.fill(evt, iDIO, protonWindow.pcHits);
   }
 
   //----------------------------------------------------------------
-  // Count the number of hit planes in the veto region
-  int numVetoHits(0);
-  for(unsigned i=1; i<=cutZContainedNumPlanes_; ++i) {
+  // Z containment check
+  int numZVetoHitsUp(0), numZVetoHitsDn(0);
+  for(unsigned i=1; i<=cutZContainedNumToCheck_; ++i) {
     if(!protonGlobalClusters[i].empty()) {
-      ++numVetoHits;
+      ++numZVetoHitsUp;
     }
     if(!protonGlobalClusters[protonGlobalClusters.size() - i].empty()) {
-      ++numVetoHits;
+      ++numZVetoHitsDn;
     }
   }
 
-  hNumVetoHits_->Fill(numVetoHits);
-  if(numVetoHits) {
+  hZContaintedNumHitPlanesUp_->Fill(numZVetoHitsUp);
+  hZContaintedNumHitPlanesDn_->Fill(numZVetoHitsDn);
+  if((numZVetoHitsUp > cutZContainedMaxHitPlanes_) || (numZVetoHitsDn > cutZContainedMaxHitPlanes_)) {
     return CUT_Z_CONTAINED;
   }
 
-
-  // Here we have a sample of events with charged particle emission from mu capture
-  // (plus some DIOs hitting the glass)
-  // Normalize to number of captures in accepted deltaT (corrected for accidental effects)
-  // and get a measurement of charged particles per capture.
   hhsZContained_.fill(protonGlobalClusters);
+
+  //----------------------------------------------------------------
+  if(protonGlobalClusters[29].empty()) {
+    return CUT_PC7_HIT;
+  }
+
+  //----------------------------------------------------------------
+//  if() {
+//    return CUT_PC7_COORDINATE;
+//  }
+
+  hRangeAfterPC7Cuts_.fill(protonDnClusters);
+
+  //  //----------------------------------------------------------------
+  //  // CUTS_LOOSE_PROTONS are passed at this point
+  //
+  const PlaneRange gr = findPlaneRange(protonGlobalClusters);
+  hLastPlaneLoose_->Fill(gr.max());
+
+  hwidthPCLooseProtons_.fill(protonWindow.pcHits);
+  hwidthDCLooseProtons_.fill(protonWindow.dcHits);
+  hcLooseProtons_.fill(protonGlobalClusters);
 
 
   // FIXME: just do the downstream analysis, but at earlier times
   // Can use the already-studies TDC width cut to select protons
-  // Can allow some upstream hits...  Note that upstream hits
+  // Can allow some upstream hits...  Note that upstream DC hits
   // would be eaten by the muon window for early times anyway.
 
 
-//  if(protonWindow.stream != cutStream_) {
-//    return CUT_STREAM;
-//  }
-
-//  if(clustersPC[7].empty()) {
-//    return CUT_NOPC7;
-//  }
-//
-//  for(int plane=1; plane <= 56; ++plane) {
-//    hNumClusters_->Fill(plane, global[plane].size());
-//  }
-//
-//  if(!gr.noGaps) {
-//    return CUT_RANGE_GAPS;
-//  }
-//
-//  const unsigned numDIO = uvan_.process(evt,  protonWindow.tstart, global, muStopUV);
-//  if(numDIO) {
-//    hwidthPCTightDIO_.fill(protonPCHits);
-//    hwidthDCTightDIO_.fill(protonDCHits);
-//    hcdio_.fill(global);
-//  }
-//
-//  hLastPlane_->Fill(gr.max);
-//  if(doMCTruth_ && (evt.nmcvtx == 2)) {
-//    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max);
-//  }
-//
-//  if(gr.max > cutMaxPlane_) {
-//    return CUT_MAX_RANGE;
-//  }
-//
-//  //----------------------------------------------------------------
-//  // CUTS_LOOSE_PROTONS are passed at this point
-//
-//  hcLooseProtons_.fill(global);
-//
-//  if(doMCTruth_) {
-//    htruthLoose_.fill(evt);
-//  }
-//
-//  //hpw_.fill(global, evt);
-//
-//  //----------------------------------------------------------------
-//  if(gr.max < 30) {
-//    return CUT_NOPC8;
-//  }
-//
-//  if(doMCTruth_) {
-//    htruthPC8_.fill(evt);
-//  }
-//
-//  //----------------------------------------------------------------
-//  // the containment check requires at least 2U and 2V planes
-//  if(gr.max < 32) {
-//    return CUT_MIN_RANGE;
-//  }
-//
-//  if(doMCTruth_) {
-//    htruthMinRange_.fill(evt);
-//  }
-//
-//  const double rext = rcheckProtonCandidates_.rmax(gr.max, global);
-//  hCCRvsPlaneProtons_->Fill(gr.max, rext);
-//  if(doMCTruth_) {
-//    hrtruth_.fill(evt, gr.max, rext);
-//  }
-//  if(rext > cutRextMax_) {
-//    return CUT_REXT;
-//  }
-//
-//  if(doMCTruth_) {
-//    htruthTight_.fill(evt);
-//  }
-//
-//  hwidthPCTightProtons_.fill(protonPCHits);
-//  hwidthDCTightProtons_.fill(protonDCHits);
-//  hcTightProtons_.fill(global);
+  //  if(!gr.noGaps) {
+  //    return CUT_RANGE_GAPS;
+  //  }
+  //
+  //  if(doMCTruth_ && (evt.nmcvtx == 2)) {
+  //    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max);
+  //  }
+  //
+  //
+  //  if(doMCTruth_) {
+  //    htruthLoose_.fill(evt);
+  //  }
+  //
+  //  //hpw_.fill(global, evt);
+  //
+  //  //----------------------------------------------------------------
+  //  // the containment check requires at least 2U and 2V planes
+  //  if(gr.max < 32) {
+  //    return CUT_MIN_RANGE;
+  //  }
+  //
+  //  if(doMCTruth_) {
+  //    htruthMinRange_.fill(evt);
+  //  }
+  //
+  //  const double rext = rcheckProtonCandidates_.rmax(gr.max, global);
+  //  hCCRvsPlaneProtons_->Fill(gr.max, rext);
+  //  if(doMCTruth_) {
+  //    hrtruth_.fill(evt, gr.max, rext);
+  //  }
+  //  if(rext > cutRextMax_) {
+  //    return CUT_REXT;
+  //  }
+  //
+  //  if(doMCTruth_) {
+  //    htruthTight_.fill(evt);
+  //  }
+  //
+  //  hwidthPCTightProtons_.fill(protonPCHits);
+  //  hwidthDCTightProtons_.fill(protonDCHits);
+  //  hcTightProtons_.fill(global);
 
   return CUTS_TIGHT_PROTONS;
 }
