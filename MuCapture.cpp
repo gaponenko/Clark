@@ -308,7 +308,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   winTimeBeforeTrigPCWinGaps_.fill(wres);
   for(int i = 0; i + 1 < trigPCRange.segments().size(); ++i) {
-    hTrigPCWinGaps_->Fill(trigPCRange.segments()[i].max, trigPCRange.segments()[i+1].min);
+    hTrigPCWinGaps_->Fill(trigPCRange.segments()[i].max + 1, trigPCRange.segments()[i+1].min - 1);
   }
   for(int iplane = 1; iplane <= 6; ++iplane) {
     if(muonPCClusters[iplane].empty()) {

@@ -28,7 +28,7 @@ void HistPlaneRanges::init(const std::string& hdir,
                                 57, -0.5, 56.5, 57, -0.5, 56.5);
   hSingleRange_->SetOption("colz");
 
-  hDoubleRangeGap_ = hf.DefineTH2D(hdir, "doubleRangeGap", "Double range gap",
+  hDoubleRangeGap_ = hf.DefineTH2D(hdir, "doubleRangeGap", "Double range gap end vs start",
                                    57, -0.5, 56.5, 57, -0.5, 56.5);
   hDoubleRangeGap_->SetOption("colz");
 
@@ -49,7 +49,7 @@ void HistPlaneRanges::fill(const PlaneRange& gr) {
     hSingleRange_->Fill(gr.min(), gr.max());
     break;
   case 2:
-    hDoubleRangeGap_->Fill(gr.segments()[0].max, gr.segments()[1].min);
+    hDoubleRangeGap_->Fill(gr.segments()[0].max + 1, gr.segments()[1].min - 1);
     assert(gr.segments()[0].max + 1 < gr.segments()[1].min);
     for(int i = gr.segments()[0].max + 1; i < gr.segments()[1].min; ++i) {
       hDoubleRangeMissingPlanes_->Fill(i);
