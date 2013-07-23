@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <limits>
 
 #include "TH1.h"
 
@@ -29,7 +30,11 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   cutZContainedNumToCheck_ = conf.read<unsigned>("MuCapture/StreamAnalysis/cutZContainedNumToCheck");
   cutZContainedMaxHitPlanes_ = conf.read<unsigned>("MuCapture/StreamAnalysis/cutZContainedMaxHitPlanes");
+  cutPC7MaxDistanceToMuStop_ = conf.read<double>("MuCapture/StreamAnalysis/cutPC7MaxDistanceToMuStop");
   cutRextMax_ = conf.read<double>("MuCapture/StreamAnalysis/cutRextMax");
+
+  //----------------------------------------------------------------
+  geom_ = &geom;
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "protonCuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -59,6 +64,10 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
                                           "Num PC7 wires vs clusters before cut",
                                           10, -0.5, 9.5, 40, -0.5, 39.5);
   hNumPC7WiresVsClusters_->SetOption("colz");
+
+  hPC7DistanceToMuStop_ = hf.DefineTH1D(hdir, "pc7DistanceToMuStop", "pc7DistanceToMuStop",
+                                        //101, -0.0125, 2.5125); //cm
+                                        200, 0, 5.); //cm
 
   hLastPlaneLoose_ = hf.DefineTH1D(hdir, "lastPlaneLoose", "Loose proton last plane", 56, 0.5, 56.5);
 
@@ -198,19 +207,27 @@ analyze(const EventClass& evt,
   hhsZContained_.fill(protonGlobalClusters);
 
   //----------------------------------------------------------------
-  const int PC7GlobalIndex = 29;
-  hNumPC7Clusters_->Fill(protonGlobalClusters[PC7GlobalIndex].size());
-  hNumPC7WiresVsClusters_->Fill(protonGlobalClusters[PC7GlobalIndex].size(),
-                                MuCapUtilities::numWires(protonGlobalClusters[PC7GlobalIndex]));
-
-  if(protonGlobalClusters[PC7GlobalIndex].empty()) {
+  const WireClusterCollection& pc7clusters = protonGlobalClusters[29];
+  hNumPC7Clusters_->Fill(pc7clusters.size());
+  hNumPC7WiresVsClusters_->Fill(pc7clusters.size(), MuCapUtilities::numWires(pc7clusters));
+  if(pc7clusters.empty()) {
     return CUT_PC7_HIT;
   }
 
   //----------------------------------------------------------------
-//  if() {
-//    return CUT_PC7_COORDINATE;
-//  }
+  double distanceToMuStop = std::numeric_limits<double>::max();
+  for(WireClusterCollection::const_iterator ic = pc7clusters.begin(); ic != pc7clusters.end(); ++ic) {
+    WirePlane::Measurement m7 = geom_->pc(7).measurement(ic->centralCell());
+
+    const double offset = m7.coordinate - (m7.dir == WirePlane::U ? muStopUV.x() : muStopUV.y());
+    //std::cout<<"m7.dir = "<<m7.dir<<", coord = "<<m7.coordinate<<", muStopUV = "<<muStopUV<<", offset = "<<offset<<std::endl;
+    const double current = std::max(0., std::abs(offset) - geom_->pc(7).wireSpacing() * ic->numCells()/2.);
+    distanceToMuStop = std::min(distanceToMuStop, current);
+  }
+  hPC7DistanceToMuStop_->Fill(distanceToMuStop);
+  if(distanceToMuStop > cutPC7MaxDistanceToMuStop_) {
+    return CUT_PC7_COORDINATE;
+  }
 
   hRangeAfterPC7Cuts_.fill(protonDnClusters);
 

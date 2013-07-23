@@ -376,6 +376,7 @@ void SetDefault(ConfigFile &Conf)
 
         SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedNumToCheck", 4);
         SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedMaxHitPlanes", 1);
+        SetKey(Conf, "MuCapture/StreamAnalysis/cutPC7MaxDistanceToMuStop", 0.15/*cm*/);
         SetKey(Conf, "MuCapture/StreamAnalysis/cutRextMax", 13.);
 
         //================================================================

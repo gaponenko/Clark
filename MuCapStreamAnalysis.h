@@ -41,7 +41,7 @@ class MuCapStreamAnalysis {
     ax->SetBinLabel(1+CUT_Z_CONTAINED, "Z contained");
 
     ax->SetBinLabel(1+CUT_PC7_HIT, "PC7 hit");
-    // ax->SetBinLabel(1+CUT_PC7_COORDINATE, "PC7 V"); // uncomment once implemented
+    ax->SetBinLabel(1+CUT_PC7_COORDINATE, "PC7 V"); // uncomment once implemented
 
     ax->SetBinLabel(1+CUTS_LOOSE_PROTONS, "Loose protons");
 
@@ -104,6 +104,7 @@ public:
     , cutZContainedNumToCheck_()
     , cutZContainedMaxHitPlanes_()
     , cutRextMax_()
+    , geom_()
     , h_cuts_r()
     , h_cuts_p()
     , hBeamVetoNumHitPlanes_()
@@ -117,6 +118,7 @@ public:
     , hZContaintedNumHitPlanesDn_()
     , hNumPC7Clusters_()
     , hNumPC7WiresVsClusters_()
+    , hPC7DistanceToMuStop_()
     , hLastPlaneLoose_()
   {}
 
@@ -137,7 +139,11 @@ private :
   //
   int cutZContainedMaxHitPlanes_; // in the range on each side
 
+  double cutPC7MaxDistanceToMuStop_;
+
   double cutRextMax_;
+
+  const DetectorGeo *geom_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
@@ -157,6 +163,8 @@ private :
 
   TH1 *hNumPC7Clusters_;
   TH1 *hNumPC7WiresVsClusters_;
+
+  TH1 *hPC7DistanceToMuStop_;
 
   TH1 *hLastPlaneLoose_;
 
