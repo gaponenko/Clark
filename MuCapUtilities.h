@@ -5,6 +5,7 @@
 
 #include <vector>
 #include "TDCHitWP.h"
+#include "WireCluster.h"
 
 namespace MuCapUtilities {
 
@@ -14,6 +15,8 @@ namespace MuCapUtilities {
   double kineticEnergy(int pdgId, double ptot);
 
   unsigned numPlanes(const TDCHitWPPtrCollection& hits);
+
+  unsigned numWires(const WireClusterCollection& clusters);
 
   //================================================================
   class Stats {

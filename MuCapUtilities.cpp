@@ -41,6 +41,15 @@ namespace MuCapUtilities {
   }
 
   //================================================================
+  unsigned numWires(const WireClusterCollection& clusters) {
+    unsigned res(0);
+    for(WireClusterCollection::const_iterator i = clusters.begin(); i!=clusters.end(); ++i) {
+      res  += i->numCells();
+    }
+    return res;
+  }
+
+  //================================================================
   Stats::Stats()
     : sum_(0.)
     , min_(std::numeric_limits<double>::max())

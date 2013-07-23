@@ -54,6 +54,12 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   hZContaintedNumHitPlanesUp_ = hf.DefineTH1D(hdir, "hZContaintedNumHitPlanesUp", "hZContaintedNumHitPlanesUp", 10, -0.5, 9.5);
   hZContaintedNumHitPlanesDn_ = hf.DefineTH1D(hdir, "hZContaintedNumHitPlanesDn", "hZContaintedNumHitPlanesDn", 10, -0.5, 9.5);
 
+  hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "Num PC7 clusters before cut", 10, -0.5, 9.5);
+  hNumPC7WiresVsClusters_ = hf.DefineTH2D(hdir, "numPC7WiresVsClusters",
+                                          "Num PC7 wires vs clusters before cut",
+                                          10, -0.5, 9.5, 40, -0.5, 39.5);
+  hNumPC7WiresVsClusters_->SetOption("colz");
+
   hLastPlaneLoose_ = hf.DefineTH1D(hdir, "lastPlaneLoose", "Loose proton last plane", 56, 0.5, 56.5);
 
   //----------------------------------------------------------------
@@ -192,7 +198,12 @@ analyze(const EventClass& evt,
   hhsZContained_.fill(protonGlobalClusters);
 
   //----------------------------------------------------------------
-  if(protonGlobalClusters[29].empty()) {
+  const int PC7GlobalIndex = 29;
+  hNumPC7Clusters_->Fill(protonGlobalClusters[PC7GlobalIndex].size());
+  hNumPC7WiresVsClusters_->Fill(protonGlobalClusters[PC7GlobalIndex].size(),
+                                MuCapUtilities::numWires(protonGlobalClusters[PC7GlobalIndex]));
+
+  if(protonGlobalClusters[PC7GlobalIndex].empty()) {
     return CUT_PC7_HIT;
   }
 

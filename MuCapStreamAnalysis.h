@@ -115,6 +115,8 @@ public:
     , hWindow2dt_()
     , hZContaintedNumHitPlanesUp_()
     , hZContaintedNumHitPlanesDn_()
+    , hNumPC7Clusters_()
+    , hNumPC7WiresVsClusters_()
     , hLastPlaneLoose_()
   {}
 
@@ -153,6 +155,9 @@ private :
   TH1 *hZContaintedNumHitPlanesUp_;
   TH1 *hZContaintedNumHitPlanesDn_;
 
+  TH1 *hNumPC7Clusters_;
+  TH1 *hNumPC7WiresVsClusters_;
+
   TH1 *hLastPlaneLoose_;
 
   MuCapUVAnalysis uvan_;
@@ -162,7 +167,6 @@ private :
   HistHitStream hhsZContained_;
 
   HistPlaneRanges hRangeAfterPC7Cuts_;
-
 
   HistTDCWidth hwidthPCTightDIO_;
   HistTDCWidth hwidthDCTightDIO_;
