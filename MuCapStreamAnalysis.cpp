@@ -80,19 +80,24 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   //----------------------------------------------------------------
   hhsZContained_.init(hdir+"/hsZContained", hf, geom, conf);
+  hhsLooseProtons_.init(hdir+"/hsLooseProtons", hf, geom, conf);
   hRangeAfterPC7Cuts_.init(hdir+"/rangeAfterPC7Cuts", hf, geom, conf);
 
   //----------------------------------------------------------------
-  hwidthPCTightDIO_.init(hdir+"/pcWidthTightDIO", "pcpwidth", 12, hf, conf);
-  hwidthDCTightDIO_.init(hdir+"/dcWidthTightDIO", "dcpwidth", 44, hf, conf);
+  hwidthPCDIO_.init(hdir+"/pcWidthDIO", "pcpwidth", 12, hf, conf);
+  hwidthDCDIO_.init(hdir+"/dcWidthDIO", "dcpwidth", 44, hf, conf);
   hwidthPCLooseProtons_.init(hdir+"/pcWidthLooseProtons", "pcpwidth", 12, hf, conf);
   hwidthDCLooseProtons_.init(hdir+"/dcWidthLooseProtons", "dcpwidth", 44, hf, conf);
-  hwidthPCTightProtons_.init(hdir+"/pcWidthTightProtons", "pcpwidth", 12, hf, conf);
-  hwidthDCTightProtons_.init(hdir+"/dcWidthTightProtons", "dcpwidth", 44, hf, conf);
 
   hcdio_.init(hf, hdir+"/clDIO", geom, conf, cutStream_);
   hcLooseProtons_.init(hf, hdir+"/clLooseProtons", geom, conf, cutStream_);
-  hcTightProtons_.init(hf, hdir+"/clTightProtons", geom, conf, cutStream_);
+
+  hfLoose_.init(hf, hdir+"/finalLoose", geom, conf);
+
+  //----------------------------------------------------------------
+  if(doMCTruth_) {
+    htruthLoose_.init(hf, "MuCapture/ProtonWindow/TruthLoose", conf);
+  }
 }
 
 //================================================================
@@ -178,8 +183,8 @@ analyze(const EventClass& evt,
   // UVAnalysis: DIOs for normalization
   const int iDIO = uvan_.process(evt, muStopUV);
   if(iDIO >= 0) {
-    hwidthPCTightDIO_.fill(protonWindow.pcHits);
-    hwidthDCTightDIO_.fill(protonWindow.dcHits);
+    hwidthPCDIO_.fill(protonWindow.pcHits);
+    hwidthDCDIO_.fill(protonWindow.dcHits);
     hcdio_.fill(protonGlobalClusters);
 
     hRangeDIO_.fill(protonDnClusters);
@@ -231,64 +236,22 @@ analyze(const EventClass& evt,
 
   hRangeAfterPC7Cuts_.fill(protonDnClusters);
 
-  //  //----------------------------------------------------------------
-  //  // CUTS_LOOSE_PROTONS are passed at this point
-  //
+  //----------------------------------------------------------------
+  // CUTS_LOOSE_PROTONS are passed at this point
+
   const PlaneRange gr = findPlaneRange(protonGlobalClusters);
   hLastPlaneLoose_->Fill(gr.max());
 
   hwidthPCLooseProtons_.fill(protonWindow.pcHits);
   hwidthDCLooseProtons_.fill(protonWindow.dcHits);
   hcLooseProtons_.fill(protonGlobalClusters);
+  hhsLooseProtons_.fill(protonGlobalClusters);
 
+  hfLoose_.fill(protonGlobalClusters, evt);
 
-  // FIXME: just do the downstream analysis, but at earlier times
-  // Can use the already-studies TDC width cut to select protons
-  // Can allow some upstream hits...  Note that upstream DC hits
-  // would be eaten by the muon window for early times anyway.
+  if(doMCTruth_) {
+    htruthLoose_.fill(evt);
+  }
 
-
-  //  if(!gr.noGaps) {
-  //    return CUT_RANGE_GAPS;
-  //  }
-  //
-  //  if(doMCTruth_ && (evt.nmcvtx == 2)) {
-  //    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max);
-  //  }
-  //
-  //
-  //  if(doMCTruth_) {
-  //    htruthLoose_.fill(evt);
-  //  }
-  //
-  //  //hpw_.fill(global, evt);
-  //
-  //  //----------------------------------------------------------------
-  //  // the containment check requires at least 2U and 2V planes
-  //  if(gr.max < 32) {
-  //    return CUT_MIN_RANGE;
-  //  }
-  //
-  //  if(doMCTruth_) {
-  //    htruthMinRange_.fill(evt);
-  //  }
-  //
-  //  const double rext = rcheckProtonCandidates_.rmax(gr.max, global);
-  //  hCCRvsPlaneProtons_->Fill(gr.max, rext);
-  //  if(doMCTruth_) {
-  //    hrtruth_.fill(evt, gr.max, rext);
-  //  }
-  //  if(rext > cutRextMax_) {
-  //    return CUT_REXT;
-  //  }
-  //
-  //  if(doMCTruth_) {
-  //    htruthTight_.fill(evt);
-  //  }
-  //
-  //  hwidthPCTightProtons_.fill(protonPCHits);
-  //  hwidthDCTightProtons_.fill(protonDCHits);
-  //  hcTightProtons_.fill(global);
-
-  return CUTS_TIGHT_PROTONS;
+  return CUTS_LOOSE_PROTONS;
 }

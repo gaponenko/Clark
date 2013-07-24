@@ -14,12 +14,12 @@
 //#include "HistStreamAnalysis.h"
 #include "MuCapUVAnalysis.h"
 #include "MuCapContainmentCheck.h"
-#include "HistMuCapRTruth.h"
 #include "HistMuCapTruth.h"
 #include "HistTDCParticleClassifier.h"
 #include "HistHitStream.h"
 #include "HistOccupancy.h"
 #include "HistDriftTime.h"
+#include "HistMuCapFinal.h"
 
 #include "Math/Point2D.h"
 #include "TAxis.h"
@@ -44,12 +44,6 @@ class MuCapStreamAnalysis {
     ax->SetBinLabel(1+CUT_PC7_COORDINATE, "PC7 V"); // uncomment once implemented
 
     ax->SetBinLabel(1+CUTS_LOOSE_PROTONS, "Loose protons");
-
-    //ax->SetBinLabel(1+CUT_MIN_RANGE, "Min range");
-    //ax->SetBinLabel(1+CUT_RANGE_GAPS, "RANGE_GAPS");
-    //ax->SetBinLabel(1+CUT_REXT, "Rext");
-
-    ax->SetBinLabel(1+CUTS_TIGHT_PROTONS, "Tight protons");
   }
 
 public:
@@ -66,6 +60,10 @@ public:
 
     CUT_Z_CONTAINED,
 
+    // Just do the downstream analysis, but at earlier times
+    // Can use the already-studies TDC width cut to select protons
+    // Can allow some upstream hits...  Note that upstream DC hits
+    // would be eaten by the muon window for early times anyway.
     CUT_PC7_HIT,
     CUT_PC7_COORDINATE,
 
@@ -78,10 +76,20 @@ public:
     // plot missing planes
     // Plot TDC widths/particle ID distributions
 
-    CUT_MIN_RANGE,
-    CUT_RANGE_GAPS, // in the "stream" direction
-    CUT_REXT,
-    CUTS_TIGHT_PROTONS,
+    // // Per 20130501-muminus/slides.pdf
+    // // the Rext cut can only marginally improve proton purity
+    // // at the cost of a large drop in efficiency.
+    // // Do not use the "tight" protons for now.
+    // // Glen argues that we need events with protons
+    // // ranging out in the stack and not hitting the glass
+    // // to estimate their energy spectrum.  However even
+    // // hitting the glass protons give information about
+    // // their MIN possible energy.
+    // CUT_MIN_RANGE,
+    // CUT_RANGE_GAPS, // in the "stream" direction
+    // CUT_REXT,
+    // CUTS_TIGHT_PROTONS,
+
     CUTS_END
   };
 
@@ -173,19 +181,21 @@ private :
   HistDriftTime hdriftPCFiltered_;
 
   HistHitStream hhsZContained_;
+  HistHitStream hhsLooseProtons_;
 
   HistPlaneRanges hRangeAfterPC7Cuts_;
 
-  HistTDCWidth hwidthPCTightDIO_;
-  HistTDCWidth hwidthDCTightDIO_;
+  HistTDCWidth hwidthPCDIO_;
+  HistTDCWidth hwidthDCDIO_;
   HistTDCWidth hwidthPCLooseProtons_;
   HistTDCWidth hwidthDCLooseProtons_;
-  HistTDCWidth hwidthPCTightProtons_;
-  HistTDCWidth hwidthDCTightProtons_;
 
   HistTDCParticleClassifier hcdio_;
   HistTDCParticleClassifier hcLooseProtons_;
-  HistTDCParticleClassifier hcTightProtons_;
+
+  HistMuCapFinal hfLoose_;
+
+  HistMuCapTruth htruthLoose_;
 
   EventCutNumber analyze(const EventClass& evt,
                          const TimeWindowingResults& wres,
