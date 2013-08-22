@@ -39,15 +39,11 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_NOPCHITS, "NoPCHits");
     ax->SetBinLabel(1+CUT_NOTRIGWIN, "NoTrigWin");
     ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "Pre-trig hits");
-    ax->SetBinLabel(1+CUT_TRIGPCWIN_TYPE, "TrigPCWinType");
-    ax->SetBinLabel(1+CUT_TRIGPCWIN_GAPS, "TrigPCWinGaps");
-    ax->SetBinLabel(1+CUT_TRIGPCWIN_END_PLANE, "TrigPCWinEndPlane");
-    ax->SetBinLabel(1+CUT_TRIGPCWIN_START_PLANE, "TrigPCWinStartPlane");
-
-    ax->SetBinLabel(1+CUT_TRIGDCWIN_TYPE, "TrigDCWinType");
     ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS, "Unassigned DC hits");
 
-    ax->SetBinLabel(1+CUT_MU_RANGE_GAPS, "Mu range gaps");
+    ax->SetBinLabel(1+CUT_MUON_FIRST_PLANE, "mu first plane");
+    ax->SetBinLabel(1+CUT_MUON_RANGE_GAPS, "mu range gaps");
+    ax->SetBinLabel(1+CUT_MUON_LAST_PLANE, "mu last plane");
 
     ax->SetBinLabel(1+CUT_MUSTOP_SINGLECLUSTER, "Mu single cluster");
     ax->SetBinLabel(1+CUT_MUSTOP_UV, "Mu stop UV");
@@ -64,16 +60,11 @@ public :
     CUT_NOPCHITS,
     CUT_NOTRIGWIN,
     CUT_PCWIN_TRIGSEPPAST,
-
-    CUT_TRIGPCWIN_TYPE,
-    CUT_TRIGPCWIN_END_PLANE,
-    CUT_TRIGPCWIN_START_PLANE,
-    CUT_TRIGPCWIN_GAPS,
-
-    CUT_TRIGDCWIN_TYPE,
     CUT_UNASSIGNEDDCHITS,
 
-    CUT_MU_RANGE_GAPS,
+    CUT_MUON_FIRST_PLANE,
+    CUT_MUON_RANGE_GAPS,
+    CUT_MUON_LAST_PLANE,
 
     CUT_MUSTOP_SINGLECLUSTER,
     CUT_MUSTOP_UV,
@@ -95,6 +86,8 @@ public :
     , doDefaultTWIST_(false)
     , winPCPreTrigSeparation_()
     , maxUnassignedDCHits_()
+    , cutMuonFirstPlane_()
+    , cutMuonRangeGapsEnabled_()
     , muStopRMax_()
 
     , pcHitProcessor_()
@@ -103,11 +96,13 @@ public :
     , h_cuts_r()
     , h_cuts_p()
     , hPCPreTrigSeparation_()
-    , hTrigPCWinStartPlane_()
-    , hTrigPCWinGaps_()
-    , hTrigPCWinMissingPlanes_()
-
     , hWinDCUnassignedCount_()
+
+    , hMuonFirstPlane_()
+    , hMuonLastPlaneBeforeGaps_()
+    , hMuonLastPlaneAfterGaps_()
+    , hMuonRangeGaps_()
+    , hMuonMissingPlanes_()
 
     , hMuStopUVCell_()
     , hMuStopUVPos_()
@@ -129,10 +124,10 @@ private :
 
   double winPCPreTrigSeparation_;
 
-  bool cutTrigPCWinGapsEnabled_;
-  int cutTrigPCWinStartPlane_;
-
   int maxUnassignedDCHits_;
+
+  int cutMuonFirstPlane_;
+  bool cutMuonRangeGapsEnabled_;
 
   double muStopRMax_;
 
@@ -151,11 +146,13 @@ private :
   TH1D *h_cuts_p;
 
   TH1 *hPCPreTrigSeparation_;
-  TH1 *hTrigPCWinStartPlane_;
-  TH2 *hTrigPCWinGaps_;
-  TH1 *hTrigPCWinMissingPlanes_;
-
   TH1 *hWinDCUnassignedCount_;
+
+  TH1 *hMuonFirstPlane_;
+  TH1 *hMuonLastPlaneBeforeGaps_;
+  TH1 *hMuonLastPlaneAfterGaps_;
+  TH2 *hMuonRangeGaps_;
+  TH1 *hMuonMissingPlanes_;
 
   TH2 *hMuStopUVCell_;
   TH2 *hMuStopUVPos_;
@@ -185,13 +182,6 @@ private :
   HistAccidentals haccidentalsStop_;
 
   HistWinTime winTimeBeforeNoTrigWin_;
-  HistWinTime winTimeBeforeTrigPCWinType_;
-  HistWinTime winTimeBeforeTrigPCWinGaps_;
-
-  HistWinTime winTimeBeforeTrigPCWinEndPlane_;
-  HistWinTime winTimeBeforeTrigPCWinStartPlane_;
-
-  HistWinTime winTimeBeforeTrigDCWinType_;
   HistWinTime winTimeMuStop_;
 
   MuCapUVAnalysis dioUp_;

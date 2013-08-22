@@ -50,9 +50,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
   winPCPreTrigSeparation_ = Conf.read<double>("MuCapture/winPCPreTrigSeparation");
-  cutTrigPCWinGapsEnabled_ = Conf.read<bool>("MuCapture/cutTrigPCWinGapsEnabled");
-  cutTrigPCWinStartPlane_ = Conf.read<int>("MuCapture/cutTrigPCWinStartPlane");
   maxUnassignedDCHits_ = Conf.read<int>("MuCapture/maxUnassignedDCHits");
+  cutMuonFirstPlane_ = Conf.read<int>("MuCapture/cutMuonFirstPlane");
+  cutMuonRangeGapsEnabled_ = Conf.read<bool>("MuCapture/cutMuonRangeGapsEnabled");
 
   muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
 
@@ -103,14 +103,16 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hPCPreTrigSeparation_ = H.DefineTH1D("MuCapture", "pcPreTrigSeparation", "PC win pre-trigger separation", 600, -6000., 0.);
 
-  hTrigPCWinStartPlane_ = H.DefineTH1D("MuCapture", "trigPCWinStartPlane", "Trig win start PC plane", 12, 0.5, 12.5);
-
-  hTrigPCWinGaps_ = H.DefineTH2D("MuCapture", "trigPCWinGaps", "Trig win PC gap end vs start", 13, -0.5, 12.5, 13, -0.5, 12.5);
-  hTrigPCWinGaps_->SetOption("colz");
-
-  hTrigPCWinMissingPlanes_ = H.DefineTH1D("MuCapture", "trigPCWinMissingPlanes", "Trig win missing PC planes", 12, 0.5, 12.5);
-
   hWinDCUnassignedCount_ = H.DefineTH1D("MuCapture", "winDCUnassignedCount", "Count of unassigned DC hits", 101, -0.5, 100.5);
+
+  hMuonFirstPlane_ = H.DefineTH1D("MuCapture", "muonFirstPlane", "Muon first plane", 56, 0.5, 56.5);
+  hMuonLastPlaneBeforeGaps_ = H.DefineTH1D("MuCapture", "muonLastPlaneBeforeGaps", "Muon last plane, before gaps", 56, 0.5, 56.5);
+  hMuonLastPlaneAfterGaps_ = H.DefineTH1D("MuCapture", "muonLastPlaneAfterGaps", "Muon last plane, after range gaps", 56, 0.5, 56.5);
+
+  hMuonRangeGaps_ = H.DefineTH2D("MuCapture", "muonRangeGaps", "Muon win gap end vs start", 57, -0.5, 56.5, 57, -0.5, 56.5);
+  hMuonRangeGaps_->SetOption("colz");
+
+  hMuonMissingPlanes_ = H.DefineTH1D("MuCapture", "muonMissingPlanes", "Muon range missing planes", 56, 0.5, 56.5);
 
   // Make the bin size half a cell
   hMuStopUVCell_ = H.DefineTH2D("MuCapture", "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
@@ -146,13 +148,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   haccidentalsStop_.init("MuCapture/AccidentalsStop", H, Conf);
 
   winTimeBeforeNoTrigWin_.init("MuCapture/winTime", "beforeNoTrigWin", H, Conf);
-  winTimeBeforeTrigPCWinType_.init("MuCapture/winTime", "beforeTrigPCWinType", H, Conf);
-  winTimeBeforeTrigPCWinGaps_.init("MuCapture/winTime", "beforeTrigPCWinGaps", H, Conf);
-
-  winTimeBeforeTrigPCWinEndPlane_.init("MuCapture/winTime", "beforeTrigPCEndPlane", H, Conf);
-  winTimeBeforeTrigPCWinStartPlane_.init("MuCapture/winTime", "beforeTrigPCStartPlane", H, Conf);
-
-  winTimeBeforeTrigDCWinType_.init("MuCapture/winTime", "beforeTrigDCWinType", H, Conf);
   winTimeMuStop_.init("MuCapture/winTime", "muStop", H, Conf);
 
   dioUp_.init("MuCapture/DIOUp", H, Conf,
@@ -285,77 +280,63 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
-  winTimeBeforeTrigPCWinType_.fill(wres);
-
   const TimeWindow& trigWin = wres.windows[wres.iTrigWin];
-  if(trigWin.stream != TimeWindow::UPSTREAM) {
-    return CUT_TRIGPCWIN_TYPE;
-  }
-
-  const ClustersByPlane muonPCClusters = constructPlaneClusters(12, trigWin.pcHits);
-  const PlaneRange trigPCRange = findPlaneRange(muonPCClusters);
-
-  winTimeBeforeTrigPCWinEndPlane_.fill(wres);
-  if(trigPCRange.max() != 6) {
-    return CUT_TRIGPCWIN_END_PLANE;
-  }
-
-  winTimeBeforeTrigPCWinStartPlane_.fill(wres);
-  hTrigPCWinStartPlane_->Fill(trigPCRange.min());
-  if(cutTrigPCWinStartPlane_ < trigPCRange.min()) {
-    return CUT_TRIGPCWIN_START_PLANE;
-  }
-
-  winTimeBeforeTrigPCWinGaps_.fill(wres);
-  for(int i = 0; i + 1 < trigPCRange.segments().size(); ++i) {
-    hTrigPCWinGaps_->Fill(trigPCRange.segments()[i].max + 1, trigPCRange.segments()[i+1].min - 1);
-  }
-  for(int iplane = 1; iplane <= 6; ++iplane) {
-    if(muonPCClusters[iplane].empty()) {
-      hTrigPCWinMissingPlanes_->Fill(iplane);
-    }
-  }
-  if(cutTrigPCWinGapsEnabled_ && !trigPCRange.noGaps()) {
-    return CUT_TRIGPCWIN_GAPS;
-  }
-
-  winTimeBeforeTrigDCWinType_.fill(wres);
 
   //----------------
   // Process DC hits
   dcWindowing_.assignDCHits(filteredDCHits, &wres);
-  if(trigWin.stream != TimeWindow::UPSTREAM) {
-    return CUT_TRIGDCWIN_TYPE;
-  }
 
   hWinDCUnassignedCount_->Fill(wres.unassignedDCHits.size());
   if(wres.unassignedDCHits.size() > maxUnassignedDCHits_) {
     return CUT_UNASSIGNEDDCHITS;
   }
 
-  //----------------------------------------------------------------
-  const ClustersByPlane muonDCClusters = constructPlaneClusters(44, trigWin.dcHits);
-  const ClustersByPlane muonGlobalClusters = globalPlaneClusters(muonPCClusters, muonDCClusters);
+  //----------------
+  const ClustersByPlane muonPCtmp = constructPlaneClusters(12, trigWin.pcHits);
+  const ClustersByPlane muonDCtmp = constructPlaneClusters(44, trigWin.dcHits);
+  const ClustersByPlane muonGlobalClusters = globalPlaneClusters(muonPCtmp, muonDCtmp);
+  const PlaneRange muonRange = findPlaneRange(muonGlobalClusters);
 
+  hMuonFirstPlane_->Fill(muonRange.min());
+  if(cutMuonFirstPlane_ < muonRange.min()) {
+    return CUT_MUON_FIRST_PLANE;
+  }
+
+  //----------------
+  hMuonLastPlaneBeforeGaps_->Fill(muonRange.max());
+  for(int i = 0; i + 1 < muonRange.segments().size(); ++i) {
+    hMuonRangeGaps_->Fill(muonRange.segments()[i].max + 1, muonRange.segments()[i+1].min - 1);
+  }
+  for(int iplane = 1; iplane <= muonRange.max(); ++iplane) {
+    if(muonGlobalClusters[iplane].empty()) {
+      hMuonMissingPlanes_->Fill(iplane);
+    }
+  }
+  if(cutMuonRangeGapsEnabled_ && !muonRange.noGaps()) {
+    return CUT_MUON_RANGE_GAPS;
+  }
+
+  //----------------
+  hMuonLastPlaneAfterGaps_->Fill(muonRange.max());
+  if(muonRange.max() != 28) {
+    return CUT_MUON_LAST_PLANE;
+  }
+
+  //----------------------------------------------------------------
   if(gEventList.requested(evt)) {
     std::cout<<__func__<<": run "<<evt.nrun<<" event "<<evt.nevt
              <<": muonGlobalClusters = "<<muonGlobalClusters
              <<std::endl;
   }
 
-  const PlaneRange muonRange = findPlaneRange(muonGlobalClusters);
-  if(!muonRange.noGaps()) {
-    return CUT_MU_RANGE_GAPS;
-  }
-
   //----------------------------------------------------------------
   // CUT_MUSTOP_UV
-  if((muonPCClusters[5].size() != 1) || (muonPCClusters[6].size() != 1)) {
+  if((muonGlobalClusters[27].size() != 1) || (muonGlobalClusters[28].size() != 1)) {
     return CUT_MUSTOP_SINGLECLUSTER;
   }
 
-  const double pc5wire = muonPCClusters[5].front().centralCell();
-  const double pc6wire = muonPCClusters[6].front().centralCell();
+  const double pc5wire = muonGlobalClusters[27].front().centralCell();
+  const double pc6wire = muonGlobalClusters[28].front().centralCell();
 
   // See dt_geo.00061 and twist-coordinate-system.uvplanes.pdf
   hMuStopUVCell_->Fill(pc6wire, pc5wire);
@@ -373,7 +354,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------------------------------------------------------
-  if(1 != pactCut_.quadrant(muonPCClusters[5].front(), muonPCClusters[6].front())) {
+  if(1 != pactCut_.quadrant(muonGlobalClusters[27].front(), muonGlobalClusters[28].front())) {
     return CUT_MUSTOP_PACT;
   }
 
