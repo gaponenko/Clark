@@ -159,14 +159,7 @@ analyze(const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  // Trig time is 0, dt from that rather than from less precise trigWin time
-  hWindowTimeBefore_->Fill(protonWindow.tstart);
-  if( (protonWindow.tstart < cutWinTimeMin_) || (cutWinTimeMax_ < protonWindow.tstart)) {
-    return CUT_WINTIME;
-  }
-  hWindowTimeAfter_->Fill(protonWindow.tstart);
-
-  //----------------------------------------------------------------
+  // Deal with multiple after-trigger time windows
   hNumAfterTrigWindows_->Fill(afterTrigGlobalClusters.size());
   if(afterTrigGlobalClusters.size() > 1) {
     const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
@@ -178,6 +171,14 @@ analyze(const EventClass& evt,
       return CUT_MULTIWIN_NEXTDT;
     }
   }
+
+  //----------------------------------------------------------------
+  // Trig time is 0, dt from that rather than from less precise trigWin time
+  hWindowTimeBefore_->Fill(protonWindow.tstart);
+  if( (protonWindow.tstart < cutWinTimeMin_) || (cutWinTimeMax_ < protonWindow.tstart)) {
+    return CUT_WINTIME;
+  }
+  hWindowTimeAfter_->Fill(protonWindow.tstart);
 
   //----------------------------------------------------------------
   // UVAnalysis: DIOs for normalization

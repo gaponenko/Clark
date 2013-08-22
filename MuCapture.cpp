@@ -107,7 +107,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hMuonFirstPlane_ = H.DefineTH1D("MuCapture", "muonFirstPlane", "Muon first plane", 56, 0.5, 56.5);
   hMuonLastPlaneBeforeGaps_ = H.DefineTH1D("MuCapture", "muonLastPlaneBeforeGaps", "Muon last plane, before gaps", 56, 0.5, 56.5);
-  hMuonLastPlaneAfterGaps_ = H.DefineTH1D("MuCapture", "muonLastPlaneAfterGaps", "Muon last plane, after range gaps", 56, 0.5, 56.5);
+  hMuonLastPlaneAfterGaps_ = H.DefineTH1D("MuCapture", "muonLastPlaneAfterGaps", "Muon last plane", 56, 0.5, 56.5);
 
   hMuonRangeGaps_ = H.DefineTH2D("MuCapture", "muonRangeGaps", "Muon win gap end vs start", 57, -0.5, 56.5, 57, -0.5, 56.5);
   hMuonRangeGaps_->SetOption("colz");

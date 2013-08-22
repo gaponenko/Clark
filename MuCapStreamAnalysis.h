@@ -52,9 +52,9 @@ public:
 
     CUT_BEAM_VETO, // veto PC1-4 here to make wintime smooth (get rid of cyclotron structure)
 
-    CUT_WINTIME,
-
     CUT_MULTIWIN_NEXTDT, // plot t2 and t2 - t1 before
+
+    CUT_WINTIME,
 
     // === UV analysis goes here ===
 
