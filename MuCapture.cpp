@@ -67,14 +67,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
 
   //----------------------------------------------------------------
-  muStopOutFileName_ = Conf.read<std::string>("MuCapture/muStopOutFileName", "");
-  if(!muStopOutFileName_.empty()) {
-    muStopOutFile_.open(muStopOutFileName_.c_str());
-    if(!muStopOutFile_) {
-      throw std::runtime_error("Error opening output file "+muStopOutFileName_);
-    }
-  }
-
   uvOutFileName_ = Conf.read<std::string>("MuCapture/uvOutFileName", "");
   if(!uvOutFileName_.empty()) {
     uvOutFile_.open(uvOutFileName_.c_str());
@@ -395,10 +387,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     if(uvOutFile_) {
       uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
     }
-  }
-
-  if(muStopOutFile_) {
-    muStopOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
   }
 
   //----------------------------------------------------------------

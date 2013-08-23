@@ -151,6 +151,9 @@ private :
 
   double cutRextMax_;
 
+  std::string commonSkimOutFileName_;
+  std::ofstream commonSkimOutFile_;
+
   const DetectorGeo *geom_;
 
   TH1 *h_cuts_r;

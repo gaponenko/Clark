@@ -294,8 +294,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/inputEventNumberFile", "");
         // Print out details about events on this list
         SetKey(Conf, "MuCapture/debugEventList", "");
-        // Print out event ID of accepted stops into this file
-        SetKey(Conf, "MuCapture/muStopOutFileName", "");
 
         SetKey(Conf, "MuCapture/winPCLength", 100.);
         // Trigger window has to be within max dt from 0
@@ -378,6 +376,9 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedMaxHitPlanes", 1);
         SetKey(Conf, "MuCapture/StreamAnalysis/cutPC7MaxDistanceToMuStop", 0.15/*cm*/);
         SetKey(Conf, "MuCapture/StreamAnalysis/cutRextMax", 13.);
+
+        // Print out event ID of events for the common skim into this file
+        SetKey(Conf, "MuCapture/StreamAnalysis/commonSkimOutFileName", "");
 
         //================================================================
 }

@@ -116,9 +116,6 @@ private :
   bool doDefaultTWIST_;
   EventList inputNumberList_;
 
-  std::string muStopOutFileName_;
-  std::ofstream muStopOutFile_;
-
   std::string uvOutFileName_;
   std::ofstream uvOutFile_;
 

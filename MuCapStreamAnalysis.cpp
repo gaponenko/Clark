@@ -33,6 +33,14 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   cutPC7MaxDistanceToMuStop_ = conf.read<double>("MuCapture/StreamAnalysis/cutPC7MaxDistanceToMuStop");
   cutRextMax_ = conf.read<double>("MuCapture/StreamAnalysis/cutRextMax");
 
+  commonSkimOutFileName_ = conf.read<std::string>("MuCapture/StreamAnalysis/commonSkimOutFileName", "");
+  if(!commonSkimOutFileName_.empty()) {
+    commonSkimOutFile_.open(commonSkimOutFileName_.c_str());
+    if(!commonSkimOutFile_) {
+      throw std::runtime_error("Error opening output file "+commonSkimOutFileName_);
+    }
+  }
+
   //----------------------------------------------------------------
   geom_ = &geom;
 
@@ -170,6 +178,12 @@ analyze(const EventClass& evt,
     if(dt2 < cutMultiwinNextdt_) {
       return CUT_MULTIWIN_NEXTDT;
     }
+  }
+
+  //----------------------------------------------------------------
+  // Evetn sample before Z containment and window time cuts
+  if(commonSkimOutFile_) {
+    commonSkimOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
   }
 
   //----------------------------------------------------------------
