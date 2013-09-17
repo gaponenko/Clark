@@ -203,7 +203,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   TDCHitPreprocessing::PassThrough hitpass;
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits(), hitpass);
-  const TDCHitWPPtrCollection allPCHits = allPCHitsBuf.get();
+  const TDCHitWPPtrCollection& allPCHits = allPCHitsBuf.get();
 
   TDCHitPreprocessing::Hits filteredPCHitsBuf(evt.pc_hits(), *pcHitProcessor_);
   const TDCHitWPPtrCollection& filteredPCHits = filteredPCHitsBuf.get();
@@ -220,10 +220,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   TDCHitPreprocessing::Hits allDCHitsBuf(evt.dc_hits(), hitpass);
-  const TDCHitWPPtrCollection allDCHits = allDCHitsBuf.get();
+  const TDCHitWPPtrCollection& allDCHits = allDCHitsBuf.get();
 
   TDCHitPreprocessing::Hits filteredDCHitsBuf(evt.dc_hits(), *dcHitProcessor_);
-  const TDCHitWPPtrCollection filteredDCHits = filteredDCHitsBuf.get();
+  const TDCHitWPPtrCollection& filteredDCHits = filteredDCHitsBuf.get();
 
   hwidthDCall_.fill(allDCHits);
   hwidthDCfiltered_.fill(filteredDCHits);
