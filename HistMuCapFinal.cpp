@@ -42,6 +42,31 @@ void HistMuCapFinal::fill(const ClustersByPlane& globalPlaneClusters,
   }
 
   hNumPlanesVsWires_->Fill(numWires, numPlanes);
+
+  // Investigate the peak that is not in MC
+  if(false/*this block is normally disabled*/
+     && (numPlanes == 2)&&(numWires > 90)) {
+    ///static std::ofstream dataPeak("dataPeak.txt");
+    //dataPeak<<evt.nrun<<" "<<evt.nevt<<std::endl;
+    std::cout<<"Data peak: run = "<<evt.nrun<<", event = "<<evt.nevt<<std::endl;
+
+    for(int plane=29; plane<globalPlaneClusters.size(); ++plane) {
+      if(!globalPlaneClusters[plane].empty()) {
+        std::cout<<"   Dump: plane = "<<plane<<", num clusters = "
+                 <<globalPlaneClusters[plane].size()<<std::endl;
+        for(int ic = 0; ic < globalPlaneClusters[plane].size(); ++ic) {
+          std::cout<<"      Dump for cluster "<<ic<<": hits = "<<std::endl;;
+          const TDCHitWPPtrCollection& hits = globalPlaneClusters[plane][ic].hits();
+          for(int ihit = 0; ihit < hits.size(); ++ihit) {
+            std::cout<<"         hit wire = "<<hits[ihit]->cell()
+                     <<", time = "<<hits[ihit]->time()
+                     <<", width = "<<hits[ihit]->width()
+                     <<std::endl;
+          }
+        }
+      }
+    }
+  }
 }
 
 //================================================================
