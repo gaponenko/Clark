@@ -57,7 +57,7 @@ void TimeWindowingDC::assignDCHits(const TDCHitWPPtrCollection& dcHits,
     // Look for a time-compatible PC "analysis" (not before trigger)
     // window of the same stream type first
     bool assigned = false;
-    for(unsigned iwin = inout->iTrigWin; iwin < windows.size(); ++iwin) {
+    for(unsigned iwin = inout->iTrigWin; !assigned && (iwin < windows.size()); ++iwin) {
       TimeWindow& win = windows[iwin];
       if(win.stream == dcStream) {
         if((win.tstartDC < phit->time()) && (phit->time() <= win.tendDC)) {
@@ -68,26 +68,24 @@ void TimeWindowingDC::assignDCHits(const TDCHitWPPtrCollection& dcHits,
     }
 
     // Look for any time-compatible PC window here
-    if(!assigned) {
-      for(unsigned iwin = 0; iwin < windows.size(); ++iwin) {
-        TimeWindow& win = windows[iwin];
-        if((win.tstartDC < phit->time()) && (phit->time() <= win.tendDC)) {
+    for(unsigned iwin = 0; !assigned && (iwin < windows.size()); ++iwin) {
+      TimeWindow& win = windows[iwin];
+      if((win.tstartDC < phit->time()) && (phit->time() <= win.tendDC)) {
 
-          if(iwin == inout->iTrigWin) {
-            if(win.stream != TimeWindow::MIXED) {
-              hWinDCMuMixStreamMap_.fill(*phit);
-            }
+        if(iwin == inout->iTrigWin) {
+          if(win.stream != TimeWindow::MIXED) {
+            hWinDCMuMixStreamMap_.fill(*phit);
           }
-          else if(iwin == 1 + inout->iTrigWin) {
-            if(win.stream != TimeWindow::MIXED) {
-              hWinDCProtonMixStreamMap_.fill(*phit);
-            }
-          }
-
-          windows[iwin].dcHits.push_back(phit);
-          win.stream = TimeWindow::MIXED;
-          assigned = true;
         }
+        else if(iwin == 1 + inout->iTrigWin) {
+          if(win.stream != TimeWindow::MIXED) {
+            hWinDCProtonMixStreamMap_.fill(*phit);
+          }
+        }
+
+        windows[iwin].dcHits.push_back(phit);
+        win.stream = TimeWindow::MIXED;
+        assigned = true;
       }
     }
 
