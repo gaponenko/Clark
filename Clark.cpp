@@ -29,6 +29,7 @@ void LoadAnalysisClasses(const ConfigFile& Conf, TreeClass *AnaObj);
 
 int main(int argc, char **argv)
 {
+  try {
 	// ================ COMMAND LINE ===================== //
 
 	CommandLine	Com;
@@ -143,4 +144,13 @@ int main(int argc, char **argv)
 	// clean up and flush all appenders
 	LogAll.shutdown();
 	return 0;
+  }
+  catch(std::exception& e) {
+    std::cerr<<"Got std::exception: "<<e.what()<<std::endl;
+    return 1;
+  }
+  catch(ConfigFile::key_not_found& e) {
+    std::cerr<<"Got ConfigFile::key_not_found exception: key = "<<e.key<<std::endl;
+    return 1;
+  }
 }
