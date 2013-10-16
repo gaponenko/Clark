@@ -42,6 +42,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                            TimeWindow::StreamType cutStream,
                            double cutMinTime)
 {
+  doMCTruth_ = conf.read<bool>("TruthBank/Do");
   cutCharge_ = +1;
   cutStream_ = cutStream;
   cutTrackMinTime_ = cutMinTime;
@@ -144,6 +145,11 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   hNumTracks_ = hf.DefineTH1D(hdir, "numAcceptedTracks",
                               "numAcceptedTracks",
                               10, -0.5, 9.5);
+
+
+  if(doMCTruth_) {
+    htruthAccepted_.init(hf, hdir+"/truthAccepted", conf);
+  }
 }
 
 //================================================================
@@ -283,5 +289,9 @@ analyzeTrack(int i, const EventClass& evt,
   final_trackTime_->Fill(evt.hefit_time[i]);
 
   //----------------------------------------------------------------
+  if(doMCTruth_) {
+    htruthAccepted_.fill(evt);
+  }
+
   return CUTS_ACCEPTED;
 }

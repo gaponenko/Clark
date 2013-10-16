@@ -9,6 +9,7 @@
 
 #include "TimeWindow.h"
 #include "WireCluster.h"
+#include "HistMuCapTruth.h"
 
 #include "TAxis.h"
 #include "Math/Point2D.h"
@@ -68,7 +69,8 @@ public:
   int process(const EventClass& evt, const ROOT::Math::XYPoint& muStopUV);
 
   MuCapTrkAnalysisHF()
-    : cutCharge_()
+    : doMCTruth_(false)
+    , cutCharge_()
     , cutTrackMinTime_()
     , cutTrackRmax_()
     , cutCosThetaMin_()
@@ -104,6 +106,7 @@ public:
   {}
 
 private :
+  bool doMCTruth_;
   int cutCharge_;
   TimeWindow::StreamType cutStream_;
   double cutTrackMinTime_;
@@ -138,6 +141,8 @@ private :
   TH1 *final_trackTime_;
 
   TH1 *hNumTracks_;
+
+  HistMuCapTruth htruthAccepted_;
 
   // true iff the track passed the cuts
   bool processTrack(int itrack,
