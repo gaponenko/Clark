@@ -443,6 +443,14 @@ class EventClass{
   const TDCHitWPCollection& dc_hits() const { return dc_hits_; }
   const TDCHitWPCollection& pc_hits() const { return pc_hits_; }
 
+  // Index of the capture track in the mctrack_XXX arrays
+  unsigned iCaptureMcTrk;
+
+  // Indexes of the capture vertex and the capture track end vertex in
+  // the mcvertex_XXX arrays
+  unsigned iCaptureMcVtxStart;
+  unsigned iCaptureMcVtxEnd;
+
 private :
   map <std::string, bool>ExistList;
 
@@ -456,6 +464,8 @@ private :
   void LoadMuCapture();
   void InitMuCaptureVar(TTree* T);
 
+  enum MCType { G3, G4 };
+  MCType mctype_;
 };
 
 

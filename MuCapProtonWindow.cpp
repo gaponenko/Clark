@@ -200,8 +200,8 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   }
 
   hLastPlane_->Fill(gr.max());
-  if(doMCTruth_ && (evt.nmcvtx == 2)) {
-    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], gr.max());
+  if(doMCTruth_) {
+    hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[evt.iCaptureMcVtxStart], gr.max());
   }
 
   if(gr.max() > cutMaxPlane_) {

@@ -1,5 +1,6 @@
 MuCapture/Do = true
 TruthBank/Do = true
+MuCapture/MCType = G4
 MuCapture/loadDefaultTWISTVars = false
 MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 61

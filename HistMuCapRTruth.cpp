@@ -27,18 +27,16 @@ void HistMuCapRTruth::init(HistogramFactory &hf,
 
 //================================================================
 void HistMuCapRTruth::fill(const EventClass& evt, int lastPlane, double extrapolatedRmax) {
-  if(evt.nmcvtx != 2) {
-    std::ostringstream os;
-    os<<"HistMuCapRTruth::fill(): unexpected number of mc vertexes = "<<evt.nmcvtx;
-    throw std::runtime_error(os.str());
-  }
+  const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+  const unsigned imcvtxEnd = evt.iCaptureMcVtxEnd;
+  const unsigned imctrk = evt.iCaptureMcTrk;
 
-  hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[0], lastPlane);
+  hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[imcvtxStart], lastPlane);
 
-  const double mcRend = std::sqrt(std::pow(evt.mcvertex_vu[1], 2) +
-                                  std::pow(evt.mcvertex_vv[1], 2));
+  const double mcRend = std::sqrt(std::pow(evt.mcvertex_vu[imcvtxEnd], 2) +
+                                  std::pow(evt.mcvertex_vv[imcvtxEnd], 2));
 
-  if(std::abs(evt.mcvertex_vz[1]) < 60.) {
+  if(std::abs(evt.mcvertex_vz[imcvtxEnd]) < 60.) {
     (mcRend < 16. ? hRmaxContained_ : hRmaxUncontained_)->Fill(extrapolatedRmax);
   }
 }

@@ -39,26 +39,23 @@ void HistMuCapTruth::init(HistogramFactory &hf,
 
 //================================================================
 void HistMuCapTruth::fill(const EventClass& evt) {
-  if(evt.nmcvtx != 2) {
-    std::ostringstream os;
-    os<<"HistMuCapTruth::fill(): unexpected number mc vertexes = "<<evt.nmcvtx;
-    throw std::runtime_error(os.str());
-  }
+  const unsigned imcvtx = evt.iCaptureMcVtxStart;
+  const unsigned imctrk = evt.iCaptureMcTrk;
 
-  hptot_->Fill(evt.mcvertex_ptot[0]);
-  hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[0], evt.mcvertex_ptot[0]));
-  hphi_->Fill(evt.mcvertex_phimuv[0]);
-  hpcos_->Fill(evt.mcvertex_ptot[0], evt.mcvertex_costh[0]);
+  hptot_->Fill(evt.mcvertex_ptot[imcvtx]);
+  hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtx]));
+  hphi_->Fill(evt.mcvertex_phimuv[imcvtx]);
+  hpcos_->Fill(evt.mcvertex_ptot[imcvtx], evt.mcvertex_costh[imcvtx]);
 
   const double endR = std::sqrt(std::pow(evt.mcvertex_vu[1], 2) + std::pow(evt.mcvertex_vv[1], 2));
   hRZend_->Fill(evt.mcvertex_vz[1], endR);
 
   if(std::abs(evt.mcvertex_vz[1]) < 60.) {
     hVUend_->Fill(evt.mcvertex_vu[1], evt.mcvertex_vv[1]);
-    hRendVsPstart_->Fill(evt.mcvertex_ptot[0], endR);
+    hRendVsPstart_->Fill(evt.mcvertex_ptot[imcvtx], endR);
   }
 
-  hZendVsPstart_->Fill(evt.mcvertex_ptot[0], evt.mcvertex_vz[1]);
+  hZendVsPstart_->Fill(evt.mcvertex_ptot[imcvtx], evt.mcvertex_vz[1]);
 }
 
 //================================================================

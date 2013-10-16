@@ -13,6 +13,7 @@ void SetDefault(ConfigFile &Conf)
 {
 	// MuCapture, if enabled, can prevent the standard analysis from running
 	SetKey(Conf, "MuCapture/Do", false);
+	SetKey(Conf, "MuCapture/MCType", "G3");
 
 	// ================ Standard Analysis =============== //
 

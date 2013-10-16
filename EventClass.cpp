@@ -48,6 +48,19 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	MinDkTimeAfterMu	=	C.read<double>( "TruthBank/MinDkTimeAfterMu");
 	MaxDkTimeAfterMu	=	C.read<double>( "TruthBank/MaxDkTimeAfterMu");
 
+        if(AnalyseTruthBank) {
+          const std::string mcType = C.read<string>("MuCapture/MCType");
+          if(mcType == "G4") {
+            mctype_ = G4;
+          }
+          else if(mcType == "G3") {
+            mctype_ = G3;
+          }
+          else {
+            throw std::runtime_error("EventClass::Init(): Unknown MCType "+mcType);
+          }
+        }
+
 	// Energy calibration mode
 	EcalibMode	= C.read<int>("EnergyCalibration/Mode");
 
@@ -125,6 +138,28 @@ void EventClass::LoadMuCapture() {
   for(int i=0; i<pc_nhits; ++i) {
     if(!killPC6DeadWire || (pc_plane[i] != 6) || (pc_cell[i] != 88)) {
       pc_hits_.push_back(TDCHitWP(pc_time[i], pc_width[i], pc_plane[i], pc_cell[i]));
+    }
+  }
+
+  if(AnalyseTruthBank) {
+    switch(mctype_) {
+    case G4:
+      if(nmcvtx != 2) {
+        std::ostringstream os;
+        os<<"EventClass::LoadMuCapture(): unexpected number of mc vertexes for G4 = "<<nmcvtx<<"\n";
+        throw std::runtime_error(os.str());
+      }
+      iCaptureMcTrk = 0;
+      iCaptureMcVtxStart = 0;
+      iCaptureMcVtxEnd = 1;
+      break;
+
+    case G3:
+      throw std::runtime_error("EventClass::LoadMuCapture() loading G3 truth is not implemented.");
+      break;
+
+    default:
+      throw std::runtime_error("EventClass::LoadMuCapture() internal error loading truth.");
     }
   }
 }
@@ -865,3 +900,4 @@ bool EventClass::GetEcalib(string EcalibFile, string EcalibArray)
 	return true;
 }
 
+//================================================================
