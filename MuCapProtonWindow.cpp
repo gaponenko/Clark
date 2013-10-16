@@ -200,7 +200,7 @@ analyze(const ROOT::Math::XYPoint& muStopUV,
   }
 
   hLastPlane_->Fill(gr.max());
-  if(doMCTruth_) {
+  if(doMCTruth_ && (evt.iCaptureMcTrk != -1)) {
     hLastPlaneVsMCPstart_->Fill(evt.mcvertex_ptot[evt.iCaptureMcVtxStart], gr.max());
   }
 

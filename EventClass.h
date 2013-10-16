@@ -445,11 +445,15 @@ class EventClass{
 
   // Index of the capture track in the mctrack_XXX arrays
   unsigned iCaptureMcTrk;
+  int numCaptureMcTrkCandidates;
 
   // Indexes of the capture vertex and the capture track end vertex in
   // the mcvertex_XXX arrays
   unsigned iCaptureMcVtxStart;
   unsigned iCaptureMcVtxEnd;
+
+  enum MCType { G3, G4 };
+  MCType mctype;
 
 private :
   map <std::string, bool>ExistList;
@@ -464,8 +468,6 @@ private :
   void LoadMuCapture();
   void InitMuCaptureVar(TTree* T);
 
-  enum MCType { G3, G4 };
-  MCType mctype_;
 };
 
 

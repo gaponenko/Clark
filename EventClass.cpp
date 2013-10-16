@@ -49,15 +49,15 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	MaxDkTimeAfterMu	=	C.read<double>( "TruthBank/MaxDkTimeAfterMu");
 
         if(AnalyseTruthBank) {
-          const std::string mcType = C.read<string>("MuCapture/MCType");
-          if(mcType == "G4") {
-            mctype_ = G4;
+          const std::string t = C.read<string>("MuCapture/MCType");
+          if(t == "G4") {
+            mctype = G4;
           }
-          else if(mcType == "G3") {
-            mctype_ = G3;
+          else if(t == "G3") {
+            mctype = G3;
           }
           else {
-            throw std::runtime_error("EventClass::Init(): Unknown MCType "+mcType);
+            throw std::runtime_error("EventClass::Init(): Unknown MCType "+t);
           }
         }
 
@@ -142,7 +142,7 @@ void EventClass::LoadMuCapture() {
   }
 
   if(AnalyseTruthBank) {
-    switch(mctype_) {
+    switch(mctype) {
     case G4:
       if(nmcvtx != 2) {
         std::ostringstream os;
@@ -155,7 +155,32 @@ void EventClass::LoadMuCapture() {
       break;
 
     case G3:
-      throw std::runtime_error("EventClass::LoadMuCapture() loading G3 truth is not implemented.");
+      static int const PID_G3_PROTON = 14;
+      iCaptureMcTrk = -1;
+      numCaptureMcTrkCandidates = 0;
+      for(unsigned i=0; i<nmctr; ++i) {
+        if(mctrack_pid[i] == PID_G3_PROTON) {
+          ++numCaptureMcTrkCandidates;
+          if(iCaptureMcTrk == -1) {
+            iCaptureMcTrk = i;
+          }
+          else {
+            // throw std::runtime_error("EventClass::LoadMuCapture() G3 truth: multiple protons cases are not handled");
+          }
+        }
+      }
+
+      iCaptureMcVtxStart = -1;
+      iCaptureMcVtxEnd = -1;
+      if(iCaptureMcTrk != -1) {
+        // Set vertex indexes
+        iCaptureMcVtxStart = 0;
+        for(unsigned i = 0; i < iCaptureMcTrk; ++i) {
+          iCaptureMcVtxStart += mctrack_nv[i];
+        }
+        iCaptureMcVtxEnd = iCaptureMcVtxStart + mctrack_nv[iCaptureMcTrk] - 1;
+      }
+
       break;
 
     default:

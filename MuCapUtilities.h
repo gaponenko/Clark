@@ -7,12 +7,14 @@
 #include "TDCHitWP.h"
 #include "WireCluster.h"
 
+class EventClass;
+
 namespace MuCapUtilities {
 
   // TWIST units are MeV/c^2
-  double mass(int pdgId);
+  double mass(int pdgId, const EventClass& evt); // evt is to decide between G3 and G4
 
-  double kineticEnergy(int pdgId, double ptot);
+  double kineticEnergy(int pdgId, double ptot, const EventClass& evt); // evt is to decide between G3 and G4
 
   unsigned numPlanes(const TDCHitWPPtrCollection& hits);
 

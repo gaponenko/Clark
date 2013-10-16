@@ -25,7 +25,8 @@ public:
   void fill(const EventClass& evt);
 
   HistMuCapTruth()
-    : hptot_()
+    : hNumMCCaptureTracks_()
+    , hptot_()
     , hek_()
     , hphi_()
     , hpcos_()
@@ -36,6 +37,7 @@ public:
   {}
 
 private :
+  TH1 *hNumMCCaptureTracks_;
   TH1 *hptot_;
   TH1 *hek_;
   TH1 *hphi_;

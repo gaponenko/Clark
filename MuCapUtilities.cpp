@@ -1,4 +1,5 @@
 #include "MuCapUtilities.h"
+#include "EventClass.h"
 
 #include <cmath>
 #include <cstdlib>
@@ -10,23 +11,42 @@
 
 namespace MuCapUtilities {
   //================================================================
-  double mass(int pdgId) {
-    switch(std::abs(pdgId)) {
+  double mass(int pdgId, const EventClass& evt) {
+    static const double protonMass =  938.272 /* MeV/c^2 */;
+    static const double electronMass = 0.510999 /* MeV/c^2 */;
+    switch(evt.mctype) {
+    case EventClass::G4: //----------------------------------------------------------------
+      switch(std::abs(pdgId)) {
 
-    case 2212: /*proton*/ return 938.272 /* MeV/c^2 */;
+      case 2212: return protonMass;
 
-    case 11: /*electron*/ return 0.510999 /* MeV/c^2 */;
+      case 11: return electronMass;
+
+      default:
+        std::ostringstream os;
+        os<<"MuCapUtilities::mass(): unknown G4 pdgId = "<<pdgId;
+        throw std::runtime_error(os.str());
+      }
+      break;
+
+    case EventClass::G3: //----------------------------------------------------------------
+      switch(pdgId) {
+      case 14: return protonMass;
+      default:
+        std::ostringstream os;
+        os<<"MuCapUtilities::mass(): unknown G3 pdgId = "<<pdgId;
+        throw std::runtime_error(os.str());
+      }
+      break;
 
     default:
-      std::ostringstream os;
-      os<<"MuCapUtilities::mass(): unknown pdgId = "<<pdgId;
-      throw std::runtime_error(os.str());
+      throw std::runtime_error("MuCapUtilities::mass(): unknown evt.mctype");
     }
   }
 
   //================================================================
-  double kineticEnergy(int pdgId, double ptot) {
-    const double m = mass(pdgId);
+  double kineticEnergy(int pdgId, double ptot, const EventClass& evt) {
+    const double m = mass(pdgId, evt);
     const double etot = std::sqrt(std::pow(ptot,2) + std::pow(m, 2));
     return etot - m;
   }
