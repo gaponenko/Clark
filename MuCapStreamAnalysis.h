@@ -13,6 +13,7 @@
 #include "HistTDCWidth.h"
 //#include "HistStreamAnalysis.h"
 #include "MuCapUVAnalysis.h"
+#include "MuCapTrkAnalysisHF.h"
 #include "MuCapContainmentCheck.h"
 #include "HistMuCapTruth.h"
 #include "HistTDCParticleClassifier.h"
@@ -180,6 +181,7 @@ private :
   TH1 *hLastPlaneLoose_;
 
   MuCapUVAnalysis uvan_;
+  MuCapTrkAnalysisHF muCapTrkHF_;
   HistPlaneRanges hRangeDIO_;
   HistDriftTime hdriftPCFiltered_;
 

@@ -81,6 +81,7 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   //----------------------------------------------------------------
   uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/);
+  muCapTrkHF_.init(hdir+"/TrkHF", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/);
   hRangeDIO_.init(hdir+"/rangeDIO", hf, geom, conf);
   hdriftPCFiltered_.init(hdir+"/driftTimePCFiltered", hf, geom.numPCs(), 1000./*ns*/,
                          conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtPC"),
@@ -205,6 +206,10 @@ analyze(const EventClass& evt,
     hRangeDIO_.fill(protonDnClusters);
     hdriftPCFiltered_.fill(evt, iDIO, protonWindow.pcHits);
   }
+
+  //----------------------------------------------------------------
+  // Track based analysis
+  muCapTrkHF_.process(evt, muStopUV);
 
   //----------------------------------------------------------------
   // Z containment check

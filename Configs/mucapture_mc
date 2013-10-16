@@ -1,7 +1,7 @@
 MuCapture/Do = true
 TruthBank/Do = true
 MuCapture/MCType = G3
-MuCapture/loadDefaultTWISTVars = false
+MuCapture/loadDefaultTWISTVars = true
 MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 61
 Detector/Geometry/dc_ppc = 0

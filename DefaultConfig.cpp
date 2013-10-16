@@ -347,6 +347,7 @@ void SetDefault(ConfigFile &Conf)
         // make sure the planes are not adjacent at dz=0.4cm
         SetKey(Conf, "MuCapture/ProtonWindow/Containment1D/minPlanedz", 0.5);
 
+        //----------------
         SetKey(Conf, "MuCapture/UVAnalysis/cutTrackRmax", 6.3);//cm
         // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
         SetKey(Conf, "MuCapture/UVAnalysis/cutCosThetaMin", 0.54);
@@ -360,6 +361,21 @@ void SetDefault(ConfigFile &Conf)
         // Empty file name disables the output
         //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
+        //----------------
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackRmax", 99999.);//cm
+        // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMin", 0.5);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMax", 0.98);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtMin", 0.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPzMin", 0.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMin", 0.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMax", 250.); // MeV/c
+        //
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 5.);//cm
+        // Empty file name disables the output
+        //        SetKey(Conf, "MuCapture/TrkAnalysisHF/uvOutFileName", "");
+
+        //----------------
         //# Use downstream PC planes as a veto
         //NB: need implement ganged wires to include PC9,10 in the range.
         SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 52);
