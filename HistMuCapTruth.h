@@ -34,6 +34,8 @@ public:
     , hRZend_()
     , hRendVsPstart_()
     , hZendVsPstart_()
+    , hZStart1_()
+    , hZStart2_()
   {}
 
 private :
@@ -46,6 +48,8 @@ private :
   TH2 *hRZend_;
   TH2 *hRendVsPstart_;
   TH2 *hZendVsPstart_;
+  TH1 *hZStart1_;
+  TH1 *hZStart2_;
 };
 
 #endif/*HistMuCapTruth_h*/

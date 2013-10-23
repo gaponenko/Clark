@@ -37,6 +37,12 @@ void HistMuCapTruth::init(HistogramFactory &hf,
 
   hZendVsPstart_ = hf.DefineTH2D(hdir, "zpstart", "End Z vs start ptot", 200, 0., 200., 1200, -60., 60.);
   hZendVsPstart_->SetOption("colz");
+
+  // Same binning as G3 H4
+  hZStart1_ = hf.DefineTH1D(hdir, "zstart1", "Capture track start Z, coarse", 100, -50., 50.);
+
+  // Same bin size as G3 H5, but different range because of the target shift
+  hZStart2_ = hf.DefineTH1D(hdir, "zstart2", "Capture track start Z", 300, -0.030, 0.030);
 }
 
 //================================================================
@@ -61,6 +67,9 @@ void HistMuCapTruth::fill(const EventClass& evt) {
     }
 
     hZendVsPstart_->Fill(evt.mcvertex_ptot[imcvtxStart], evt.mcvertex_vz[imcvtxEnd]);
+
+    hZStart1_->Fill(evt.mcvertex_vz[imcvtxStart]);
+    hZStart2_->Fill(evt.mcvertex_vz[imcvtxStart]);
   }
 }
 
