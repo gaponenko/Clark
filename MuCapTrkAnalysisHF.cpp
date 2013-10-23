@@ -112,14 +112,14 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   trackRL_ = hf.DefineTH2D(hdir,
                            "trackRL",
                            "track wavelengh vs radius",
-                           200, 0., 20, 1600, -80., 80.);
+                           200, 0., 20, 800, -400., 400.);
 
   trackRL_->SetOption("colz");
 
   final_trackRL_ = hf.DefineTH2D(hdir,
                                  "final trackRL",
                                  "final track wavelengh vs radius",
-                                 200, 0., 20, 1600, -80., 80.);
+                                 200, 0., 20, 800, -400., 400.);
 
   final_trackRL_->SetOption("colz");
 
