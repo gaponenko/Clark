@@ -105,7 +105,7 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   //----------------------------------------------------------------
   if(doMCTruth_) {
-    htruthLoose_.init(hf, "MuCapture/ProtonWindow/TruthLoose", conf);
+    htruthLoose_.init(hf, hdir + "/TruthLoose", conf);
   }
 }
 
