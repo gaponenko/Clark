@@ -43,23 +43,24 @@ void HistMuCapTruth::init(HistogramFactory &hf,
 void HistMuCapTruth::fill(const EventClass& evt) {
   hNumMCCaptureTracks_->Fill(evt.numCaptureMcTrkCandidates);
   if(evt.iCaptureMcTrk != -1) {
-    const unsigned imcvtx = evt.iCaptureMcVtxStart;
+    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+    const unsigned imcvtxEnd = evt.iCaptureMcVtxEnd;
     const unsigned imctrk = evt.iCaptureMcTrk;
 
-    hptot_->Fill(evt.mcvertex_ptot[imcvtx]);
-    hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtx], evt));
-    hphi_->Fill(evt.mcvertex_phimuv[imcvtx]);
-    hpcos_->Fill(evt.mcvertex_ptot[imcvtx], evt.mcvertex_costh[imcvtx]);
+    hptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+    hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtxStart], evt));
+    hphi_->Fill(evt.mcvertex_phimuv[imcvtxStart]);
+    hpcos_->Fill(evt.mcvertex_ptot[imcvtxStart], evt.mcvertex_costh[imcvtxStart]);
 
-    const double endR = std::sqrt(std::pow(evt.mcvertex_vu[1], 2) + std::pow(evt.mcvertex_vv[1], 2));
-    hRZend_->Fill(evt.mcvertex_vz[1], endR);
+    const double endR = std::sqrt(std::pow(evt.mcvertex_vu[imcvtxEnd], 2) + std::pow(evt.mcvertex_vv[imcvtxEnd], 2));
+    hRZend_->Fill(evt.mcvertex_vz[imcvtxEnd], endR);
 
-    if(std::abs(evt.mcvertex_vz[1]) < 60.) {
-      hVUend_->Fill(evt.mcvertex_vu[1], evt.mcvertex_vv[1]);
-      hRendVsPstart_->Fill(evt.mcvertex_ptot[imcvtx], endR);
+    if(std::abs(evt.mcvertex_vz[imcvtxEnd]) < 60.) {
+      hVUend_->Fill(evt.mcvertex_vu[imcvtxEnd], evt.mcvertex_vv[imcvtxEnd]);
+      hRendVsPstart_->Fill(evt.mcvertex_ptot[imcvtxStart], endR);
     }
 
-    hZendVsPstart_->Fill(evt.mcvertex_ptot[imcvtx], evt.mcvertex_vz[1]);
+    hZendVsPstart_->Fill(evt.mcvertex_ptot[imcvtxStart], evt.mcvertex_vz[imcvtxEnd]);
   }
 }
 
