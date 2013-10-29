@@ -106,6 +106,9 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   //----------------------------------------------------------------
   if(doMCTruth_) {
     htruthLoose_.init(hf, hdir + "/TruthLoose", conf);
+    htruth2planes_.init(hf, hdir + "/Truth2planes", conf);
+    htruth3planes_.init(hf, hdir + "/Truth3planes", conf);
+    htruth4planes_.init(hf, hdir + "/Truth4planes", conf);
   }
 }
 
@@ -271,6 +274,15 @@ analyze(const EventClass& evt,
 
   if(doMCTruth_) {
     htruthLoose_.fill(evt);
+    if(gr.max() >= 30) {
+      htruth2planes_.fill(evt);
+    }
+    if(gr.max() >= 31) {
+      htruth3planes_.fill(evt);
+    }
+    if(gr.max() >= 32) {
+      htruth4planes_.fill(evt);
+    }
   }
 
   return CUTS_LOOSE_PROTONS;

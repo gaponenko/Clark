@@ -201,6 +201,9 @@ private :
   HistMuCapFinal hfLoose_;
 
   HistMuCapTruth htruthLoose_;
+  HistMuCapTruth htruth2planes_;
+  HistMuCapTruth htruth3planes_;
+  HistMuCapTruth htruth4planes_;
 
   EventCutNumber analyze(const EventClass& evt,
                          const TimeWindowingResults& wres,
