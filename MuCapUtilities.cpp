@@ -14,6 +14,7 @@ namespace MuCapUtilities {
   double mass(int pdgId, const EventClass& evt) {
     static const double protonMass =  938.272 /* MeV/c^2 */;
     static const double electronMass = 0.510999 /* MeV/c^2 */;
+    static const double muonMass = 105.6584 /* MeV/c^2 */;
     switch(evt.mctype) {
     case EventClass::G4: //----------------------------------------------------------------
       switch(std::abs(pdgId)) {
@@ -21,6 +22,8 @@ namespace MuCapUtilities {
       case 2212: return protonMass;
 
       case 11: return electronMass;
+
+      case 13: return muonMass;
 
       default:
         std::ostringstream os;
