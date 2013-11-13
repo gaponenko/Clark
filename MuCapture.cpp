@@ -166,6 +166,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   if(doMCTruth_) {
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
+    hTruthMuStop_.init(H, "MuCapture/MCTruthMuStop", Conf);
   }
 
   //----------------------------------------------------------------
@@ -387,6 +388,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     if(uvOutFile_) {
       uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
     }
+  }
+
+  if(doMCTruth_) {
+    hTruthMuStop_.fill(evt);
   }
 
   //----------------------------------------------------------------

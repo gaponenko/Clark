@@ -190,6 +190,7 @@ private :
   HistDriftTime hdriftDCFiltered_;
 
   HistMuCapTruth hTruthAll_;
+  HistMuCapTruth hTruthMuStop_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

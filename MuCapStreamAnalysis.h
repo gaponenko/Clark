@@ -200,6 +200,7 @@ private :
 
   HistMuCapFinal hfLoose_;
 
+  HistMuCapTruth htruthContained_;
   HistMuCapTruth htruthLoose_;
   HistMuCapTruth htruth2planes_;
   HistMuCapTruth htruth3planes_;

@@ -105,6 +105,7 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   //----------------------------------------------------------------
   if(doMCTruth_) {
+    htruthContained_.init(hf, hdir + "/TruthContained", conf);
     htruthLoose_.init(hf, hdir + "/TruthLoose", conf);
     htruth2planes_.init(hf, hdir + "/Truth2planes", conf);
     htruth3planes_.init(hf, hdir + "/Truth3planes", conf);
@@ -233,6 +234,9 @@ analyze(const EventClass& evt,
   }
 
   hhsZContained_.fill(protonGlobalClusters);
+  if(doMCTruth_) {
+    htruthContained_.fill(evt);
+  }
 
   //----------------------------------------------------------------
   const WireClusterCollection& pc7clusters = protonGlobalClusters[29];
