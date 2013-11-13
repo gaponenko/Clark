@@ -81,6 +81,7 @@ public :
 		void	Save();
 		void	DoDirectory(string FilePath);
 		void	Store(TObject* obj, string Name, string Path, string TmpType);
+		void	Store(TObject* obj, string Name, string Path, int writeOpt = 0);
 
 	private :
 		map<string, TH1D*> H1D;

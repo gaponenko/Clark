@@ -126,6 +126,10 @@ void HistogramFactory::Store(TObject *obj, string Name, string Path, string TmpT
   OrderedHists.push_back(StoredObjectData(obj, Path, Name, opt));
 }
 
+void HistogramFactory::Store(TObject *obj, string Name, string Path, int opt)
+{
+  OrderedHists.push_back(StoredObjectData(obj, Path, Name, opt));
+}
 
 // ================================= Fill section ======================================
 
@@ -242,17 +246,13 @@ void HistogramFactory::DoDirectory(string FilePath)
 
 void HistogramFactory::Save()
 {
-  int H = H1D.size() + H2D.size();
-  if ( H > 0)
-    {
       for(vector<StoredObjectData>::iterator N=OrderedHists.begin(); N != OrderedHists.end(); N++)
         {
-          Log->info("Storing %s %s/%s with opt = %d",Type[N->name].c_str(), (N->path).c_str(), (N->name).c_str(), N->writeOpt);
+          Log->info("Storing %s/%s with opt = %d", (N->path).c_str(), (N->name).c_str(), N->writeOpt);
           DoDirectory(N->path);
           N->obj->Write(N->name.c_str(), N->writeOpt);
           File->cd();
         }
-    }
 }
 
 HistogramFactory::~HistogramFactory() {
