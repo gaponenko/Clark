@@ -27,6 +27,9 @@
 #include "TimeWindowingDC.h"
 #include "EventList.h"
 #include "TDCHitPreprocessing.h"
+#include "RecoResMuCapTrk.h"
+
+#include "RooUnfold/RooUnfoldResponse.h"
 
 #include "TAxis.h"
 class TH1;
@@ -76,7 +79,7 @@ public :
     CUTS_END
   };
 
-  virtual bool Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *Log) ;
+  virtual bool Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4cpp::Category *Log);
   virtual bool Process(EventClass &E, HistogramFactory &H);
 
   MuCapture()
@@ -130,6 +133,9 @@ private :
 
   TDCHitPreprocessing::IProcessor *pcHitProcessor_;
   TDCHitPreprocessing::IProcessor *dcHitProcessor_;
+
+  RecoResMuCapTrk anDnLateRes_;
+  RooUnfoldResponse anDnLateResponse_;
 
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;

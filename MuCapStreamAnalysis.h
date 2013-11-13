@@ -30,6 +30,7 @@ class TH2;
 class HistogramFactory;
 class DetectorGeo;
 class ConfigFile;
+class RecoResMuCapTrk;
 
 //================================================================
 class MuCapStreamAnalysis {
@@ -96,6 +97,7 @@ public:
 
   void init(HistogramFactory &hf, const std::string& hdir,
             const DetectorGeo& geom, const ConfigFile &conf,
+            RecoResMuCapTrk *resTrk,
             TimeWindow::StreamType cutWinStream, double cutWinTimeMin);
 
   void process(const EventClass& evt,

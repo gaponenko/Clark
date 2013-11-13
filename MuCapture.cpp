@@ -67,6 +67,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
 
   //----------------------------------------------------------------
+  anDnLateResponse_.Setup(20, 0., 200, 20, 0., 200.);
+  H.Store(&anDnLateResponse_, "anDnLateResponse", "MuCapture");
+
+  //----------------------------------------------------------------
   uvOutFileName_ = Conf.read<std::string>("MuCapture/uvOutFileName", "");
   if(!uvOutFileName_.empty()) {
     uvOutFile_.open(uvOutFileName_.c_str());
@@ -83,7 +87,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
 
   //anUpLate_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
-  anDnLate_.init(H, "MuCapture/dnLate", *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
+  anDnLate_.init(H, "MuCapture/dnLate", *E.geo, Conf, &anDnLateRes_, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
 
   h_cuts_r = H.DefineTH1D("MuCapture", "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
@@ -177,10 +181,22 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 //================================================================
 bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
 
+  anDnLateRes_.accepted = false;
   EventCutNumber c = analyze(evt, hist);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
+  }
+  if(doMCTruth_) {
+    if(evt.iCaptureMcVtxStart != -1) {  // Signal event. Fill the unfolding matrix.
+      const double p_true = evt.mcvertex_ptot[evt.iCaptureMcVtxStart];
+      if(anDnLateRes_.accepted) {
+        anDnLateResponse_.Fill(anDnLateRes_.momentum, p_true);
+      }
+      else {
+        anDnLateResponse_.Miss(p_true);
+      }
+    }
   }
 
   if(gEventList.requested(evt)) {

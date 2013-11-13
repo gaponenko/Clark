@@ -18,6 +18,7 @@
 //================================================================
 void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
                                const DetectorGeo& geom, const ConfigFile& conf,
+                               RecoResMuCapTrk *resTrk,
                                TimeWindow::StreamType cutWinStream, double cutWinTimeMin)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
@@ -81,7 +82,7 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   //----------------------------------------------------------------
   uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/);
-  muCapTrkHF_.init(hdir+"/TrkHF", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/);
+  muCapTrkHF_.init(hdir+"/TrkHF", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/, resTrk);
   hRangeDIO_.init(hdir+"/rangeDIO", hf, geom, conf);
   hdriftPCFiltered_.init(hdir+"/driftTimePCFiltered", hf, geom.numPCs(), 1000./*ns*/,
                          conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtPC"),

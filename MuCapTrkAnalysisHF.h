@@ -10,6 +10,7 @@
 #include "TimeWindow.h"
 #include "WireCluster.h"
 #include "HistMuCapTruth.h"
+#include "RecoResMuCapTrk.h"
 
 #include "TAxis.h"
 #include "Math/Point2D.h"
@@ -63,13 +64,15 @@ public:
             HistogramFactory &hf,
             const ConfigFile &conf,
             TimeWindow::StreamType cutStream,
-            double cutTrackMinTime);
+            double cutTrackMinTime,
+            RecoResMuCapTrk *result);
 
   // Returns the index of an accepted track in the event, or -1
   int process(const EventClass& evt, const ROOT::Math::XYPoint& muStopUV);
 
   MuCapTrkAnalysisHF()
     : doMCTruth_(false)
+    , result_(nullptr)
     , cutCharge_()
     , cutTrackMinTime_()
     , cutTrackRmax_()
@@ -107,6 +110,7 @@ public:
 
 private :
   bool doMCTruth_;
+  RecoResMuCapTrk *result_;
   int cutCharge_;
   TimeWindow::StreamType cutStream_;
   double cutTrackMinTime_;

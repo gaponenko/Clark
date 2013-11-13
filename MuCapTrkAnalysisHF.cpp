@@ -37,12 +37,14 @@ namespace {
 
 //================================================================
 void MuCapTrkAnalysisHF::init(const std::string& hdir,
-                           HistogramFactory &hf,
-                           const ConfigFile& conf,
-                           TimeWindow::StreamType cutStream,
-                           double cutMinTime)
+                              HistogramFactory &hf,
+                              const ConfigFile& conf,
+                              TimeWindow::StreamType cutStream,
+                              double cutMinTime,
+                              RecoResMuCapTrk *result)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
+  result_ = result;
   cutCharge_ = +1;
   cutStream_ = cutStream;
   cutTrackMinTime_ = cutMinTime;
@@ -292,6 +294,13 @@ analyzeTrack(int i, const EventClass& evt,
   if(doMCTruth_) {
     htruthAccepted_.fill(evt);
   }
+
+  // Note: this must be set to false higher in the call chain.
+  // This class does not see *all* of the incoming events, thus
+  // it can't reset the result.
+  // Also, for the case of multiple accepted tracks the last one wins.
+  result_->accepted = true;
+  result_->momentum = evt.ptot[i];
 
   return CUTS_ACCEPTED;
 }
