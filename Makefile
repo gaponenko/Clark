@@ -8,7 +8,7 @@ ROOTLIBS      := -L$(shell root-config --libdir) -lGenVector $(shell root-config
 # On detsim we use products from the UPS areas
 ifeq ($(UPS_DIR),)
 	INCLUDE = -I/twist/local/include
-	LIBS += $(ROOTLIBS) -L/twist/local/lib -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
+	LIBS += $(ROOTLIBS) -L/twist/local/lib -lRooUnfold -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
 else
 	INCLUDE = -I$(LOG4CPP_DIR)/include -I$(GSL_DIR)/include -I$(BOOST_INC)
 	LIBS += $(ROOTLIBS) -L$(LOG4CPP_DIR)/lib  -L$(GSL_DIR)/lib -L$(BOOST_LIB) -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
