@@ -452,6 +452,12 @@ class EventClass{
   unsigned iCaptureMcVtxStart;
   unsigned iCaptureMcVtxEnd;
 
+  // Indexes for the beam particle
+  unsigned iPrimaryMcTrk;
+  int numPrimaryMcTrkCandidates;
+  unsigned iPrimaryMcVtxStart;
+  unsigned iPrimaryMcVtxEnd;
+
   enum MCType { G3, G4 };
   MCType mctype;
 
@@ -468,6 +474,7 @@ private :
   void LoadMuCapture();
   void InitMuCaptureVar(TTree* T);
 
+  int getFirstMCVertexIndexForTrack(int imctrk);
 };
 
 

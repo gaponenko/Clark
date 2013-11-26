@@ -169,6 +169,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
                          Conf);
 
   if(doMCTruth_) {
+    hmuStopTruthAfterGaps_.init(H, "MuCapture/MuStopTruthAfterGaps", Conf);
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
     hTruthMuStop_.init(H, "MuCapture/MCTruthMuStop", Conf);
   }
@@ -323,6 +324,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
   if(cutMuonRangeGapsEnabled_ && !muonRange.noGaps()) {
     return CUT_MUON_RANGE_GAPS;
+  }
+
+  if(doMCTruth_) {
+    hmuStopTruthAfterGaps_.fill(evt);
   }
 
   //----------------

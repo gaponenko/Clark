@@ -11,6 +11,14 @@ class EventClass;
 
 namespace MuCapUtilities {
 
+  static int const PID_G3_PROTON = 14;
+
+  static int const PID_G4_MUMINUS = +13;
+  static int const PID_G4_EMINUS = +11;
+  static int const PID_G4_PROTON = 2112;
+
+  static int const PROC_G4_PRIMARY = 56; // ProcessCode::mu2ePrimary
+
   // TWIST units are MeV/c^2
   double mass(int pdgId, const EventClass& evt); // evt is to decide between G3 and G4
 

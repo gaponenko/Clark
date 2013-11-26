@@ -1,4 +1,5 @@
 #include "EventClass.h"
+#include "MuCapUtilities.h"
 
 #include <cassert>
 
@@ -144,22 +145,33 @@ void EventClass::LoadMuCapture() {
   if(AnalyseTruthBank) {
     switch(mctype) {
     case G4:
-      if(nmcvtx != 2) {
-        std::ostringstream os;
-        os<<"EventClass::LoadMuCapture(): unexpected number of mc vertexes for G4 = "<<nmcvtx<<"\n";
-        throw std::runtime_error(os.str());
+      iPrimaryMcTrk = -1;
+      numPrimaryMcTrkCandidates = 0;
+      iPrimaryMcVtxStart = -1;
+      iPrimaryMcVtxEnd = -1;
+
+      for(int i=0; i<nmctr; ++i) {
+        const int ivtx = getFirstMCVertexIndexForTrack(i);
+        if((mctrack_nv[i] > 0) && (mcvertex_istop[ivtx] == MuCapUtilities::PROC_G4_PRIMARY))
+          {
+            ++numPrimaryMcTrkCandidates;
+            iPrimaryMcTrk = i;
+            iPrimaryMcVtxStart = ivtx;
+            iPrimaryMcVtxEnd = iPrimaryMcVtxStart + mctrack_nv[i] - 1;
+          }
       }
-      iCaptureMcTrk = 0;
-      iCaptureMcVtxStart = 0;
-      iCaptureMcVtxEnd = 1;
+
+      iCaptureMcTrk = iPrimaryMcTrk;
+      numCaptureMcTrkCandidates = numPrimaryMcTrkCandidates;
+      iCaptureMcVtxStart = iPrimaryMcVtxStart;
+      iCaptureMcVtxEnd = iPrimaryMcVtxEnd;
       break;
 
     case G3:
-      static int const PID_G3_PROTON = 14;
       iCaptureMcTrk = -1;
       numCaptureMcTrkCandidates = 0;
       for(unsigned i=0; i<nmctr; ++i) {
-        if(mctrack_pid[i] == PID_G3_PROTON) {
+        if(mctrack_pid[i] == MuCapUtilities::PID_G3_PROTON) {
           ++numCaptureMcTrkCandidates;
           if(iCaptureMcTrk == -1) {
             iCaptureMcTrk = i;
@@ -174,12 +186,14 @@ void EventClass::LoadMuCapture() {
       iCaptureMcVtxEnd = -1;
       if(iCaptureMcTrk != -1) {
         // Set vertex indexes
-        iCaptureMcVtxStart = 0;
-        for(unsigned i = 0; i < iCaptureMcTrk; ++i) {
-          iCaptureMcVtxStart += mctrack_nv[i];
-        }
+        iCaptureMcVtxStart = getFirstMCVertexIndexForTrack(iCaptureMcTrk);
         iCaptureMcVtxEnd = iCaptureMcVtxStart + mctrack_nv[iCaptureMcTrk] - 1;
       }
+
+      iPrimaryMcTrk = -1;
+      numPrimaryMcTrkCandidates = 0;
+      iPrimaryMcVtxStart = -1;
+      iPrimaryMcVtxEnd = -1;
 
       break;
 
@@ -923,6 +937,15 @@ bool EventClass::GetEcalib(string EcalibFile, string EcalibArray)
 	Log->info("The energy calibration will be applied.");
 
 	return true;
+}
+
+//================================================================
+int EventClass::getFirstMCVertexIndexForTrack(int imctrk) {
+  int res = 0;
+  for(unsigned i = 0; i < imctrk; ++i) {
+    res += mctrack_nv[i];
+  }
+  return res;
 }
 
 //================================================================

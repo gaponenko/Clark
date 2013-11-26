@@ -21,6 +21,7 @@
 #include "HistAfterPulsing.h"
 #include "HistXtalk.h"
 #include "HistMuCapTruth.h"
+#include "HistMuStopTruth.h"
 #include "HistAccidentals.h"
 #include "HistWinTime.h"
 #include "TimeWindowingPC.h"
@@ -194,6 +195,8 @@ private :
   HistDriftTime hdriftPCFiltered_;
   HistDriftTime hdriftDCAll_;
   HistDriftTime hdriftDCFiltered_;
+
+  HistMuStopTruth hmuStopTruthAfterGaps_;
 
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
