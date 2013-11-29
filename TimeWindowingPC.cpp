@@ -53,10 +53,11 @@ void TimeWindowingPC::assignPCHits(const TDCHitWPPtrCollection& inhits, TimeWind
     win.tendPC = win.tstart + winPCLength_;
 
     // Put all hits falling in the  given time interval into the same window
-    while((i < pchits.size()) && (pchits[i]->time() < win.tendPC)) {
+    do {
       win.pcHits.push_back(pchits[i]);
       ++i;
     }
+    while((i < pchits.size()) && (pchits[i]->time() < win.tendPC));
 
     // Order hits in each window by plane/cell
     std::sort(win.pcHits.begin(), win.pcHits.end(), TDCHitWPCmpGeom());
