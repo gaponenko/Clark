@@ -282,6 +282,13 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/debugEventList", "");
         SetKey(Conf, "Detector/Geometry/dc_ppc", 25);
         SetKey(Conf, "Detector/Geometry/pc_ppc", 5);
+
+        // The value in dt_geo.00061: -0.0904, however this is the
+        // 25um foil position, and 71um target is glued on the "-z"
+        // side (in G3's PC6 volume).
+        // -0.0904 - 0.0250/2 - 0.071/2 = -0.1384 mm = -0.01384 cm
+        SetKey(Conf, "Detector/Geometry/zTargetCenter", -0.01384);
+
         SetKey(Conf, "MuCapture/killPC6DeadWire", true);
 
         SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "SameWireHitDiscarder");

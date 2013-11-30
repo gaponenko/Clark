@@ -76,7 +76,9 @@ namespace {
   };
 }
 
-DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger) {
+DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger) 
+  : zTargetCenter_(conf.read<double>("Detector/Geometry/zTargetCenter"))
+{
   if(!ReadGeometry(conf, &logger)) {
     throw std::runtime_error("DetectorGeo: error reading geometry.");
   }

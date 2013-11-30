@@ -169,7 +169,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
                          Conf);
 
   if(doMCTruth_) {
-    hmuStopTruthAfterGaps_.init(H, "MuCapture/MuStopTruthAfterGaps", Conf);
+    hmuStopTruthAfterGaps_.init(H, "MuCapture/MuStopTruthAfterGaps", *E.geo, Conf);
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
     hTruthMuStop_.init(H, "MuCapture/MCTruthMuStop", Conf);
   }

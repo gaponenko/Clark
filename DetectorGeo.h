@@ -94,6 +94,8 @@ public:
 
   unsigned maxCellNumber(WirePlane::DetType d) const;
 
+  double zTargetCenter() const { return zTargetCenter_; }
+
 private:
   // (1) DC variables
   int             ndfoils;                 // Total number of foils in drift chambers
@@ -159,6 +161,7 @@ private :
   std::vector<WirePlane> pcplanes_;
   std::vector<WirePlane> dcplanes_;
   std::vector<WirePlane> globalplanes_;
+  double zTargetCenter_;
 
   bool ReadGeometry(const ConfigFile& conf, log4cpp::Category *L);
   void  ReadDRFT(std::ifstream &file);

@@ -12,6 +12,7 @@ class TH1;
 class TH2;
 
 class HistogramFactory;
+class DetectorGeo;
 class ConfigFile;
 class EventClass;
 
@@ -20,17 +21,20 @@ class HistMuStopTruth {
 public:
   void init(HistogramFactory &hf,
             const std::string& hdir,
+            const DetectorGeo& geom,
             const ConfigFile &conf);
 
   void fill(const EventClass& evt);
 
   HistMuStopTruth()
-    : hstopZ1_()
+    : zTargetCenter_()
+    , hstopZ1_()
     , hstopZ2_()
     , hstopZ3_()
   {}
 
 private :
+  double zTargetCenter_;
   TH1 *hnumPrimaries_;
   TH1 *hstopZ1_;
   TH1 *hstopZ2_;
