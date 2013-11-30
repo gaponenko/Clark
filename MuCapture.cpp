@@ -169,6 +169,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
                          Conf);
 
   if(doMCTruth_) {
+    hmuStopTruthAll_.init(H, "MuCapture/MuStopTruthAll", *E.geo, Conf);
     hmuStopTruthAfterGaps_.init(H, "MuCapture/MuStopTruthAfterGaps", *E.geo, Conf);
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
     hTruthMuStop_.init(H, "MuCapture/MCTruthMuStop", Conf);
@@ -258,6 +259,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hOccupancyDCAll_.fill(evt.dc_hits());
 
   if(doMCTruth_) {
+    hmuStopTruthAll_.fill(evt);
     hTruthAll_.fill(evt);
   }
 
