@@ -23,7 +23,7 @@ void HistMuStopTruth::init(HistogramFactory &hf,
   hnumPrimaries_ = hf.DefineTH1D(hdir, "numPrimaries", "number of primary tracks", 10, -0.5, 9.5);
   hstopZ1_ = hf.DefineTH1D(hdir, "stopz1", "true Z stop", 1200, -60., 60.);
   hstopZ2_ = hf.DefineTH1D(hdir, "stopz2", "true Z stop", 200, -1., 1.);
-  hstopZ3_ = hf.DefineTH1D(hdir, "stopz3", "true Z stop - Z tgt", 300, -0.03, 0.03);
+  hstopZ3_ = hf.DefineTH1D(hdir, "stopz3", "true Z stop - Z tgt", 100, -0.01, 0.01);
 }
 
 //================================================================
