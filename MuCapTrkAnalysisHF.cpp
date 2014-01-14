@@ -160,6 +160,9 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                               "numAcceptedTracks",
                               10, -0.5, 9.5);
 
+  hPerEventMomentum_ = hf.DefineTH1D(hdir, "perEventMomentum",
+                                     "selected track momentum",
+                                     300, 0., 300.);
 
   if(doMCTruth_) {
     htruthAccepted_.init(hf, hdir+"/truthAccepted", conf);
@@ -204,6 +207,12 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     // Also, for the case of multiple accepted tracks the last one wins.
     result_->accepted = true;
     result_->momentum = evt.ptot[selected];
+
+    hPerEventMomentum_->Fill(evt.ptot[selected]);
+
+    if(doMCTruth_) {
+      htruthAccepted_.fill(evt);
+    }
   }
 
   return selected;
@@ -322,11 +331,6 @@ analyzeTrack(int i, const EventClass& evt,
   final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
   final_trackTime_->Fill(evt.hefit_time[i]);
   final_trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
-
-  //----------------------------------------------------------------
-  if(doMCTruth_) {
-    htruthAccepted_.fill(evt);
-  }
 
   return CUTS_ACCEPTED;
 }

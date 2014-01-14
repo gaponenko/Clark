@@ -117,6 +117,7 @@ public:
     , final_trackWinTime_()
 
     , hNumTracks_()
+    , hPerEventMomentum_()
   {}
 
 private :
@@ -135,8 +136,6 @@ private :
   double cutPtotMax_;
   double cutChi2_;
   double cutTrackMuonOffset_;
-
-  MuCapUVAnalysis normalization_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
@@ -162,8 +161,11 @@ private :
   TH1 *final_trackTime_;
   TH1 *final_trackWinTime_;
 
+  // Unlike the histos above, which are per track,
+  // the following distributions are filled once per event,
+  MuCapUVAnalysis normalization_;
   TH1 *hNumTracks_;
-
+  TH1 *hPerEventMomentum_;
   HistMuCapTruth htruthAccepted_;
 
   // true iff the track passed the cuts
