@@ -67,8 +67,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
 
   //----------------------------------------------------------------
-  anDnLateResponse_.Setup(20, 0., 200, 20, 0., 200.);
-  H.Store(&anDnLateResponse_, "anDnLateResponse", "MuCapture");
+  if(doMCTruth_) {
+    anDnLateResponse_.Setup(20, 0., 200, 20, 0., 200.);
+    H.Store(&anDnLateResponse_, "anDnLateResponse", "MuCapture");
+  }
 
   //----------------------------------------------------------------
   uvOutFileName_ = Conf.read<std::string>("MuCapture/uvOutFileName", "");
