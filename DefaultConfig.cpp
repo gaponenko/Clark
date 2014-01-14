@@ -369,6 +369,9 @@ void SetDefault(ConfigFile &Conf)
         //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
         //----------------
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutStartPlane", 31);
+        // FIXME: beware of the time cuts in the MuCapStreamAnalysis pre-selection.
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTimeMin", 400.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackRmax", 99999.);//cm
         // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMin", 0.5);
@@ -377,6 +380,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPzMin", 0.); // MeV/c
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMin", 0.); // MeV/c
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMax", 250.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutChi2", 100.); //
         //
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 5.);//cm
         // Empty file name disables the output

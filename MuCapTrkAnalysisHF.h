@@ -28,6 +28,7 @@ class MuCapTrkAnalysisHF {
     ax->SetBinLabel(1+CUT_IERROR, "ierror");
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
+    ax->SetBinLabel(1+CUT_STARTPLANE, "startPlane");
     ax->SetBinLabel(1+CUT_TIME, "time");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
@@ -37,6 +38,7 @@ class MuCapTrkAnalysisHF {
     ax->SetBinLabel(1+CUT_PZMIN, "pz min");
     ax->SetBinLabel(1+CUT_PTOTMIN, "ptot min");
     ax->SetBinLabel(1+CUT_PTOTMAX, "ptot max");
+    ax->SetBinLabel(1+CUT_CHI2,     "chi2");
 
     ax->SetBinLabel(1+CUT_TRACK_MUON_OFFSET, "drmu");
     ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
@@ -47,6 +49,7 @@ public:
     CUT_IERROR,
     CUT_CHARGE,
     CUT_STREAM,
+    CUT_STARTPLANE,
     CUT_TIME,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
@@ -55,6 +58,7 @@ public:
     CUT_PZMIN,
     CUT_PTOTMIN,
     CUT_PTOTMAX,
+    CUT_CHI2,
     CUT_TRACK_MUON_OFFSET,
     CUTS_ACCEPTED,
     CUTS_END
@@ -74,6 +78,7 @@ public:
     : doMCTruth_(false)
     , result_(nullptr)
     , cutCharge_()
+    , cutStartPlane_()
     , cutTrackMinTime_()
     , cutTrackRmax_()
     , cutCosThetaMin_()
@@ -82,6 +87,7 @@ public:
     , cutPzMin_()
     , cutPtotMin_()
     , cutPtotMax_()
+    , cutChi2_()
     , cutTrackMuonOffset_()
 
     , h_cuts_r()
@@ -113,6 +119,7 @@ private :
   RecoResMuCapTrk *result_;
   int cutCharge_;
   TimeWindow::StreamType cutStream_;
+  int cutStartPlane_;
   double cutTrackMinTime_;
   double cutTrackRmax_;
   double cutCosThetaMin_;
@@ -121,6 +128,7 @@ private :
   double cutPzMin_;
   double cutPtotMin_;
   double cutPtotMax_;
+  double cutChi2_;
   double cutTrackMuonOffset_;
 
   TH1 *h_cuts_r;
@@ -133,6 +141,7 @@ private :
 
   TH2 *hStartStop_;
   TH1 *trackz_;
+  TH1 *trackChi2_;
   TH2 *trackMuonOffset_;
   TH1 *trackMuondr_;
 

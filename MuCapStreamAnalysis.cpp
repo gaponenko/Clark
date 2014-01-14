@@ -82,7 +82,10 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   //----------------------------------------------------------------
   uvan_.init(hdir+"/UVAnalysis", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/);
-  muCapTrkHF_.init(hdir+"/TrkHF", hf, conf, TimeWindow::DOWNSTREAM, cutWinTimeMin - 100./*FIXME*/, resTrk);
+  muCapTrkHF_.init(hdir+"/TrkHF", hf, conf, TimeWindow::DOWNSTREAM,
+                   conf.read<double>("MuCapture/TrkAnalysisHF/cutTimeMin") /*FIXME*/,
+                   resTrk);
+
   hRangeDIO_.init(hdir+"/rangeDIO", hf, geom, conf);
   hdriftPCFiltered_.init(hdir+"/driftTimePCFiltered", hf, geom.numPCs(), 1000./*ns*/,
                          conf.read<double>("MuCapture/HistDriftTime/cutEffTrackHitDtPC"),

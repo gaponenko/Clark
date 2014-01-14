@@ -47,6 +47,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   result_ = result;
   cutCharge_ = +1;
   cutStream_ = cutStream;
+  cutStartPlane_ = conf.read<int>("MuCapture/TrkAnalysisHF/cutStartPlane");
   cutTrackMinTime_ = cutMinTime;
   cutTrackRmax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackRmax");
   cutCosThetaMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutCosThetaMin");
@@ -55,6 +56,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   cutPzMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPzMin");
   cutPtotMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtotMin");
   cutPtotMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtotMax");
+  cutChi2_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutChi2");
   cutTrackMuonOffset_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackMuonOffset");
 
   //----------------------------------------------------------------
@@ -77,6 +79,8 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   trackz_ = hf.DefineTH1D(hdir, "trackz",
                           "trackz",
                           700, -89.5, 610.5);
+
+  trackChi2_ = hf.DefineTH1D(hdir, "trackchi2", "trackchi2", 1000, 0, 500.);
 
   trackMuonOffset_ = hf.DefineTH2D(hdir,
                                    "trackMuonOffset",
@@ -217,6 +221,13 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
+  hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
+  trackz_->Fill(evt.hefit_z[i]);
+  if(evt.hefit_pstart[i] != cutStartPlane_) {
+    return CUT_STARTPLANE;
+  }
+
+  //----------------------------------------------------------------
   if((cutStream_==TimeWindow::DOWNSTREAM)&&(evt.costh[i] < 0.) ||
      (cutStream_==TimeWindow::UPSTREAM)&&(evt.costh[i] > 0.) ) {
     return CUT_STREAM;
@@ -263,6 +274,12 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
+  trackChi2_->Fill(evt.hefit_chi2[i]);
+  if(evt.hefit_chi2[i] > cutChi2_) {
+    return CUT_CHI2;
+  }
+
+  //----------------------------------------------------------------
   const double du = evt.hefit_u0[i] - muStopUV.x();
   const double dv = evt.hefit_v0[i] - muStopUV.y();
   const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
@@ -273,11 +290,6 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
-  // Select tracks that go from tgt to the end of tracker
-  // if( (31== evt.hefit_pstart[i]) && (52 == evt.hefit_pstop[i])) {}
-  trackz_->Fill(evt.hefit_z[i]);
-
   helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
 
   const double rout =
