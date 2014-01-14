@@ -59,6 +59,8 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   cutChi2_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutChi2");
   cutTrackMuonOffset_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackMuonOffset");
 
+  normalization_.init(hdir+"/norm", hf, conf, cutStream, cutMinTime);
+
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Tracks rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
@@ -169,6 +171,8 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
                                 const ROOT::Math::XYPoint& muStopUV,
                                 const TimeWindow& protonWin)
 {
+  normalization_.process(evt, muStopUV);
+
   std::vector<unsigned> accepted;
   for(int i = 0; i < evt.ntr; ++i) {
     if(processTrack(i, evt, muStopUV, protonWin)) {

@@ -11,6 +11,7 @@
 #include "WireCluster.h"
 #include "HistMuCapTruth.h"
 #include "RecoResMuCapTrk.h"
+#include "MuCapUVAnalysis.h"
 
 #include "TAxis.h"
 #include "Math/Point2D.h"
@@ -134,6 +135,8 @@ private :
   double cutPtotMax_;
   double cutChi2_;
   double cutTrackMuonOffset_;
+
+  MuCapUVAnalysis normalization_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
