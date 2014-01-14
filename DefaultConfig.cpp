@@ -370,7 +370,6 @@ void SetDefault(ConfigFile &Conf)
 
         //----------------
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutStartPlane", 31);
-        // FIXME: beware of the time cuts in the MuCapStreamAnalysis pre-selection.
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTimeMin", 400.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackRmax", 99999.);//cm
         // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above

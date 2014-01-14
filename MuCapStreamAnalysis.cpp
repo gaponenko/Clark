@@ -190,7 +190,10 @@ analyze(const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  // Evetn sample before Z containment and window time cuts
+  // Run the track based analysis, and write out the "common" sample
+  // before Z containment and window time cuts
+
+  muCapTrkHF_.process(evt, muStopUV, protonWindow);
   if(commonSkimOutFile_) {
     commonSkimOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
   }
@@ -214,10 +217,6 @@ analyze(const EventClass& evt,
     hRangeDIO_.fill(protonDnClusters);
     hdriftPCFiltered_.fill(evt, iDIO, protonWindow.pcHits);
   }
-
-  //----------------------------------------------------------------
-  // Track based analysis
-  muCapTrkHF_.process(evt, muStopUV, protonWindow);
 
   //----------------------------------------------------------------
   // Z containment check
