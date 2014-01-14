@@ -184,13 +184,13 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
   }
   hNumTracks_->Fill(accepted.size());
 
-  //// Look at the multiple-track events
-  // if(accepted.size() > 1) {
-  //   std::cout<<"Multiple accepted tracks in run "<<evt.nrun<<", event "<<evt.nevt<<std::endl;
-  //   for(unsigned i=0; i < accepted.size(); ++i) {
-  //     std::cout<<"\t"<<formatTrack(evt, accepted[i])<<std::endl;
-  //   }
-  // }
+  // Look at the multiple-track events
+  if(accepted.size() > 1) {
+    std::cout<<"Multiple accepted tracks in run "<<evt.nrun<<", event "<<evt.nevt<<std::endl;
+    for(unsigned i=0; i < accepted.size(); ++i) {
+      std::cout<<"\t"<<formatTrack(evt, accepted[i])<<std::endl;
+    }
+  }
 
   int selected = accepted.empty() ? -1 : accepted[0];
   // find a track that starts closer to the target
