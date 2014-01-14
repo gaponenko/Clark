@@ -217,7 +217,7 @@ analyze(const EventClass& evt,
 
   //----------------------------------------------------------------
   // Track based analysis
-  muCapTrkHF_.process(evt, muStopUV);
+  muCapTrkHF_.process(evt, muStopUV, protonWindow);
 
   //----------------------------------------------------------------
   // Z containment check

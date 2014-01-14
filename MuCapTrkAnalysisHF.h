@@ -72,7 +72,9 @@ public:
             RecoResMuCapTrk *result);
 
   // Returns the index of an accepted track in the event, or -1
-  int process(const EventClass& evt, const ROOT::Math::XYPoint& muStopUV);
+  int process(const EventClass& evt,
+              const ROOT::Math::XYPoint& muStopUV,
+              const TimeWindow& protonWin);
 
   MuCapTrkAnalysisHF()
     : doMCTruth_(false)
@@ -94,6 +96,7 @@ public:
     , h_cuts_p()
 
     , trackTime_()
+    , trackWinTime_()
     , trackRL_()
     , costhVsPtot_()
 
@@ -110,6 +113,7 @@ public:
     , final_u0v0_()
     , final_trackROut_()
     , final_trackTime_()
+    , final_trackWinTime_()
 
     , hNumTracks_()
   {}
@@ -135,6 +139,7 @@ private :
   TH1 *h_cuts_p;
 
   TH1 *trackTime_;
+  TH1 *trackWinTime_;
 
   TH2 *trackRL_;
   TH2 *costhVsPtot_;
@@ -152,6 +157,7 @@ private :
   TH2 *final_u0v0_;
   TH1 *final_trackROut_;
   TH1 *final_trackTime_;
+  TH1 *final_trackWinTime_;
 
   TH1 *hNumTracks_;
 
@@ -160,13 +166,13 @@ private :
   // true iff the track passed the cuts
   bool processTrack(int itrack,
                     const EventClass& evt,
-                    const ROOT::Math::XYPoint& muStopUV
-                    );
+                    const ROOT::Math::XYPoint& muStopUV,
+                    const TimeWindow& protonWin);
 
   CutNumber analyzeTrack(int itrack,
                          const EventClass& evt,
-                         const ROOT::Math::XYPoint& muStopUV
-                         );
+                         const ROOT::Math::XYPoint& muStopUV,
+                         const TimeWindow& protonWin);
 };
 
 #endif/*MuCapTrkAnalysisHF_h*/
