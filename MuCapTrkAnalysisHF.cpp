@@ -193,6 +193,15 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     }
   }
 
+  if(selected >= 0) {
+    // Note: this must be set to false higher in the call chain.
+    // This class does not see *all* of the incoming events, thus
+    // it can't reset the result.
+    // Also, for the case of multiple accepted tracks the last one wins.
+    result_->accepted = true;
+    result_->momentum = evt.ptot[selected];
+  }
+
   return selected;
 }
 
@@ -314,13 +323,6 @@ analyzeTrack(int i, const EventClass& evt,
   if(doMCTruth_) {
     htruthAccepted_.fill(evt);
   }
-
-  // Note: this must be set to false higher in the call chain.
-  // This class does not see *all* of the incoming events, thus
-  // it can't reset the result.
-  // Also, for the case of multiple accepted tracks the last one wins.
-  result_->accepted = true;
-  result_->momentum = evt.ptot[i];
 
   return CUTS_ACCEPTED;
 }
