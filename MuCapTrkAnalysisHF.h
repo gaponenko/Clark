@@ -140,6 +140,7 @@ private :
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
+  TH1 *hCharge_;
   TH1 *trackTime_;
   TH1 *trackWinTime_;
 

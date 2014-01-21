@@ -71,6 +71,8 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   h_cuts_p->SetStats(kFALSE);
 
   //----------------------------------------------------------------
+  hCharge_ = hf.DefineTH1D(hdir, "charge", "track charge", 3, -1.5, 1.5);
+
   hStartStop_ = hf.DefineTH2D(hdir,
                               "startStopPlane",
                               "Track stop vs start plane",
@@ -244,6 +246,7 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
+  hCharge_->Fill(evt.hefit_q[i]);
   if(evt.hefit_q[i] != cutCharge_) {
     return CUT_CHARGE;
   }
