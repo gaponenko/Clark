@@ -105,7 +105,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
 
   final_costhVsPtot_ = hf.DefineTH2D(hdir,
                                      "final_ptotVsCosth",
-                                     "ptot vs costh",
+                                     "final ptot vs costh",
                                      300, 0., 300., 100, -1., +1.);
 
   final_costhVsPtot_->SetOption("colz");
@@ -125,7 +125,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   trackRL_->SetOption("colz");
 
   final_trackRL_ = hf.DefineTH2D(hdir,
-                                 "final trackRL",
+                                 "final_trackRL",
                                  "final track wavelengh vs radius",
                                  200, 0., 20, 800, -400., 400.);
 
