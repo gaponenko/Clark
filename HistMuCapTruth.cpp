@@ -20,6 +20,7 @@ void HistMuCapTruth::init(HistogramFactory &hf,
   static const double PI = 4.*atan(1.);
 
   hNumMCCaptureTracks_ = hf.DefineTH1D(hdir, "numCaptureMcTrkCandidates", "numCaptureMcTrkCandidates", 10, -0.5, 9.5);
+  hCaptureTime_ = hf.DefineTH1D(hdir, "time", "MC time", 640, -100., 1500.);
   hptot_ = hf.DefineTH1D(hdir, "ptot", "MC ptot", 200, 0., 200.);
   hek_ = hf.DefineTH1D(hdir, "ek", "MC Ek", 200, 0., 50.);
   hphi_ = hf.DefineTH1D(hdir, "phi", "MC momentum phi", 100, -PI, +PI);
@@ -53,6 +54,7 @@ void HistMuCapTruth::fill(const EventClass& evt) {
     const unsigned imcvtxEnd = evt.iCaptureMcVtxEnd;
     const unsigned imctrk = evt.iCaptureMcTrk;
 
+    hCaptureTime_->Fill(evt.mcvertex_time[imcvtxStart]);
     hptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
     hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtxStart], evt));
     hphi_->Fill(evt.mcvertex_phimuv[imcvtxStart]);

@@ -26,6 +26,7 @@ public:
 
   HistMuCapTruth()
     : hNumMCCaptureTracks_()
+    , hCaptureTime_()
     , hptot_()
     , hek_()
     , hphi_()
@@ -40,6 +41,7 @@ public:
 
 private :
   TH1 *hNumMCCaptureTracks_;
+  TH1 *hCaptureTime_;
   TH1 *hptot_;
   TH1 *hek_;
   TH1 *hphi_;
