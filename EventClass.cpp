@@ -161,10 +161,28 @@ void EventClass::LoadMuCapture() {
           }
       }
 
-      iCaptureMcTrk = iPrimaryMcTrk;
-      numCaptureMcTrkCandidates = numPrimaryMcTrkCandidates;
-      iCaptureMcVtxStart = iPrimaryMcVtxStart;
-      iCaptureMcVtxEnd = iPrimaryMcVtxEnd;
+      iCaptureMcTrk = -1;
+      numCaptureMcTrkCandidates = 0;
+      for(unsigned i=0; i<nmctr; ++i) {
+        if(mctrack_pid[i] == MuCapUtilities::PID_G4_PROTON) {
+          ++numCaptureMcTrkCandidates;
+          if(iCaptureMcTrk == -1) {
+            iCaptureMcTrk = i;
+          }
+          else {
+            // throw std::runtime_error("EventClass::LoadMuCapture() G4 truth: multiple protons cases are not handled");
+          }
+        }
+      }
+
+      iCaptureMcVtxStart = -1;
+      iCaptureMcVtxEnd = -1;
+      if(iCaptureMcTrk != -1) {
+        // Set vertex indexes
+        iCaptureMcVtxStart = getFirstMCVertexIndexForTrack(iCaptureMcTrk);
+        iCaptureMcVtxEnd = iCaptureMcVtxStart + mctrack_nv[iCaptureMcTrk] - 1;
+      }
+
       break;
 
     case G3:
