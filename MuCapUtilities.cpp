@@ -20,6 +20,7 @@ namespace MuCapUtilities {
       switch(std::abs(pdgId)) {
 
       case 2212: return protonMass;
+      case 2112: return 939.565; // neutron
 
       case 11: return electronMass;
 
