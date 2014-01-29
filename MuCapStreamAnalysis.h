@@ -202,6 +202,10 @@ private :
 
   HistMuCapFinal hfLoose_;
 
+  HistMuCapTruth htruthAfterNoHits_;
+  HistMuCapTruth htruthAfterBeamVeto_;
+  HistMuCapTruth htruthAfterMutliwinTime_;
+  HistMuCapTruth htruthAfterWinTime_;
   HistMuCapTruth htruthContained_;
   HistMuCapTruth htruthLoose_;
   HistMuCapTruth htruth2planes_;
