@@ -173,7 +173,14 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   if(doMCTruth_) {
     hmuStopTruthAll_.init(H, "MuCapture/MuStopTruthAll", *E.geo, Conf);
     hmuStopTruthAfterGaps_.init(H, "MuCapture/MuStopTruthAfterGaps", *E.geo, Conf);
+
     hTruthAll_.init(H, "MuCapture/MCTruthAll", Conf);
+    hTruthAfterPreTrigHits_.init(H, "MuCapture/MCTruthAfterPreTrigHits", Conf);
+    hTruthAfterUnassignedDCHits_.init(H, "MuCapture/MCTruthAfterUnassignedDCHits", Conf);
+    hTruthAfterMuRangeGaps_.init(H, "MuCapture/MCTruthAfterMuRangeGapss", Conf);
+    hTruthAfterMuLastPlane_.init(H, "MuCapture/MCTruthAfterMuLastPlane", Conf);
+    hTruthAfterMuSingleCluster_.init(H, "MuCapture/MCTruthAfterMuSingleCluster", Conf);
+    hTruthAfterMuStopUV_.init(H, "MuCapture/", Conf);
     hTruthMuStop_.init(H, "MuCapture/MCTruthMuStop", Conf);
   }
 
@@ -294,6 +301,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
+  if(doMCTruth_) {
+    hTruthAfterPreTrigHits_.fill(evt);
+  }
+
   const TimeWindow& trigWin = wres.windows[wres.iTrigWin];
 
   //----------------
@@ -303,6 +314,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hWinDCUnassignedCount_->Fill(wres.unassignedDCHits.size());
   if(wres.unassignedDCHits.size() > maxUnassignedDCHits_) {
     return CUT_UNASSIGNEDDCHITS;
+  }
+
+  if(doMCTruth_) {
+    hTruthAfterUnassignedDCHits_.fill(evt);
   }
 
   //----------------
@@ -332,12 +347,17 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   if(doMCTruth_) {
     hmuStopTruthAfterGaps_.fill(evt);
+    hTruthAfterMuRangeGaps_.fill(evt);
   }
 
   //----------------
   hMuonLastPlaneAfterGaps_->Fill(muonRange.max());
   if(muonRange.max() != 28) {
     return CUT_MUON_LAST_PLANE;
+  }
+
+  if(doMCTruth_) {
+    hTruthAfterMuLastPlane_.fill(evt);
   }
 
   //----------------------------------------------------------------
@@ -351,6 +371,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // CUT_MUSTOP_UV
   if((muonGlobalClusters[27].size() != 1) || (muonGlobalClusters[28].size() != 1)) {
     return CUT_MUSTOP_SINGLECLUSTER;
+  }
+
+  if(doMCTruth_) {
+    hTruthAfterMuSingleCluster_.fill(evt);
   }
 
   const double pc5wire = muonGlobalClusters[27].front().centralCell();
@@ -369,6 +393,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hMuStopRadius_->Fill(muStopRadius);
   if(muStopRadius > muStopRMax_) {
     return CUT_MUSTOP_UV;
+  }
+
+  if(doMCTruth_) {
+    hTruthAfterMuStopUV_.fill(evt);
   }
 
   //----------------------------------------------------------------

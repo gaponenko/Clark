@@ -200,6 +200,12 @@ private :
   HistMuStopTruth hmuStopTruthAfterGaps_;
 
   HistMuCapTruth hTruthAll_;
+  HistMuCapTruth hTruthAfterPreTrigHits_;
+  HistMuCapTruth hTruthAfterUnassignedDCHits_;
+  HistMuCapTruth hTruthAfterMuRangeGaps_;
+  HistMuCapTruth hTruthAfterMuLastPlane_;
+  HistMuCapTruth hTruthAfterMuSingleCluster_;
+  HistMuCapTruth hTruthAfterMuStopUV_;
   HistMuCapTruth hTruthMuStop_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);

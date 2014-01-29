@@ -109,6 +109,10 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
 
   //----------------------------------------------------------------
   if(doMCTruth_) {
+    htruthAfterNoHits_.init(hf, hdir + "/TruthAfterNoHits", conf);
+    htruthAfterBeamVeto_.init(hf, hdir + "/TruthAfterBeamVeto", conf);
+    htruthAfterMutliwinTime_.init(hf, hdir + "/TruthAfterMultiwinTime", conf);
+    htruthAfterWinTime_.init(hf, hdir + "/TruthAfterWinTime", conf);
     htruthContained_.init(hf, hdir + "/TruthContained", conf);
     htruthLoose_.init(hf, hdir + "/TruthLoose", conf);
     htruth2planes_.init(hf, hdir + "/Truth2planes", conf);
@@ -148,6 +152,9 @@ analyze(const EventClass& evt,
   if(afterTrigGlobalClusters.empty()) {
     return CUT_NOHITS;
   }
+  if(doMCTruth_) {
+    htruthAfterNoHits_.fill(evt);
+  }
 
   const unsigned iProtonWin = 1 + wres.iTrigWin;
   const TimeWindow& protonWindow = wres.windows[iProtonWin];
@@ -167,6 +174,9 @@ analyze(const EventClass& evt,
   hBeamVetoNumHitPlanes_->Fill(numBeamVetoHitPlanes);
   if(numBeamVetoHitPlanes > cutBeamVetoMaxPCplanes_) {
     return CUT_BEAM_VETO;
+  }
+  if(doMCTruth_) {
+    htruthAfterBeamVeto_.fill(evt);
   }
 
   for(int i=1; i<=4; ++i) {
@@ -188,6 +198,9 @@ analyze(const EventClass& evt,
       return CUT_MULTIWIN_NEXTDT;
     }
   }
+  if(doMCTruth_) {
+    htruthAfterMutliwinTime_.fill(evt);
+  }
 
   //----------------------------------------------------------------
   // Run the track based analysis, and write out the "common" sample
@@ -205,6 +218,10 @@ analyze(const EventClass& evt,
     return CUT_WINTIME;
   }
   hWindowTimeAfter_->Fill(protonWindow.tstart);
+
+  if(doMCTruth_) {
+    htruthAfterWinTime_.fill(evt);
+  }
 
   //----------------------------------------------------------------
   // UVAnalysis: DIOs for normalization
