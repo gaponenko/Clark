@@ -23,15 +23,15 @@ public:
             HistogramFactory &hf,
             const ConfigFile &conf);
 
-  void fill(const WireCellId& cid);
   void fill(const TDCHitWP& hit);
   void fill(const TDCHitWPCollection& hits);
   void fill(const TDCHitWPPtrCollection& hits);
 
-  HistOccupancy() : hitMap_() {}
+  HistOccupancy() : hitMap_(), planeHitTimes_() {}
 
 private :
   TH2 *hitMap_;
+  TH2 *planeHitTimes_;
 };
 
 #endif/*HistOccupancy_h*/

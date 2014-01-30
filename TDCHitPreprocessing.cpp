@@ -113,12 +113,12 @@ namespace TDCHitPreprocessing {
           if(dt < cutSameWireDt_) {
             hSameCellDtDropped_[plane-1]->Fill(dt);
             hSameCellWidthDropped_[plane-1]->Fill(hits[ihit]->width());
-            hSameCellOccupancyDropped_.fill(hits[ihit]->cid());
+            hSameCellOccupancyDropped_.fill(*hits[ihit]);
           }
           else {
             out.push_back(hits[ihit]);
             hSameCellWidthKept_[plane-1]->Fill(hits[ihit]->width());
-            hSameCellOccupancyKept_.fill(hits[ihit]->cid());
+            hSameCellOccupancyKept_.fill(*hits[ihit]);
           }
         }
         else {

@@ -65,7 +65,7 @@ void HistAfterPulsing::fill(TDCHitWPPtrCollection hits) {
     if(hits[ihit]->cid() == hits[ihit+1]->cid()) {
       ++extraHitCount;
       //std::cout<<"hits = "<<hits<<std::endl;
-      hOccupancyMultiHit_.fill(hits[ihit]->cid());
+      hOccupancyMultiHit_.fill(*hits[ihit]);
       const int plane = hits[ihit]->plane();
       const double dt = hits[ihit+1]->time() - hits[ihit]->time();
       hSameCellDt_[plane-1]->Fill(dt);

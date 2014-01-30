@@ -27,16 +27,18 @@ void HistOccupancy::init(const std::string& hdir,
                           1+maxCellNumber, -0.5, maxCellNumber+0.5);
 
   hitMap_->SetOption("colz");
-}
 
-//================================================================
-void HistOccupancy::fill(const WireCellId& cid) {
-  hitMap_->Fill(cid.plane, cid.cell);
+  planeHitTimes_ = hf.DefineTH2D(hdir, namePrefix+"times", namePrefix+": time vs plane",
+                                 1+maxPlaneNumber, -0.5, maxPlaneNumber+0.5,
+                                 320, -6000., +10000.);
+
+  planeHitTimes_->SetOption("colz");
 }
 
 //================================================================
 void HistOccupancy::fill(const TDCHitWP& hit) {
-  fill(hit.cid());
+  hitMap_->Fill(hit.plane(), hit.cell());
+  planeHitTimes_->Fill(hit.plane(), hit.time());
 }
 
 //================================================================
