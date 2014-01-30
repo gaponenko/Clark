@@ -188,7 +188,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthAfterMuRangeGaps_.init(H, "MuCapture/MCTruthAfterMuRangeGapss", Conf);
     hTruthAfterMuLastPlane_.init(H, "MuCapture/MCTruthAfterMuLastPlane", Conf);
     hTruthAfterMuSingleCluster_.init(H, "MuCapture/MCTruthAfterMuSingleCluster", Conf);
-    hTruthAfterMuStopUV_.init(H, "MuCapture/", Conf);
+    hTruthAfterMuStopUV_.init(H, "MuCapture/MCTruthAfterMuStopUV", Conf);
     hTruthMuStop_.init(H, "MuCapture/MCTruthMuStop", Conf);
   }
 
