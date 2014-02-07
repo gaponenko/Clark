@@ -137,6 +137,11 @@ private :
 
   RecoResMuCapTrk anDnLateRes_;
   RooUnfoldResponse anDnLateResponse_;
+  TH1D* hTruthMomentum_;
+  TH1D* hTruthMomentumReco_;
+  TH2D* hMeasVsTruthMomentum_;
+  TH1D* hTruthMomentumNotReco_;
+  TH1D* hMeasuredMomentum_;
 
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
