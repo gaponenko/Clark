@@ -375,8 +375,8 @@ void SetDefault(ConfigFile &Conf)
         // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMin", 0.5);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMax", 0.98);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtMin", 0.); // MeV/c
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPzMin", 0.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtMin", 11.9); // MeV/c = 2 cm R
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPzMin", 28.4); // MeV/c = 30cm L
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMin", 0.); // MeV/c
 
         // NB: remember about "name helixfit helixfitmommax=..." in the KCM file.
