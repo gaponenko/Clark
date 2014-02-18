@@ -68,14 +68,15 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   //----------------------------------------------------------------
   if(doMCTruth_) {
-    anDnLateResponse_.Setup(20, 0., 200, 20, 0., 200.);
+    anDnLateResponse_.Setup(25, 0., 250, 25, 0., 250.);
     H.Store(&anDnLateResponse_, "anDnLateResponse", "MuCapture");
 
-    hTruthMomentum_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",20, 0., 200);
-    hTruthMomentumReco_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",20, 0., 200);
-    hMeasVsTruthMomentum_ = H.DefineTH2D("MuCapture/LateResponse", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",20, 0., 200,20, 0., 200);
-    hTruthMomentumNotReco_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",20, 0., 200);
-    hMeasuredMomentum_ = H.DefineTH1D("MuCapture/LateResponse", "MCMeasuredMomentum", "Measured momentum used in response function;Momentum [MeV/c]",20, 0., 200);
+    hTruthMomentum_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
+    hTruthMomentumReco_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
+    hMeasVsTruthMomentum_ = H.DefineTH2D("MuCapture/LateResponse", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
+    hTruthMomentumNotReco_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hMeasuredMomentum_ = H.DefineTH1D("MuCapture/LateResponse", "MCMeasuredMomentum", "Measured momentum used in response function;Momentum [MeV/c]",25, 0., 250);
+
   hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
   }
