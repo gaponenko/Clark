@@ -9,7 +9,7 @@
 
 
 
-from ROOT import gROOT, gRandom, gStyle, TH1, TH1D, cout, TFile, TCanvas, TLegend
+from ROOT import gROOT, gRandom, gStyle, TH1, TH1D, cout, TFile, TCanvas, TLegend, TGraph
 from ROOT import RooUnfoldResponse
 from ROOT import RooUnfold
 from ROOT import RooUnfoldBayes
@@ -17,7 +17,7 @@ from ROOT import RooUnfoldBayes
 # from ROOT import RooUnfoldTUnfold
 from optparse import OptionParser
 
-def Openfile(inputopt):
+def Openfile(inputopt, defaultTitle):
 	inputSplit = inputopt.split(':')
 	thefile = TFile(inputSplit[0])
 	if thefile.IsZombie():
@@ -26,7 +26,7 @@ def Openfile(inputopt):
 	if len(inputSplit) > 1:
 		thetitle = ':'.join(inputSplit[1:])
 	else:
-		thetitle = None
+		thetitle = defaultTitle
 
 	return (thefile, thetitle)
 
@@ -47,8 +47,8 @@ class Unfolder:
 			sys.exit(1)
 
 		# Open input files
-		(self.unfold, self.unfoldTitle) = Openfile(options.unfold)
-		(self.training, self.trainingTitle) = Openfile(options.training)
+		(self.unfold, self.unfoldTitle) = Openfile(options.unfold, "input")
+		(self.training, self.trainingTitle) = Openfile(options.training, "training")
 
 		# Open output file
 		if options.output.find('.pdf') == -1:
@@ -65,6 +65,8 @@ class Unfolder:
 			self.unfoldIsMC = True
 
 		self.unfoldresult = None
+
+		self.nbiterations = 10
 
 
 
@@ -88,6 +90,19 @@ class Unfolder:
 			self.Canv.Clear()
 
 
+	def PrintResponseMatrix(self):
+
+		def DrawMeasuredFromResponse(thefile, thetitle):
+			matrix = thefile.Get("MuCapture/LateResponse/MCMeasVsTruthMomentum")
+			if not thetitle == None:
+				matrix.SetTitle(thetitle+" response matrix")
+			matrix.Draw("colz")
+		
+		DrawMeasuredFromResponse(self.training, self.trainingTitle)
+		self.Canv.Print(self.output)
+		self.Canv.Clear()
+
+
 
 	def UnfoldBayes(self):
 		response = self.training.Get("MuCapture/anDnLateResponse")
@@ -96,7 +111,7 @@ class Unfolder:
 		tmpresponse = self.unfold.Get("MuCapture/anDnLateResponse")
 		unfoldMeas = tmpresponse.Hmeasured()
 
-		self.unfoldresult = RooUnfoldBayes     (response, unfoldMeas, 10);
+		self.unfoldresult = RooUnfoldBayes(response, unfoldMeas, self.nbiterations);
 		self.unfoldname = "Bayes"
 
 
@@ -125,7 +140,38 @@ class Unfolder:
 			hReco.SetTitle(self.trainingTitle+" spectrum unfolded using RooUnfold"+self.unfoldname)
 		self.Canv.Update()
 		self.Canv.Print(self.output)
+		self.Canv.Clear()
 
+	def MakeChi2VsIterationPlot(self):
+		self.Chi2VsIter = TGraph()
+
+	def AddChi2VsIterationPoint(self):
+		if self.unfoldresult == None:
+			print "ERROR: No unfolding performed yet !!!"
+			sys.exit(1)
+
+		if not self.unfoldIsMC:
+			print "WARNING: There is no truth information to compare to. No Chi2 point added."
+			return
+
+		unfoldTruth = self.unfold.Get("MuCapture/LateResponse/MCTruthMomentum")
+		chi2 = self.unfoldresult.Chi2(unfoldTruth)
+		nbPt = self.Chi2VsIter.GetN()
+		self.Chi2VsIter.SetPoint(nbPt, self.nbiterations, chi2)
+
+
+	def DrawChi2VsIterationPlot(self):
+		self.Canv.Clear()
+		self.Chi2VsIter.SetTitle("chi^{2} between unfolded and true %s spectra, using %s spectrum;Number of iterations;chi^{2}" % (self.unfoldTitle,self.trainingTitle))
+		self.Chi2VsIter.SetMarkerStyle(5)
+		self.Chi2VsIter.SetMarkerColor(4)
+		self.Chi2VsIter.SetLineColor(4)
+		self.Chi2VsIter.Draw("APL")
+		self.Canv.Update()
+		self.Canv.Print(self.output)
+		self.Canv.Clear()
+
+	def Close(self):
 		self.Canv.Print(self.output+"]")
 
 
@@ -139,14 +185,28 @@ parser = OptionParser()
 parser.add_option("-t", "--training", dest="training", help="Root file containing the rooUnfold response.")
 parser.add_option("-u", "--unfold", dest="unfold", help="Root file containing the measured spectrum you want to unfold")
 parser.add_option("-o", "--output", dest="output", help="Output file name for the pdf file. Don't put the suffix '.pdf'", default="output")
+parser.add_option("-i", "--iterationcheck", dest="iterationcheck", help="Plot the unfolding results versus the number of iterations.", action="store_true")
 (options, args) = parser.parse_args()
 
 gROOT.SetBatch()
 gStyle.SetOptStat(10)
-gStyle.SetTitleW(0.9)
+gStyle.SetTitleW(1.0)
 
 Unf = Unfolder(options)
-Unf.PrintMeasured()
-Unf.UnfoldBayes()
-Unf.PrintResultsMC()
-
+# Study of unfolding results vs number of iterations
+if options.iterationcheck:
+	Unf.MakeChi2VsIterationPlot()
+	for it in range(1,16):
+		Unf.nbiterations = it
+		Unf.UnfoldBayes()
+		Unf.unfoldname = "Bayes, %d iterations" % it
+		Unf.PrintResultsMC()
+		Unf.AddChi2VsIterationPoint()
+	Unf.DrawChi2VsIterationPlot()
+# Default output
+else:
+	Unf.PrintMeasured()
+	Unf.PrintResponseMatrix()
+	Unf.UnfoldBayes()
+	Unf.PrintResultsMC()
+Unf.Close()
