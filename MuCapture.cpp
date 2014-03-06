@@ -75,11 +75,11 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthMomentumReco_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
     hMeasVsTruthMomentum_ = H.DefineTH2D("MuCapture/LateResponse", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
     hTruthMomentumNotReco_ = H.DefineTH1D("MuCapture/LateResponse", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
-    hMeasuredMomentum_ = H.DefineTH1D("MuCapture/LateResponse", "MCMeasuredMomentum", "Measured momentum used in response function;Momentum [MeV/c]",25, 0., 250);
 
   hMuStopRadius_ = H.DefineTH1D("MuCapture", "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
   }
+  hMeasuredMomentum_ = H.DefineTH1D("MuCapture/LateResponse", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
 
   //----------------------------------------------------------------
   uvOutFileName_ = Conf.read<std::string>("MuCapture/uvOutFileName", "");
@@ -206,7 +206,6 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
       if(anDnLateRes_.accepted) {
         anDnLateResponse_.Fill(anDnLateRes_.momentum, p_true);
         hTruthMomentum_->Fill(p_true);
-        hMeasuredMomentum_->Fill(anDnLateRes_.momentum);
         hTruthMomentumReco_->Fill(p_true);
         hMeasVsTruthMomentum_->Fill(p_true,anDnLateRes_.momentum);
       }
@@ -216,6 +215,9 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
         hTruthMomentumNotReco_->Fill(p_true);
       }
     }
+  }
+  if(anDnLateRes_.accepted) {
+    hMeasuredMomentum_->Fill(anDnLateRes_.momentum);
   }
 
   if(gEventList.requested(evt)) {
