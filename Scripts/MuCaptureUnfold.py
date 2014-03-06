@@ -17,6 +17,8 @@ from ROOT import RooUnfoldBayes
 # from ROOT import RooUnfoldTUnfold
 from optparse import OptionParser
 
+import sys
+
 def Openfile(inputopt, defaultTitle):
 	inputSplit = inputopt.split(':')
 	thefile = TFile(inputSplit[0])
@@ -37,18 +39,22 @@ class Unfolder:
 	def __init__(self,options):
 
 		fail = False
-		required = ["unfold", "training", "output"]
+		required = ["unfold", "output"]
 		for opt in required:
 			if not hasattr(options, opt):
 				print "--" + opt + " option must be specified"
 				fail = True
+		if options.training == "" and not options.multipletraining:
+			print "--training option must be specified"
+			fail = True
 		
 		if fail:
 			sys.exit(1)
 
 		# Open input files
 		(self.unfold, self.unfoldTitle) = Openfile(options.unfold, "input")
-		(self.training, self.trainingTitle) = Openfile(options.training, "training")
+		if not options.training == "":
+			self.InitTraining(options.training, "training")
 
 		# Open output file
 		if options.output.find('.pdf') == -1:
@@ -74,6 +80,8 @@ class Unfolder:
 		self.nbiterations = 10
 
 
+	def InitTraining(self, thefile, defaulttitle):
+		(self.training, self.trainingTitle) = Openfile(thefile, defaulttitle)
 
 	
 	def PrintMeasured(self):
@@ -169,7 +177,6 @@ class Unfolder:
 			leg.AddEntry(hReco, 'Unfolded spectrum', 'L')
 			unfoldTruth.SetTitle("%s spectrum unfolded with %s spectrum using RooUnfold%s" % (self.unfoldTitle, self.trainingTitle, self.unfoldname))
 			unfoldTruth.SetAxisRange((0.1*MinhReco),(1.1*MaxhReco),'Y')
-			print " =====> ",MinhReco,(0.1*MinhReco)
 			leg.Draw()
 		else:
 			hReco.Draw()
@@ -180,11 +187,11 @@ class Unfolder:
 		if self.logy:
 			self.Canv.SetLogy(0)
 
-	def MakeChi2VsIterationPlot(self):
-		self.RUChi2VsIter = TGraph()
-		self.MyChi2VsIter = TGraph()
+	def MakeChi2Vs_Plot(self):
+		self.RUChi2 = TGraph()
+		self.MyChi2 = TGraph()
 
-	def AddChi2VsIterationPoint(self):
+	def AddChi2Vs_Point(self, xVal):
 		if self.unfoldresult == None:
 			print "ERROR: No unfolding performed yet !!!"
 			sys.exit(1)
@@ -195,8 +202,8 @@ class Unfolder:
 
 		unfoldTruth = self.unfold.Get("MuCapture/LateResponse/MCTruthMomentum")
 		chi2 = self.unfoldresult.Chi2(unfoldTruth)
-		nbPt = self.RUChi2VsIter.GetN()
-		self.RUChi2VsIter.SetPoint(nbPt, self.nbiterations, chi2)
+		nbPt = self.RUChi2.GetN()
+		self.RUChi2.SetPoint(nbPt, xVal, chi2)
 
 		chi2 = 0
 		hReco= self.unfoldresult.Hreco()
@@ -205,28 +212,28 @@ class Unfolder:
 			eyreco = hReco.GetBinError(b)
 			ytrue = unfoldTruth.GetBinContent(b)
 			chi2 = chi2 + ( (yreco-ytrue) * (yreco-ytrue) / (eyreco*eyreco))
-		nbPt = self.MyChi2VsIter.GetN()
-		self.MyChi2VsIter.SetPoint(nbPt, self.nbiterations, chi2)
+		nbPt = self.MyChi2.GetN()
+		self.MyChi2.SetPoint(nbPt, xVal, chi2)
 
 
 
-	def DrawChi2VsIterationPlot(self):
+	def DrawChi2Vs_Plot(self, xTitle):
 		self.Canv.Clear()
-		self.RUChi2VsIter.SetTitle("RooUnfold chi^{2} between unfolded and true %s spectra, using %s spectrum;Number of iterations;chi^{2}" % (self.unfoldTitle,self.trainingTitle))
-		self.RUChi2VsIter.SetMarkerStyle(5)
-		self.RUChi2VsIter.SetMarkerColor(4)
-		self.RUChi2VsIter.SetLineColor(4)
-		self.RUChi2VsIter.Draw("APL")
+		self.RUChi2.SetTitle("RooUnfold chi^{2} between unfolded and true %s spectra, using %s;%s;chi^{2}" % (self.unfoldTitle,self.trainingTitle,xTitle))
+		self.RUChi2.SetMarkerStyle(5)
+		self.RUChi2.SetMarkerColor(4)
+		self.RUChi2.SetLineColor(4)
+		self.RUChi2.Draw("APL")
 		self.Canv.Update()
 		self.Canv.Print(self.output)
 		self.Canv.Clear()
 
 		self.Canv.Clear()
-		self.MyChi2VsIter.SetTitle("Manual chi^{2} between unfolded and true %s spectra, using %s spectrum;Number of iterations;chi^{2}" % (self.unfoldTitle,self.trainingTitle))
-		self.MyChi2VsIter.SetMarkerStyle(5)
-		self.MyChi2VsIter.SetMarkerColor(4)
-		self.MyChi2VsIter.SetLineColor(4)
-		self.MyChi2VsIter.Draw("APL")
+		self.MyChi2.SetTitle("Manual chi^{2} between unfolded and true %s spectra, using %s;%s;chi^{2}" % (self.unfoldTitle,self.trainingTitle,xTitle))
+		self.MyChi2.SetMarkerStyle(5)
+		self.MyChi2.SetMarkerColor(4)
+		self.MyChi2.SetLineColor(4)
+		self.MyChi2.Draw("APL")
 		self.Canv.Update()
 		self.Canv.Print(self.output)
 		self.Canv.Clear()
@@ -242,11 +249,12 @@ class Unfolder:
 # OptionParser.format_description = lambda self, formatter: "\n".join(map(textwrap.fill, self.description.split("\n"))) + "\n"
 # parser = OptionParser(description=description)
 parser = OptionParser()
-parser.add_option("-t", "--training", dest="training", help="Root file containing the rooUnfold response.")
+parser.add_option("-t", "--training", dest="training", help="Root file containing the rooUnfold response.", default="")
 parser.add_option("-u", "--unfold", dest="unfold", help="Root file containing the measured spectrum you want to unfold.")
 parser.add_option("-o", "--output", dest="output", help="Output file name for the pdf file. Don't put the suffix '.pdf'.", default="output")
 parser.add_option("", "--logy", dest="logy", help="Use SetLogY for the 1D plots.", action="store_true")
 parser.add_option("-i", "--iterationcheck", dest="iterationcheck", help="Plot the unfolding results versus the number of iterations.", action="store_true")
+parser.add_option("-m", "--multipletraining", dest="multipletraining", help="Instead of one training, loop over the training files given as arguments.", action="store_true")
 (options, args) = parser.parse_args()
 
 gROOT.SetBatch()
@@ -256,14 +264,25 @@ gStyle.SetTitleW(1.0)
 Unf = Unfolder(options)
 # Study of unfolding results vs number of iterations
 if options.iterationcheck:
-	Unf.MakeChi2VsIterationPlot()
+	Unf.MakeChi2Vs_Plot()
 	for it in range(1,16):
 		Unf.nbiterations = it
 		Unf.UnfoldBayes()
 		Unf.unfoldname = "Bayes, %d iterations" % it
 		Unf.PrintResultsMC()
-		Unf.AddChi2VsIterationPoint()
-	Unf.DrawChi2VsIterationPlot()
+		Unf.AddChi2Vs_Point("Number iterations")
+	Unf.trainingTitle = Unf.trainingTitle+" spectrum"
+	Unf.DrawChi2Vs_Plot()
+elif options.multipletraining:
+	Unf.MakeChi2Vs_Plot()
+	for tr,TR in enumerate(args):
+		Unf.InitTraining(TR, "training "+str(tr+1))
+		Unf.UnfoldBayes()
+		Unf.PrintResultsMC()
+		Unf.AddChi2Vs_Point(tr+1)
+	Unf.trainingTitle = str(len(args))+" training spectra"
+	Unf.DrawChi2Vs_Plot("Training index")
+
 # Default output
 else:
 	Unf.PrintMeasured()
