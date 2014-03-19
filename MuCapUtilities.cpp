@@ -13,18 +13,19 @@ namespace MuCapUtilities {
   //================================================================
   double mass(int pdgId, const EventClass& evt) {
     static const double protonMass =  938.272 /* MeV/c^2 */;
+    static const double neutronMass =  939.565 /* MeV/c^2 */;
+
+    static const double deuteronMass =  1875.613 /* MeV/c^2, from G3 */;
     static const double electronMass = 0.510999 /* MeV/c^2 */;
     static const double muonMass = 105.6584 /* MeV/c^2 */;
     switch(evt.mctype) {
     case EventClass::G4: //----------------------------------------------------------------
       switch(std::abs(pdgId)) {
 
-      case 2212: return protonMass;
-      case 2112: return 939.565; // neutron
-
-      case 11: return electronMass;
-
-      case 13: return muonMass;
+      case PID_G4_PROTON: return protonMass;
+      case PID_G4_NEUTRON: return neutronMass;
+      case PID_G4_EMINUS: return electronMass;
+      case PID_G4_MUMINUS: return muonMass;
 
       default:
         std::ostringstream os;
@@ -35,7 +36,8 @@ namespace MuCapUtilities {
 
     case EventClass::G3: //----------------------------------------------------------------
       switch(pdgId) {
-      case 14: return protonMass;
+      case PID_G3_PROTON: return protonMass;
+      case PID_G3_DEUTERON: return deuteronMass;
       default:
         std::ostringstream os;
         os<<"MuCapUtilities::mass(): unknown G3 pdgId = "<<pdgId;
