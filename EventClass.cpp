@@ -189,10 +189,14 @@ void EventClass::LoadMuCapture() {
       iCaptureMcTrk = -1;
       numCaptureMcTrkCandidates = 0;
       for(unsigned i=0; i<nmctr; ++i) {
-        if(mctrack_pid[i] == MuCapUtilities::PID_G3_PROTON) {
+
+        if((mctrack_pid[i] == MuCapUtilities::PID_G3_PROTON) ||
+           (mctrack_pid[i] == MuCapUtilities::PID_G3_DEUTERON) ) {
+
           ++numCaptureMcTrkCandidates;
           if(iCaptureMcTrk == -1) {
             iCaptureMcTrk = i;
+
           }
           else {
             // throw std::runtime_error("EventClass::LoadMuCapture() G3 truth: multiple protons cases are not handled");

@@ -12,10 +12,12 @@ class EventClass;
 namespace MuCapUtilities {
 
   static int const PID_G3_PROTON = 14;
+  static int const PID_G3_DEUTERON = 45;
 
   static int const PID_G4_MUMINUS = +13;
   static int const PID_G4_EMINUS = +11;
-  static int const PID_G4_PROTON = 2112;
+  static int const PID_G4_PROTON = 2212;
+  static int const PID_G4_NEUTRON = 2112;
 
   static int const PROC_G4_PRIMARY = 56; // ProcessCode::mu2ePrimary
 
