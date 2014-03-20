@@ -44,7 +44,7 @@ class Unfolder:
 			if not hasattr(options, opt):
 				print "--" + opt + " option must be specified"
 				fail = True
-		if options.training == "" and not options.multipletraining:
+		if options.training == "" and not options.multipletraining and not options.differencetraining:
 			print "--training option must be specified"
 			fail = True
 		
@@ -78,6 +78,9 @@ class Unfolder:
 		self.unfoldresult = None
 
 		self.nbiterations = 10
+		# Range where the results are trusted
+		self.minBin = 9
+		self.maxBin = 17
 
 
 	def InitTraining(self, thefile, defaulttitle):
@@ -165,7 +168,7 @@ class Unfolder:
 			unfoldTruth.SetLineColor(2)
 			leg = TLegend(0.65,0.7,0.98,0.9)
 
-			MaxhReco = hReco.GetMaximum()
+			MaxhReco = max(hReco.GetMaximum(), unfoldTruth.GetMaximum())
 			MinhReco = 99999.
 			for b in range(1,hReco.GetNbinsX()+1):
 				Min = hReco.GetBinContent(b)
@@ -187,6 +190,41 @@ class Unfolder:
 		if self.logy:
 			self.Canv.SetLogy(0)
 
+
+	def PrintUnfoldDiff(self, Unfold1, Unfold2, Title1, Title2):
+		if self.logy:
+			self.Canv.SetLogy()
+
+		hReco1= Unfold1.Hreco()
+		hReco2= Unfold2.Hreco()
+
+		hDiff = hReco1.Clone()
+		hDiff.Add(hReco2, -1.)
+		hDiff.Divide(hReco2)
+
+		MinhReco = 999999.
+		MaxhReco = -999999.
+		for b in range(hDiff.GetNbinsX()):
+			binCont = hDiff.SetBinError(b,0.0000001)
+		for b in range(self.minBin,self.maxBin):
+			binCont = hDiff.GetBinContent(b)
+			MinhReco = min(MinhReco, binCont)
+			MaxhReco = max(MaxhReco, binCont)
+		if MinhReco < 0.0 and MaxhReco < 0.0:
+			hDiff.SetAxisRange((1.1*MinhReco),(-0.1*MaxhReco),'Y')
+		else:
+			hDiff.SetAxisRange((1.1*MinhReco),(1.1*MaxhReco),'Y')
+		hDiff.SetTitle("Relative difference %s minus %s for %s;Momentum [MeV/c]" % (Title1, Title2, self.unfoldTitle))
+		hDiff.Draw()
+
+		self.Canv.Update()
+		self.Canv.Print(self.output)
+		self.Canv.Clear()
+		if self.logy:
+			self.Canv.SetLogy(0)
+
+
+
 	def MakeChi2Vs_Plot(self):
 		self.RUChi2 = TGraph()
 		self.MyChi2 = TGraph()
@@ -207,7 +245,7 @@ class Unfolder:
 
 		chi2 = 0
 		hReco= self.unfoldresult.Hreco()
-		for b in range(9,17):
+		for b in range(self.minBin,self.maxBin):
 			yreco = hReco.GetBinContent(b)
 			eyreco = hReco.GetBinError(b)
 			ytrue = unfoldTruth.GetBinContent(b)
@@ -255,6 +293,7 @@ parser.add_option("-o", "--output", dest="output", help="Output file name for th
 parser.add_option("", "--logy", dest="logy", help="Use SetLogY for the 1D plots.", action="store_true")
 parser.add_option("-i", "--iterationcheck", dest="iterationcheck", help="Plot the unfolding results versus the number of iterations.", action="store_true")
 parser.add_option("-m", "--multipletraining", dest="multipletraining", help="Instead of one training, loop over the training files given as arguments.", action="store_true")
+parser.add_option("-d", "--differencetraining", dest="differencetraining", help="Perform the unfolding for two provided training files and plot the difference, first minus last file.", action="store_true")
 (options, args) = parser.parse_args()
 
 gROOT.SetBatch()
@@ -282,6 +321,23 @@ elif options.multipletraining:
 		Unf.AddChi2Vs_Point(tr+1)
 	Unf.trainingTitle = str(len(args))+" training spectra"
 	Unf.DrawChi2Vs_Plot("Training index")
+elif options.differencetraining:
+	if not len(args) == 2:
+		print "ERROR: you did not provide two files in the command line."
+		sys.exit()
+	Unf.InitTraining(args[0], "1st training")
+	Unf.UnfoldBayes()
+	Unf.PrintResultsMC()
+	UnfoldResults1 = Unf.unfoldresult
+	TrainingTitle1 = Unf.trainingTitle
+
+	Unf.InitTraining(args[1], "2nd training")
+	Unf.UnfoldBayes()
+	Unf.PrintResultsMC()
+	UnfoldResults2 = Unf.unfoldresult
+	TrainingTitle2 = Unf.trainingTitle
+
+	Unf.PrintUnfoldDiff(UnfoldResults1, UnfoldResults2, TrainingTitle1, TrainingTitle2)
 
 # Default output
 else:
