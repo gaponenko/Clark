@@ -335,5 +335,13 @@ analyzeTrack(int i, const EventClass& evt,
   final_trackTime_->Fill(evt.hefit_time[i]);
   final_trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
 
+  if((evt.ptot[i]>200.)&&(std::abs(evt.costh[i])>0.95)) {
+    static std::ofstream outFile("phaseskim.txt");
+    if(!outFile) {
+      throw std::runtime_error("Error opening output file for the tracking skim");
+    }
+    outFile<<evt.nrun<<" "<<evt.nevt<<std::endl;
+  }
+
   return CUTS_ACCEPTED;
 }
