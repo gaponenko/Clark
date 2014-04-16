@@ -116,7 +116,7 @@ void MuCapUVAnalysis::init(const std::string& hdir,
   trackRL_->SetOption("colz");
 
   final_trackRL_ = hf.DefineTH2D(hdir,
-                                 "final trackRL",
+                                 "final_trackRL",
                                  "final track wavelengh vs radius",
                                  200, 0., 20, 1600, -80., 80.);
 
