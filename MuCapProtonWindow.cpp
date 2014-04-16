@@ -53,7 +53,7 @@ void MuCapProtonWindow::init(HistogramFactory &hf, const DetectorGeo& geom, cons
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
 
-  hNumAfterTrigWindows_ = hf.DefineTH1D("MuCapture", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
+  hNumAfterTrigWindows_ = hf.DefineTH1D("MuCapture/ProtonWindow", "numAfterTrigPCWindows", "numAfterTrigPCWindows", 10, -0.5, 9.5);
   hNumClusters_ = hf.DefineTH2D("MuCapture/ProtonWindow", "numClustersVsPlane", "Num cluster vs plane", 56, 0.5, 56.5,  11, -0.5, 10.5);
   hNumClusters_->SetOption("colz");
 
