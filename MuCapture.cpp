@@ -57,6 +57,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   muStopRMax_ = Conf.read<double>("MuCapture/muStopRMax");
 
   cutBeamVetoMaxPCplanes_ = Conf.read<double>("MuCapture/cutBeamVetoMaxPCplanes");
+
+  cutWinTimeMin_ = Conf.read<double>("MuCapture/cutWinTimeMin");
+  cutWinTimeMax_ = Conf.read<double>("MuCapture/cutWinTimeMax");
+
   cutMultiwinNextdt_ = Conf.read<double>("MuCapture/cutMultiwinNextdt");
 
   fillXtalkPC_ = Conf.read<bool>("MuCapture/fillXtalkPC");
@@ -126,6 +130,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hBeamVetoNumHitPlanes_ = H.DefineTH1D(hdir, "beamVetoNumHitPlanes", "beamVetoNumHitPlanes", 6, -0.5, 5.5);
   hHitPCsAterBeamVeto_ = H.DefineTH1D(hdir, "hitUpsteamPCsAfterBeamVeto", "hitUpsteamPCsAfterBeamVeto", 6, -0.5, 5.5);
+
+  hWindowTimeBefore_ = H.DefineTH1D(hdir, "windowTimeBeforeCut", "Decay window start time, before time cut", 1000, 0., 10000.);
+  hWindowTimeAfter_ = H.DefineTH1D(hdir, "windowTimeAfterCut", "Decay window start time, after time cut", 1000, 0., 10000.);
 
   hNumAfterTrigWindows_ = H.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
   hWindow2Time_ = H.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
@@ -463,6 +470,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_DOWNSTREAM_PCHITS;
   }
 
+  const unsigned iDecayWin = 1 + wres.iTrigWin;
+  const TimeWindow& decayWindow = wres.windows[iDecayWin];
+
   //----------------------------------------------------------------
   // Veto accidental beam particles (also upstream DIOs and some protons)
 
@@ -485,6 +495,15 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
       hHitPCsAterBeamVeto_->Fill(i);
     }
   }
+
+  //----------------------------------------------------------------
+  // Trig time is 0, dt from that rather than from less precise trigWin time
+
+  hWindowTimeBefore_->Fill(decayWindow.tstart);
+  if( (decayWindow.tstart < cutWinTimeMin_) || (cutWinTimeMax_ < decayWindow.tstart)) {
+    return CUT_WIN_TIME;
+  }
+  hWindowTimeAfter_->Fill(decayWindow.tstart);
 
   //----------------------------------------------------------------
   // Deal with multiple after-trigger time windows

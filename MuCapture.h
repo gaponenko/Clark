@@ -54,15 +54,17 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_MUSTOP_PACT, "Mu stop PACT");
 
-    ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "Accepted stop");
+    //ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "Accepted stop");
 
     ax->SetBinLabel(1+CUT_DOWNSTREAM_PCHITS, "Dn PC");
 
     ax->SetBinLabel(1+CUT_BEAM_VETO, "Beam veto");
 
-    ax->SetBinLabel(1+CUT_MULTIWIN_NEXTDT, "multiwin time");
+    ax->SetBinLabel(1+CUT_WIN_TIME, "Win time");
 
-    ax->SetBinLabel(1+CUTS_DOWNSTREAM_ACCEPTED, "Accepted Dn decay");
+    ax->SetBinLabel(1+CUT_MULTIWIN_NEXTDT, "Multiwin time");
+
+    ax->SetBinLabel(1+CUTS_DOWNSTREAM_ACCEPTED, "Dn candidate");
   }
 
 public :
@@ -79,17 +81,19 @@ public :
     CUT_MUSTOP_UV,
 
     CUT_MUSTOP_PACT,
-
-    CUTS_MUSTOP_ACCEPTED,
+    // CUTS_MUSTOP_ACCEPTED,
 
     CUT_DOWNSTREAM_PCHITS,
 
     CUT_BEAM_VETO,
 
-    CUT_MULTIWIN_NEXTDT,
+    // Here is a good place to write a skim.  Or after the time cut?
 
-    // No common "win time" cut, we cut on track time instead, both
-    // for protons and DIOs.
+    // cut on the same var for DIO and protons
+    // avoid norm systematic due to time resolution
+    CUT_WIN_TIME, // FIXME: switch with the multiwin cut?
+
+    CUT_MULTIWIN_NEXTDT,
 
     CUTS_DOWNSTREAM_ACCEPTED,
 
@@ -129,6 +133,8 @@ public :
     , hBeamVetoNumHitPlanes_()
     , hHitPCsAterBeamVeto_()
 
+    , hWindowTimeBefore_()
+    , hWindowTimeAfter_()
     , hNumAfterTrigWindows_()
     , hWindow2Time_()
     , hWindow2dt_()
@@ -151,6 +157,9 @@ private :
   double muStopRMax_;
 
   int cutBeamVetoMaxPCplanes_;
+
+  double cutWinTimeMin_;
+  double cutWinTimeMax_;
   double cutMultiwinNextdt_; // min t2-t1
 
   TDCHitPreprocessing::IProcessor *pcHitProcessor_;
@@ -189,6 +198,9 @@ private :
 
   TH1 *hBeamVetoNumHitPlanes_;
   TH1 *hHitPCsAterBeamVeto_; // occupancy after the cut
+
+  TH1 *hWindowTimeBefore_;
+  TH1 *hWindowTimeAfter_;
 
   TH1 *hNumAfterTrigWindows_;
   TH1 *hWindow2Time_;
