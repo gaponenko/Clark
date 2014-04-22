@@ -49,10 +49,12 @@ void MuCapStreamAnalysis::init(HistogramFactory &hf, const std::string& hdir,
   h_cuts_r = hf.DefineTH1D(hdir, "protonCuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
   set_cut_bin_labels(h_cuts_r->GetXaxis());
+  h_cuts_r->SetOption("hist text");
 
   h_cuts_p = hf.DefineTH1D(hdir, "protonCuts_p", "Events before cut", CUTS_END, -0.5, CUTS_END-0.5);
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
+  h_cuts_p->SetOption("hist text");
 
   hBeamVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "beamVetoNumHitPlanes", "beamVetoNumHitPlanes", 6, -0.5, 5.5);
   hHitPCsAterBeamVeto_ = hf.DefineTH1D(hdir, "hitUpsteamPCsAfterBeamVeto", "hitUpsteamPCsAfterBeamVeto", 6, -0.5, 5.5);

@@ -65,10 +65,12 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Tracks rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
   set_cut_bin_labels(h_cuts_r->GetXaxis());
+  h_cuts_r->SetOption("hist text");
 
   h_cuts_p = hf.DefineTH1D(hdir, "cuts_p", "Tracks before cut", CUTS_END, -0.5, CUTS_END-0.5);
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
+  h_cuts_p->SetOption("hist text");
 
   //----------------------------------------------------------------
   hCharge_ = hf.DefineTH1D(hdir, "charge", "track charge", 3, -1.5, 1.5);

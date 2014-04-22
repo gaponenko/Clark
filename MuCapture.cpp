@@ -102,10 +102,12 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   h_cuts_r = H.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
   set_cut_bin_labels(h_cuts_r->GetXaxis());
+  h_cuts_r->SetOption("hist text");
 
   h_cuts_p = H.DefineTH1D(hdir, "cuts_p", "Events before cut", CUTS_END, -0.5, CUTS_END-0.5);
   set_cut_bin_labels(h_cuts_p->GetXaxis());
   h_cuts_p->SetStats(kFALSE);
+  h_cuts_p->SetOption("hist text");
 
   hPCPreTrigSeparation_ = H.DefineTH1D(hdir, "pcPreTrigSeparation", "PC win pre-trigger separation", 600, -6000., 0.);
 
