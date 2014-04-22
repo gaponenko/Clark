@@ -24,7 +24,6 @@
 #include "HistMuStopTruth.h"
 #include "HistAccidentals.h"
 #include "HistWinDCUnassigned.h"
-#include "HistWinTime.h"
 #include "TimeWindowingPC.h"
 #include "TimeWindowingDC.h"
 #include "EventList.h"
@@ -229,9 +228,6 @@ private :
   HistWinDCUnassigned winDCUnassignedAfterWindowing_;
   HistWinDCUnassigned winDCUnassignedMuStop_;
   HistWinDCUnassigned winDCUnassignedDnDecay_;
-
-  HistWinTime winTimeBeforeNoTrigWin_;
-  HistWinTime winTimeMuStop_;
 
   MuCapUVAnalysis dioUp_;
   MuCapUVAnalysis dioDn_;

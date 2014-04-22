@@ -173,9 +173,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   winDCUnassignedMuStop_.init(hdir+"/unassignedDC/mustop", H, Conf);
   winDCUnassignedDnDecay_.init(hdir+"/unassignedDC/dndecay", H, Conf);
 
-  winTimeBeforeNoTrigWin_.init(hdir+"/winTime", "beforeNoTrigWin", H, Conf);
-  winTimeMuStop_.init(hdir+"/winTime", "muStop", H, Conf);
-
   dioUp_.init(hdir+"/chamberEff/DIOUp", H, Conf,
               TimeWindow::UPSTREAM,
               Conf.read<double>(hdir+"/DIOUp/cutMinTime"));
@@ -317,8 +314,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   assert(filteredPCHits.size() ==
          std::accumulate(wres.windows.begin(), wres.windows.end(), WinHitCounter()).numPCHits);
 
-  winTimeBeforeNoTrigWin_.fill(wres);
-
   if(wres.iTrigWin == -1u) {
     return CUT_NOTRIGWIN;
   }
@@ -413,7 +408,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   // Call the subanalyses
   winDCUnassignedMuStop_.fill(wres);
-  winTimeMuStop_.fill(wres);
   haccidentalsStop_.fill(wres);
   protonWindow_.process(muStop, wres, evt);
 
