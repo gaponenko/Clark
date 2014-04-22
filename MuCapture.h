@@ -23,6 +23,7 @@
 #include "HistMuCapTruth.h"
 #include "HistMuStopTruth.h"
 #include "HistAccidentals.h"
+#include "HistWinDCUnassigned.h"
 #include "HistWinTime.h"
 #include "TimeWindowingPC.h"
 #include "TimeWindowingDC.h"
@@ -42,11 +43,10 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_EVENT_NUMBER, "Event number");
     ax->SetBinLabel(1+CUT_NOPCHITS, "NoPCHits");
     ax->SetBinLabel(1+CUT_NOTRIGWIN, "NoTrigWin");
-    ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "Pre-trig hits");
-    ax->SetBinLabel(1+CUT_UNASSIGNEDDCHITS, "Unassigned DC hits");
+
+    ax->SetBinLabel(1+CUT_PCWIN_TRIGSEPPAST, "Pre-trig win");
 
     ax->SetBinLabel(1+CUT_MUON_FIRST_PLANE, "mu first plane");
-    ax->SetBinLabel(1+CUT_MUON_RANGE_GAPS, "mu range gaps");
     ax->SetBinLabel(1+CUT_MUON_LAST_PLANE, "mu last plane");
 
     ax->SetBinLabel(1+CUT_MUSTOP_SINGLECLUSTER, "Mu single cluster");
@@ -55,6 +55,14 @@ class MuCapture : public ModuleClass {
     ax->SetBinLabel(1+CUT_MUSTOP_PACT, "Mu stop PACT");
 
     ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "Accepted stop");
+
+    ax->SetBinLabel(1+CUT_DOWNSTREAM_PCHITS, "Dn PC");
+
+    ax->SetBinLabel(1+CUT_BEAM_VETO, "Beam veto");
+
+    ax->SetBinLabel(1+CUT_MULTIWIN_NEXTDT, "multiwin time");
+
+    ax->SetBinLabel(1+CUTS_DOWNSTREAM_ACCEPTED, "Accepted Dn decay");
   }
 
 public :
@@ -64,10 +72,7 @@ public :
     CUT_NOPCHITS,
     CUT_NOTRIGWIN,
     CUT_PCWIN_TRIGSEPPAST,
-    CUT_UNASSIGNEDDCHITS,
-
     CUT_MUON_FIRST_PLANE,
-    CUT_MUON_RANGE_GAPS,
     CUT_MUON_LAST_PLANE,
 
     CUT_MUSTOP_SINGLECLUSTER,
@@ -76,6 +81,17 @@ public :
     CUT_MUSTOP_PACT,
 
     CUTS_MUSTOP_ACCEPTED,
+
+    CUT_DOWNSTREAM_PCHITS,
+
+    CUT_BEAM_VETO,
+
+    CUT_MULTIWIN_NEXTDT,
+
+    // No common "win time" cut, we cut on track time instead, both
+    // for protons and DIOs.
+
+    CUTS_DOWNSTREAM_ACCEPTED,
 
     CUTS_END
   };
@@ -89,10 +105,10 @@ public :
     , doMCTruth_(false)
     , doDefaultTWIST_(false)
     , winPCPreTrigSeparation_()
-    , maxUnassignedDCHits_()
     , cutMuonFirstPlane_()
-    , cutMuonRangeGapsEnabled_()
     , muStopRMax_()
+    , cutBeamVetoMaxPCplanes_()
+    , cutMultiwinNextdt_()
 
     , pcHitProcessor_()
     , dcHitProcessor_()
@@ -100,17 +116,22 @@ public :
     , h_cuts_r()
     , h_cuts_p()
     , hPCPreTrigSeparation_()
-    , hWinDCUnassignedCount_()
 
     , hMuonFirstPlane_()
-    , hMuonLastPlaneBeforeGaps_()
     , hMuonLastPlaneAfterGaps_()
-    , hMuonRangeGaps_()
-    , hMuonMissingPlanes_()
+    , hStoppedMuonRangeGaps_()
+    , hStoppedMuonMissingPlanes_()
 
     , hMuStopUVCell_()
     , hMuStopUVPos_()
     , hMuStopRadius_()
+
+    , hBeamVetoNumHitPlanes_()
+    , hHitPCsAterBeamVeto_()
+
+    , hNumAfterTrigWindows_()
+    , hWindow2Time_()
+    , hWindow2dt_()
   {}
 
 private :
@@ -125,12 +146,12 @@ private :
 
   double winPCPreTrigSeparation_;
 
-  int maxUnassignedDCHits_;
-
   int cutMuonFirstPlane_;
-  bool cutMuonRangeGapsEnabled_;
 
   double muStopRMax_;
+
+  int cutBeamVetoMaxPCplanes_;
+  double cutMultiwinNextdt_; // min t2-t1
 
   TDCHitPreprocessing::IProcessor *pcHitProcessor_;
   TDCHitPreprocessing::IProcessor *dcHitProcessor_;
@@ -155,17 +176,23 @@ private :
   TH1D *h_cuts_p;
 
   TH1 *hPCPreTrigSeparation_;
-  TH1 *hWinDCUnassignedCount_;
 
   TH1 *hMuonFirstPlane_;
-  TH1 *hMuonLastPlaneBeforeGaps_;
   TH1 *hMuonLastPlaneAfterGaps_;
-  TH2 *hMuonRangeGaps_;
-  TH1 *hMuonMissingPlanes_;
+
+  TH2 *hStoppedMuonRangeGaps_;
+  TH1 *hStoppedMuonMissingPlanes_;
 
   TH2 *hMuStopUVCell_;
   TH2 *hMuStopUVPos_;
   TH1 *hMuStopRadius_;
+
+  TH1 *hBeamVetoNumHitPlanes_;
+  TH1 *hHitPCsAterBeamVeto_; // occupancy after the cut
+
+  TH1 *hNumAfterTrigWindows_;
+  TH1 *hWindow2Time_;
+  TH1 *hWindow2dt_;
 
   HistTDCWidth hwidthPCall_;
   HistTDCWidth hwidthPCfiltered_;
@@ -189,6 +216,10 @@ private :
   HistOccupancy hOccupancyDCAll_;
   HistAccidentals haccidentalsTrig_;
   HistAccidentals haccidentalsStop_;
+
+  HistWinDCUnassigned winDCUnassignedAfterWindowing_;
+  HistWinDCUnassigned winDCUnassignedMuStop_;
+  HistWinDCUnassigned winDCUnassignedDnDecay_;
 
   HistWinTime winTimeBeforeNoTrigWin_;
   HistWinTime winTimeMuStop_;

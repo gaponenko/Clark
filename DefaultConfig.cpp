@@ -309,7 +309,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winPCPreTrigSeparation", 1050.);
 
         SetKey(Conf, "MuCapture/cutMuonFirstPlane", 1);
-        SetKey(Conf, "MuCapture/cutMuonRangeGapsEnabled", true);
 
         SetKey(Conf, "MuCapture/Accidentals/tmax", -1100.);
         // Cyclotron RF=25.058 MHz [Glen Marshall in the 2013-06-12 muminus meeting]
@@ -320,7 +319,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winDCStart", -100.); // W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCEnd", 1050.); // W.r.t PC win start
         SetKey(Conf, "MuCapture/winDCDoHistos", true);
-        SetKey(Conf, "MuCapture/maxUnassignedDCHits", 1);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
 
         SetKey(Conf, "MuCapture/cutWinTimeMax", 10000. - 1050.); // ns, make sure DC window ends.
@@ -344,6 +342,9 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/PACT/slopeb_22", -1.0);
         SetKey(Conf, "MuCapture/PACT/intercepta_22", -148.1);
         SetKey(Conf, "MuCapture/PACT/interceptb_22", 350);
+
+        SetKey(Conf, "MuCapture/cutBeamVetoMaxPCplanes", 1);
+        SetKey(Conf, "MuCapture/cutMultiwinNextdt", 1050.);
 
         SetKey(Conf, "MuCapture/DIOUp/cutMinTime", 300.);
         SetKey(Conf, "MuCapture/DIODn/cutMinTime", 300.);
