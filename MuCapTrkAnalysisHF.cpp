@@ -39,16 +39,16 @@ namespace {
 void MuCapTrkAnalysisHF::init(const std::string& hdir,
                               HistogramFactory &hf,
                               const ConfigFile& conf,
+                              int cutCharge,
                               TimeWindow::StreamType cutStream,
-                              double cutMinTime,
                               RecoResMuCapTrk *result)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
   result_ = result;
-  cutCharge_ = +1;
+  cutCharge_ = cutCharge;
   cutStream_ = cutStream;
   cutStartPlane_ = conf.read<int>("MuCapture/TrkAnalysisHF/cutStartPlane");
-  cutTrackMinTime_ = cutMinTime;
+  cutTrackWinTimedt_ = conf.read<int>("MuCapture/TrkAnalysisHF/cutTrackWinTimedt");
   cutTrackRmax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackRmax");
   cutCosThetaMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutCosThetaMin");
   cutCosThetaMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutCosThetaMax");
@@ -58,8 +58,6 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   cutPtotMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtotMax");
   cutChi2_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutChi2");
   cutTrackMuonOffset_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackMuonOffset");
-
-  normalization_.init(hdir+"/norm", hf, conf, cutStream, cutMinTime);
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Tracks rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -73,6 +71,9 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   h_cuts_p->SetOption("hist text");
 
   //----------------------------------------------------------------
+  trackWinTime_ = hf.DefineTH1D(hdir, "trackWinTime", "track time - win time",
+                                201, -100.5, 100.5);
+
   hCharge_ = hf.DefineTH1D(hdir, "charge", "track charge", 3, -1.5, 1.5);
 
   hStartStop_ = hf.DefineTH2D(hdir,
@@ -81,6 +82,13 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                               56, 0.5, 56.5, 56, 0.5, 56.5);
 
   hStartStop_->SetOption("colz");
+
+  final_StartStop_ = hf.DefineTH2D(hdir,
+                                   "final_startStopPlane",
+                                   "Final track stop vs start plane",
+                                   56, 0.5, 56.5, 56, 0.5, 56.5);
+
+  final_StartStop_->SetOption("colz");
 
   trackz_ = hf.DefineTH1D(hdir, "trackz",
                           "trackz",
@@ -154,9 +162,6 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                                    "final track time",
                                    1100, -1000., 10000.);
 
-  trackWinTime_ = hf.DefineTH1D(hdir, "trackWinTime", "track time - win time",
-                                201, -100.5, 100.5);
-
   final_trackWinTime_ = hf.DefineTH1D(hdir, "final_trackWinTime", "final track time - win time",
                                       201, -100.5, 100.5);
 
@@ -178,8 +183,6 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
                                 const ROOT::Math::XYPoint& muStopUV,
                                 const TimeWindow& protonWin)
 {
-  normalization_.process(evt, muStopUV);
-
   std::vector<unsigned> accepted;
   for(int i = 0; i < evt.ntr; ++i) {
     if(processTrack(i, evt, muStopUV, protonWin)) {
@@ -209,8 +212,10 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     // This class does not see *all* of the incoming events, thus
     // it can't reset the result.
     // Also, for the case of multiple accepted tracks the last one wins.
-    result_->accepted = true;
-    result_->momentum = evt.ptot[selected];
+    if(result_) {
+      result_->accepted = true;
+      result_->momentum = evt.ptot[selected];
+    }
 
     hPerEventMomentum_->Fill(evt.ptot[selected]);
 
@@ -248,29 +253,43 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  hCharge_->Fill(evt.hefit_q[i]);
-  if(evt.hefit_q[i] != cutCharge_) {
-    return CUT_CHARGE;
+  trackTime_->Fill(evt.hefit_time[i]);
+  trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
+  if(std::abs(evt.hefit_time[i]  - protonWin.tstart) > cutTrackWinTimedt_) {
+    return CUT_TRKWINTIME;
   }
 
   //----------------------------------------------------------------
   hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
+  if((cutStream_==TimeWindow::DOWNSTREAM)
+     &&((evt.hefit_pstart[i]<=28)||(evt.hefit_pstop[i]<=28))
+     ||
+     (cutStream_==TimeWindow::UPSTREAM)
+     &&((evt.hefit_pstart[i]>28)||(evt.hefit_pstop[i]>28))
+     ) {
+    return CUT_STREAM;
+  }
+
+  // FIXME: debug:
+  if((cutStream_==TimeWindow::DOWNSTREAM) && evt.costh[i] < 0.) {
+    std::cout<<"Downstream event with "
+             <<" costh = " <<evt.costh[i]
+             <<", charge = "<<evt.hefit_q[i]
+             <<": run = "<<evt.nrun
+             <<" event "<<evt.nevt
+             <<std::endl;
+  }
+
+  //----------------------------------------------------------------
   trackz_->Fill(evt.hefit_z[i]);
-  if(evt.hefit_pstart[i] != cutStartPlane_) {
+  if((cutStartPlane_ > 0) && (evt.hefit_pstart[i] != cutStartPlane_)) {
     return CUT_STARTPLANE;
   }
 
   //----------------------------------------------------------------
-  if((cutStream_==TimeWindow::DOWNSTREAM)&&(evt.costh[i] < 0.) ||
-     (cutStream_==TimeWindow::UPSTREAM)&&(evt.costh[i] > 0.) ) {
-    return CUT_STREAM;
-  }
-
-  //----------------------------------------------------------------
-  trackTime_->Fill(evt.hefit_time[i]);
-  trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
-  if(evt.hefit_time[i] < cutTrackMinTime_) {
-    return CUT_TIME;
+  hCharge_->Fill(evt.hefit_q[i]);
+  if(evt.hefit_q[i] != cutCharge_) {
+    return CUT_CHARGE;
   }
 
   //----------------------------------------------------------------
@@ -336,6 +355,7 @@ analyzeTrack(int i, const EventClass& evt,
   final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
   final_trackTime_->Fill(evt.hefit_time[i]);
   final_trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
+  final_StartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
 
   return CUTS_ACCEPTED;
 }

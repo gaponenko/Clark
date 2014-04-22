@@ -13,8 +13,8 @@
 
 #include "MuCapPACTCut.h"
 #include "MuCapProtonWindow.h"
-#include "MuCapStreamAnalysis.h"
 #include "MuCapUVAnalysis.h"
+#include "MuCapTrkAnalysisHF.h"
 #include "HistDriftTime.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
@@ -91,7 +91,7 @@ public :
 
     // cut on the same var for DIO and protons
     // avoid norm systematic due to time resolution
-    CUT_WIN_TIME, // FIXME: switch with the multiwin cut?
+    CUT_WIN_TIME,
 
     CUT_MULTIWIN_NEXTDT,
 
@@ -177,9 +177,6 @@ private :
   TimeWindowingDC dcWindowing_;
   MuCapPACTCut pactCut_;
   MuCapProtonWindow protonWindow_;
-  MuCapStreamAnalysis anUpLate_;
-  MuCapStreamAnalysis anDnLate_;
-  MuCapStreamAnalysis anDnEarly_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;
@@ -238,6 +235,9 @@ private :
 
   MuCapUVAnalysis dioUp_;
   MuCapUVAnalysis dioDn_;
+
+  MuCapTrkAnalysisHF dnPosTracks_;
+  MuCapTrkAnalysisHF dnNegTracks_;
 
   HistDriftTime hdriftPCAll_;
   HistDriftTime hdriftPCFiltered_;

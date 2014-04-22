@@ -101,7 +101,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   pactCut_.init(H, Conf);
   protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
-  anDnLate_.init(H, hdir+"/dnLate", *E.geo, Conf, &anDnLateRes_, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
 
   h_cuts_r = H.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
@@ -180,6 +179,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dioDn_.init(hdir+"/DIODn", H, Conf,
               TimeWindow::DOWNSTREAM,
               Conf.read<double>(hdir+"/DIODn/cutMinTime"));
+
+  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, +1, TimeWindow::DOWNSTREAM, &anDnLateRes_);
+  dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, -1, TimeWindow::DOWNSTREAM);
 
   hdriftPCAll_.init(hdir+"/driftTimePCAll", H, 12, 1000./*ns*/,
                     Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtPC"),
@@ -409,7 +411,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   winTimeMuStop_.fill(wres);
   haccidentalsStop_.fill(wres);
   protonWindow_.process(muStop, wres, evt);
-  anDnLate_.process(evt, wres, muStop, afterTrigClusters);
 
   int idio = dioUp_.process(evt, muStop);
   if(idio >= 0) {
@@ -520,6 +521,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------------------------------------------------------
+  //  The pre-selection for downstream decays/captures is passed here
+
+  dnPosTracks_.process(evt, muStop, decayWindow);
+  dnNegTracks_.process(evt, muStop, decayWindow);
+
   winDCUnassignedDnDecay_.fill(wres);
   // What do events with many unassigned hits look like?
   if(false && (wres.unassignedDCHits.size()>10) ) {
@@ -534,8 +540,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
       std::cout<<"iwin="<<iwin<<" tstartDC "<<wres.windows[iwin].tstartDC<<": DC = "<<wres.windows[iwin].dcHits<<std::endl;
     }
   }
-
-  // Other analyses....
 
 
   return CUTS_DOWNSTREAM_ACCEPTED;

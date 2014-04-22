@@ -345,10 +345,11 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/PACT/interceptb_22", 350);
 
         SetKey(Conf, "MuCapture/cutBeamVetoMaxPCplanes", 1);
-        SetKey(Conf, "MuCapture/cutMultiwinNextdt", 1050.);
 
         SetKey(Conf, "MuCapture/DIOUp/cutMinTime", 300.);
         SetKey(Conf, "MuCapture/DIODn/cutMinTime", 300.);
+
+        SetKey(Conf, "MuCapture/cutMultiwinNextdt", 1050.);
 
         SetKey(Conf, "MuCapture/HistDriftTime/cutEffTrackHitDtPC", 100.);
         SetKey(Conf, "MuCapture/HistDriftTime/cutEffTrackHitDtDC", 1500.);
@@ -371,10 +372,11 @@ void SetDefault(ConfigFile &Conf)
         //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
         //----------------
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutStartPlane", 31);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTimeMin", 400.);//ns
+        //SetKey(Conf, "MuCapture/TrkAnalysisHF/cutStartPlane", 31);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutStartPlane", -1);
+
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackWinTimedt", 100.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackRmax", 99999.);//cm
-        // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMin", 0.5);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMax", 0.98);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtMin", 11.9); // MeV/c = 2 cm R
@@ -398,19 +400,6 @@ void SetDefault(ConfigFile &Conf)
         // From purity vs eff Want proton eff~=0.2,
         // from slide 3 this is <~13 cm
         SetKey(Conf, "MuCapture/ProtonWindow/RextMax", 13.);
-
-        // Use outer PCs as a veto
-        SetKey(Conf, "MuCapture/StreamAnalysis/cutBeamVetoMaxPCplanes", 1);
-        SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedNumPlanes", 4);
-        SetKey(Conf, "MuCapture/StreamAnalysis/cutMultiwinNextdt", 1050.);
-
-        SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedNumToCheck", 4);
-        SetKey(Conf, "MuCapture/StreamAnalysis/cutZContainedMaxHitPlanes", 1);
-        SetKey(Conf, "MuCapture/StreamAnalysis/cutPC7MaxDistanceToMuStop", 0.15/*cm*/);
-        SetKey(Conf, "MuCapture/StreamAnalysis/cutRextMax", 13.);
-
-        // Print out event ID of events for the common skim into this file
-        SetKey(Conf, "MuCapture/StreamAnalysis/commonSkimOutFileName", "");
 
         //================================================================
 }

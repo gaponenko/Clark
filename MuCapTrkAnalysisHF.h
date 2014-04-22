@@ -11,7 +11,6 @@
 #include "WireCluster.h"
 #include "HistMuCapTruth.h"
 #include "RecoResMuCapTrk.h"
-#include "MuCapUVAnalysis.h"
 
 #include "TAxis.h"
 #include "Math/Point2D.h"
@@ -27,10 +26,10 @@ class EventClass;
 class MuCapTrkAnalysisHF {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_IERROR, "ierror");
-    ax->SetBinLabel(1+CUT_CHARGE, "charge");
+    ax->SetBinLabel(1+CUT_TRKWINTIME, "trkwintime");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
+    ax->SetBinLabel(1+CUT_CHARGE, "charge");
     ax->SetBinLabel(1+CUT_STARTPLANE, "startPlane");
-    ax->SetBinLabel(1+CUT_TIME, "time");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
     ax->SetBinLabel(1+CUT_COSTHETAMIN, "cos(theta) min");
@@ -48,10 +47,10 @@ class MuCapTrkAnalysisHF {
 public:
   enum CutNumber {
     CUT_IERROR,
-    CUT_CHARGE,
+    CUT_TRKWINTIME,
     CUT_STREAM,
+    CUT_CHARGE,
     CUT_STARTPLANE,
-    CUT_TIME,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
     CUT_COSTHETAMAX,
@@ -68,9 +67,9 @@ public:
   void init(const std::string& hdir,
             HistogramFactory &hf,
             const ConfigFile &conf,
+            int cutCharge,
             TimeWindow::StreamType cutStream,
-            double cutTrackMinTime,
-            RecoResMuCapTrk *result);
+            RecoResMuCapTrk *result=0);
 
   // Returns the index of an accepted track in the event, or -1
   int process(const EventClass& evt,
@@ -82,7 +81,7 @@ public:
     , result_(nullptr)
     , cutCharge_()
     , cutStartPlane_()
-    , cutTrackMinTime_()
+    , cutTrackWinTimedt_()
     , cutTrackRmax_()
     , cutCosThetaMin_()
     , cutCosThetaMax_()
@@ -115,6 +114,7 @@ public:
     , final_trackROut_()
     , final_trackTime_()
     , final_trackWinTime_()
+    , final_StartStop_()
 
     , hNumTracks_()
     , hPerEventMomentum_()
@@ -126,7 +126,7 @@ private :
   int cutCharge_;
   TimeWindow::StreamType cutStream_;
   int cutStartPlane_;
-  double cutTrackMinTime_;
+  double cutTrackWinTimedt_;
   double cutTrackRmax_;
   double cutCosThetaMin_;
   double cutCosThetaMax_;
@@ -161,10 +161,10 @@ private :
   TH1 *final_trackROut_;
   TH1 *final_trackTime_;
   TH1 *final_trackWinTime_;
+  TH2 *final_StartStop_;
 
   // Unlike the histos above, which are per track,
   // the following distributions are filled once per event,
-  MuCapUVAnalysis normalization_;
   TH1 *hNumTracks_;
   TH1 *hPerEventMomentum_;
   HistMuCapTruth htruthAccepted_;
