@@ -69,11 +69,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   inputNumberList_ = EventList(Conf.read<std::string>("MuCapture/inputEventNumberFile"));
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
-  //----------------------------------------------------------------
-  pcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::PC, H, *E.geo, Conf);
-  dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
-
-  //----------------------------------------------------------------
+  //       --------- Histograms initialization ---------          //
   if(doMCTruth_) {
     anDnLateResponse_.Setup(25, 0., 250, 25, 0., 250.);
     H.Store(&anDnLateResponse_, "anDnLateResponse", hdir);
@@ -86,6 +82,39 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
 
+
+  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, +1, TimeWindow::DOWNSTREAM, &anDnLateRes_);
+  dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, -1, TimeWindow::DOWNSTREAM);
+
+
+  //----------------------------------------------------------------
+  pcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::PC, H, *E.geo, Conf);
+  dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
+
+  hwidthPCall_.init(hdir+"/hitLevel/pcWidthAll", "pcwidth", 12, H, Conf);
+  hwidthPCfiltered_.init(hdir+"/hitLevel/pcWidthFiltered", "pcwidth", 12, H, Conf);
+  hwidthDCall_.init(hdir+"/hitLevel/dcWidthAll", "dcwidth", 44, H, Conf);
+  hwidthDCfiltered_.init(hdir+"/hitLevel/dcWidthFiltered", "dcwidth", 44, H, Conf);
+
+  if(fillXtalkPC_) {
+    hAfterPulsingPCAll_.init(hdir+"/hitLevel/afterPulsingPCAll", 12, 160, H, Conf);
+    hAfterPulsingPCFiltered_.init(hdir+"/hitLevel/afterPulsingPCFiltered", 12, 160, H, Conf);
+    hXtalkSameWirePC_.init(hdir+"/hitLevel/xtalkSameWirePC", 12, 0, 0, H, Conf);
+    hXtalk1PC_.init(hdir+"/hitLevel/xtalk1PC", 12, 1, 1, H, Conf);
+    hXtalkPlanePC_.init(hdir+"/hitLevel/xtalkPlanePC", 12, 1, 999, H, Conf);
+  }
+
+  if(fillXtalkDC_) {
+    hAfterPulsingDCAll_.init(hdir+"/hitLevel/afterPulsingDCAll", 44, 80, H, Conf);
+    hAfterPulsingDCFiltered_.init(hdir+"/hitLevel/afterPulsingDCFiltered", 44, 80, H, Conf);
+    hXtalkSameWireDC_.init(hdir+"/hitLevel/xtalkSameWireDC", 44, 0, 0, H, Conf);
+    hXtalk1DC_.init(hdir+"/hitLevel/xtalk1DC", 44, 1, 1, H, Conf);
+    hXtalkPlaneDC_.init(hdir+"/hitLevel/xtalkPlaneDC", 44, 1, 999, H, Conf);
+  }
+
+  hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
+  hOccupancyDCAll_.init(hdir+"/hitLevel", "hitMapDCAll", 44, 80, H, Conf);
+
   //----------------------------------------------------------------
   uvOutFileName_ = Conf.read<std::string>(hdir+"/uvOutFileName", "");
   if(!uvOutFileName_.empty()) {
@@ -95,12 +124,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     }
   }
 
-  //       --------- Histograms initialization ---------          //
+  //----------------------------------------------------------------
   pcWindowing_.init(H, hdir+"/WindowingPC", *E.geo, Conf);
   dcWindowing_.init(H, hdir+"/WindowingDC", *E.geo, Conf);
-
-  pactCut_.init(H, Conf);
-  protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
 
   h_cuts_r = H.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
@@ -117,15 +143,17 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuonFirstPlane_ = H.DefineTH1D(hdir, "muonFirstPlane", "Muon first plane", 56, 0.5, 56.5);
   hMuonLastPlaneAfterGaps_ = H.DefineTH1D(hdir, "muonLastPlaneAfterGaps", "Muon last plane", 56, 0.5, 56.5);
 
-  hStoppedMuonRangeGaps_ = H.DefineTH2D(hdir+"/AcceptedMuStop", "muStopRangeGaps", "Stopped muon range gap end vs start", 57, -0.5, 56.5, 57, -0.5, 56.5);
-  hStoppedMuonRangeGaps_->SetOption("colz");
-
-  hStoppedMuonMissingPlanes_ = H.DefineTH1D(hdir+"/AcceptedMuStop", "muStopMissingPlanes", "Stopped muon missing planes", 56, 0.5, 56.5);
-
   // Make the bin size half a cell
   hMuStopUVCell_ = H.DefineTH2D(hdir, "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
   hMuStopUVPos_ = H.DefineTH2D(hdir, "MuStopUVPos", "Muon stop V vs U position (cm)", 201, -10.05, +10.05, 201, -10.05, +10.05 );
   hMuStopRadius_ = H.DefineTH1D(hdir, "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
+
+  pactCut_.init(H, Conf);
+
+  hStoppedMuonRangeGaps_ = H.DefineTH2D(hdir+"/AcceptedMuStop", "muStopRangeGaps", "Stopped muon range gap end vs start", 57, -0.5, 56.5, 57, -0.5, 56.5);
+  hStoppedMuonRangeGaps_->SetOption("colz");
+
+  hStoppedMuonMissingPlanes_ = H.DefineTH1D(hdir+"/AcceptedMuStop", "muStopMissingPlanes", "Stopped muon missing planes", 56, 0.5, 56.5);
 
   hBeamVetoNumHitPlanes_ = H.DefineTH1D(hdir, "beamVetoNumHitPlanes", "beamVetoNumHitPlanes", 6, -0.5, 5.5);
   hHitPCsAterBeamVeto_ = H.DefineTH1D(hdir, "hitUpsteamPCsAfterBeamVeto", "hitUpsteamPCsAfterBeamVeto", 6, -0.5, 5.5);
@@ -138,62 +166,35 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hWindow2dt_ = H.DefineTH1D(hdir, "window2dt", "Second window time - proton win time", 1000, 0., 10000.);
 
   //----------------------------------------------------------------
-  hwidthPCall_.init(hdir+"/pcWidthAll", "pcwidth", 12, H, Conf);
-  hwidthPCfiltered_.init(hdir+"/pcWidthFiltered", "pcwidth", 12, H, Conf);
-  hwidthDCall_.init(hdir+"/dcWidthAll", "dcwidth", 44, H, Conf);
-  hwidthDCfiltered_.init(hdir+"/dcWidthFiltered", "dcwidth", 44, H, Conf);
+  haccidentalsTrig_.init(hdir+"/accidentals/trig", H, Conf);
+  haccidentalsStop_.init(hdir+"/accidentals/stop", H, Conf);
 
-  if(fillXtalkPC_) {
-    hAfterPulsingPCAll_.init(hdir+"/afterPulsingPCAll", 12, 160, H, Conf);
-    hAfterPulsingPCFiltered_.init(hdir+"/afterPulsingPCFiltered", 12, 160, H, Conf);
-    hXtalkSameWirePC_.init(hdir+"/xtalkSameWirePC", 12, 0, 0, H, Conf);
-    hXtalk1PC_.init(hdir+"/xtalk1PC", 12, 1, 1, H, Conf);
-    hXtalkPlanePC_.init(hdir+"/xtalkPlanePC", 12, 1, 999, H, Conf);
-  }
-
-  if(fillXtalkDC_) {
-    hAfterPulsingDCAll_.init(hdir+"/afterPulsingDCAll", 44, 80, H, Conf);
-    hAfterPulsingDCFiltered_.init(hdir+"/afterPulsingDCFiltered", 44, 80, H, Conf);
-    hXtalkSameWireDC_.init(hdir+"/xtalkSameWireDC", 44, 0, 0, H, Conf);
-    hXtalk1DC_.init(hdir+"/xtalk1DC", 44, 1, 1, H, Conf);
-    hXtalkPlaneDC_.init(hdir+"/xtalkPlaneDC", 44, 1, 999, H, Conf);
-  }
-
-  //----------------------------------------------------------------
-  hOccupancyPCAll_.init(hdir, "hitMapPCAll", 12, 160, H, Conf);
-  hOccupancyDCAll_.init(hdir, "hitMapDCAll", 44, 80, H, Conf);
-  haccidentalsTrig_.init(hdir+"/AccidentalsTrig", H, Conf);
-  haccidentalsStop_.init(hdir+"/AccidentalsStop", H, Conf);
-
-  winDCUnassignedAfterWindowing_.init(hdir+"/dcUnassignedWindowing", H, Conf);
-  winDCUnassignedMuStop_.init(hdir+"/dcUnassignedMuStop", H, Conf);
-  winDCUnassignedDnDecay_.init(hdir+"/dcUnassignedDnDecay", H, Conf);
+  winDCUnassignedAfterWindowing_.init(hdir+"/unassignedDC/windowing", H, Conf);
+  winDCUnassignedMuStop_.init(hdir+"/unassignedDC/mustop", H, Conf);
+  winDCUnassignedDnDecay_.init(hdir+"/unassignedDC/dndecay", H, Conf);
 
   winTimeBeforeNoTrigWin_.init(hdir+"/winTime", "beforeNoTrigWin", H, Conf);
   winTimeMuStop_.init(hdir+"/winTime", "muStop", H, Conf);
 
-  dioUp_.init(hdir+"/DIOUp", H, Conf,
+  dioUp_.init(hdir+"/chamberEff/DIOUp", H, Conf,
               TimeWindow::UPSTREAM,
               Conf.read<double>(hdir+"/DIOUp/cutMinTime"));
 
-  dioDn_.init(hdir+"/DIODn", H, Conf,
+  dioDn_.init(hdir+"/chamberEff/DIODn", H, Conf,
               TimeWindow::DOWNSTREAM,
               Conf.read<double>(hdir+"/DIODn/cutMinTime"));
 
-  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, +1, TimeWindow::DOWNSTREAM, &anDnLateRes_);
-  dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, -1, TimeWindow::DOWNSTREAM);
-
-  hdriftPCAll_.init(hdir+"/driftTimePCAll", H, 12, 1000./*ns*/,
+  hdriftPCAll_.init(hdir+"/chamberEff/driftTimePCAll", H, 12, 1000./*ns*/,
                     Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtPC"),
                     Conf);
-  hdriftPCFiltered_.init(hdir+"/driftTimePCFiltered", H, 12, 1000./*ns*/,
+  hdriftPCFiltered_.init(hdir+"/chamberEff/driftTimePCFiltered", H, 12, 1000./*ns*/,
                          Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtPC"),
                          Conf);
 
-  hdriftDCAll_.init(hdir+"/driftTimeDCAll", H, 44, 5000./*ns*/,
+  hdriftDCAll_.init(hdir+"/chamberEff/driftTimeDCAll", H, 44, 5000./*ns*/,
                     Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtDC"),
                     Conf);
-  hdriftDCFiltered_.init(hdir+"/driftTimeDCFiltered", H, 44, 5000./*ns*/,
+  hdriftDCFiltered_.init(hdir+"/chamberEff/driftTimeDCFiltered", H, 44, 5000./*ns*/,
                          Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtDC"),
                          Conf);
 
@@ -203,6 +204,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthAll_.init(H, hdir+"/MCTruthAll", Conf);
     hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
   }
+
+  //----------------------------------------------------------------
+  // Obsolete, but keep it as an example of PID histograms
+  protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
 
   //----------------------------------------------------------------
 
