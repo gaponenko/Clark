@@ -212,7 +212,7 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
   hNumTracks_->Fill(accepted.size());
 
   // Look at the multiple-track events
-  if(accepted.size() > 1) {
+  if(false && (accepted.size() > 1)) {
     std::cout<<"Multiple accepted tracks in run "<<evt.nrun<<", event "<<evt.nevt<<std::endl;
     for(unsigned i=0; i < accepted.size(); ++i) {
       std::cout<<"\t"<<formatTrack(evt, accepted[i])<<std::endl;
