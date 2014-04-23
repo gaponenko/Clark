@@ -102,6 +102,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                                 700, -89.5, 610.5);
 
   trackChi2_ = hf.DefineTH1D(hdir, "trackchi2", "trackchi2", 1000, 0, 500.);
+  hTrackQuality_.init(hf, hdir+"/TrackQuality", conf);
 
   trackMuonOffset_ = hf.DefineTH2D(hdir,
                                    "trackMuonOffset",
@@ -176,6 +177,8 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                               "numAcceptedTracks",
                               10, -0.5, 9.5);
 
+  hSelectedTrackQuality_.init(hf, hdir+"/SelectedTrackQuality", conf);
+
   hPerEventMomentum_ = hf.DefineTH1D(hdir, "perEventMomentum",
                                      "selected track momentum",
                                      300, 0., 300.);
@@ -245,7 +248,7 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     }
 
     hPerEventMomentum_->Fill(evt.ptot[selected]);
-    //FIXME: hSelectedTrackQuality_.fill(evt, selected);
+    hSelectedTrackQuality_.fill(evt, selected);
 
     if(doMCTruth_) {
       htruthAccepted_.fill(evt);
@@ -360,6 +363,7 @@ analyzeTrack(int i, const EventClass& evt,
 
   //----------------------------------------------------------------
   trackChi2_->Fill(evt.hefit_chi2[i]);
+  hTrackQuality_.fill(evt, i);
   if(evt.hefit_chi2[i] > cutChi2_) {
     return CUT_CHI2;
   }

@@ -11,6 +11,7 @@
 #include "WireCluster.h"
 #include "HistMuCapTruth.h"
 #include "RecoResMuCapTrk.h"
+#include "HistTrkQuality.h"
 
 #include "TAxis.h"
 #include "Math/Point2D.h"
@@ -147,6 +148,7 @@ private :
 
   TH2 *hStartStop_;
   TH1 *trackChi2_;
+  HistTrkQuality hTrackQuality_;
   TH2 *trackMuonOffset_;
   TH1 *trackMuondr_;
 
@@ -165,6 +167,7 @@ private :
   TH1 *hNumTracks_;
   TH1 *hPerEventMomentum_;
   HistMuCapTruth htruthAccepted_;
+  HistTrkQuality hSelectedTrackQuality_;
 
   // Selection among multiple track passing the cuts
   TH2 *hSelectorPlane_;
