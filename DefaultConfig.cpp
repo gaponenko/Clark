@@ -372,9 +372,6 @@ void SetDefault(ConfigFile &Conf)
         //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
         //----------------
-        //SetKey(Conf, "MuCapture/TrkAnalysisHF/cutStartPlane", 31);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutStartPlane", -1);
-
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackWinTimedt", 100.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackRmax", 99999.);//cm
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMin", 0.5);
@@ -388,7 +385,7 @@ void SetDefault(ConfigFile &Conf)
 
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutChi2", 100.); //
         //
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 5.);//cm
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 1.5);//cm
         // Empty file name disables the output
         //        SetKey(Conf, "MuCapture/TrkAnalysisHF/uvOutFileName", "");
 

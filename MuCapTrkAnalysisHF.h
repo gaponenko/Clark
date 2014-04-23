@@ -29,7 +29,7 @@ class MuCapTrkAnalysisHF {
     ax->SetBinLabel(1+CUT_TRKWINTIME, "trkwintime");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
-    ax->SetBinLabel(1+CUT_STARTPLANE, "startPlane");
+    ax->SetBinLabel(1+CUT_TRACK_MUON_OFFSET, "drmu");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
     ax->SetBinLabel(1+CUT_COSTHETAMIN, "cos(theta) min");
@@ -40,7 +40,6 @@ class MuCapTrkAnalysisHF {
     ax->SetBinLabel(1+CUT_PTOTMAX, "ptot max");
     ax->SetBinLabel(1+CUT_CHI2,     "chi2");
 
-    ax->SetBinLabel(1+CUT_TRACK_MUON_OFFSET, "drmu");
     ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
   }
 
@@ -50,7 +49,7 @@ public:
     CUT_TRKWINTIME,
     CUT_STREAM,
     CUT_CHARGE,
-    CUT_STARTPLANE,
+    CUT_TRACK_MUON_OFFSET,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
     CUT_COSTHETAMAX,
@@ -59,7 +58,6 @@ public:
     CUT_PTOTMIN,
     CUT_PTOTMAX,
     CUT_CHI2,
-    CUT_TRACK_MUON_OFFSET,
     CUTS_ACCEPTED,
     CUTS_END
   };
@@ -80,7 +78,6 @@ public:
     : doMCTruth_(false)
     , result_(nullptr)
     , cutCharge_()
-    , cutStartPlane_()
     , cutTrackWinTimedt_()
     , cutTrackRmax_()
     , cutCosThetaMin_()
@@ -101,13 +98,12 @@ public:
     , costhVsPtot_()
 
     , hStartStop_()
-    , trackz_()
 
     , trackMuonOffset_()
     , trackMuondr_()
 
-    , helixCenterUV_()
-
+    , final_helixCenterUV_()
+    , final_trackz_()
     , final_trackRL_()
     , final_costhVsPtot_()
     , final_u0v0_()
@@ -128,7 +124,6 @@ private :
   RecoResMuCapTrk *result_;
   int cutCharge_;
   TimeWindow::StreamType cutStream_;
-  int cutStartPlane_;
   double cutTrackWinTimedt_;
   double cutTrackRmax_;
   double cutCosThetaMin_;
@@ -151,13 +146,12 @@ private :
   TH2 *costhVsPtot_;
 
   TH2 *hStartStop_;
-  TH1 *trackz_;
   TH1 *trackChi2_;
   TH2 *trackMuonOffset_;
   TH1 *trackMuondr_;
 
-  TH2 *helixCenterUV_;
-
+  TH2 *final_helixCenterUV_;
+  TH1 *final_trackz_;
   TH2 *final_trackRL_; // radius and wavelength
   TH2 *final_costhVsPtot_;
   TH2 *final_u0v0_;

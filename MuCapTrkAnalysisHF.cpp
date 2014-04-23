@@ -55,7 +55,6 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   result_ = result;
   cutCharge_ = cutCharge;
   cutStream_ = cutStream;
-  cutStartPlane_ = conf.read<int>("MuCapture/TrkAnalysisHF/cutStartPlane");
   cutTrackWinTimedt_ = conf.read<int>("MuCapture/TrkAnalysisHF/cutTrackWinTimedt");
   cutTrackRmax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackRmax");
   cutCosThetaMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutCosThetaMin");
@@ -98,9 +97,9 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
 
   final_StartStop_->SetOption("colz");
 
-  trackz_ = hf.DefineTH1D(hdir, "trackz",
-                          "trackz",
-                          700, -89.5, 610.5);
+  final_trackz_ = hf.DefineTH1D(hdir, "trackz",
+                                "trackz",
+                                700, -89.5, 610.5);
 
   trackChi2_ = hf.DefineTH1D(hdir, "trackchi2", "trackchi2", 1000, 0, 500.);
 
@@ -151,12 +150,12 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
 
   final_trackRL_->SetOption("colz");
 
-  helixCenterUV_ = hf.DefineTH2D(hdir,
-                                 "helixCenterUV",
-                                 "helix center UV",
-                                 320, -16., 16., 320, -16., 16.);
+  final_helixCenterUV_ = hf.DefineTH2D(hdir,
+                                       "final_helixCenterUV",
+                                       "final helix center UV",
+                                       320, -16., 16., 320, -16., 16.);
 
-  helixCenterUV_->SetOption("colz");
+  final_helixCenterUV_->SetOption("colz");
 
 
   final_trackROut_ = hf.DefineTH1D(hdir, "final_rout",
@@ -246,6 +245,7 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     }
 
     hPerEventMomentum_->Fill(evt.ptot[selected]);
+    //FIXME: hSelectedTrackQuality_.fill(evt, selected);
 
     if(doMCTruth_) {
       htruthAccepted_.fill(evt);
@@ -298,7 +298,7 @@ analyzeTrack(int i, const EventClass& evt,
     return CUT_STREAM;
   }
 
-  // FIXME: debug:
+  // debug:
   if((cutStream_==TimeWindow::DOWNSTREAM) && evt.costh[i] < 0.) {
     std::cout<<"Downstream event with "
              <<" costh = " <<evt.costh[i]
@@ -309,15 +309,19 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  trackz_->Fill(evt.hefit_z[i]);
-  if((cutStartPlane_ > 0) && (evt.hefit_pstart[i] != cutStartPlane_)) {
-    return CUT_STARTPLANE;
-  }
-
-  //----------------------------------------------------------------
   hCharge_->Fill(evt.hefit_q[i]);
   if(evt.hefit_q[i] != cutCharge_) {
     return CUT_CHARGE;
+  }
+
+  //----------------------------------------------------------------
+  const double du = evt.hefit_u0[i] - muStopUV.x();
+  const double dv = evt.hefit_v0[i] - muStopUV.y();
+  const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
+  trackMuonOffset_->Fill(du, dv);
+  trackMuondr_->Fill(dr);
+  if(dr > cutTrackMuonOffset_) {
+    return CUT_TRACK_MUON_OFFSET;
   }
 
   //----------------------------------------------------------------
@@ -361,22 +365,13 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  const double du = evt.hefit_u0[i] - muStopUV.x();
-  const double dv = evt.hefit_v0[i] - muStopUV.y();
-  const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
-  trackMuonOffset_->Fill(du, dv);
-  trackMuondr_->Fill(dr);
-  if(dr > cutTrackMuonOffset_) {
-    return CUT_TRACK_MUON_OFFSET;
-  }
-
-  //----------------------------------------------------------------
-  helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
+  final_helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
 
   const double rout =
     sqrt(std::pow(evt.hefit_ucenter[i], 2) + std::pow(evt.hefit_vcenter[i], 2))
     + evt.radius[i];
 
+  final_trackz_->Fill(evt.hefit_z[i]);
   final_trackROut_->Fill(rout);
   final_costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
   final_trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
