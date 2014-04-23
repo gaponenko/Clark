@@ -33,6 +33,14 @@ namespace {
   int distanceToTarget(int globalPlane) {
     return int(std::abs((globalPlane - 28.5)));
   }
+
+  double distanceToMuon(const EventClass& evt, int itrack, const ROOT::Math::XYPoint& muStopUV) {
+    const double du = evt.hefit_u0[itrack] - muStopUV.x();
+    const double dv = evt.hefit_v0[itrack] - muStopUV.y();
+    const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
+    return dr;
+  }
+
 }
 
 //================================================================
@@ -173,6 +181,16 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                                      "selected track momentum",
                                      300, 0., 300.);
 
+  hSelectorPlane_ = hf.DefineTH2D(hdir, "selectorPlane", "track to target dplane max vs min",
+                                  30, -0.5, 29.5, 30, -0.5, 29.5);
+
+  hSelectorPlane_->SetOption("colz");
+
+  hSelectordrmu_ = hf.DefineTH2D(hdir, "selectordrmu", "drmu max vs min",
+                                 50, 0., 5., 50, 0., 5.);
+
+  hSelectordrmu_->SetOption("colz");
+
   if(doMCTruth_) {
     htruthAccepted_.init(hf, hdir+"/truthAccepted", conf);
   }
@@ -202,16 +220,26 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
   int selected = accepted.empty() ? -1 : accepted[0];
   // find a track that starts closer to the target
   for(int i=1; i<accepted.size(); ++i) {
-    if(distanceToTarget(evt.hefit_pstart[i]) < distanceToTarget(evt.hefit_pstart[selected])) {
-      selected = i;
+    const int distBest = distanceToTarget(evt.hefit_pstart[selected]);
+    const int distCurrent = distanceToTarget(evt.hefit_pstart[accepted[i]]) ;
+    hSelectorPlane_->Fill(std::min(distBest,distCurrent), std::max(distBest,distCurrent));
+    if(distCurrent < distBest) {
+      selected = accepted[i];
+    }
+    else if(distCurrent == distBest) {
+      const double drmuBest = distanceToMuon(evt, selected, muStopUV);
+      const double drmuCurrent = distanceToMuon(evt, accepted[i], muStopUV);
+      hSelectordrmu_->Fill(std::min(drmuBest,drmuCurrent), std::max(drmuBest, drmuCurrent));
+      if(drmuCurrent < drmuBest) {
+        selected = accepted[i];
+      }
     }
   }
 
   if(selected >= 0) {
-    // Note: this must be set to false higher in the call chain.
+    // Note: resul_->accepted must be set to false higher in the call chain.
     // This class does not see *all* of the incoming events, thus
     // it can't reset the result.
-    // Also, for the case of multiple accepted tracks the last one wins.
     if(result_) {
       result_->accepted = true;
       result_->momentum = evt.ptot[selected];

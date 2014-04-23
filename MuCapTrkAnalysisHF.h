@@ -118,6 +118,9 @@ public:
 
     , hNumTracks_()
     , hPerEventMomentum_()
+
+    , hSelectorPlane_()
+    , hSelectordrmu_()
   {}
 
 private :
@@ -168,6 +171,10 @@ private :
   TH1 *hNumTracks_;
   TH1 *hPerEventMomentum_;
   HistMuCapTruth htruthAccepted_;
+
+  // Selection among multiple track passing the cuts
+  TH2 *hSelectorPlane_;
+  TH2 *hSelectordrmu_;
 
   // true iff the track passed the cuts
   bool processTrack(int itrack,
