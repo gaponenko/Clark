@@ -30,7 +30,6 @@ class MuCapTrkAnalysisHF {
     ax->SetBinLabel(1+CUT_TRKWINTIME, "trkwintime");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
-    ax->SetBinLabel(1+CUT_TRACK_MUON_OFFSET, "drmu");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
     ax->SetBinLabel(1+CUT_COSTHETAMIN, "cos(theta) min");
@@ -39,6 +38,7 @@ class MuCapTrkAnalysisHF {
     ax->SetBinLabel(1+CUT_PZMIN, "pz min");
     ax->SetBinLabel(1+CUT_PTOTMIN, "ptot min");
     ax->SetBinLabel(1+CUT_PTOTMAX, "ptot max");
+    ax->SetBinLabel(1+CUT_TRACK_MUON_OFFSET, "drmu");
     ax->SetBinLabel(1+CUT_CHI2,     "chi2");
 
     ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
@@ -50,7 +50,6 @@ public:
     CUT_TRKWINTIME,
     CUT_STREAM,
     CUT_CHARGE,
-    CUT_TRACK_MUON_OFFSET,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
     CUT_COSTHETAMAX,
@@ -58,6 +57,7 @@ public:
     CUT_PZMIN,
     CUT_PTOTMIN,
     CUT_PTOTMAX,
+    CUT_TRACK_MUON_OFFSET,
     CUT_CHI2,
     CUTS_ACCEPTED,
     CUTS_END

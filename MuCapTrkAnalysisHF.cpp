@@ -101,8 +101,9 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                                 "trackz",
                                 700, -89.5, 610.5);
 
-  trackChi2_ = hf.DefineTH1D(hdir, "trackchi2", "trackchi2", 1000, 0, 500.);
   hTrackQuality_.init(hf, hdir+"/TrackQuality", conf);
+
+  trackChi2_ = hf.DefineTH1D(hdir, "trackchi2", "trackchi2", 1000, 0, 500.);
 
   trackMuonOffset_ = hf.DefineTH2D(hdir,
                                    "trackMuonOffset",
@@ -248,7 +249,7 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     }
 
     hPerEventMomentum_->Fill(evt.ptot[selected]);
-    hSelectedTrackQuality_.fill(evt, selected);
+    hSelectedTrackQuality_.fill(evt, selected, distanceToMuon(evt, selected, muStopUV));
 
     if(doMCTruth_) {
       htruthAccepted_.fill(evt);
@@ -318,16 +319,6 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  const double du = evt.hefit_u0[i] - muStopUV.x();
-  const double dv = evt.hefit_v0[i] - muStopUV.y();
-  const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
-  trackMuonOffset_->Fill(du, dv);
-  trackMuondr_->Fill(dr);
-  if(dr > cutTrackMuonOffset_) {
-    return CUT_TRACK_MUON_OFFSET;
-  }
-
-  //----------------------------------------------------------------
   // Make sure the tracks are fully contained in the transverse direction
   trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
@@ -362,8 +353,19 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
+  const double du = evt.hefit_u0[i] - muStopUV.x();
+  const double dv = evt.hefit_v0[i] - muStopUV.y();
+  const double dr = sqrt(std::pow(du,2)+std::pow(dv,2));
+  trackMuonOffset_->Fill(du, dv);
+  trackMuondr_->Fill(dr);
+  hTrackQuality_.fill(evt, i, dr);
+
+  if(dr > cutTrackMuonOffset_) {
+    return CUT_TRACK_MUON_OFFSET;
+  }
+
+  //----------------------------------------------------------------
   trackChi2_->Fill(evt.hefit_chi2[i]);
-  hTrackQuality_.fill(evt, i);
   if(evt.hefit_chi2[i] > cutChi2_) {
     return CUT_CHI2;
   }
