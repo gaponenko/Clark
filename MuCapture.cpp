@@ -125,6 +125,15 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   }
 
   //----------------------------------------------------------------
+  commonSkimOutFileName_ = Conf.read<std::string>("MuCapture/commonSkimOutFileName", "");
+  if(!commonSkimOutFileName_.empty()) {
+    commonSkimOutFile_.open(commonSkimOutFileName_.c_str());
+    if(!commonSkimOutFile_) {
+      throw std::runtime_error("Error opening output file "+commonSkimOutFileName_);
+    }
+  }
+
+  //----------------------------------------------------------------
   pcWindowing_.init(H, hdir+"/WindowingPC", *E.geo, Conf);
   dcWindowing_.init(H, hdir+"/WindowingDC", *E.geo, Conf);
 
@@ -540,6 +549,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
+  //----------------
+  if(commonSkimOutFile_) {
+    commonSkimOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
+  }
 
   return CUTS_DOWNSTREAM_ACCEPTED;
 }

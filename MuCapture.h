@@ -86,8 +86,6 @@ public :
 
     CUT_BEAM_VETO,
 
-    // Here is a good place to write a skim.  Or after the time cut?
-
     // cut on the same var for DIO and protons
     // avoid norm systematic due to time resolution
     CUT_WIN_TIME,
@@ -148,6 +146,8 @@ private :
 
   std::string uvOutFileName_;
   std::ofstream uvOutFile_;
+  std::string commonSkimOutFileName_;
+  std::ofstream commonSkimOutFile_;
 
   double winPCPreTrigSeparation_;
 

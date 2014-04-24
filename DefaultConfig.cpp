@@ -354,6 +354,10 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/HistDriftTime/cutEffTrackHitDtPC", 100.);
         SetKey(Conf, "MuCapture/HistDriftTime/cutEffTrackHitDtDC", 1500.);
 
+        // Empty file name disables the output
+        SetKey(Conf, "MuCapture/uvOutFileName", "");
+        SetKey(Conf, "MuCapture/commonSkimOutFileName", "");
+
         // make sure the planes are not adjacent at dz=0.4cm
         SetKey(Conf, "MuCapture/ProtonWindow/Containment1D/minPlanedz", 0.5);
 
@@ -386,8 +390,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutChi2", 100.); //
         //
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 1.5);//cm
-        // Empty file name disables the output
-        //        SetKey(Conf, "MuCapture/TrkAnalysisHF/uvOutFileName", "");
 
         //----------------
         //# Use downstream PC planes as a veto
