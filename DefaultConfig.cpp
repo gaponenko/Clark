@@ -387,7 +387,7 @@ void SetDefault(ConfigFile &Conf)
         // NB: remember about "name helixfit helixfitmommax=..." in the KCM file.
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMax", 250.); // MeV/c
 
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutChi2", 100.); //
+        //SetKey(Conf, "MuCapture/TrkAnalysisHF/cutChi2", 100.); //
         //
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 1.5);//cm
 

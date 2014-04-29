@@ -63,7 +63,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   cutPzMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPzMin");
   cutPtotMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtotMin");
   cutPtotMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtotMax");
-  cutChi2_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutChi2");
+  // cutChi2_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutChi2");
   cutTrackMuonOffset_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackMuonOffset");
 
   //----------------------------------------------------------------
@@ -366,9 +366,9 @@ analyzeTrack(int i, const EventClass& evt,
 
   //----------------------------------------------------------------
   trackChi2_->Fill(evt.hefit_chi2[i]);
-  if(evt.hefit_chi2[i] > cutChi2_) {
-    return CUT_CHI2;
-  }
+//  if(evt.hefit_chi2[i] > cutChi2_) {
+//    return CUT_CHI2;
+//  }
 
   //----------------------------------------------------------------
   final_helixCenterUV_->Fill(evt.hefit_ucenter[i], evt.hefit_vcenter[i]);
