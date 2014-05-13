@@ -254,6 +254,20 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     if(doMCTruth_) {
       htruthAccepted_.fill(evt);
     }
+
+    // skim events using reco track parameters
+    if(1) {
+      if((50. < evt.ptot[selected])&&(0.7 < std::abs(evt.costh[selected]))) {
+        static std::ofstream skim("skim_p50_cos07.txt");
+        skim<<evt.nrun<<" "<<evt.nevt<<std::endl;
+      }
+      if((100. < evt.ptot[selected])&&
+         (0.9 < std::abs(evt.costh[selected]))&&
+         (std::abs(evt.costh[selected])<0.98)) {
+        static std::ofstream skim("skim_p100_cos09.txt");
+        skim<<evt.nrun<<" "<<evt.nevt<<std::endl;
+      }
+    }
   }
 
   return selected;
