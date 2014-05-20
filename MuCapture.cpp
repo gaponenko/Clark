@@ -102,6 +102,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hXtalkSameWirePC_.init(hdir+"/hitLevel/xtalkSameWirePC", 12, 0, 0, H, Conf);
     hXtalk1PC_.init(hdir+"/hitLevel/xtalk1PC", 12, 1, 1, H, Conf);
     hXtalkPlanePC_.init(hdir+"/hitLevel/xtalkPlanePC", 12, 1, 999, H, Conf);
+    hXT2PlanePC_.init(hdir+"/hitLevel/xt2PlanePC", 12, 1, 999, 40., H, Conf);
   }
 
   if(fillXtalkDC_) {
@@ -110,6 +111,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hXtalkSameWireDC_.init(hdir+"/hitLevel/xtalkSameWireDC", 44, 0, 0, H, Conf);
     hXtalk1DC_.init(hdir+"/hitLevel/xtalk1DC", 44, 1, 1, H, Conf);
     hXtalkPlaneDC_.init(hdir+"/hitLevel/xtalkPlaneDC", 44, 1, 999, H, Conf);
+    hXT2PlaneDC_.init(hdir+"/hitLevel/xt2PlaneDC", 44, 1, 999, 50., H, Conf);
   }
 
   hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
@@ -284,6 +286,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     hXtalkSameWirePC_.fill(allPCHits);
     hXtalk1PC_.fill(allPCHits);
     hXtalkPlanePC_.fill(allPCHits);
+    hXT2PlanePC_.fill(allPCHits);
   }
 
   TDCHitPreprocessing::Hits allDCHitsBuf(evt.dc_hits(), hitpass);
@@ -301,6 +304,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     hXtalkSameWireDC_.fill(allDCHits);
     hXtalk1DC_.fill(allDCHits);
     hXtalkPlaneDC_.fill(allDCHits);
+    hXT2PlaneDC_.fill(allDCHits);
   }
 
   hOccupancyPCAll_.fill(evt.pc_hits());
