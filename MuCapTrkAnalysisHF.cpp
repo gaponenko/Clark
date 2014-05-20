@@ -256,7 +256,7 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     }
 
     // skim events using reco track parameters
-    if(1) {
+    if(false) {
       if((50. < evt.ptot[selected])&&(0.7 < std::abs(evt.costh[selected]))) {
         static std::ofstream skim("skim_p50_cos07.txt");
         skim<<evt.nrun<<" "<<evt.nevt<<std::endl;
