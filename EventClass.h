@@ -82,6 +82,7 @@ class EventClass{
 
 		bool loadMuCaptureVars;
 		bool loadDefaultTWISTVars;
+		bool analyze_all;
 		bool killPC6DeadWire;
 
 		//__________________________ Parameters _________________________//

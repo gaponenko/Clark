@@ -11,6 +11,7 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
         loadDefaultTWISTVars = !loadMuCaptureVars
           || C.read<bool>("MuCapture/doDefaultTWIST")
           || C.read<bool>("MuCapture/loadDefaultTWISTVars", false);
+        analyze_all = C.read<bool>("AnalyzeAllEvents");
 
         killPC6DeadWire = C.read<bool>("MuCapture/killPC6DeadWire");
 
@@ -241,7 +242,7 @@ bool EventClass::Load( )
 	iewin		= -1;	// Default value. This will crash the prog. That's the goal.
 	is_upstreamdk= true;
 
-	if ( not nwin > 0 )
+	if (!analyze_all && !(nwin > 0) )
 		return false;
 
 	// Look for the muon and the decay windows.

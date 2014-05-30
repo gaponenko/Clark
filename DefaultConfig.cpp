@@ -14,6 +14,7 @@ void SetDefault(ConfigFile &Conf)
 	// MuCapture, if enabled, can prevent the standard analysis from running
 	SetKey(Conf, "MuCapture/Do", false);
 	SetKey(Conf, "MuCapture/MCType", "G3");
+        SetKey(Conf, "AnalyzeAllEvents", false); // Michel analysis code crashes on empty events
 
 	// ================ Standard Analysis =============== //
 

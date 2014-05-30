@@ -1,3 +1,4 @@
+AnalyzeAllEvents = true
 MuCapture/Do	= true
 MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 61

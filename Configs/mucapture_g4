@@ -1,3 +1,4 @@
+AnalyzeAllEvents = true
 MuCapture/Do = true
 TruthBank/Do = true
 MuCapture/MCType = G4
