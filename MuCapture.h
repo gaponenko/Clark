@@ -25,6 +25,7 @@
 #include "HistMuStopTruth.h"
 #include "HistAccidentals.h"
 #include "HistWinDCUnassigned.h"
+#include "HistProtonPID.h"
 #include "TimeWindowingPC.h"
 #include "TimeWindowingDC.h"
 #include "EventList.h"
@@ -237,6 +238,8 @@ private :
 
   MuCapTrkAnalysisHF dnPosTracks_;
   MuCapTrkAnalysisHF dnNegTracks_;
+
+  HistProtonPID hProtonPID_;
 
   HistDriftTime hdriftPCAll_;
   HistDriftTime hdriftPCFiltered_;

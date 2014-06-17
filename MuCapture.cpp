@@ -86,6 +86,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, +1, TimeWindow::DOWNSTREAM, &anDnLateRes_);
   dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, -1, TimeWindow::DOWNSTREAM);
 
+  hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
 
   //----------------------------------------------------------------
   pcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::PC, H, *E.geo, Conf);
@@ -535,7 +536,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
 
-  dnPosTracks_.process(evt, muStop, decayWindow);
+  const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
+  if(iPosTrack != -1) {
+    hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+  }
+
   dnNegTracks_.process(evt, muStop, decayWindow);
 
   winDCUnassignedDnDecay_.fill(wres);
