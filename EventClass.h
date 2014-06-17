@@ -375,6 +375,7 @@ class EventClass{
 		Float_t		dc_width[MAXHITS_DC];			//[dc_nhits]
 		Int_t		dc_plane[MAXHITS_DC];			//[dc_nhits]
 		Int_t		dc_cell[MAXHITS_DC];			//[dc_nhits]
+		Int_t		dc_xtalk[MAXHITS_DC];			//[dc_nhits]
 
 		//_________________________ MuCapture: All hits - PC  __________________________//
 		Int_t		pc_nhits;
@@ -382,6 +383,7 @@ class EventClass{
 		Float_t		pc_width[MAXHITS_PC];			//[pc_nhits]
 		Int_t		pc_plane[MAXHITS_PC];			//[pc_nhits]
 		Int_t		pc_cell[MAXHITS_PC];			//[pc_nhits]
+		Int_t		pc_xtalk[MAXHITS_PC];			//[pc_nhits]
 
 		//_________________________ MuCapture: All hits - SC  __________________________//
 		Int_t		sc_nhits;

@@ -556,6 +556,7 @@ void EventClass::InitMuCaptureVar( TTree* T) {
         GetVar(T, "DC_hits", "DC_width", dc_width);
         GetVar(T, "DC_hits", "DC_plane", dc_plane);
         GetVar(T, "DC_hits", "DC_cell", dc_cell);
+        GetVar(T, "DC_hits", "DC_xtalk", dc_xtalk);
 
         //_________________________ All hits - PC  __________________________//
         GetVar(T, "PC_hits", "PC_nhits", &pc_nhits);
@@ -563,6 +564,7 @@ void EventClass::InitMuCaptureVar( TTree* T) {
         GetVar(T, "PC_hits", "PC_width", pc_width);
         GetVar(T, "PC_hits", "PC_plane", pc_plane);
         GetVar(T, "PC_hits", "PC_cell", pc_cell);
+        GetVar(T, "PC_hits", "PC_xtalk", pc_xtalk);
 
         //_________________________ All hits - SC  __________________________//
         GetVar(T, "SC_hits", "SC_nhits", &sc_nhits);
