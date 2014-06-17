@@ -133,14 +133,14 @@ void EventClass::LoadMuCapture() {
   dc_hits_.clear();
   dc_hits_.reserve(dc_nhits);
   for(int i=0; i<dc_nhits; ++i) {
-    dc_hits_.push_back(TDCHitWP(dc_time[i], dc_width[i], dc_plane[i], dc_cell[i]));
+    dc_hits_.push_back(TDCHitWP(dc_time[i], dc_width[i], dc_plane[i], dc_cell[i], dc_xtalk[i]));
   }
 
   pc_hits_.clear();
   pc_hits_.reserve(pc_nhits);
   for(int i=0; i<pc_nhits; ++i) {
     if(!killPC6DeadWire || (pc_plane[i] != 6) || (pc_cell[i] != 88)) {
-      pc_hits_.push_back(TDCHitWP(pc_time[i], pc_width[i], pc_plane[i], pc_cell[i]));
+      pc_hits_.push_back(TDCHitWP(pc_time[i], pc_width[i], pc_plane[i], pc_cell[i], pc_xtalk[i]));
     }
   }
 

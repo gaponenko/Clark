@@ -32,16 +32,18 @@ class TDCHitWP {
   WireCellId cid_;
   float time_;
   float width_;
+  bool xtalk_;
 public:
   int plane() const { return cid_.plane; }
   int cell() const { return cid_.cell; }
   float time() const { return time_; }
   float width() const { return width_; }
+  bool xtalk() const { return xtalk_; }
 
   const WireCellId& cid() const { return cid_; }
 
-  TDCHitWP(float t, float w, int p, int c)
-    : cid_(p,c), time_(t), width_(w)
+  TDCHitWP(float t, float w, int p, int c, int xt)
+    : cid_(p,c), time_(t), width_(w), xtalk_(xt)
   {}
 };
 
