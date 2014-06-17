@@ -22,19 +22,19 @@ void HistProtonPID::init(const std::string& hdir,
   hSingleClusterSize78_ = hf.DefineTH2D(hdir, "signleClusterSize78", "PC8 vs PC7 cluster size for single cluster events", 5, -0.5, 4.5, 5, -0.5, 4.5);
   hSingleClusterSize78_->SetOption("colz");
 
-  hsum78cos_vs_p_all_ = hf.DefineTH2D(hdir, "sum78cosall", "PC78 mean width cos(theta) vs p, all", 30, 0., 300., 40, 0, 800.);
+  hsum78cos_vs_p_all_ = hf.DefineTH2D(hdir, "sum78cosall", "PC78 mean width cos(theta) vs p, all", 150, 0., 300., 120, 0, 600.);
   hsum78cos_vs_p_all_->SetOption("colz");
 
-  hsum78cos_vs_p_11_ = hf.DefineTH2D(hdir, "sum78cos11", "PC78 mean width cos(theta) vs p, 11", 30, 0., 300., 40, 0, 800.);
+  hsum78cos_vs_p_11_ = hf.DefineTH2D(hdir, "sum78cos11", "PC78 mean width cos(theta) vs p, 11", 150, 0., 300., 120, 0, 600.);
   hsum78cos_vs_p_11_->SetOption("colz");
 
-  hsum78cos_vs_p_12_ = hf.DefineTH2D(hdir, "sum78cos12", "PC78 mean width cos(theta) vs p, 12", 30, 0., 300., 40, 0, 800.);
+  hsum78cos_vs_p_12_ = hf.DefineTH2D(hdir, "sum78cos12", "PC78 mean width cos(theta) vs p, 12", 150, 0., 300., 120, 0, 600.);
   hsum78cos_vs_p_12_->SetOption("colz");
 
-  hsum78cos_vs_p_21_ = hf.DefineTH2D(hdir, "sum78cos21", "PC78 mean width cos(theta) vs p, 21", 30, 0., 300., 40, 0, 800.);
+  hsum78cos_vs_p_21_ = hf.DefineTH2D(hdir, "sum78cos21", "PC78 mean width cos(theta) vs p, 21", 150, 0., 300., 120, 0, 600.);
   hsum78cos_vs_p_21_->SetOption("colz");
 
-  hsum78cos_vs_p_22_ = hf.DefineTH2D(hdir, "sum78cos22", "PC78 mean width cos(theta) vs p, 22", 30, 0., 300., 40, 0, 800.);
+  hsum78cos_vs_p_22_ = hf.DefineTH2D(hdir, "sum78cos22", "PC78 mean width cos(theta) vs p, 22", 150, 0., 300., 120, 0, 600.);
   hsum78cos_vs_p_22_->SetOption("colz");
 }
 
