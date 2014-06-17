@@ -572,6 +572,9 @@ MuCapture::makeTDCHitPreprocessor(WirePlane::DetType d,
   if(proc == "NarrowHitDiscarder") {
     return new TDCHitPreprocessing::NarrowHitDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
   }
+  if(proc == "MOFIA_XTalkDiscarder") {
+    return new TDCHitPreprocessing::MOFIA_XTalkDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
+  }
   if(proc == "SameWireHitDiscarder") {
     return new TDCHitPreprocessing::SameWireHitDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
   }

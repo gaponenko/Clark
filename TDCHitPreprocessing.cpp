@@ -23,6 +23,32 @@ namespace TDCHitPreprocessing {
   }
 
   //================================================================
+  MOFIA_XTalkDiscarder::MOFIA_XTalkDiscarder(const std::string& topdir,
+                                             WirePlane::DetType det,
+                                             HistogramFactory& hf,
+                                             const DetectorGeo& geom,
+                                             const ConfigFile& conf)
+  {
+    const std::string hdir = topdir + "/" + WirePlane::detName(det);
+    hxt_ = hf.DefineTH1D(hdir, "XTFlag", "XTFlag", 2, -0.5, 1.5);
+  }
+
+  //----------------------------------------------------------------
+  void MOFIA_XTalkDiscarder::process(TDCHitWPPtrCollection *res,
+                                     TDCHitWPCollection *buf,
+                                     const TDCHitWPCollection& hits)
+  {
+    res->clear();
+    res->reserve(hits.size());
+    for(unsigned i=0; i<hits.size(); ++i) {
+      hxt_->Fill(hits[i].xtalk());
+      if(!hits[i].xtalk()) {
+        res->push_back(TDCHitWPPtr(hits, i));
+      }
+    }
+  }
+
+  //================================================================
   NarrowHitDiscarder::NarrowHitDiscarder(const std::string& topdir,
                                          WirePlane::DetType det,
                                          HistogramFactory& hf,

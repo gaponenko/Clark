@@ -43,6 +43,23 @@ namespace  TDCHitPreprocessing {
   };
 
   //----------------------------------------------------------------
+  // drop hits that MOFIA flagged as cross talk
+  class MOFIA_XTalkDiscarder : public IProcessor {
+  public:
+    MOFIA_XTalkDiscarder(const std::string& topdir,
+                         WirePlane::DetType det,
+                         HistogramFactory& hf,
+                         const DetectorGeo& geom,
+                         const ConfigFile& conf);
+
+    virtual void process(TDCHitWPPtrCollection *res,
+                         TDCHitWPCollection *buf,
+                         const TDCHitWPCollection& inputs);
+  private:
+    TH1 *hxt_;
+  };
+
+  //----------------------------------------------------------------
   class NarrowHitDiscarder : public IProcessor {
   public:
     NarrowHitDiscarder(const std::string& topdir,
