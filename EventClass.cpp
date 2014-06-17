@@ -2,6 +2,7 @@
 #include "MuCapUtilities.h"
 
 #include <cassert>
+#include <stdexcept>
 
 void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 {
@@ -680,30 +681,31 @@ void EventClass::InitVar( TTree* T)
 
 
 	//_________________________ TEC __________________________//
-
-	GetVar(T, "", "TEC_nhits",			&TEC_nhits);
-	GetVar(T, "", "tec_time",			tec_time);
-	GetVar(T, "", "tec_width",			tec_width);
-	GetVar(T, "", "tec_z",				tec_z);
-	GetVar(T, "TEC", "xy0",				xy0);
-	GetVar(T, "TEC", "tanthxy",			tanthxy);
-	GetVar(T, "TEC", "sigma",			sigma);
-	GetVar(T, "TEC", "zspan",			zspan);
-	GetVar(T, "TEC", "zrms",			zrms);
-	GetVar(T, "TEC", "ifail",			ifail);
-	GetVar(T, "", "tec_fitxn",			&tec_fitxn);
-	GetVar(T, "", "tec_fityn",			&tec_fityn);
-	GetVar(T, "", "tec_fitxt",			tec_fitxt);
-	GetVar(T, "", "tec_fitxz",			tec_fitxz);
-	GetVar(T, "", "tec_xres",			tec_xres);
-	GetVar(T, "", "tec_fityt",			tec_fityt);
-	GetVar(T, "", "tec_fityz",			tec_fityz);
-	GetVar(T, "", "tec_yres",			tec_yres);
-	GetVar(T, "", "nhits_in_scin",		&nhits_in_scin);
-	GetVar(T, "", "failed_cptof_m12",	&failed_cptof_m12);
-	GetVar(T, "", "global_wire",		global_wire);
-	GetVar(T, "", "TC_xy_TWIST",		TC_xy_TWIST);
-
+        const bool doTEC = false;
+        if(doTEC) {
+          GetVar(T, "", "TEC_nhits",			&TEC_nhits);
+          GetVar(T, "", "tec_time",			tec_time);
+          GetVar(T, "", "tec_width",			tec_width);
+          GetVar(T, "", "tec_z",				tec_z);
+          GetVar(T, "TEC", "xy0",				xy0);
+          GetVar(T, "TEC", "tanthxy",			tanthxy);
+          GetVar(T, "TEC", "sigma",			sigma);
+          GetVar(T, "TEC", "zspan",			zspan);
+          GetVar(T, "TEC", "zrms",			zrms);
+          GetVar(T, "TEC", "ifail",			ifail);
+          GetVar(T, "", "tec_fitxn",			&tec_fitxn);
+          GetVar(T, "", "tec_fityn",			&tec_fityn);
+          GetVar(T, "", "tec_fitxt",			tec_fitxt);
+          GetVar(T, "", "tec_fitxz",			tec_fitxz);
+          GetVar(T, "", "tec_xres",			tec_xres);
+          GetVar(T, "", "tec_fityt",			tec_fityt);
+          GetVar(T, "", "tec_fityz",			tec_fityz);
+          GetVar(T, "", "tec_yres",			tec_yres);
+          GetVar(T, "", "nhits_in_scin",		&nhits_in_scin);
+          GetVar(T, "", "failed_cptof_m12",	&failed_cptof_m12);
+          GetVar(T, "", "global_wire",		global_wire);
+          GetVar(T, "", "TC_xy_TWIST",		TC_xy_TWIST);
+        }
 
 	//_________________________ FirstLastDC  __________________________//
 
@@ -736,15 +738,18 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "fgfit_type",		fgfit_type);
 
 
-	//_________________________ MHitsOutput  __________________________//
+        //_________________________ MHitsOutput  __________________________//
+        const bool doMCounter = false;
+        if(doMCounter) {
+          GetVar(T, "", "nmhits",		&nmhits);
+          GetVar(T, "", "time",		time);
+        }
 
-	GetVar(T, "", "nmhits",		&nmhits);
-	GetVar(T, "", "time",		time);
-
-
-	//_________________________ PactOutput  __________________________//
-
-	GetVar(T, "", "pact_elost",		pact_elost);
+        //_________________________ PactOutput  __________________________//
+        const bool doPACT = false;
+        if(doPACT) {
+          GetVar(T, "", "pact_elost",		pact_elost);
+        }
 
 
 	//_________________________ PseudoPact  __________________________//
@@ -759,65 +764,70 @@ void EventClass::InitVar( TTree* T)
 	GetVar(T, "", "pspact_pc6width",	pc6width);
 
 
-	//_________________________ PseudoPactTest  __________________________//
+        //_________________________ PseudoPactTest  __________________________//
+        const bool doPseudoPactTest = false;
+        if(doPseudoPactTest) {
+          GetVar(T, "", "npc7",					&npc7);
+          GetVar(T, "", "npc8",					&npc8);
+          GetVar(T, "", "pspacttest_pc7wire",		pc7wire);
+          GetVar(T, "", "pspacttest_pc7time",		pc7time);
+          GetVar(T, "", "pspacttest_pc7width",	pc7width);
+          GetVar(T, "", "pspacttest_pc8wire",		pc8wire);
+          GetVar(T, "", "pspacttest_pc8time",		pc8time);
+          GetVar(T, "", "pspacttest_pc8width",	pc8width);
+        }
 
-	GetVar(T, "", "npc7",					&npc7);
-	GetVar(T, "", "npc8",					&npc8);
-	GetVar(T, "", "pspacttest_pc7wire",		pc7wire);
-	GetVar(T, "", "pspacttest_pc7time",		pc7time);
-	GetVar(T, "", "pspacttest_pc7width",	pc7width);
-	GetVar(T, "", "pspacttest_pc8wire",		pc8wire);
-	GetVar(T, "", "pspacttest_pc8time",		pc8time);
-	GetVar(T, "", "pspacttest_pc8width",	pc8width);
+        //_________________________ WinStatOutput  __________________________//
+        const bool doWinStatOutput = false;
+        if(doWinStatOutput) {
+          GetVar(T, "", "win_numdc",			win_numdc);
+          GetVar(T, "", "win_numpc",			win_numpc);
+          GetVar(T, "", "win_maxuv",			win_maxuv);
+          GetVar(T, "", "win_uavg",			win_uavg);
+          GetVar(T, "", "win_vavg",			win_vavg);
+          GetVar(T, "", "win_usig",			win_usig);
+          GetVar(T, "", "win_vsig",			win_vsig);
+          GetVar(T, "", "win_hitspp",			win_hitspp);
+          GetVar(T, "", "win_clareaavg",		win_clareaavg);
+          GetVar(T, "", "win_dcwidthavg",		win_dcwidthavg);
+          GetVar(T, "", "win_pctsig",			win_pctsig);
+          GetVar(T, "", "win_up_dense_start",	win_up_dense_start);
+          GetVar(T, "", "win_dn_dense_start",	win_dn_dense_start);
+        }
 
+        //_________________________ HeFitNHitsOutput  __________________________//
+        const bool doHeFitNHitsOutput = false;
+        if(doHeFitNHitsOutput) {
+          GetVar(T, "", "hefit_numu",			hefit_numu);
+          GetVar(T, "", "hefit_numv",			hefit_numv);
+          GetVar(T, "", "hefit_nunused",		hefit_nunused);
+          GetVar(T, "", "hefit_nmissingpl",	hefit_nmissingpl);
+        }
 
-	//_________________________ WinStatOutput  __________________________//
-
-	GetVar(T, "", "win_numdc",			win_numdc);
-	GetVar(T, "", "win_numpc",			win_numpc);
-	GetVar(T, "", "win_maxuv",			win_maxuv);
-	GetVar(T, "", "win_uavg",			win_uavg);
-	GetVar(T, "", "win_vavg",			win_vavg);
-	GetVar(T, "", "win_usig",			win_usig);
-	GetVar(T, "", "win_vsig",			win_vsig);
-	GetVar(T, "", "win_hitspp",			win_hitspp);
-	GetVar(T, "", "win_clareaavg",		win_clareaavg);
-	GetVar(T, "", "win_dcwidthavg",		win_dcwidthavg);
-	GetVar(T, "", "win_pctsig",			win_pctsig);
-	GetVar(T, "", "win_up_dense_start",	win_up_dense_start);
-	GetVar(T, "", "win_dn_dense_start",	win_dn_dense_start);
-
-
-	//_________________________ HeFitNHitsOutput  __________________________//
-
-	GetVar(T, "", "hefit_numu",			hefit_numu);
-	GetVar(T, "", "hefit_numv",			hefit_numv);
-	GetVar(T, "", "hefit_nunused",		hefit_nunused);
-	GetVar(T, "", "hefit_nmissingpl",	hefit_nmissingpl);
-
-
-	//_________________________ FgFitNHitsOutput  __________________________//
+        //_________________________ FgFitNHitsOutput  __________________________//
 
 	GetVar(T, "", "fgfit_numu",			fgfit_numu);
 	GetVar(T, "", "fgfit_numv",			fgfit_numv);
 	GetVar(T, "", "fgfit_nunused",		fgfit_nunused);
 	GetVar(T, "", "fgfit_nmissingpl",	fgfit_nmissingpl);
 
-	//_________________________ User  __________________________//
-
-	GetVar(T, "", "event_user",		event_user);
-	GetVar(T, "", "win_user1",		win_user1);
-	GetVar(T, "", "win_user2",		win_user2);
-	GetVar(T, "", "win_user3",		win_user3);
-	GetVar(T, "", "win_user4",		win_user4);
-	GetVar(T, "", "track_user1",	track_user1);
-	GetVar(T, "", "track_user2",	track_user2);
-	GetVar(T, "", "track_user3",	track_user3);
-	GetVar(T, "", "track_user4",	track_user4);
-	GetVar(T, "", "mctrack_user1",	mctrack_user1);
-	GetVar(T, "", "mctrack_user2",	mctrack_user2);
-	GetVar(T, "", "mctrack_user3",	mctrack_user3);
-	GetVar(T, "", "mctrack_user4",	mctrack_user4);
+        //_________________________ User  __________________________//
+        const bool doUser = false;
+        if(doUser) {
+          GetVar(T, "", "event_user",		event_user);
+          GetVar(T, "", "win_user1",		win_user1);
+          GetVar(T, "", "win_user2",		win_user2);
+          GetVar(T, "", "win_user3",		win_user3);
+          GetVar(T, "", "win_user4",		win_user4);
+          GetVar(T, "", "track_user1",	track_user1);
+          GetVar(T, "", "track_user2",	track_user2);
+          GetVar(T, "", "track_user3",	track_user3);
+          GetVar(T, "", "track_user4",	track_user4);
+          GetVar(T, "", "mctrack_user1",	mctrack_user1);
+          GetVar(T, "", "mctrack_user2",	mctrack_user2);
+          GetVar(T, "", "mctrack_user3",	mctrack_user3);
+          GetVar(T, "", "mctrack_user4",	mctrack_user4);
+        }
 
 	// SPECIAL. Initialize the random seed using the run number.
 	if ( MomAngSmearingDo )
@@ -827,42 +837,50 @@ void EventClass::InitVar( TTree* T)
 
 void EventClass::GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Int_t* V)
 {
-	if ( Branch == "")
-		if (CheckBranchLeaf( T, Leaf))
-		{
-			ExistList[Leaf]	= true;
-			T->GetLeaf(Leaf.c_str())->SetAddress(V);
-		}
-		else
-			ExistList[Leaf]	= false;
-	else
-		if (CheckBranchLeaf( T, Branch, Leaf))
-		{
-			ExistList[Leaf]	= true;
-			T->GetBranch(Branch.c_str())->GetLeaf(Leaf.c_str())->SetAddress(V);
-		}
-		else
-			ExistList[Leaf]	= false;
+  if ( Branch == "") {
+    if (CheckBranchLeaf( T, Leaf)) {
+      ExistList[Leaf] = true;
+      T->GetLeaf(Leaf.c_str())->SetAddress(V);
+    }
+    else {
+      //ExistList[Leaf] = false;
+      throw std::runtime_error("GetVar: can not get \""+Leaf+"\" in branch \""+Branch+"\"");
+    }
+  }
+  else {
+    if (CheckBranchLeaf( T, Branch, Leaf)) {
+        ExistList[Leaf]	= true;
+        T->GetBranch(Branch.c_str())->GetLeaf(Leaf.c_str())->SetAddress(V);
+      }
+    else {
+      //ExistList[Leaf] = false;
+      throw std::runtime_error("GetVar: can not get \""+Leaf+"\" in branch \""+Branch+"\"");
+    }
+  }
 }
 
 void EventClass::GetVar( TTree* T, const std::string& Branch, const std::string& Leaf, Float_t* V)
 {
-	if ( Branch == "")
-		if (CheckBranchLeaf( T, Leaf))
-		{
-			ExistList[Leaf]	= true;
-			T->GetLeaf(Leaf.c_str())->SetAddress(V);
-		}
-		else
-			ExistList[Leaf]	= false;
-	else
-		if (CheckBranchLeaf( T, Branch, Leaf))
-		{
-			ExistList[Leaf]	= true;
-			T->GetBranch(Branch.c_str())->GetLeaf(Leaf.c_str())->SetAddress(V);
-		}
-		else
-			ExistList[Leaf]	= false;
+  if ( Branch == "") {
+    if (CheckBranchLeaf( T, Leaf)) {
+        ExistList[Leaf]	= true;
+        T->GetLeaf(Leaf.c_str())->SetAddress(V);
+      }
+    else {
+      // ExistList[Leaf] = false;
+      throw std::runtime_error("GetVar: can not get \""+Leaf+"\" in branch \""+Branch+"\"");
+    }
+  }
+  else {
+    if (CheckBranchLeaf( T, Branch, Leaf)) {
+        ExistList[Leaf]	= true;
+        T->GetBranch(Branch.c_str())->GetLeaf(Leaf.c_str())->SetAddress(V);
+      }
+    else {
+      // ExistList[Leaf] = false;
+      throw std::runtime_error("GetVar: can not get \""+Leaf+"\" in branch \""+Branch+"\"");
+    }
+  }
 }
 
 bool EventClass::CheckBranchLeaf( TTree* T, const std::string& Branch, const std::string& Leaf)
