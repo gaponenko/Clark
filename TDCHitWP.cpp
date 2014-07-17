@@ -10,7 +10,11 @@ std::ostream& operator<<(std::ostream& os, const WireCellId& cid) {
 }
 
 std::ostream& operator<<(std::ostream& os, const TDCHitWP& hit) {
-  return os<<"TDCHit(cid="<<hit.cid()<<", time="<<hit.time()<<", width="<<hit.width()<<" )";
+  return os<<"TDCHit(cid="<<hit.cid()
+           <<", time="<<hit.time()
+           <<", width="<<hit.width()
+           <<", xt="<<hit.xtalk()
+           <<" )";
 }
 
 std::ostream& operator<<(std::ostream& os, const TDCHitWPCollection& coll) {
