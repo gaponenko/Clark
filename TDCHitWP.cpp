@@ -18,11 +18,28 @@ std::ostream& operator<<(std::ostream& os, const TDCHitWP& hit) {
 }
 
 std::ostream& operator<<(std::ostream& os, const TDCHitWPCollection& coll) {
-  std::copy(coll.begin(), coll.end(), std::ostream_iterator<TDCHitWP>(os, " "));
+  TDCHitWPPtrCollection hits;
+  hits.reserve(coll.size());
+  for(unsigned i=0; i<coll.size(); ++i) {
+    hits.push_back(TDCHitWPPtr(coll, i));
+  }
+
+  std::sort(hits.begin(), hits.end(), TDCHitWPCmpTime());
+  std::stable_sort(hits.begin(), hits.end(), TDCHitWPCmpGeom());
+  // here we have hits sorted by cell then time
+
+  for(TDCHitWPPtrCollection::const_iterator i=hits.begin(); i!=hits.end(); ++i) {
+    os<<**i<<" ";
+  }
   return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const TDCHitWPPtrCollection& hits) {
+std::ostream& operator<<(std::ostream& os, const TDCHitWPPtrCollection& origHits) {
+  TDCHitWPPtrCollection hits(origHits);
+  std::sort(hits.begin(), hits.end(), TDCHitWPCmpTime());
+  std::stable_sort(hits.begin(), hits.end(), TDCHitWPCmpGeom());
+  // here we have hits sorted by cell then time
+
   for(TDCHitWPPtrCollection::const_iterator i=hits.begin(); i!=hits.end(); ++i) {
     os<<**i<<" ";
   }
