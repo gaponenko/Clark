@@ -268,6 +268,10 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
         skim<<evt.nrun<<" "<<evt.nevt<<std::endl;
       }
     }
+    if(false && (cutCharge_ > 0)) {
+      static std::ofstream skim("skim_posFinal.txt");
+      skim<<evt.nrun<<" "<<evt.nevt<<std::endl;
+    }
   }
 
   return selected;
