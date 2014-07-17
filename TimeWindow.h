@@ -4,6 +4,8 @@
 #define TimeWindow_h
 
 #include <vector>
+#include <ostream>
+
 #include "TDCHitWP.h"
 
 struct TimeWindow {
@@ -31,6 +33,7 @@ struct TimeWindowingResults {
   TimeWindowingResults(): iTrigWin(-1u) {}
 };
 
-
+std::ostream& operator<<(std::ostream& os, const TimeWindow& win);
+std::ostream& operator<<(std::ostream& os, const TimeWindowingResults& wres);
 
 #endif/*TimeWindow_h*/
