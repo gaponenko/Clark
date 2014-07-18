@@ -41,10 +41,14 @@ void TimeWindowingDC::init(HistogramFactory &hf,
 void TimeWindowingDC::assignDCHits(const TDCHitWPPtrCollection& dcHits,
                                    TimeWindowingResults *inout)
 {
+  std::vector<TimeWindow::StreamType> newWinStream;
+  newWinStream.reserve(inout->windows.size());
+
   TimeWindowCollection& windows = inout->windows;
   for(unsigned i=0; i < windows.size(); ++i) {
     windows[i].tstartDC = windows[i].tstart + winDCStart_;
     windows[i].tendDC = windows[i].tstart + winDCEnd_;
+    newWinStream[i] = windows[i].stream;
   }
 
   //----------------
@@ -84,7 +88,7 @@ void TimeWindowingDC::assignDCHits(const TDCHitWPPtrCollection& dcHits,
         }
 
         windows[iwin].dcHits.push_back(phit);
-        win.stream = TimeWindow::MIXED;
+        newWinStream[iwin] = TimeWindow::MIXED;
         assigned = true;
       }
     }
@@ -92,6 +96,10 @@ void TimeWindowingDC::assignDCHits(const TDCHitWPPtrCollection& dcHits,
     if(!assigned) {
       inout->unassignedDCHits.push_back(phit);
     }
+  }
+
+  for(unsigned i=0; i<newWinStream.size(); ++i) {
+    inout->windows[i].stream = newWinStream[i];
   }
 
   if(winDCDoHistos_) {
