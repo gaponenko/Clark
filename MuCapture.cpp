@@ -271,12 +271,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_EVENT_NUMBER;
   }
 
-  TDCHitPreprocessing::PassThrough hitpass;
-  TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits(), hitpass);
+  TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits());
   const TDCHitWPPtrCollection& allPCHits = allPCHitsBuf.get();
 
-  TDCHitPreprocessing::Hits filteredPCHitsBuf(evt.pc_hits(), *pcHitProcessor_);
-  const TDCHitWPPtrCollection& filteredPCHits = filteredPCHitsBuf.get();
+  TDCHitWPPtrCollection filteredPCHits;
+  pcHitProcessor_->process(&filteredPCHits, allPCHits);
 
   hwidthPCall_.fill(allPCHits);
   hwidthPCfiltered_.fill(filteredPCHits);
@@ -290,11 +289,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     hXT2PlanePC_.fill(allPCHits);
   }
 
-  TDCHitPreprocessing::Hits allDCHitsBuf(evt.dc_hits(), hitpass);
+  TDCHitPreprocessing::Hits allDCHitsBuf(evt.dc_hits());
   const TDCHitWPPtrCollection& allDCHits = allDCHitsBuf.get();
 
-  TDCHitPreprocessing::Hits filteredDCHitsBuf(evt.dc_hits(), *dcHitProcessor_);
-  const TDCHitWPPtrCollection& filteredDCHits = filteredDCHitsBuf.get();
+  TDCHitWPPtrCollection filteredDCHits;
+  dcHitProcessor_->process(&filteredDCHits, allDCHits);
 
   hwidthDCall_.fill(allDCHits);
   hwidthDCfiltered_.fill(filteredDCHits);

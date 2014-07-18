@@ -12,13 +12,11 @@ namespace TDCHitPreprocessing {
 
   //================================================================
   void PassThrough::process(TDCHitWPPtrCollection *res,
-                            const TDCHitWPCollection& hits)
+                            const TDCHitWPPtrCollection& hits)
   {
     res->clear();
     res->reserve(hits.size());
-    for(unsigned i=0; i<hits.size(); ++i) {
-      res->push_back(TDCHitWPPtr(hits, i));
-    }
+    std::copy(hits.begin(), hits.end(), std::back_inserter(*res));
   }
 
   //================================================================
@@ -34,14 +32,14 @@ namespace TDCHitPreprocessing {
 
   //----------------------------------------------------------------
   void MOFIA_XTalkDiscarder::process(TDCHitWPPtrCollection *res,
-                                     const TDCHitWPCollection& hits)
+                                     const TDCHitWPPtrCollection& hits)
   {
     res->clear();
     res->reserve(hits.size());
     for(unsigned i=0; i<hits.size(); ++i) {
-      hxt_->Fill(hits[i].xtalk());
-      if(!hits[i].xtalk()) {
-        res->push_back(TDCHitWPPtr(hits, i));
+      hxt_->Fill(hits[i]->xtalk());
+      if(!hits[i]->xtalk()) {
+        res->push_back(hits[i]);
       }
     }
   }
@@ -57,12 +55,12 @@ namespace TDCHitPreprocessing {
 
   //================================================================
   void NarrowHitDiscarder::process(TDCHitWPPtrCollection *res,
-                                   const TDCHitWPCollection& hits)
+                                   const TDCHitWPPtrCollection& hits)
   {
     res->clear();
     for(unsigned i=0; i<hits.size(); ++i) {
-      if(hits[i].width() > cutMinTDCWidth_) {
-        res->push_back(TDCHitWPPtr(hits, i));
+      if(hits[i]->width() > cutMinTDCWidth_) {
+        res->push_back(hits[i]);
       }
     }
   }
@@ -111,7 +109,7 @@ namespace TDCHitPreprocessing {
 
   //================================================================
   void SameWireHitDiscarder::process(TDCHitWPPtrCollection *res,
-                                     const TDCHitWPCollection& inputs)
+                                     const TDCHitWPPtrCollection& inputs)
   {
     PassThrough pt;
     TDCHitWPPtrCollection hits;
@@ -150,6 +148,14 @@ namespace TDCHitPreprocessing {
     }
 
     res->swap(out);
+  }
+
+  //================================================================
+  Hits::Hits(const TDCHitWPCollection& in) {
+    phits_.reserve(in.size());
+    for(unsigned i=0; i<in.size(); ++i) {
+      phits_.push_back(TDCHitWPPtr(in, i));
+    }
   }
 
   //================================================================

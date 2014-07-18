@@ -27,7 +27,7 @@ namespace  TDCHitPreprocessing {
     // res should point to valid empty collections at the call time.
     // After the call *res will contain the result.
     virtual void process(TDCHitWPPtrCollection *res,
-                         const TDCHitWPCollection& inputs) = 0;
+                         const TDCHitWPPtrCollection& inputs) = 0;
 
     virtual ~IProcessor() {}
   };
@@ -36,7 +36,7 @@ namespace  TDCHitPreprocessing {
   class PassThrough : public IProcessor {
   public:
     virtual void process(TDCHitWPPtrCollection *res,
-                         const TDCHitWPCollection& inputs);
+                         const TDCHitWPPtrCollection& inputs);
   };
 
   //----------------------------------------------------------------
@@ -50,7 +50,7 @@ namespace  TDCHitPreprocessing {
                          const ConfigFile& conf);
 
     virtual void process(TDCHitWPPtrCollection *res,
-                         const TDCHitWPCollection& inputs);
+                         const TDCHitWPPtrCollection& inputs);
   private:
     TH1 *hxt_;
   };
@@ -65,7 +65,7 @@ namespace  TDCHitPreprocessing {
                        const ConfigFile& conf);
 
     virtual void process(TDCHitWPPtrCollection *res,
-                         const TDCHitWPCollection& inputs);
+                         const TDCHitWPPtrCollection& inputs);
 
   private:
     float cutMinTDCWidth_;
@@ -81,7 +81,7 @@ namespace  TDCHitPreprocessing {
                          const ConfigFile& conf);
 
     virtual void process(TDCHitWPPtrCollection *res,
-                         const TDCHitWPCollection& inputs);
+                         const TDCHitWPPtrCollection& inputs);
 
   private:
     float cutSameWireDt_;
@@ -94,15 +94,13 @@ namespace  TDCHitPreprocessing {
   };
 
   //================================================================
-  // The "data" class
+  // A helper to convert from by-value to by-pointer collection
 
   class Hits {
   public:
     const TDCHitWPPtrCollection& get() const { return phits_; }
 
-    Hits(const TDCHitWPCollection& in, IProcessor& proc) {
-      proc.process(&phits_, in);
-    }
+    explicit Hits(const TDCHitWPCollection& in);
 
   private:
     TDCHitWPPtrCollection phits_;
