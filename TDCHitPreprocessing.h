@@ -24,11 +24,9 @@ namespace  TDCHitPreprocessing {
 
   class IProcessor {
   public:
-    // res and buf arguments should point to valid empty collections.
-    // After the call *res will contain the result.  It may or may not
-    // use *buf for storage.
+    // res should point to valid empty collections at the call time.
+    // After the call *res will contain the result.
     virtual void process(TDCHitWPPtrCollection *res,
-                         TDCHitWPCollection *buf,
                          const TDCHitWPCollection& inputs) = 0;
 
     virtual ~IProcessor() {}
@@ -38,7 +36,6 @@ namespace  TDCHitPreprocessing {
   class PassThrough : public IProcessor {
   public:
     virtual void process(TDCHitWPPtrCollection *res,
-                         TDCHitWPCollection *buf,
                          const TDCHitWPCollection& inputs);
   };
 
@@ -53,7 +50,6 @@ namespace  TDCHitPreprocessing {
                          const ConfigFile& conf);
 
     virtual void process(TDCHitWPPtrCollection *res,
-                         TDCHitWPCollection *buf,
                          const TDCHitWPCollection& inputs);
   private:
     TH1 *hxt_;
@@ -69,7 +65,6 @@ namespace  TDCHitPreprocessing {
                        const ConfigFile& conf);
 
     virtual void process(TDCHitWPPtrCollection *res,
-                         TDCHitWPCollection *buf,
                          const TDCHitWPCollection& inputs);
 
   private:
@@ -86,7 +81,6 @@ namespace  TDCHitPreprocessing {
                          const ConfigFile& conf);
 
     virtual void process(TDCHitWPPtrCollection *res,
-                         TDCHitWPCollection *buf,
                          const TDCHitWPCollection& inputs);
 
   private:
@@ -107,11 +101,10 @@ namespace  TDCHitPreprocessing {
     const TDCHitWPPtrCollection& get() const { return phits_; }
 
     Hits(const TDCHitWPCollection& in, IProcessor& proc) {
-      proc.process(&phits_, &buf_, in);
+      proc.process(&phits_, in);
     }
 
   private:
-    TDCHitWPCollection buf_;
     TDCHitWPPtrCollection phits_;
   };
 

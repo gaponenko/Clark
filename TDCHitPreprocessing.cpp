@@ -12,7 +12,6 @@ namespace TDCHitPreprocessing {
 
   //================================================================
   void PassThrough::process(TDCHitWPPtrCollection *res,
-                            TDCHitWPCollection *buf,
                             const TDCHitWPCollection& hits)
   {
     res->clear();
@@ -35,7 +34,6 @@ namespace TDCHitPreprocessing {
 
   //----------------------------------------------------------------
   void MOFIA_XTalkDiscarder::process(TDCHitWPPtrCollection *res,
-                                     TDCHitWPCollection *buf,
                                      const TDCHitWPCollection& hits)
   {
     res->clear();
@@ -59,7 +57,6 @@ namespace TDCHitPreprocessing {
 
   //================================================================
   void NarrowHitDiscarder::process(TDCHitWPPtrCollection *res,
-                                   TDCHitWPCollection * /*buf*/,
                                    const TDCHitWPCollection& hits)
   {
     res->clear();
@@ -114,12 +111,11 @@ namespace TDCHitPreprocessing {
 
   //================================================================
   void SameWireHitDiscarder::process(TDCHitWPPtrCollection *res,
-                                     TDCHitWPCollection *buf,
                                      const TDCHitWPCollection& inputs)
   {
     PassThrough pt;
     TDCHitWPPtrCollection hits;
-    pt.process(&hits, buf, inputs);
+    pt.process(&hits, inputs);
 
     std::sort(hits.begin(), hits.end(), TDCHitWPCmpTime());
     std::stable_sort(hits.begin(), hits.end(), TDCHitWPCmpGeom());
