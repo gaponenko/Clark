@@ -41,8 +41,7 @@ void TimeWindowingDC::init(HistogramFactory &hf,
 void TimeWindowingDC::assignDCHits(const TDCHitWPPtrCollection& dcHits,
                                    TimeWindowingResults *inout)
 {
-  std::vector<TimeWindow::StreamType> newWinStream;
-  newWinStream.reserve(inout->windows.size());
+  std::vector<TimeWindow::StreamType> newWinStream(inout->windows.size(), TimeWindow::MIXED);
 
   TimeWindowCollection& windows = inout->windows;
   for(unsigned i=0; i < windows.size(); ++i) {
