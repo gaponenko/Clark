@@ -295,13 +295,11 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/HitPreproc/PC/applyXTalk", true);
         SetKey(Conf, "MuCapture/HitPreproc/DC/applyXTalk", true);
 
-        SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "MOFIA_XTalkDiscarder");
-        //SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "SameWireHitDiscarder");
+        SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "SameWireHitDiscarder");
         SetKey(Conf, "MuCapture/HitPreproc/PC/NarrowHitDiscarder/cutMinTDCWidth", 40.);
         SetKey(Conf, "MuCapture/HitPreproc/PC/SameWireHitDiscarder/cutSameWireDt", 200.);
 
-        SetKey(Conf, "MuCapture/HitPreproc/DC/processor", "MOFIA_XTalkDiscarder");
-        //SetKey(Conf, "MuCapture/HitPreproc/DC/processor", "NarrowHitDiscarder");
+        SetKey(Conf, "MuCapture/HitPreproc/DC/processor", "NarrowHitDiscarder");
         SetKey(Conf, "MuCapture/HitPreproc/DC/NarrowHitDiscarder/cutMinTDCWidth", 50.);
 
         // If defined, ignore all other input events
