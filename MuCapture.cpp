@@ -609,6 +609,9 @@ MuCapture::makeTDCHitPreprocessor(WirePlane::DetType d,
   if(proc == "SameWireHitDiscarder") {
     return new TDCHitPreprocessing::SameWireHitDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
   }
+  if(proc == "PassThrough") {
+    return new TDCHitPreprocessing::PassThrough();
+  }
   throw std::runtime_error("MuCapture::makeTDCHitPreprocessor(): unknown processor name \""+proc+"\"");
 }
 
