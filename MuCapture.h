@@ -113,6 +113,9 @@ public :
     , cutBeamVetoMaxPCplanes_()
     , cutMultiwinNextdt_()
 
+    , pcXTalkProcessor_()
+    , dcXTalkProcessor_()
+
     , pcHitProcessor_()
     , dcHitProcessor_()
 
@@ -162,6 +165,9 @@ private :
   double cutWinTimeMin_;
   double cutWinTimeMax_;
   double cutMultiwinNextdt_; // min t2-t1
+
+  TDCHitPreprocessing::IProcessor *pcXTalkProcessor_;
+  TDCHitPreprocessing::IProcessor *dcXTalkProcessor_;
 
   TDCHitPreprocessing::IProcessor *pcHitProcessor_;
   TDCHitPreprocessing::IProcessor *dcHitProcessor_;
@@ -253,6 +259,9 @@ private :
   HistMuCapTruth hTruthMuStop_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
+
+  static TDCHitPreprocessing::IProcessor*
+  makeXTalkPreprocessor(const std::string& topdir, WirePlane::DetType d, HistogramFactory& hf, const DetectorGeo& geom, ConfigFile& conf);
 
   static TDCHitPreprocessing::IProcessor*
   makeTDCHitPreprocessor(WirePlane::DetType d, HistogramFactory& hf, const DetectorGeo& geom, ConfigFile& conf);

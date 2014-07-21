@@ -89,6 +89,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
 
   //----------------------------------------------------------------
+  pcXTalkProcessor_ = makeXTalkPreprocessor(hdir+"/hitLevel/XTalk", WirePlane::PC, H, *E.geo, Conf);
+  dcXTalkProcessor_ = makeXTalkPreprocessor(hdir+"/hitLevel/XTalk", WirePlane::DC, H, *E.geo, Conf);
+
   pcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::PC, H, *E.geo, Conf);
   dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
 
@@ -274,8 +277,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits());
   const TDCHitWPPtrCollection& allPCHits = allPCHitsBuf.get();
 
+  TDCHitWPPtrCollection nxtPCHits;
+  pcXTalkProcessor_->process(&nxtPCHits, allPCHits);
+
   TDCHitWPPtrCollection filteredPCHits;
-  pcHitProcessor_->process(&filteredPCHits, allPCHits);
+  pcHitProcessor_->process(&filteredPCHits, nxtPCHits);
 
   hwidthPCall_.fill(allPCHits);
   hwidthPCfiltered_.fill(filteredPCHits);
@@ -292,8 +298,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   TDCHitPreprocessing::Hits allDCHitsBuf(evt.dc_hits());
   const TDCHitWPPtrCollection& allDCHits = allDCHitsBuf.get();
 
+  TDCHitWPPtrCollection nxtDCHits;
+  dcXTalkProcessor_->process(&nxtDCHits, allDCHits);
+
   TDCHitWPPtrCollection filteredDCHits;
-  dcHitProcessor_->process(&filteredDCHits, allDCHits);
+  dcHitProcessor_->process(&filteredDCHits, nxtDCHits);
 
   hwidthDCall_.fill(allDCHits);
   hwidthDCfiltered_.fill(filteredDCHits);
@@ -563,6 +572,24 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   return CUTS_DOWNSTREAM_ACCEPTED;
+}
+
+//================================================================
+TDCHitPreprocessing::IProcessor *
+MuCapture::makeXTalkPreprocessor(const std::string& topdir,
+                                 WirePlane::DetType d,
+                                 HistogramFactory& hf,
+                                 const DetectorGeo& geom,
+                                 ConfigFile& conf)
+{
+  const bool doXTalk = conf.read<bool>("MuCapture/HitPreproc/"+WirePlane::detName(d)+"/applyXTalk");
+  if(doXTalk) {
+    return new TDCHitPreprocessing::
+      MOFIA_XTalkDiscarder(topdir, d, hf, geom, conf);
+  }
+  else {
+    return new TDCHitPreprocessing::PassThrough();
+  }
 }
 
 //================================================================

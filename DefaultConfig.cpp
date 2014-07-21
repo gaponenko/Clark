@@ -292,6 +292,9 @@ void SetDefault(ConfigFile &Conf)
 
         SetKey(Conf, "MuCapture/killPC6DeadWire", true);
 
+        SetKey(Conf, "MuCapture/HitPreproc/PC/applyXTalk", true);
+        SetKey(Conf, "MuCapture/HitPreproc/DC/applyXTalk", true);
+
         SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "MOFIA_XTalkDiscarder");
         //SetKey(Conf, "MuCapture/HitPreproc/PC/processor", "SameWireHitDiscarder");
         SetKey(Conf, "MuCapture/HitPreproc/PC/NarrowHitDiscarder/cutMinTDCWidth", 40.);
