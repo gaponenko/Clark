@@ -621,8 +621,12 @@ void EventClass::InitVar( TTree* T)
           GetVar(T, "", "mcvertex_vv",          mcvertex_vv);
           GetVar(T, "", "mcvertex_vz",          mcvertex_vz);
           GetVar(T, "", "mcvertex_istop",       mcvertex_istop);
-          GetVar(T, "", "micheld_itrack",       micheld_itrack);
-          GetVar(T, "", "micheld_accflag",      micheld_accflag);
+
+          const bool do_micheld = false;
+          if(do_micheld) {
+            GetVar(T, "", "micheld_itrack",       micheld_itrack);
+            GetVar(T, "", "micheld_accflag",      micheld_accflag);
+          }
         }
 
         if(!loadDefaultTWISTVars) {
