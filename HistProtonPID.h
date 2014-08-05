@@ -8,6 +8,7 @@
 #include "WireCluster.h"
 
 #include "HistTDCSinglePlanePID.h"
+#include "HistRangePID.h"
 
 class TH1;
 class TH2;
@@ -44,6 +45,8 @@ private :
   HistTDCSinglePlanePID pidPC8_;
   HistTDCSinglePlanePID pidDC23_;
   HistTDCSinglePlanePID pidDC24_;
+
+  HistRangePID pidRange_;
 
   //----------------
   TH2 *hNumClusters78_;

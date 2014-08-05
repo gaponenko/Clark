@@ -20,6 +20,7 @@ void HistProtonPID::init(const std::string& hdir,
   pidPC8_.init(hdir+"/pidPC8", 22+8, hf, conf);
   pidDC23_.init(hdir+"/pidDC23", 8+23, hf, conf);
   pidDC24_.init(hdir+"/pidDC24", 8+24, hf, conf);
+  pidRange_.init(hdir+"/pidRange", hf, conf);
 
   //----------------------------------------------------------------
   hNumClusters78_ = hf.DefineTH2D(hdir, "numClusters78", "PC8 vs PC7 num clusters", 5, -0.5, 4.5, 5, -0.5, 4.5);
@@ -82,6 +83,7 @@ void HistProtonPID::fill(const EventClass& evt, int itrack, const ClustersByPlan
   pidPC8_.fill(evt, itrack, protonGlobalClusters);
   pidDC23_.fill(evt, itrack, protonGlobalClusters);
   pidDC24_.fill(evt, itrack, protonGlobalClusters);
+  pidRange_.fill(evt, itrack, protonGlobalClusters);
 
   hNumClusters78_->Fill(protonGlobalClusters[29].size(), protonGlobalClusters[30].size());
 
