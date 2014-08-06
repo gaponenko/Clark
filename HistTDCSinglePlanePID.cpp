@@ -22,10 +22,12 @@ TDCPlanePIDResult::TDCPlanePIDResult()
 //================================================================
 void HistTDCSinglePlanePID::init(const std::string& hdir,
                                  int globalPlaneNumber,
+                                 const TDCPIDCalib& calibration,
                                  HistogramFactory &hf,
                                  const ConfigFile& conf)
 {
   globalPlaneNumber_ = globalPlaneNumber;
+  calib_ = calibration;
 
   std::ostringstream osplane;
   osplane<<globalPlaneNumber;
@@ -66,9 +68,12 @@ TDCPlanePIDResult HistTDCSinglePlanePID::fill(const EventClass& evt, int itrack,
     double meanWidth = clusters[0].totalTDCWidth()/clusters[0].numCells();
     const double rawPIDVar = meanWidth * evt.costh[itrack];
 
-    res.analyzed = true;
     res.nwires = clusters[0].numCells();
     res.raw = rawPIDVar;
+
+    std::pair<bool,double> rc = calib_.yCalibrated(res.nwires, evt.ptot[itrack], rawPIDVar);
+    res.analyzed = rc.first;
+    res.calibrated = rc.second;
 
     if(clusters[0].numCells() == 1) {
       hsumwcos_vs_p_1_->Fill(evt.ptot[itrack], rawPIDVar);

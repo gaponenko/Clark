@@ -4,6 +4,7 @@
 #define HistTDCSinglePlanePID_h
 
 #include "WireCluster.h"
+#include "TDCPIDCalib.h"
 
 class TH1;
 class TH2;
@@ -26,6 +27,7 @@ class HistTDCSinglePlanePID {
 public:
   void init(const std::string& hdir,
             int globalPlaneNumber, // to use for PID
+            const TDCPIDCalib& calibration,
             HistogramFactory &hf,
             const ConfigFile &conf);
 
@@ -40,6 +42,8 @@ public:
 
 private :
   int globalPlaneNumber_;
+  TDCPIDCalib calib_;
+
   TH1 *hNumClusters_;
   TH1 *hSingleClusterSize_;
   TH2 *hsumwcos_vs_p_1_;

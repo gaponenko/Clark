@@ -405,4 +405,11 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/ProtonWindow/RextMax", 13.);
 
         //================================================================
+        SetKey(Conf, "MuCapture/PIDCalib/PC/1", "100. 490. -1.6");
+        SetKey(Conf, "MuCapture/PIDCalib/PC/2", "100. 340. -1.4");
+        SetKey(Conf, "MuCapture/PIDCalib/PC/3", "100. 255. -1.4");
+
+        SetKey(Conf, "MuCapture/PIDCalib/DC/1", "100. 580. -1.6");
+        SetKey(Conf, "MuCapture/PIDCalib/DC/2", "100. 460. -1.1");
+        //================================================================
 }

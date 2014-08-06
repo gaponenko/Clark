@@ -12,6 +12,7 @@
 
 class TH1;
 class TH2;
+class TH3;
 class TProfile2D;
 
 class HistogramFactory;
@@ -38,6 +39,10 @@ public:
     , hcs78cos_vs_p_12_()
     , hcs78cos_vs_p_21_()
     , hcs78cos_vs_p_22_()
+    , hcsPC8vsPC7vsp_()
+    , hcsDC24vsDC23vsp_()
+    , hcsDCAvgvsPCavgVsp_()
+    , hcsDCAvgvsPCavg_p100_()
   {}
 
 private :
@@ -71,6 +76,14 @@ private :
   TH2 *hsum2324cos_vs_p_12_;
   TH2 *hsum2324cos_vs_p_21_;
   TH2 *hsum2324cos_vs_p_22_;
+
+  TH3* hcsPC8vsPC7vsp_;
+  TH3* hcsDC24vsDC23vsp_;
+  TH3* hcsDCAvgvsPCavgVsp_;
+
+  TH2* hcsPC8vsPC7_p100_;
+  TH2* hcsDC24vsDC23_p100_;
+  TH2* hcsDCAvgvsPCavg_p100_;
 };
 
 #endif/*HistProtonPID_h*/
