@@ -76,6 +76,17 @@ namespace MuCapUtilities {
   }
 
   //================================================================
+  int findExtendedLastPlane(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters) {
+    // Find the last plane contiguous with the track
+    int lastPlane = evt.hefit_pstop[itrack];
+    while(++lastPlane < protonGlobalClusters.size() && !protonGlobalClusters[lastPlane].empty())
+      {}
+
+    --lastPlane;
+    return lastPlane;
+  }
+
+  //================================================================
   Stats::Stats()
     : sum_(0.)
     , min_(std::numeric_limits<double>::max())

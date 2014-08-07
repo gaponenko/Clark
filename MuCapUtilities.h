@@ -30,6 +30,9 @@ namespace MuCapUtilities {
 
   unsigned numWires(const WireClusterCollection& clusters);
 
+  // Find the last plane in a hit plane range contiguous with the track
+  int findExtendedLastPlane(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
+
   //================================================================
   class Stats {
   public:

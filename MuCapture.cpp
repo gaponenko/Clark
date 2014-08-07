@@ -86,7 +86,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, +1, TimeWindow::DOWNSTREAM, &anDnLateRes_);
   dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, -1, TimeWindow::DOWNSTREAM);
 
+  dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
+
   hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
+  hContainedProtonPID_.init(hdir+"/posContainedTrackPID", H, Conf);
 
   //----------------------------------------------------------------
   pcXTalkProcessor_ = makeXTalkPreprocessor(hdir+"/hitLevel/XTalk", WirePlane::PC, H, *E.geo, Conf);
@@ -547,6 +550,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
   if(iPosTrack != -1) {
     hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+
+    if(dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters)) {
+      hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+    }
   }
 
   dnNegTracks_.process(evt, muStop, decayWindow);

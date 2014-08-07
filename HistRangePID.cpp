@@ -1,6 +1,7 @@
 // Andrei Gaponenko, 2014
 
 #include "HistRangePID.h"
+#include "MuCapUtilities.h"
 
 #include <cmath>
 
@@ -45,11 +46,7 @@ void HistRangePID::fill(const EventClass& evt, int itrack, const ClustersByPlane
   trackRangecosVsP_->Fill(evt.ptot[itrack], (trackEnd-28)/std::abs(evt.costh[itrack]));
 
   // Find the last plane contiguous with the track
-  int lastPlane = trackEnd;
-  while(++lastPlane < protonGlobalClusters.size() && !protonGlobalClusters[lastPlane].empty()) {}
-  --lastPlane;
-  //std::cout<<"lastPlane - trackEnd = "<<lastPlane - trackEnd<<std::endl;
-
+  int lastPlane = MuCapUtilities::findExtendedLastPlane(evt, itrack, protonGlobalClusters);
   planeRangeVsPz_->Fill(pz, lastPlane-28);
   planeRangecosVsP_->Fill(evt.ptot[itrack], (lastPlane-28)/std::abs(evt.costh[itrack]));
 }

@@ -396,6 +396,10 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
+        SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 55);
+        SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxRout", 15.);
+
+        //----------------
         //# Use downstream PC planes as a veto
         //NB: need implement ganged wires to include PC9,10 in the range.
         SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 52);

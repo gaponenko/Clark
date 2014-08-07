@@ -31,6 +31,7 @@
 #include "EventList.h"
 #include "TDCHitPreprocessing.h"
 #include "RecoResMuCapTrk.h"
+#include "MuCapTrkContainmentCut.h"
 
 #include "RooUnfold/RooUnfoldResponse.h"
 
@@ -245,7 +246,10 @@ private :
   MuCapTrkAnalysisHF dnPosTracks_;
   MuCapTrkAnalysisHF dnNegTracks_;
 
+  MuCapTrkContainmentCut dnPosTrkContainment_;
+
   HistProtonPID hProtonPID_;
+  HistProtonPID hContainedProtonPID_;
 
   HistDriftTime hdriftPCAll_;
   HistDriftTime hdriftPCFiltered_;
