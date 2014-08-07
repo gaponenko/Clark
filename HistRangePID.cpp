@@ -15,7 +15,7 @@ void HistRangePID::init(const std::string& hdir,
                         HistogramFactory &hf,
                         const ConfigFile& conf)
 {
-  planeRangeVsPz_ = hf.DefineTH2D(hdir, "planeRangeVsPz", "Last plane hit vs pz",150, 0., 300., 30, 0.5, 29.5);
+  planeRangeVsPz_ = hf.DefineTH2D(hdir, "planeRangeVsPz", "Last plane hit vs pz",150, 0., 300., 30, 0.5, 30.5);
   planeRangeVsPz_->SetOption("colz");
   planeRangeVsPz_->GetXaxis()->SetTitle("pz [MeV/c]");
   planeRangeVsPz_->GetYaxis()->SetTitle("plane-28");
@@ -25,7 +25,7 @@ void HistRangePID::init(const std::string& hdir,
   planeRangecosVsP_->GetXaxis()->SetTitle("p [MeV/c]");
   planeRangecosVsP_->GetYaxis()->SetTitle("(plane-28)/|cos(theta)|");
 
-  trackRangeVsPz_ = hf.DefineTH2D(hdir, "trackRangeVsPz", "Last track hit vs pz",150, 0., 300., 30, 0.5, 29.5);
+  trackRangeVsPz_ = hf.DefineTH2D(hdir, "trackRangeVsPz", "Last track hit vs pz",150, 0., 300., 30, 0.5, 30.5);
   trackRangeVsPz_->SetOption("colz");
   trackRangeVsPz_->GetXaxis()->SetTitle("pz [MeV/c]");
   trackRangeVsPz_->GetYaxis()->SetTitle("track end-28");
