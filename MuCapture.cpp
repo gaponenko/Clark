@@ -218,6 +218,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hmuStopTruthAfterGaps_.init(H, hdir+"/MuStopTruthAfterGaps", *E.geo, Conf);
     hTruthAll_.init(H, hdir+"/MCTruthAll", Conf);
     hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
+    hTruthTrkAccepted_.init(H, hdir+"/MCTruthTrkAccepted", Conf);
+    hTruthTrkContained_.init(H, hdir+"/MCTruthTrkContained", Conf);
   }
 
   //----------------------------------------------------------------
@@ -551,8 +553,16 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if(iPosTrack != -1) {
     hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
 
+    if(doMCTruth_) {
+      hTruthTrkAccepted_.fill(evt);
+    }
+
     if(dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters)) {
       hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+
+      if(doMCTruth_) {
+        hTruthTrkContained_.fill(evt);
+      }
     }
   }
 

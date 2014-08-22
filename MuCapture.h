@@ -261,6 +261,8 @@ private :
 
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
+  HistMuCapTruth hTruthTrkAccepted_;
+  HistMuCapTruth hTruthTrkContained_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
