@@ -393,17 +393,20 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutCharge", -1);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutTrackWinTimedt", 100.);//ns
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutTrackRmax", 99999.);//cm
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutCosThetaMin", 0.5);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutCosThetaMax", 0.98);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPtMin", 11.9); // MeV/c = 2 cm R
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPzMin", 28.4); // MeV/c = 30cm L
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPtotMin", 0.); // MeV/c
-        // NB: remember about "name helixfit helixfitmommax=..." in the KCM file.
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPtotMax", 250.); // MeV/c
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutTrackMuonOffset", 1.5);//cm
+        // The kinematic cuts for the DIO normalization sample
+        // follow the TWIST DIO Phys.Rev.D.
+        // Here we use ptot rather than E.  But the biggest difference
+        // is our use of the wire center fit.
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCharge", -1);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackRmax",6.34);//cm = 38.0 MeV/c pt
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCosThetaMin", 0.54);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCosThetaMax", 0.92);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPtMin", 11.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPzMin", 14.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPtotMin", 17.5); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPtotMax", 73.5); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 55);

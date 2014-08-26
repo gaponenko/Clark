@@ -84,7 +84,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
 
   dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
-  dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, "neg", TimeWindow::DOWNSTREAM);
+  dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
 
@@ -566,7 +566,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
-  dnNegTracks_.process(evt, muStop, decayWindow);
+  dnDIONormTracks_.process(evt, muStop, decayWindow);
 
   winDCUnassignedDnDecay_.fill(wres);
   // What do events with many unassigned hits look like?
