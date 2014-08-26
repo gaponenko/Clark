@@ -8,6 +8,7 @@
 class TH1;
 class TH2;
 class TProfile;
+class TProfile2D;
 
 class HistogramFactory;
 class ConfigFile;
@@ -26,12 +27,16 @@ public:
     : hGlobalResolution_()
     , hMomResVsMom_()
     , hMomResVsCosth_()
+    , hMomBias2DMC_()
+    , hMomBias2DReco_()
   {}
 
 private :
   TH1 *hGlobalResolution_;
   TProfile *hMomResVsMom_;
   TProfile *hMomResVsCosth_;
+  TProfile2D *hMomBias2DMC_;
+  TProfile2D *hMomBias2DReco_;
 };
 
 #endif/*HistMuCapTrkResolution_h*/
