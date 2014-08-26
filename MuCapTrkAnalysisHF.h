@@ -67,7 +67,7 @@ public:
   void init(const std::string& hdir,
             HistogramFactory &hf,
             const ConfigFile &conf,
-            int cutCharge,
+            const std::string& cutSet,
             TimeWindow::StreamType cutStream,
             RecoResMuCapTrk *result=0);
 

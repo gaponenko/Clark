@@ -83,8 +83,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
 
 
-  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, +1, TimeWindow::DOWNSTREAM, &anDnLateRes_);
-  dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, -1, TimeWindow::DOWNSTREAM);
+  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
+  dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, "neg", TimeWindow::DOWNSTREAM);
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
 

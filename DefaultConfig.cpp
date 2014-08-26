@@ -380,20 +380,30 @@ void SetDefault(ConfigFile &Conf)
         //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
         //----------------
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackWinTimedt", 100.);//ns
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackRmax", 99999.);//cm
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMin", 0.5);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMax", 0.98);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtMin", 11.9); // MeV/c = 2 cm R
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPzMin", 28.4); // MeV/c = 30cm L
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMin", 0.); // MeV/c
-
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCharge", +1);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackRmax", 99999.);//cm
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCosThetaMin", 0.5);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCosThetaMax", 0.98);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtMin", 11.9); // MeV/c = 2 cm R
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPzMin", 28.4); // MeV/c = 30cm L
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtotMin", 0.); // MeV/c
         // NB: remember about "name helixfit helixfitmommax=..." in the KCM file.
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMax", 250.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtotMax", 250.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackMuonOffset", 1.5);//cm
 
-        //SetKey(Conf, "MuCapture/TrkAnalysisHF/cutChi2", 100.); //
-        //
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 1.5);//cm
+        //----------------
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutCharge", -1);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutTrackRmax", 99999.);//cm
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutCosThetaMin", 0.5);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutCosThetaMax", 0.98);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPtMin", 11.9); // MeV/c = 2 cm R
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPzMin", 28.4); // MeV/c = 30cm L
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPtotMin", 0.); // MeV/c
+        // NB: remember about "name helixfit helixfitmommax=..." in the KCM file.
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutPtotMax", 250.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/neg/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 55);
