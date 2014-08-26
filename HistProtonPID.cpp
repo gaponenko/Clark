@@ -85,22 +85,22 @@ void HistProtonPID::init(const std::string& hdir,
   hsum2324cos_vs_p_22_->SetOption("colz");
 
   //----------------------------------------------------------------
-  hcsPC8vsPC7vsp_ = hf.DefineTH3D(hdir, "hcsPC8vsPC7vsp", "PID PC8 vs PC8 vs p", 12, 0., 300., 600, -600., 600., 600, -600., 600.);
+  hcsPC8vsPC7vsp_ = hf.DefineTH3D(hdir, "hcsPC8vsPC7vsp", "PID PC8 vs PC8 vs p", 12, 0., 300., 600, -300., 300., 600, -300., 300.);
   hcsPC8vsPC7vsp_->SetOption("box");
 
-  hcsDC24vsDC23vsp_ = hf.DefineTH3D(hdir, "hcsDC24vsDC23vsp", "PID DC24 vs DC23 vs p", 12, 0., 300., 600, -600., 600., 600, -600., 600.);
+  hcsDC24vsDC23vsp_ = hf.DefineTH3D(hdir, "hcsDC24vsDC23vsp", "PID DC24 vs DC23 vs p", 12, 0., 300., 600, -300., 300., 600, -300., 300.);
   hcsDC24vsDC23vsp_->SetOption("box");
 
-  hcsDCAvgvsPCavgVsp_ = hf.DefineTH3D(hdir, "hcsDCAvgvsPCavgVsp", "PID DC vs PC vs p", 12, 0., 300., 600, -600., 600., 600, -600., 600.);
+  hcsDCAvgvsPCavgVsp_ = hf.DefineTH3D(hdir, "hcsDCAvgvsPCavgVsp", "PID DC vs PC vs p", 12, 0., 300., 600, -300., 300., 600, -300., 300.);
   hcsDCAvgvsPCavgVsp_->SetOption("box");
 
-  hcsPC8vsPC7_p100_ = hf.DefineTH2D(hdir, "hcsPC8vsPC7_p100", "PID PC8 vs PC7, p>100 MeV/c", 600, -600., 600., 600, -600., 600.);
+  hcsPC8vsPC7_p100_ = hf.DefineTH2D(hdir, "hcsPC8vsPC7_p100", "PID PC8 vs PC7, p>100 MeV/c", 600, -300., 300., 600, -300., 300.);
   hcsPC8vsPC7_p100_->SetOption("colz");
 
-  hcsDC24vsDC23_p100_ = hf.DefineTH2D(hdir, "hcsDC24vsDC23_p100", "PID DC24 vs 23, p>100 MeV/c", 600, -600., 600., 600, -600., 600.);
+  hcsDC24vsDC23_p100_ = hf.DefineTH2D(hdir, "hcsDC24vsDC23_p100", "PID DC24 vs 23, p>100 MeV/c", 600, -300., 300., 600, -300., 300.);
   hcsDC24vsDC23_p100_->SetOption("colz");
 
-  hcsDCAvgvsPCavg_p100_ = hf.DefineTH2D(hdir, "hcsDCAvgvsPCavg_p100", "PID DC vs PC, p>100 MeV/c", 600, -600., 600., 600, -600., 600.);
+  hcsDCAvgvsPCavg_p100_ = hf.DefineTH2D(hdir, "hcsDCAvgvsPCavg_p100", "PID DC vs PC, p>100 MeV/c", 600, -300., 300., 600, -300., 300.);
   hcsDCAvgvsPCavg_p100_->SetOption("colz");
 }
 
