@@ -36,6 +36,13 @@ TH1D* HistogramFactory::DefineTH1D_varwidth(string Path, string Name, string Tit
         return H1D[Name];
 }
 
+TProfile* HistogramFactory::DefineTProfile(string Path, string Name, string Title, int xBins, double xMin, double xMax, const std::string& options)
+{
+  TProfile *res = new TProfile(Name.c_str(), Title.c_str(), xBins, xMin, xMax, options.c_str());
+  Store(H1D[Name] = res, Name, Path, "TProfile");
+  return res;
+}
+
 TH2D* HistogramFactory::DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax)
 {
 	H2D[Name]	= new TH2D(Name.c_str(), Title.c_str(), xBins, xMin, xMax, yBins, yMin, yMax);

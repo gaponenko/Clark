@@ -23,6 +23,7 @@ using namespace std;
 #include "TKey.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TProfile.h"
 #include "TProfile2D.h"
 #include "TH3D.h"
 #include "TAxis.h"
@@ -51,6 +52,7 @@ public :
 
 		// =============================== definition section ==================================
 		TH1D*	DefineTH1D(string Path, string Name, string Title, int xBins, double xMin, double xMax);
+		TProfile* DefineTProfile(string Path, string Name, string Title, int xBins, double xMin, double xMax, const std::string& options="");
 		TH2D*	DefineTH2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax);
 		TProfile2D* DefineTProfile2D(string Path, string Name, string Title, int xBins, double xMin, double xMax, int yBins, double yMin, double yMax, const std::string& options="");
 
