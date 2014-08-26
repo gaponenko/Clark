@@ -12,6 +12,7 @@
 #include "HistMuCapTruth.h"
 #include "RecoResMuCapTrk.h"
 #include "HistTrkQuality.h"
+#include "HistMuCapTrkResolution.h"
 
 #include "TAxis.h"
 #include "Math/Point2D.h"
@@ -168,6 +169,7 @@ private :
   TH1 *hPerEventMomentum_;
   HistMuCapTruth htruthAccepted_;
   HistTrkQuality hSelectedTrackQuality_;
+  HistMuCapTrkResolution hSelectedTrkResolution_;
 
   // Selection among multiple track passing the cuts
   TH2 *hSelectorPlane_;
