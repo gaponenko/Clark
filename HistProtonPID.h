@@ -25,7 +25,8 @@ public:
             HistogramFactory& hf,
             const ConfigFile& conf);
 
-  void fill(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
+  // Returns a PID variable
+  double fill(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
 
   HistProtonPID()
     : hNumClusters78_()

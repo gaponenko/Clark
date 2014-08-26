@@ -63,13 +63,13 @@ void HistProtonPID::init(const std::string& hdir,
 }
 
 //================================================================
-void HistProtonPID::fill(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters)
+double HistProtonPID::fill(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters)
 {
   pidPC7_.fill(evt, itrack, protonGlobalClusters);
   pidPC8_.fill(evt, itrack, protonGlobalClusters);
   pidDC23_.fill(evt, itrack, protonGlobalClusters);
   pidDC24_.fill(evt, itrack, protonGlobalClusters);
-  pidRange_.fill(evt, itrack, protonGlobalClusters);
+  const double result = pidRange_.fill(evt, itrack, protonGlobalClusters);
 
   hNumClusters78_->Fill(protonGlobalClusters[29].size(), protonGlobalClusters[30].size());
 
@@ -140,6 +140,7 @@ void HistProtonPID::fill(const EventClass& evt, int itrack, const ClustersByPlan
     }
   }
 
+  return result;
 }
 
 //================================================================
