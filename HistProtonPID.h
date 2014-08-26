@@ -34,10 +34,6 @@ public:
     , hsum78cos_vs_p_12_()
     , hsum78cos_vs_p_21_()
     , hsum78cos_vs_p_22_()
-    , hcs78cos_vs_p_11_()
-    , hcs78cos_vs_p_12_()
-    , hcs78cos_vs_p_21_()
-    , hcs78cos_vs_p_22_()
   {}
 
 private :
@@ -56,12 +52,6 @@ private :
   TH2 *hsum78cos_vs_p_12_;
   TH2 *hsum78cos_vs_p_21_;
   TH2 *hsum78cos_vs_p_22_;
-
-  // Calibrated PC width
-  TH2 *hcs78cos_vs_p_11_;
-  TH2 *hcs78cos_vs_p_12_;
-  TH2 *hcs78cos_vs_p_21_;
-  TH2 *hcs78cos_vs_p_22_;
 
   // DC vars
   TH2 *hNumClusters2324_;

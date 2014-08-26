@@ -42,20 +42,6 @@ void HistProtonPID::init(const std::string& hdir,
   hsum78cos_vs_p_22_->SetOption("colz");
 
   //----------------------------------------------------------------
-  // calibrated PC distributions
-  hcs78cos_vs_p_11_ = hf.DefineTH2D(hdir, "calib78cos11", "PC78 calib width cos(theta) vs p, 11", 150, 0., 300., 60, -150., 150.);
-  hcs78cos_vs_p_11_->SetOption("colz");
-
-  hcs78cos_vs_p_12_ = hf.DefineTH2D(hdir, "calib78cos12", "PC78 calib width cos(theta) vs p, 12", 150, 0., 300., 60, -150., 150.);
-  hcs78cos_vs_p_12_->SetOption("colz");
-
-  hcs78cos_vs_p_21_ = hf.DefineTH2D(hdir, "calib78cos21", "PC7 calib width cos(theta) vs p, 21", 150, 0., 300., 60, -150., 150.);
-  hcs78cos_vs_p_21_->SetOption("colz");
-
-  hcs78cos_vs_p_22_ = hf.DefineTH2D(hdir, "calib78cos22", "PC7 calib width cos(theta) vs p, 22", 150, 0., 300., 60, -150., 150.);
-  hcs78cos_vs_p_22_->SetOption("colz");
-
-  //----------------------------------------------------------------
   // DC hists
   hNumClusters2324_ = hf.DefineTH2D(hdir, "numClusters2324", "DC24 vs DC23 num clusters", 5, -0.5, 4.5, 5, -0.5, 4.5);
   hNumClusters2324_->SetOption("colz");
