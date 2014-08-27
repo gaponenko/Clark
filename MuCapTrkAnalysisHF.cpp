@@ -180,7 +180,6 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                               10, -0.5, 9.5);
 
   hSelectedTrackQuality_.init(hf, hdir+"/SelectedTrackQuality", conf);
-  hSelectedTrkResolution_.init(hf, hdir+"/SelectedTrackResolution", conf);
 
   hPerEventMomentum_ = hf.DefineTH1D(hdir, "perEventMomentum",
                                      "selected track momentum",
@@ -198,6 +197,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
 
   if(doMCTruth_) {
     htruthAccepted_.init(hf, hdir+"/truthAccepted", conf);
+    hSelectedTrkResolution_.init(hf, hdir+"/SelectedTrackResolution", conf);
   }
 }
 
@@ -252,10 +252,10 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
 
     hPerEventMomentum_->Fill(evt.ptot[selected]);
     hSelectedTrackQuality_.fill(evt, selected, distanceToMuon(evt, selected, muStopUV));
-    hSelectedTrkResolution_.fill(evt, selected);
 
     if(doMCTruth_) {
       htruthAccepted_.fill(evt);
+      hSelectedTrkResolution_.fill(evt, selected);
     }
 
     // skim events using reco track parameters
