@@ -82,7 +82,31 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
 
+  //----------------------------------------------------------------
+  // "channel" analysis histograms
 
+  contained_prange_ = H.DefineTH2D(hdir+"/channels", "containedRangecosVsP", "Last plane hit/|cos(theta)| vs p, contained", 88, 30., 250., 6, 8., 32.);
+  contained_prange_->SetOption("colz");
+  contained_prange_->GetXaxis()->SetTitle("p [MeV/c]");
+  contained_prange_->GetYaxis()->SetTitle("(plane-28)/|cos(theta)|");
+
+  contained_pcosth_ = H.DefineTH2D(hdir+"/channels", "contained_pcosth", "cosrec vs prec, contained", 88, 30., 250., 4, 0.5, 1.);
+  contained_pcosth_->SetOption("colz");
+  contained_pcosth_->GetXaxis()->SetTitle("p, MeV/c");
+  contained_pcosth_->GetYaxis()->SetTitle("cos(theta)");
+
+  contained_p_ = H.DefineTH1D(hdir+"/channels", "contained_ptot", "ptot, contained", 88, 30., 250.);
+  contained_p_->GetXaxis()->SetTitle("p, MeV/c");
+
+  uncontained_pcosth_ = H.DefineTH2D(hdir+"/channels", "uncontained_pcosth", "cosrec vs prec, contained", 88, 30., 250., 4, 0.5, 1.);
+  uncontained_pcosth_->SetOption("colz");
+  uncontained_pcosth_->GetXaxis()->SetTitle("p, MeV/c");
+  uncontained_pcosth_->GetYaxis()->SetTitle("cos(theta)");
+
+  uncontained_p_ = H.DefineTH1D(hdir+"/channels", "uncontained_ptot", "ptot, contained", 88, 30., 250.);
+  uncontained_p_->GetXaxis()->SetTitle("p, MeV/c");
+
+  //----------------------------------------------------------------
   dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
   dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
   dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
@@ -227,8 +251,12 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthAll_.init(H, hdir+"/MCTruthAll", Conf);
     hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
     hTruthTrkAccepted_.init(H, hdir+"/MCTruthTrkAccepted", Conf);
-    hTruthTrkContained_.init(H, hdir+"/MCTruthTrkContained", Conf);
-    hTruthTrkUncontained_.init(H, hdir+"/MCTruthTrkUncontained", Conf);
+
+    hTruthTrkContained_.init(H, hdir+"/channels/MCTruthTrkContained", Conf);
+    hTruthTrkUncontained_.init(H, hdir+"/channels/MCTruthTrkUncontained", Conf);
+
+    hResolutionContained_.init(H, hdir+"/channels/ResolutionContained", Conf);
+    hResolutionUncontained_.init(H, hdir+"/channels/ResolutionUncontained", Conf);
   }
 
   //----------------------------------------------------------------
@@ -578,19 +606,24 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
       if(dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters)) {
         // The "contained tracks" analysis channel
+
         const double rangePIDVar = hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
-        // figure out the "Y_contained" bin from prec,costhrec,rangePIDVar
+        contained_prange_->Fill(prec, rangePIDVar);
+        contained_pcosth_->Fill(prec, costhrec);
+        contained_p_->Fill(prec);
 
         if(doMCTruth_) {
           hTruthTrkContained_.fill(evt);
+          hResolutionContained_.fill(evt, iPosTrack);
         }
       }
       else { // The non-contained tracks channel
-
-        // figure out the "Y_uncontained" bin from prec,costhrec
+        uncontained_pcosth_->Fill(prec, costhrec);
+        uncontained_p_->Fill(prec);
 
         if(doMCTruth_) {
           hTruthTrkUncontained_.fill(evt);
+          hResolutionUncontained_.fill(evt, iPosTrack);
         }
       }
     }

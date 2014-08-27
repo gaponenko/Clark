@@ -32,6 +32,7 @@
 #include "TDCHitPreprocessing.h"
 #include "RecoResMuCapTrk.h"
 #include "MuCapTrkContainmentCut.h"
+#include "HistMuCapTrkResolution.h"
 
 #include "RooUnfold/RooUnfoldResponse.h"
 
@@ -144,6 +145,12 @@ public :
 
     , hPosNegMom_()
     , hPosNegCosth_()
+
+    , contained_prange_()
+    , contained_pcosth_()
+    , contained_p_()
+    , uncontained_pcosth_()
+    , uncontained_p_()
   {}
 
 private :
@@ -269,8 +276,20 @@ private :
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
   HistMuCapTruth hTruthTrkAccepted_;
+
   HistMuCapTruth hTruthTrkContained_;
   HistMuCapTruth hTruthTrkUncontained_;
+
+  HistMuCapTrkResolution hResolutionContained_;
+  HistMuCapTrkResolution hResolutionUncontained_;
+
+  // "channel" analysis histograms
+  TH2* contained_prange_;
+  TH2* contained_pcosth_;
+  TH1* contained_p_;
+
+  TH2* uncontained_pcosth_;
+  TH1* uncontained_p_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
