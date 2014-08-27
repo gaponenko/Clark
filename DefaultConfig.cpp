@@ -409,6 +409,19 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
+        // A loose set of cuts to get more DIOs for vetoing capture events
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCharge", -1);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackRmax",81.7);//cm, approx 49 MeV/c pt
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCosThetaMin", 0.0);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCosThetaMax", 0.98);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPtMin", 0.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPzMin", 4.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPtotMin", 0.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPtotMax", 73.5); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackMuonOffset", 1.5);//cm
+
+        //----------------
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 55);
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxRout", 15.);
 

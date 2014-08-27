@@ -141,6 +141,9 @@ public :
     , hNumAfterTrigWindows_()
     , hWindow2Time_()
     , hWindow2dt_()
+
+    , hPosNegMom_()
+    , hPosNegCosth_()
   {}
 
 private :
@@ -211,6 +214,9 @@ private :
   TH1 *hWindow2Time_;
   TH1 *hWindow2dt_;
 
+  TH2 *hPosNegMom_; // events with both positive and negative tracks accepted
+  TH2 *hPosNegCosth_; // events with both positive and negative tracks accepted
+
   HistTDCWidth hwidthPCall_;
   HistTDCWidth hwidthPCfiltered_;
 
@@ -244,6 +250,7 @@ private :
   MuCapUVAnalysis dioDn_;
 
   MuCapTrkAnalysisHF dnPosTracks_;
+  MuCapTrkAnalysisHF dnDIOVetoTracks_;
   MuCapTrkAnalysisHF dnDIONormTracks_;
 
   MuCapTrkContainmentCut dnPosTrkContainment_;
@@ -263,6 +270,7 @@ private :
   HistMuCapTruth hTruthMuStop_;
   HistMuCapTruth hTruthTrkAccepted_;
   HistMuCapTruth hTruthTrkContained_;
+  HistMuCapTruth hTruthTrkUncontained_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

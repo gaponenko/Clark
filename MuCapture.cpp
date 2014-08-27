@@ -84,6 +84,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
 
   dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
+  dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
   dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
@@ -183,6 +184,13 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hWindow2Time_ = H.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
   hWindow2dt_ = H.DefineTH1D(hdir, "window2dt", "Second window time - proton win time", 1000, 0., 10000.);
 
+
+  hPosNegMom_ = H.DefineTH2D(hdir, "posnegmom", "p(-) vs p(+)", 300, 0., 300., 300, 0., 300.);
+  hPosNegMom_->SetOption("colz");
+
+  hPosNegCosth_ = H.DefineTH2D(hdir, "posnegcosth", "cos(-) vs cos(+)", 100, -1., 1., 100, -1., 1.);
+  hPosNegCosth_->SetOption("colz");
+
   //----------------------------------------------------------------
   haccidentalsTrig_.init(hdir+"/accidentals/trig", H, Conf);
   haccidentalsStop_.init(hdir+"/accidentals/stop", H, Conf);
@@ -220,6 +228,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
     hTruthTrkAccepted_.init(H, hdir+"/MCTruthTrkAccepted", Conf);
     hTruthTrkContained_.init(H, hdir+"/MCTruthTrkContained", Conf);
+    hTruthTrkUncontained_.init(H, hdir+"/MCTruthTrkUncontained", Conf);
   }
 
   //----------------------------------------------------------------
@@ -548,25 +557,56 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
+  // select the normalization sample
+  dnDIONormTracks_.process(evt, muStop, decayWindow);
 
+  //----------------------------------------------------------------
+  // Figure out an exclusive analysis channel for this event
+
+  const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop, decayWindow);
   const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
-  if(iPosTrack != -1) {
-    hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
 
-    if(doMCTruth_) {
-      hTruthTrkAccepted_.fill(evt);
-    }
-
-    if(dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters)) {
-      hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
-
+  if(iNegTrack == -1) { // Veto DIO events
+    if(iPosTrack != -1) { // Got a reconstructed capture track
+      hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
       if(doMCTruth_) {
-        hTruthTrkContained_.fill(evt);
+        hTruthTrkAccepted_.fill(evt);
       }
+
+      const double prec = evt.ptot[iPosTrack];
+      const double costhrec = evt.costh[iPosTrack];
+
+      if(dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters)) {
+        // The "contained tracks" analysis channel
+        const double rangePIDVar = hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+        // figure out the "Y_contained" bin from prec,costhrec,rangePIDVar
+
+        if(doMCTruth_) {
+          hTruthTrkContained_.fill(evt);
+        }
+      }
+      else { // The non-contained tracks channel
+
+        // figure out the "Y_uncontained" bin from prec,costhrec
+
+        if(doMCTruth_) {
+          hTruthTrkUncontained_.fill(evt);
+        }
+      }
+    }
+    else {
+      // No good positive tracks. Can do a hit-based analysis here.
     }
   }
 
-  dnDIONormTracks_.process(evt, muStop, decayWindow);
+  //----------------------------------------------------------------
+  // Fill extra distributions
+
+  // Do we have any ambiguous events (both "DIO" and "proton")?
+  if((iNegTrack != -1)&&(iPosTrack != -1)) {
+    hPosNegMom_->Fill(evt.ptot[iPosTrack], evt.ptot[iNegTrack]);
+    hPosNegCosth_->Fill(evt.costh[iPosTrack], evt.costh[iNegTrack]);
+  }
 
   winDCUnassignedDnDecay_.fill(wres);
   // What do events with many unassigned hits look like?
