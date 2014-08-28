@@ -98,12 +98,12 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   contained_p_ = H.DefineTH1D(hdir+"/channels", "contained_ptot", "ptot, contained", 88, 30., 250.);
   contained_p_->GetXaxis()->SetTitle("p, MeV/c");
 
-  uncontained_pcosth_ = H.DefineTH2D(hdir+"/channels", "uncontained_pcosth", "cosrec vs prec, contained", 88, 30., 250., 4, 0.5, 1.);
+  uncontained_pcosth_ = H.DefineTH2D(hdir+"/channels", "uncontained_pcosth", "cosrec vs prec, non contained", 88, 30., 250., 4, 0.5, 1.);
   uncontained_pcosth_->SetOption("colz");
   uncontained_pcosth_->GetXaxis()->SetTitle("p, MeV/c");
   uncontained_pcosth_->GetYaxis()->SetTitle("cos(theta)");
 
-  uncontained_p_ = H.DefineTH1D(hdir+"/channels", "uncontained_ptot", "ptot, contained", 88, 30., 250.);
+  uncontained_p_ = H.DefineTH1D(hdir+"/channels", "uncontained_ptot", "ptot, non contained", 88, 30., 250.);
   uncontained_p_->GetXaxis()->SetTitle("p, MeV/c");
 
   //----------------------------------------------------------------
