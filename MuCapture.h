@@ -145,12 +145,17 @@ public :
 
     , hPosNegMom_()
     , hPosNegCosth_()
+    , hVetoedPCosth_()
+    , hVetoingPCosth_()
 
     , contained_prange_()
-    , contained_pcosth_()
-    , contained_p_()
-    , uncontained_pcosth_()
     , uncontained_p_()
+    , lost1_ptot_()
+    , lost2_ptot_()
+    , containedMigration1_()
+    , containedMigration2_()
+    , uncontainedMigration1_()
+    , uncontainedMigration2_()
   {}
 
 private :
@@ -223,6 +228,8 @@ private :
 
   TH2 *hPosNegMom_; // events with both positive and negative tracks accepted
   TH2 *hPosNegCosth_; // events with both positive and negative tracks accepted
+  TH2 *hVetoedPCosth_;
+  TH2 *hVetoingPCosth_;
 
   HistTDCWidth hwidthPCall_;
   HistTDCWidth hwidthPCfiltered_;
@@ -285,11 +292,13 @@ private :
 
   // "channel" analysis histograms
   TH2* contained_prange_;
-  TH2* contained_pcosth_;
-  TH1* contained_p_;
-
-  TH2* uncontained_pcosth_;
   TH1* uncontained_p_;
+  TH1* lost1_ptot_;
+  TH1* lost2_ptot_;
+  TH3* containedMigration1_;
+  TH3* containedMigration2_;
+  TH2* uncontainedMigration1_;
+  TH2* uncontainedMigration2_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
