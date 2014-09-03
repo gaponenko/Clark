@@ -19,9 +19,10 @@ public:
             HistogramFactory &hf,
             const ConfigFile &conf);
 
-  void fill(const EventClass& evt,
-            int itrack,
-            const ClustersByPlane& protonGlobalClusters);
+  // returns a PID variable
+  double fill(const EventClass& evt,
+              int itrack,
+              const ClustersByPlane& protonGlobalClusters);
 
   HistRangePID()
     : planeRangeVsPz_(), planeRangecosVsP_()

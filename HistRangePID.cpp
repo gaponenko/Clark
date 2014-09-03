@@ -38,7 +38,7 @@ void HistRangePID::init(const std::string& hdir,
 }
 
 //================================================================
-void HistRangePID::fill(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters) {
+double HistRangePID::fill(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters) {
   int trackEnd = evt.hefit_pstop[itrack];
   const double pz = evt.ptot[itrack]*evt.costh[itrack];
 
@@ -48,7 +48,10 @@ void HistRangePID::fill(const EventClass& evt, int itrack, const ClustersByPlane
   // Find the last plane contiguous with the track
   int lastPlane = MuCapUtilities::findExtendedLastPlane(evt, itrack, protonGlobalClusters);
   planeRangeVsPz_->Fill(pz, lastPlane-28);
-  planeRangecosVsP_->Fill(evt.ptot[itrack], (lastPlane-28)/std::abs(evt.costh[itrack]));
+  const double planeRangecosPIDVar = (lastPlane-28)/std::abs(evt.costh[itrack]);
+  planeRangecosVsP_->Fill(evt.ptot[itrack], planeRangecosPIDVar);
+
+  return planeRangecosPIDVar;
 }
 
 //================================================================

@@ -380,20 +380,46 @@ void SetDefault(ConfigFile &Conf)
         //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
 
         //----------------
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackWinTimedt", 100.);//ns
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackRmax", 99999.);//cm
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMin", 0.5);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutCosThetaMax", 0.98);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtMin", 11.9); // MeV/c = 2 cm R
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPzMin", 28.4); // MeV/c = 30cm L
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMin", 0.); // MeV/c
-
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCharge", +1);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackRmax", 99999.);//cm
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCosThetaMin", 0.5);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCosThetaMax", 0.98);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtMin", 11.9); // MeV/c = 2 cm R
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPzMin", 28.4); // MeV/c = 30cm L
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtotMin", 0.); // MeV/c
         // NB: remember about "name helixfit helixfitmommax=..." in the KCM file.
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutPtotMax", 250.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtotMax", 250.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackMuonOffset", 1.5);//cm
 
-        //SetKey(Conf, "MuCapture/TrkAnalysisHF/cutChi2", 100.); //
-        //
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/cutTrackMuonOffset", 1.5);//cm
+        //----------------
+        // The kinematic cuts for the DIO normalization sample
+        // follow the TWIST DIO Phys.Rev.D.
+        // Here we use ptot rather than E.  But the biggest difference
+        // is our use of the wire center fit.
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCharge", -1);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackRmax",6.34);//cm = 38.0 MeV/c pt
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCosThetaMin", 0.54);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCosThetaMax", 0.92);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPtMin", 11.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPzMin", 14.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPtotMin", 17.5); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutPtotMax", 73.5); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackMuonOffset", 1.5);//cm
+
+        //----------------
+        // A loose set of cuts to get more DIOs for vetoing capture events
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCharge", -1);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackRmax",81.7);//cm, approx 49 MeV/c pt
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCosThetaMin", 0.0);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCosThetaMax", 0.98);
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPtMin", 0.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPzMin", 4.0); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPtotMin", 0.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutPtotMax", 73.5); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 55);
@@ -408,12 +434,5 @@ void SetDefault(ConfigFile &Conf)
         // from slide 3 this is <~13 cm
         SetKey(Conf, "MuCapture/ProtonWindow/RextMax", 13.);
 
-        //================================================================
-        SetKey(Conf, "MuCapture/PIDCalib/PC/1", "100. 490. -1.6");
-        SetKey(Conf, "MuCapture/PIDCalib/PC/2", "100. 340. -1.4");
-        SetKey(Conf, "MuCapture/PIDCalib/PC/3", "100. 255. -1.4");
-
-        SetKey(Conf, "MuCapture/PIDCalib/DC/1", "100. 580. -1.6");
-        SetKey(Conf, "MuCapture/PIDCalib/DC/2", "100. 460. -1.1");
         //================================================================
 }

@@ -32,6 +32,7 @@
 #include "TDCHitPreprocessing.h"
 #include "RecoResMuCapTrk.h"
 #include "MuCapTrkContainmentCut.h"
+#include "HistMuCapTrkResolution.h"
 
 #include "RooUnfold/RooUnfoldResponse.h"
 
@@ -141,6 +142,22 @@ public :
     , hNumAfterTrigWindows_()
     , hWindow2Time_()
     , hWindow2dt_()
+
+    , hPosNegMom_()
+    , hPosNegCosth_()
+    , hVetoedPCosth_()
+    , hVetoingPCosth_()
+
+    , contained_prange_()
+    , uncontained_p_()
+    , lost1_ptot_()
+    , lost2_ptot_()
+    , mcin1_ptot_()
+    , mcin2_ptot_()
+    , containedMigration1_()
+    , containedMigration2_()
+    , uncontainedMigration1_()
+    , uncontainedMigration2_()
   {}
 
 private :
@@ -225,6 +242,11 @@ private :
   TH1 *hWindow2Time_;
   TH1 *hWindow2dt_;
 
+  TH2 *hPosNegMom_; // events with both positive and negative tracks accepted
+  TH2 *hPosNegCosth_; // events with both positive and negative tracks accepted
+  TH2 *hVetoedPCosth_;
+  TH2 *hVetoingPCosth_;
+
   HistTDCWidth hwidthPCall_;
   HistTDCWidth hwidthPCfiltered_;
 
@@ -258,7 +280,8 @@ private :
   MuCapUVAnalysis dioDn_;
 
   MuCapTrkAnalysisHF dnPosTracks_;
-  MuCapTrkAnalysisHF dnNegTracks_;
+  MuCapTrkAnalysisHF dnDIOVetoTracks_;
+  MuCapTrkAnalysisHF dnDIONormTracks_;
 
   MuCapTrkContainmentCut dnPosTrkContainment_;
 
@@ -275,8 +298,26 @@ private :
 
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
+  HistMuCapTruth hTruthDnCandidate_;
   HistMuCapTruth hTruthTrkAccepted_;
+
   HistMuCapTruth hTruthTrkContained_;
+  HistMuCapTruth hTruthTrkUncontained_;
+
+  HistMuCapTrkResolution hResolutionContained_;
+  HistMuCapTrkResolution hResolutionUncontained_;
+
+  // "channel" analysis histograms
+  TH2* contained_prange_;
+  TH1* uncontained_p_;
+  TH1* lost1_ptot_;
+  TH1* lost2_ptot_;
+  TH1* mcin1_ptot_;
+  TH1* mcin2_ptot_;
+  TH3* containedMigration1_;
+  TH3* containedMigration2_;
+  TH2* uncontainedMigration1_;
+  TH2* uncontainedMigration2_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

@@ -47,24 +47,25 @@ namespace {
 void MuCapTrkAnalysisHF::init(const std::string& hdir,
                               HistogramFactory &hf,
                               const ConfigFile& conf,
-                              int cutCharge,
+                              const std::string& cutSet,
                               TimeWindow::StreamType cutStream,
                               RecoResMuCapTrk *result)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
   result_ = result;
-  cutCharge_ = cutCharge;
   cutStream_ = cutStream;
-  cutTrackWinTimedt_ = conf.read<int>("MuCapture/TrkAnalysisHF/cutTrackWinTimedt");
-  cutTrackRmax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackRmax");
-  cutCosThetaMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutCosThetaMin");
-  cutCosThetaMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutCosThetaMax");
-  cutPtMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtMin");
-  cutPzMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPzMin");
-  cutPtotMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtotMin");
-  cutPtotMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutPtotMax");
-  // cutChi2_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutChi2");
-  cutTrackMuonOffset_ = conf.read<double>("MuCapture/TrkAnalysisHF/cutTrackMuonOffset");
+
+  cutCharge_ = conf.read<int>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutCharge");
+  cutTrackWinTimedt_ = conf.read<int>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutTrackWinTimedt");
+  cutTrackRmax_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutTrackRmax");
+  cutCosThetaMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutCosThetaMin");
+  cutCosThetaMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutCosThetaMax");
+  cutPtMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutPtMin");
+  cutPzMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutPzMin");
+  cutPtotMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutPtotMin");
+  cutPtotMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutPtotMax");
+  // cutChi2_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutChi2");
+  cutTrackMuonOffset_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutTrackMuonOffset");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Tracks rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -196,6 +197,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
 
   if(doMCTruth_) {
     htruthAccepted_.init(hf, hdir+"/truthAccepted", conf);
+    hSelectedTrkResolution_.init(hf, hdir+"/SelectedTrackResolution", conf);
   }
 }
 
@@ -253,6 +255,7 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
 
     if(doMCTruth_) {
       htruthAccepted_.fill(evt);
+      hSelectedTrkResolution_.fill(evt, selected);
     }
 
     // skim events using reco track parameters

@@ -99,9 +99,92 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hContainedMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponseContained", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
   hPlnRngCut15MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
 
+  //----------------------------------------------------------------
+  // "channel" analysis histograms
+  const int recoContPNbins = 88;
+  const double recoContPMin = 30.;
+  const double recoContPMax = 250.;
+  const int recoContRNbins = 6;
+  const double recoContRMin = 8.;
+  const double recoContRMax = 32.;
 
-  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, +1, TimeWindow::DOWNSTREAM, &anDnLateRes_);
-  dnNegTracks_.init(hdir+"/dnNegTracks", H, Conf, -1, TimeWindow::DOWNSTREAM);
+  const int recoUncPNbins = 88;
+  const double recoUncPMin = 30.;
+  const double recoUncPMax = 250.;
+
+  contained_prange_ = H.DefineTH2D(hdir+"/channels", "containedRangecosVsP", "Last plane hit/|cos(theta)| vs p, contained",
+                                   recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
+  contained_prange_->SetOption("colz");
+  contained_prange_->GetXaxis()->SetTitle("p [MeV/c]");
+  contained_prange_->GetYaxis()->SetTitle("(plane-28)/|cos(theta)|");
+
+  uncontained_p_ = H.DefineTH1D(hdir+"/channels", "uncontained_ptot", "ptot, non contained", recoUncPNbins, recoUncPMin, recoUncPMax);
+  uncontained_p_->GetXaxis()->SetTitle("p, MeV/c");
+
+  if(doMCTruth_) {
+    // truth level binning for protons
+    const int gen1nbins = 70.; // 2.5 MeV/c bins
+    const double gen1pmin = 75.;
+    const double gen1pmax = 250.;
+
+    // truth level binning for deuterons
+    const int gen2nbins = 25; // 5 MeV/c bins
+    const double gen2pmin = 125.;
+    const double gen2pmax = 250.;
+
+    // True distribution of lost events, two different binnings
+    lost1_ptot_ = H.DefineTH1D(hdir+"/channels", "lost1_ptot", "mcptot, lost", gen1nbins, gen1pmin, gen1pmax);
+    lost2_ptot_ = H.DefineTH1D(hdir+"/channels", "lost2_ptot", "mcptot, lost", gen2nbins, gen2pmin, gen2pmax);
+
+    // True distribution of all events used for the unfolding
+    mcin1_ptot_ = H.DefineTH1D(hdir+"/channels", "mcin1_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
+    mcin2_ptot_ = H.DefineTH1D(hdir+"/channels", "mcin2_ptot", "mcptot, input", gen2nbins, gen2pmin, gen2pmax);
+
+    // Migration matrices for the contained channel, two generator binnings
+    containedMigration1_ = H.DefineTH3D(hdir+"/channels", "containedMigration1",
+                                        "Contained channel migration, generator binning 1",
+                                        gen1nbins, gen1pmin, gen1pmax,
+                                        recoContPNbins, recoContPMin, recoContPMax,
+                                        recoContRNbins, recoContRMin, recoContRMax);
+
+    containedMigration1_->GetXaxis()->SetTitle("p true, MeV/c");
+    containedMigration1_->GetYaxis()->SetTitle("p reco, MeV/c");
+    containedMigration1_->GetZaxis()->SetTitle("range");
+
+    containedMigration2_ = H.DefineTH3D(hdir+"/channels", "containedMigration2",
+                                        "Contained channel migration, generator binning 2",
+                                        gen2nbins, gen2pmin, gen2pmax,
+                                        recoContPNbins, recoContPMin, recoContPMax,
+                                        recoContRNbins, recoContRMin, recoContRMax);
+
+    containedMigration2_->GetXaxis()->SetTitle("p true, MeV/c");
+    containedMigration2_->GetYaxis()->SetTitle("p reco, MeV/c");
+    containedMigration2_->GetZaxis()->SetTitle("range");
+
+    // Migration matrices for the non contained channel, two generator binnings
+    uncontainedMigration1_ = H.DefineTH2D(hdir+"/channels", "uncontainedMigration1",
+                                          "Non-contained channel migration, generator binning 1",
+                                          gen1nbins, gen1pmin, gen1pmax,
+                                          recoUncPNbins, recoUncPMin, recoUncPMax);
+
+    uncontainedMigration1_->SetOption("colz");
+    uncontainedMigration1_->GetXaxis()->SetTitle("p true, MeV/c");
+    uncontainedMigration1_->GetYaxis()->SetTitle("p reco, MeV/c");
+
+    uncontainedMigration2_ = H.DefineTH2D(hdir+"/channels", "uncontainedMigration2",
+                                          "Non-contained channel migration, generator binning 2",
+                                          gen2nbins, gen2pmin, gen2pmax,
+                                          recoUncPNbins, recoUncPMin, recoUncPMax);
+
+    uncontainedMigration2_->SetOption("colz");
+    uncontainedMigration2_->GetXaxis()->SetTitle("p true, MeV/c");
+    uncontainedMigration2_->GetYaxis()->SetTitle("p reco, MeV/c");
+  }
+
+  //----------------------------------------------------------------
+  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
+  dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
+  dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
 
@@ -200,6 +283,19 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hWindow2Time_ = H.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
   hWindow2dt_ = H.DefineTH1D(hdir, "window2dt", "Second window time - proton win time", 1000, 0., 10000.);
 
+
+  hPosNegMom_ = H.DefineTH2D(hdir, "posnegmom", "p(-) vs p(+)", 300, 0., 300., 300, 0., 300.);
+  hPosNegMom_->SetOption("colz");
+
+  hPosNegCosth_ = H.DefineTH2D(hdir, "posnegcosth", "cos(-) vs cos(+)", 100, -1., 1., 100, -1., 1.);
+  hPosNegCosth_->SetOption("colz");
+
+  hVetoedPCosth_ = H.DefineTH2D(hdir, "vetoedpcosth", "cos(theta) vs p of vetoed tracks", 300, 0., 300., 100, -1., 1.);
+  hVetoedPCosth_->SetOption("colz");
+
+  hVetoingPCosth_ = H.DefineTH2D(hdir, "vetoingpcosth", "cos(theta) vs p of veto tracks", 300, 0., 300., 100, -1., 1.);
+  hVetoingPCosth_->SetOption("colz");
+
   //----------------------------------------------------------------
   haccidentalsTrig_.init(hdir+"/accidentals/trig", H, Conf);
   haccidentalsStop_.init(hdir+"/accidentals/stop", H, Conf);
@@ -235,8 +331,14 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hmuStopTruthAfterGaps_.init(H, hdir+"/MuStopTruthAfterGaps", *E.geo, Conf);
     hTruthAll_.init(H, hdir+"/MCTruthAll", Conf);
     hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
+    hTruthDnCandidate_.init(H, hdir+"/MCTruthDnCandidate", Conf);
     hTruthTrkAccepted_.init(H, hdir+"/MCTruthTrkAccepted", Conf);
-    hTruthTrkContained_.init(H, hdir+"/MCTruthTrkContained", Conf);
+
+    hTruthTrkContained_.init(H, hdir+"/channels/MCTruthTrkContained", Conf);
+    hTruthTrkUncontained_.init(H, hdir+"/channels/MCTruthTrkUncontained", Conf);
+
+    hResolutionContained_.init(H, hdir+"/channels/ResolutionContained", Conf);
+    hResolutionUncontained_.init(H, hdir+"/channels/ResolutionUncontained", Conf);
   }
 
   //----------------------------------------------------------------
@@ -565,25 +667,71 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
+  // select the normalization sample
+  dnDIONormTracks_.process(evt, muStop, decayWindow);
 
+  //----------------------------------------------------------------
+  // Figure out an exclusive analysis channel for this event
+
+  const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop, decayWindow);
   const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
-  if(iPosTrack != -1) {
-    hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
 
-    if(doMCTruth_) {
-      hTruthTrkAccepted_.fill(evt);
-    }
+  bool eventUsedInAChannel = false;
 
-    if(dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters)) {
-      hContainedMeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
-      hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
-      double trackEnd = double(evt.hefit_pstop[iPosTrack]);
-      if( (trackEnd-28) > 15){
-        hPlnRngCut15MeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
-      }
+  if(iNegTrack == -1) { // Veto DIO events
+    if(iPosTrack != -1) { // Got a reconstructed capture track
+      hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
       if(doMCTruth_) {
-        hTruthTrkContained_.fill(evt);
+        hTruthTrkAccepted_.fill(evt);
       }
+
+      const double prec = evt.ptot[iPosTrack];
+
+      if(dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters)) {
+        // The "contained tracks" analysis channel
+        eventUsedInAChannel = true;
+        const double rangePIDVar = hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+        contained_prange_->Fill(prec, rangePIDVar);
+        if(doMCTruth_) {
+          hTruthTrkContained_.fill(evt);
+          hResolutionContained_.fill(evt, iPosTrack);
+
+          const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+          if(imcvtxStart  != -1) {
+            containedMigration1_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
+            containedMigration2_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
+          }
+        }
+        hContainedMeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
+        double trackEnd = double(evt.hefit_pstop[iPosTrack]);
+        if( (trackEnd-28) > 15){
+          hPlnRngCut15MeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
+        }
+      }
+      else { // The non-contained tracks channel
+        eventUsedInAChannel = true;
+        uncontained_p_->Fill(prec);
+        if(doMCTruth_) {
+          hTruthTrkUncontained_.fill(evt);
+          hResolutionUncontained_.fill(evt, iPosTrack);
+
+          const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+          if(imcvtxStart  != -1) {
+            uncontainedMigration1_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+            uncontainedMigration2_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+          }
+        }
+      }
+    }
+    else {
+      // No good positive tracks. Can do a hit-based analysis here.
+    }
+  }
+  if(doMCTruth_ && !eventUsedInAChannel) {
+    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+    if(imcvtxStart  != -1) {
+      lost1_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      lost2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
     }
   }
   if(doMCTruth_) {
@@ -621,7 +769,28 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
-  dnNegTracks_.process(evt, muStop, decayWindow);
+
+  //----------------------------------------------------------------
+  // Fill extra distributions
+
+  if(doMCTruth_) {
+    hTruthDnCandidate_.fill(evt);
+
+    // Truth momentum with the binning used in the unfolding
+    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+    if(imcvtxStart  != -1) {
+      mcin1_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      mcin2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+    }
+  }
+
+  // Do we have any ambiguous events (both "DIO" and "proton")?
+  if((iNegTrack != -1)&&(iPosTrack != -1)) {
+    hPosNegMom_->Fill(evt.ptot[iPosTrack], evt.ptot[iNegTrack]);
+    hPosNegCosth_->Fill(evt.costh[iPosTrack], evt.costh[iNegTrack]);
+    hVetoedPCosth_->Fill(evt.ptot[iPosTrack], evt.costh[iPosTrack]);
+    hVetoingPCosth_->Fill(evt.ptot[iNegTrack], evt.costh[iNegTrack]);
+  }
 
   winDCUnassignedDnDecay_.fill(wres);
   // What do events with many unassigned hits look like?
