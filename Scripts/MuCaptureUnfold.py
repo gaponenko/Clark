@@ -70,7 +70,8 @@ class Unfolder:
 		self.Canv = TCanvas()
 		self.Canv.Print(self.output+'[')
 
-		if self.unfold.Get("MuCapture/anDnLateResponse") == None:
+		self.ResponseName = options.responsename
+		if self.unfold.Get("MuCapture/anDnLateResponse"+self.ResponseName) == None:
 			self.unfoldIsMC = False
 		else:
 			self.unfoldIsMC = True
@@ -92,14 +93,16 @@ class Unfolder:
 		if self.logy:
 			self.Canv.SetLogy()
 		def DrawMeasuredFromResponse(thefile, thetitle, legend):
-			response = thefile.Get("MuCapture/anDnLateResponse")
+			print "MuCapture/anDnLateResponse"+self.ResponseName
+			response = thefile.Get("MuCapture/anDnLateResponse"+self.ResponseName)
 			recomeas = response.Hmeasured()
 			if not thetitle == None:
 				recomeas.SetTitle(thetitle+" measured spectrum")
 			recomeas.Draw()
 			Maxreco = recomeas.GetMaximum()
 
-			truemeas = thefile.Get("MuCapture/LateResponse/MCTruthMomentumReco")
+			print " ----> MuCapture/LateResponse"+self.ResponseName+"/MCTruthMomentumReco"
+			truemeas = thefile.Get("MuCapture/LateResponse"+self.ResponseName+"/MCTruthMomentumReco")
 			truemeas.SetLineColor(2)
 			Maxtrue = truemeas.GetMaximum()
 
@@ -132,7 +135,7 @@ class Unfolder:
 	def PrintResponseMatrix(self):
 
 		def DrawMeasuredFromResponse(thefile, thetitle):
-			matrix = thefile.Get("MuCapture/LateResponse/MCMeasVsTruthMomentum")
+			matrix = thefile.Get("MuCapture/LateResponse"+self.ResponseName+"/MCMeasVsTruthMomentum")
 			if not thetitle == None:
 				matrix.SetTitle(thetitle+" response matrix")
 			matrix.Draw("colz")
@@ -144,10 +147,10 @@ class Unfolder:
 
 
 	def UnfoldBayes(self):
-		response = self.training.Get("MuCapture/anDnLateResponse")
+		response = self.training.Get("MuCapture/anDnLateResponse"+self.ResponseName)
 
 		# TODO: This is temporary until MeasuredMomentum is filled for both data and MC
-		tmpresponse = self.unfold.Get("MuCapture/anDnLateResponse")
+		tmpresponse = self.unfold.Get("MuCapture/anDnLateResponse"+self.ResponseName)
 		unfoldMeas = tmpresponse.Hmeasured()
 
 		self.unfoldresult = RooUnfoldBayes(response, unfoldMeas, self.nbiterations);
@@ -164,7 +167,7 @@ class Unfolder:
 		hReco= self.unfoldresult.Hreco()
 
 		if self.unfoldIsMC:
-			unfoldTruth = self.unfold.Get("MuCapture/LateResponse/MCTruthMomentum")
+			unfoldTruth = self.unfold.Get("MuCapture/LateResponse"+self.ResponseName+"/MCTruthMomentum")
 			unfoldTruth.SetLineColor(2)
 			leg = TLegend(0.65,0.7,0.98,0.9)
 
@@ -238,7 +241,7 @@ class Unfolder:
 			print "WARNING: There is no truth information to compare to. No Chi2 point added."
 			return
 
-		unfoldTruth = self.unfold.Get("MuCapture/LateResponse/MCTruthMomentum")
+		unfoldTruth = self.unfold.Get("MuCapture/LateResponse"+self.ResponseName+"/MCTruthMomentum")
 		chi2 = self.unfoldresult.Chi2(unfoldTruth)
 		nbPt = self.RUChi2.GetN()
 		self.RUChi2.SetPoint(nbPt, xVal, chi2)
@@ -294,6 +297,7 @@ parser.add_option("", "--logy", dest="logy", help="Use SetLogY for the 1D plots.
 parser.add_option("-i", "--iterationcheck", dest="iterationcheck", help="Plot the unfolding results versus the number of iterations.", action="store_true")
 parser.add_option("-m", "--multipletraining", dest="multipletraining", help="Instead of one training, loop over the training files given as arguments.", action="store_true")
 parser.add_option("-d", "--differencetraining", dest="differencetraining", help="Perform the unfolding for two provided training files and plot the difference, first minus last file.", action="store_true")
+parser.add_option("-r", "--responsename", dest="responsename", help="", default="")
 (options, args) = parser.parse_args()
 
 gROOT.SetBatch()
