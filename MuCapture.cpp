@@ -49,6 +49,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   Log->info( "Register MuCapture module");
 
   const std::string hdir="MuCapture";
+    std::cout<<"  STARTING !!!!!!!!!!!!!!!!!"<<std::endl;
 
   //       --------- Parameters initialization ---------          //
   doDefaultTWIST_ = Conf.read<bool>("MuCapture/doDefaultTWIST");
@@ -74,14 +75,30 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   if(doMCTruth_) {
     anDnLateResponse_.Setup(25, 0., 250, 25, 0., 250.);
     H.Store(&anDnLateResponse_, "anDnLateResponse", hdir);
+    anDnLateResponseContained_.Setup(25, 0., 250, 25, 0., 250.);
+    H.Store(&anDnLateResponseContained_, "anDnLateResponseContained", hdir);
+    anDnLateResponsePlnRngCut15_.Setup(25, 0., 250, 25, 0., 250.);
+    H.Store(&anDnLateResponsePlnRngCut15_, "anDnLateResponsePlnRngCut15", hdir);
 
     hTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
     hTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
     hMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponse", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
     hTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+
+    hContainedTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
+    hContainedTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
+    hContainedMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponseContained", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
+    hContainedTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+
+    hPlnRngCut15TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
+    hPlnRngCut15TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
+    hPlnRngCut15MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnRngCut15", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
+    hPlnRngCut15TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
   }
 
   hMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
+  hContainedMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponseContained", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
+  hPlnRngCut15MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
 
   //----------------------------------------------------------------
   // "channel" analysis histograms
@@ -686,6 +703,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
             containedMigration2_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
           }
         }
+        hContainedMeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
+        double trackEnd = double(evt.hefit_pstop[iPosTrack]);
+        if( (trackEnd-28) > 15){
+          hPlnRngCut15MeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
+        }
       }
       else { // The non-contained tracks channel
         eventUsedInAChannel = true;
@@ -711,6 +733,40 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     if(imcvtxStart  != -1) {
       lost1_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
       lost2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+    }
+  }
+  if(doMCTruth_) {
+    if(evt.iCaptureMcVtxStart != -1) {  // Signal event. Fill the unfolding matrix.
+      bool IsContained = false;
+      bool IsInTrkRange = false;
+      const double p_true = evt.mcvertex_ptot[evt.iCaptureMcVtxStart];
+      if(iPosTrack != -1) {
+        double trackEnd = double(evt.hefit_pstop[iPosTrack]);
+        IsContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
+        IsInTrkRange = (trackEnd-28) > 15;
+        if (IsContained && IsInTrkRange) {
+          anDnLateResponsePlnRngCut15_.Fill(evt.ptot[iPosTrack], p_true);
+          hPlnRngCut15TruthMomentum_->Fill(p_true);
+          hPlnRngCut15TruthMomentumReco_->Fill(p_true);
+          hPlnRngCut15MeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
+        }
+        if (IsContained ) {
+          anDnLateResponseContained_.Fill(evt.ptot[iPosTrack], p_true);
+          hContainedTruthMomentum_->Fill(p_true);
+          hContainedTruthMomentumReco_->Fill(p_true);
+          hContainedMeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
+        }
+      }
+      if ( ! (IsContained && IsInTrkRange) ) {
+        anDnLateResponsePlnRngCut15_.Miss(p_true);
+        hPlnRngCut15TruthMomentum_->Fill(p_true);
+        hPlnRngCut15TruthMomentumNotReco_->Fill(p_true);
+      }
+      if ( ! IsContained ) {
+        anDnLateResponseContained_.Miss(p_true);
+        hContainedTruthMomentum_->Fill(p_true);
+        hContainedTruthMomentumNotReco_->Fill(p_true);
+      }
     }
   }
 
