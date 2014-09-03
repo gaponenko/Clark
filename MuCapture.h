@@ -181,6 +181,20 @@ private :
   TH1D* hTruthMomentumNotReco_;
   TH1D* hMeasuredMomentum_;
 
+  RooUnfoldResponse anDnLateResponseContained_;
+  TH1D* hContainedTruthMomentum_;
+  TH1D* hContainedTruthMomentumReco_;
+  TH2D* hContainedMeasVsTruthMomentum_;
+  TH1D* hContainedTruthMomentumNotReco_;
+  TH1D* hContainedMeasuredMomentum_;
+
+  RooUnfoldResponse anDnLateResponsePlnRngCut15_;
+  TH1D* hPlnRngCut15TruthMomentum_;
+  TH1D* hPlnRngCut15TruthMomentumReco_;
+  TH2D* hPlnRngCut15MeasVsTruthMomentum_;
+  TH1D* hPlnRngCut15TruthMomentumNotReco_;
+  TH1D* hPlnRngCut15MeasuredMomentum_;
+
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
   MuCapPACTCut pactCut_;
