@@ -152,6 +152,8 @@ public :
     , uncontained_p_()
     , lost1_ptot_()
     , lost2_ptot_()
+    , mcin1_ptot_()
+    , mcin2_ptot_()
     , containedMigration1_()
     , containedMigration2_()
     , uncontainedMigration1_()
@@ -282,6 +284,7 @@ private :
 
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
+  HistMuCapTruth hTruthDnCandidate_;
   HistMuCapTruth hTruthTrkAccepted_;
 
   HistMuCapTruth hTruthTrkContained_;
@@ -295,6 +298,8 @@ private :
   TH1* uncontained_p_;
   TH1* lost1_ptot_;
   TH1* lost2_ptot_;
+  TH1* mcin1_ptot_;
+  TH1* mcin2_ptot_;
   TH3* containedMigration1_;
   TH3* containedMigration2_;
   TH2* uncontainedMigration1_;

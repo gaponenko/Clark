@@ -116,8 +116,12 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     const double gen2pmax = 250.;
 
     // True distribution of lost events, two different binnings
-    lost1_ptot_ = H.DefineTH1D(hdir+"/channels", "lost1_ptot", "ptot, lost", gen1nbins, gen1pmin, gen1pmax);
-    lost2_ptot_ = H.DefineTH1D(hdir+"/channels", "lost2_ptot", "ptot, lost", gen2nbins, gen2pmin, gen2pmax);
+    lost1_ptot_ = H.DefineTH1D(hdir+"/channels", "lost1_ptot", "mcptot, lost", gen1nbins, gen1pmin, gen1pmax);
+    lost2_ptot_ = H.DefineTH1D(hdir+"/channels", "lost2_ptot", "mcptot, lost", gen2nbins, gen2pmin, gen2pmax);
+
+    // True distribution of all events used for the unfolding
+    mcin1_ptot_ = H.DefineTH1D(hdir+"/channels", "mcin1_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
+    mcin2_ptot_ = H.DefineTH1D(hdir+"/channels", "mcin2_ptot", "mcptot, input", gen2nbins, gen2pmin, gen2pmax);
 
     // Migration matrices for the contained channel, two generator binnings
     containedMigration1_ = H.DefineTH3D(hdir+"/channels", "containedMigration1",
@@ -310,6 +314,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hmuStopTruthAfterGaps_.init(H, hdir+"/MuStopTruthAfterGaps", *E.geo, Conf);
     hTruthAll_.init(H, hdir+"/MCTruthAll", Conf);
     hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
+    hTruthDnCandidate_.init(H, hdir+"/MCTruthDnCandidate", Conf);
     hTruthTrkAccepted_.init(H, hdir+"/MCTruthTrkAccepted", Conf);
 
     hTruthTrkContained_.init(H, hdir+"/channels/MCTruthTrkContained", Conf);
@@ -711,6 +716,17 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   // Fill extra distributions
+
+  if(doMCTruth_) {
+    hTruthDnCandidate_.fill(evt);
+
+    // Truth momentum with the binning used in the unfolding
+    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+    if(imcvtxStart  != -1) {
+      mcin1_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      mcin2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+    }
+  }
 
   // Do we have any ambiguous events (both "DIO" and "proton")?
   if((iNegTrack != -1)&&(iPosTrack != -1)) {
