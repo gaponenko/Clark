@@ -28,6 +28,8 @@ public:
     : hNumMCCaptureTracks_()
     , hCaptureTime_()
     , hptot_()
+    , hptot_proton_()
+    , hptot_deuteron_()
     , hek_()
     , hphi_()
     , hpcos_()
@@ -43,6 +45,8 @@ private :
   TH1 *hNumMCCaptureTracks_;
   TH1 *hCaptureTime_;
   TH1 *hptot_;
+  TH1 *hptot_proton_;
+  TH1 *hptot_deuteron_;
   TH1 *hek_;
   TH1 *hphi_;
   TH2 *hpcos_;

@@ -22,6 +22,8 @@ void HistMuCapTruth::init(HistogramFactory &hf,
   hNumMCCaptureTracks_ = hf.DefineTH1D(hdir, "numCaptureMcTrkCandidates", "numCaptureMcTrkCandidates", 10, -0.5, 9.5);
   hCaptureTime_ = hf.DefineTH1D(hdir, "time", "MC time", 640, -100., 1500.);
   hptot_ = hf.DefineTH1D(hdir, "ptot", "MC ptot", 300, 0., 300.);
+  hptot_proton_ = hf.DefineTH1D(hdir, "ptot_proton", "MC ptot proton", 300, 0., 300.);
+  hptot_deuteron_ = hf.DefineTH1D(hdir, "ptot_deuteron", "MC ptot deuteron", 300, 0., 300.);
   hek_ = hf.DefineTH1D(hdir, "ek", "MC Ek", 200, 0., 50.);
   hphi_ = hf.DefineTH1D(hdir, "phi", "MC momentum phi", 100, -PI, +PI);
   hpcos_ = hf.DefineTH2D(hdir, "cosVsPtos", "MC cosTheta vs ptot", 300, 0., 300., 100, -1., 1.);
@@ -55,7 +57,18 @@ void HistMuCapTruth::fill(const EventClass& evt) {
     const unsigned imctrk = evt.iCaptureMcTrk;
 
     hCaptureTime_->Fill(evt.mcvertex_time[imcvtxStart]);
+
     hptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+    const int mcParticle = evt.mctrack_pid[imctrk];
+    switch(mcParticle) {
+    case MuCapUtilities::PID_G3_PROTON:
+      hptot_proton_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    case MuCapUtilities::PID_G3_DEUTERON:
+      hptot_deuteron_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    }
+
     hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtxStart], evt));
     hphi_->Fill(evt.mcvertex_phimuv[imcvtxStart]);
     hpcos_->Fill(evt.mcvertex_ptot[imcvtxStart], evt.mcvertex_costh[imcvtxStart]);
