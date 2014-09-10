@@ -198,6 +198,9 @@ private :
   TH1D* hTruthMomentumNotReco_;
   TH1D* hMeasuredMomentum_;
 
+  RooUnfoldResponse anDnLateResponseWithPID_;
+  TH2D* hWithPIDMeasuredMomentum_;
+
   RooUnfoldResponse anDnLateResponseContained_;
   TH1D* hContainedTruthMomentum_;
   TH1D* hContainedTruthMomentumReco_;
@@ -211,6 +214,34 @@ private :
   TH2D* hPlnRngCut15MeasVsTruthMomentum_;
   TH1D* hPlnRngCut15TruthMomentumNotReco_;
   TH1D* hPlnRngCut15MeasuredMomentum_;
+
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone1_;
+  TH1D* hPlnVsPCutZone1TruthMomentum_;
+  TH1D* hPlnVsPCutZone1TruthMomentumReco_;
+  TH2D* hPlnVsPCutZone1MeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone1TruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone1MeasuredMomentum_;
+
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone2_;
+  TH1D* hPlnVsPCutZone2TruthMomentum_;
+  TH1D* hPlnVsPCutZone2TruthMomentumReco_;
+  TH2D* hPlnVsPCutZone2MeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone2TruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone2MeasuredMomentum_;
+
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone3_;
+  TH1D* hPlnVsPCutZone3TruthMomentum_;
+  TH1D* hPlnVsPCutZone3TruthMomentumReco_;
+  TH2D* hPlnVsPCutZone3MeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone3TruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone3MeasuredMomentum_;
+
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone4_;
+  TH1D* hPlnVsPCutZone4TruthMomentum_;
+  TH1D* hPlnVsPCutZone4TruthMomentumReco_;
+  TH2D* hPlnVsPCutZone4MeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone4TruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone4MeasuredMomentum_;
 
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
