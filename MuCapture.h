@@ -208,12 +208,12 @@ private :
   TH1D* hContainedTruthMomentumNotReco_;
   TH1D* hContainedMeasuredMomentum_;
 
-  RooUnfoldResponse anDnLateResponsePlnRngCut15_;
-  TH1D* hPlnRngCut15TruthMomentum_;
-  TH1D* hPlnRngCut15TruthMomentumReco_;
-  TH2D* hPlnRngCut15MeasVsTruthMomentum_;
-  TH1D* hPlnRngCut15TruthMomentumNotReco_;
-  TH1D* hPlnRngCut15MeasuredMomentum_;
+  RooUnfoldResponse anDnLateResponsePlnRngCutPln_;
+  TH1D* hPlnRngCutPlnTruthMomentum_;
+  TH1D* hPlnRngCutPlnTruthMomentumReco_;
+  TH2D* hPlnRngCutPlnMeasVsTruthMomentum_;
+  TH1D* hPlnRngCutPlnTruthMomentumNotReco_;
+  TH1D* hPlnRngCutPlnMeasuredMomentum_;
 
   RooUnfoldResponse anDnLateResponsePlnVsPCutZone1_;
   TH1D* hPlnVsPCutZone1TruthMomentum_;

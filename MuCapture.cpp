@@ -72,74 +72,76 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
   //       --------- Histograms initialization ---------          //
+  int NbBinP = 30;
+  double MaxP = 300.;
   if(doMCTruth_) {
-    anDnLateResponse_.Setup(25, 0., 250, 25, 0., 250.);
+    anDnLateResponse_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
     H.Store(&anDnLateResponse_, "anDnLateResponse", hdir);
-    anDnLateResponseContained_.Setup(25, 0., 250, 25, 0., 250.);
+    anDnLateResponseContained_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
     H.Store(&anDnLateResponseContained_, "anDnLateResponseContained", hdir);
-    anDnLateResponsePlnRngCut15_.Setup(25, 0., 250, 25, 0., 250.);
-    H.Store(&anDnLateResponsePlnRngCut15_, "anDnLateResponsePlnRngCut15", hdir);
+    anDnLateResponsePlnRngCutPln_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
+    H.Store(&anDnLateResponsePlnRngCutPln_, "anDnLateResponsePlnRngCutPln", hdir);
 
-    anDnLateResponsePlnVsPCutZone1_.Setup(25, 0., 250, 25, 0., 250.);
+    anDnLateResponsePlnVsPCutZone1_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
     H.Store(&anDnLateResponsePlnVsPCutZone1_, "anDnLateResponsePlnVsPCutZone1", hdir);
-    anDnLateResponsePlnVsPCutZone2_.Setup(25, 0., 250, 25, 0., 250.);
+    anDnLateResponsePlnVsPCutZone2_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
     H.Store(&anDnLateResponsePlnVsPCutZone2_, "anDnLateResponsePlnVsPCutZone2", hdir);
-    anDnLateResponsePlnVsPCutZone3_.Setup(25, 0., 250, 25, 0., 250.);
+    anDnLateResponsePlnVsPCutZone3_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
     H.Store(&anDnLateResponsePlnVsPCutZone3_, "anDnLateResponsePlnVsPCutZone3", hdir);
-    anDnLateResponsePlnVsPCutZone4_.Setup(25, 0., 250, 25, 0., 250.);
+    anDnLateResponsePlnVsPCutZone4_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
     H.Store(&anDnLateResponsePlnVsPCutZone4_, "anDnLateResponsePlnVsPCutZone4", hdir);
 
     // Temporary histos just to define the 2D response functions
-    TH2D *MeasuredTmp = new TH2D("MeasuredMomentumVsPID", "Measured momentum vs PID;PID;Momentum", 2,0,2., 25, 0., 250);
-    TH2D *TrueTmp = new TH2D("TrueMomentumVsPID", "True momentum vs PID;PID;Momentum", 2,0,2., 25, 0., 250);
+    TH2D *MeasuredTmp = new TH2D("MeasuredMomentumVsPID", "Measured momentum vs PID;PID;Momentum", 2,0,2., NbBinP, 0., MaxP);
+    TH2D *TrueTmp = new TH2D("TrueMomentumVsPID", "True momentum vs PID;PID;Momentum", 2,0,2., NbBinP, 0., MaxP);
     anDnLateResponseWithPID_.Setup(MeasuredTmp, TrueTmp);
     H.Store(&anDnLateResponseWithPID_, "anDnLateResponseWithPID", hdir);
 
-    hTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
-    hTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
-    hMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponse", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
-    hTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponse", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponse", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
-    hContainedTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
-    hContainedTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
-    hContainedMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponseContained", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
-    hContainedTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hContainedTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hContainedTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hContainedMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponseContained", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hContainedTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponseContained", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
-    hPlnRngCut15TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
-    hPlnRngCut15TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
-    hPlnRngCut15MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnRngCut15", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
-    hPlnRngCut15TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hPlnRngCutPlnTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCutPln", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnRngCutPlnTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCutPln", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnRngCutPlnMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnRngCutPln", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnRngCutPlnTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCutPln", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
-    hPlnVsPCutZone1TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone1TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone1MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone1", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
-    hPlnVsPCutZone1TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hPlnVsPCutZone1TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone1TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone1MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone1", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone1TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
-    hPlnVsPCutZone2TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone2TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone2MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone2", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
-    hPlnVsPCutZone2TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hPlnVsPCutZone2TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone2TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone2MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone2", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone2TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
-    hPlnVsPCutZone3TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone3TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone3MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone3", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
-    hPlnVsPCutZone3TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hPlnVsPCutZone3TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone3TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone3MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone3", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone3TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
-    hPlnVsPCutZone4TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone4TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",25, 0., 250);
-    hPlnVsPCutZone4MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone4", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",25, 0., 250,25, 0., 250);
-    hPlnVsPCutZone4TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",25, 0., 250);
+    hPlnVsPCutZone4TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone4TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone4MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone4", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone4TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
   }
 
-  hMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
-  hContainedMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponseContained", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
-  hPlnRngCut15MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCut15", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
-  hPlnVsPCutZone1MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
-  hPlnVsPCutZone2MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
-  hPlnVsPCutZone3MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
-  hPlnVsPCutZone4MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",25, 0., 250);
+  hMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponse", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NbBinP, 0., MaxP);
+  hContainedMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponseContained", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NbBinP, 0., MaxP);
+  hPlnRngCutPlnMeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnRngCutPln", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NbBinP, 0., MaxP);
+  hPlnVsPCutZone1MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NbBinP, 0., MaxP);
+  hPlnVsPCutZone2MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NbBinP, 0., MaxP);
+  hPlnVsPCutZone3MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NbBinP, 0., MaxP);
+  hPlnVsPCutZone4MeasuredMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone4", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
-  hWithPIDMeasuredMomentum_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]", 2,0,2.,25, 0., 250);
+  hWithPIDMeasuredMomentum_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]", 2,0,2.,NbBinP, 0., MaxP);
 
   //----------------------------------------------------------------
   // "channel" analysis histograms
@@ -746,10 +748,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
         }
         hContainedMeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
         double trackEnd = double(evt.hefit_pstop[iPosTrack]);
-        int RecoPIDProton = int(double(trackEnd-28) < (0.55 * evt.ptot[iPosTrack] - 40.));
+        int RecoPIDProton = int(double(trackEnd-28) < (0.40 * evt.ptot[iPosTrack] - 22.));
         hWithPIDMeasuredMomentum_->Fill(RecoPIDProton, evt.ptot[iPosTrack]);
-        if( (trackEnd-28) > 15){
-          hPlnRngCut15MeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
+        if( (trackEnd-28) > 10){
+          hPlnRngCutPlnMeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
           if ( RecoPIDProton == 0 ){
             // Zone 1
             hPlnVsPCutZone1MeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
@@ -810,9 +812,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
       if( iNegTrack == -1 && iPosTrack != -1) {
         double trackEnd = double(evt.hefit_pstop[iPosTrack]);
         IsContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
-        IsInTrkRange = (trackEnd-28) > 15;
+        IsInTrkRange = (trackEnd-28) > 10;
         // 0 for protons, 1 for deuterons
-        int RecoPIDProton = int(double(trackEnd-28) < (0.55 * evt.ptot[iPosTrack] - 40.));
+        int RecoPIDProton = int(double(trackEnd-28) < (0.40 * evt.ptot[iPosTrack] - 22.));
         if (IsContained ) {
           anDnLateResponseWithPID_.Fill(RecoPIDProton, evt.ptot[iPosTrack], TruePIDProton, p_true);
           
@@ -821,10 +823,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
           hContainedTruthMomentumReco_->Fill(p_true);
           hContainedMeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
           if ( IsInTrkRange) {
-            anDnLateResponsePlnRngCut15_.Fill(evt.ptot[iPosTrack], p_true);
-            hPlnRngCut15TruthMomentum_->Fill(p_true);
-            hPlnRngCut15TruthMomentumReco_->Fill(p_true);
-            hPlnRngCut15MeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
+            anDnLateResponsePlnRngCutPln_.Fill(evt.ptot[iPosTrack], p_true);
+            hPlnRngCutPlnTruthMomentum_->Fill(p_true);
+            hPlnRngCutPlnTruthMomentumReco_->Fill(p_true);
+            hPlnRngCutPlnMeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
             if ( RecoPIDProton == 0 ){
               // Zone 1
               anDnLateResponsePlnVsPCutZone1_.Fill(evt.ptot[iPosTrack], p_true);
@@ -863,9 +865,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
         hContainedTruthMomentumNotReco_->Fill(p_true);
         anDnLateResponseWithPID_.Miss(TruePIDProton, p_true);
         if ( ! IsInTrkRange) {
-          anDnLateResponsePlnRngCut15_.Miss(p_true);
-          hPlnRngCut15TruthMomentum_->Fill(p_true);
-          hPlnRngCut15TruthMomentumNotReco_->Fill(p_true);
+          anDnLateResponsePlnRngCutPln_.Miss(p_true);
+          hPlnRngCutPlnTruthMomentum_->Fill(p_true);
+          hPlnRngCutPlnTruthMomentumNotReco_->Fill(p_true);
         }
       }
     }
