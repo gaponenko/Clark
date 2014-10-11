@@ -41,6 +41,10 @@
 #include "HistTrkClass.h"
 #include "HistMuCapMCTgtStops.h"
 
+//#include "RooUnfold/RooUnfoldResponse.h"
+#include "RooUnfoldDummy.h"
+typedef RooUnfoldDummy RooUnfoldResponse;
+
 #include "TAxis.h"
 class TH1;
 class TH2;
