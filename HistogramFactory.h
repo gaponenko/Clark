@@ -31,7 +31,7 @@ using namespace std;
 // Include Program
 #include "log4cpp/Category.hh"
 #include "EventClass.h"
-
+#include "RooUnfoldDummy.h"
 
 class HistogramFactory {
   struct StoredObjectData {
@@ -84,6 +84,8 @@ public :
 		void	DoDirectory(string FilePath);
 		void	Store(TObject* obj, string Name, string Path, string TmpType);
 		void	Store(TObject* obj, string Name, string Path, int writeOpt = 0);
+		void	Store(RooUnfoldDummy* obj, string Name, string Path, int writeOpt = 0) {}
+
 
 	private :
 		map<string, TH1D*> H1D;
