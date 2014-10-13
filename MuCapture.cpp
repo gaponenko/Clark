@@ -167,9 +167,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   if(doMCTruth_) {
     // truth level binning for protons
-    const int gen1nbins = 70.; // 2.5 MeV/c bins
-    const double gen1pmin = 75.;
-    const double gen1pmax = 250.;
+    const int gen1nbins = 400; // 2.5 MeV/c bins
+    const double gen1pmin = 0.;
+    const double gen1pmax = 400.;
 
     // truth level binning for deuterons
     const int gen2nbins = 25; // 5 MeV/c bins
