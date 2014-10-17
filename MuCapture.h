@@ -151,13 +151,10 @@ public :
     , contained_prange_()
     , uncontained_p_()
     , lost1_ptot_()
-    , lost2_ptot_()
     , mcproton_ptot_()
     , mcdeuteron_ptot_()
     , containedMigration1_()
-    , containedMigration2_()
     , uncontainedMigration1_()
-    , uncontainedMigration2_()
   {}
 
 private :
@@ -342,13 +339,10 @@ private :
   TH2* contained_prange_;
   TH1* uncontained_p_;
   TH1* lost1_ptot_;
-  TH1* lost2_ptot_;
   TH1* mcproton_ptot_;
   TH1* mcdeuteron_ptot_;
   TH3* containedMigration1_;
-  TH3* containedMigration2_;
   TH2* uncontainedMigration1_;
-  TH2* uncontainedMigration2_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

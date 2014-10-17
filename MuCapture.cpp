@@ -166,23 +166,17 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   uncontained_p_->GetXaxis()->SetTitle("p, MeV/c");
 
   if(doMCTruth_) {
-    // truth level binning for protons
+    // truth level binning
     const int gen1nbins = 400; // 2.5 MeV/c bins
     const double gen1pmin = 0.;
     const double gen1pmax = 400.;
 
-    // truth level binning for deuterons
-    const int gen2nbins = 25; // 5 MeV/c bins
-    const double gen2pmin = 125.;
-    const double gen2pmax = 250.;
-
-    // True distribution of lost events, two different binnings
+    // True distribution of lost events
     lost1_ptot_ = H.DefineTH1D(hdir+"/channels", "lost1_ptot", "mcptot, lost", gen1nbins, gen1pmin, gen1pmax);
-    lost2_ptot_ = H.DefineTH1D(hdir+"/channels", "lost2_ptot", "mcptot, lost", gen2nbins, gen2pmin, gen2pmax);
 
     // True distribution of all events used for the unfolding
     mcproton_ptot_ = H.DefineTH1D(hdir+"/channels", "mcproton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
-    mcdeuteron_ptot_ = H.DefineTH1D(hdir+"/channels", "mcdeuteron_ptot", "mcptot, input", gen2nbins, gen2pmin, gen2pmax);
+    mcdeuteron_ptot_ = H.DefineTH1D(hdir+"/channels", "mcdeuteron_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
 
     // Migration matrices for the contained channel, two generator binnings
     containedMigration1_ = H.DefineTH3D(hdir+"/channels", "containedMigration1",
@@ -195,16 +189,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     containedMigration1_->GetYaxis()->SetTitle("p reco, MeV/c");
     containedMigration1_->GetZaxis()->SetTitle("range");
 
-    containedMigration2_ = H.DefineTH3D(hdir+"/channels", "containedMigration2",
-                                        "Contained channel migration, generator binning 2",
-                                        gen2nbins, gen2pmin, gen2pmax,
-                                        recoContPNbins, recoContPMin, recoContPMax,
-                                        recoContRNbins, recoContRMin, recoContRMax);
-
-    containedMigration2_->GetXaxis()->SetTitle("p true, MeV/c");
-    containedMigration2_->GetYaxis()->SetTitle("p reco, MeV/c");
-    containedMigration2_->GetZaxis()->SetTitle("range");
-
     // Migration matrices for the non contained channel, two generator binnings
     uncontainedMigration1_ = H.DefineTH2D(hdir+"/channels", "uncontainedMigration1",
                                           "Non-contained channel migration, generator binning 1",
@@ -214,15 +198,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     uncontainedMigration1_->SetOption("colz");
     uncontainedMigration1_->GetXaxis()->SetTitle("p true, MeV/c");
     uncontainedMigration1_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    uncontainedMigration2_ = H.DefineTH2D(hdir+"/channels", "uncontainedMigration2",
-                                          "Non-contained channel migration, generator binning 2",
-                                          gen2nbins, gen2pmin, gen2pmax,
-                                          recoUncPNbins, recoUncPMin, recoUncPMax);
-
-    uncontainedMigration2_->SetOption("colz");
-    uncontainedMigration2_->GetXaxis()->SetTitle("p true, MeV/c");
-    uncontainedMigration2_->GetYaxis()->SetTitle("p reco, MeV/c");
   }
 
   //----------------------------------------------------------------
@@ -743,7 +718,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
           const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
           if(imcvtxStart  != -1) {
             containedMigration1_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
-            containedMigration2_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
           }
         }
         hContainedMeasuredMomentum_->Fill(evt.ptot[iPosTrack]);
@@ -779,7 +753,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
           const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
           if(imcvtxStart  != -1) {
             uncontainedMigration1_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
-            uncontainedMigration2_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
           }
         }
       }
@@ -792,7 +765,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
     if(imcvtxStart  != -1) {
       lost1_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
-      lost2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
     }
   }
   if(doMCTruth_) {
