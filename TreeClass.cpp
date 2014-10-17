@@ -108,6 +108,7 @@ bool TreeClass::InitTree( string Treename, ConfigFile &Conf)
 
 	Tree = dynamic_cast<TTree*>(TreeFile->Get("T"));
         if(!Tree) Tree = dynamic_cast<TTree*>(TreeFile->Get("clarkdumper/T"));
+        if(!Tree) throw std::runtime_error("TreeClass::InitTree("+Treename+", Conf): no input tree in this file.");
 
 	// ======> The first entry is loaded to check which variables are in the tree <======
 	// Get the next tree in the chain and verify
