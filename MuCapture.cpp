@@ -173,10 +173,12 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
     // True distribution of lost events
     lost1_ptot_ = H.DefineTH1D(hdir+"/channels", "lost1_ptot", "mcptot, lost", gen1nbins, gen1pmin, gen1pmax);
+    noncapture_lost_ = H.DefineTH1D(hdir+"/channels", "noncapture_lost", "count of lost non-capture events", 1, -0.5, 0.5);
 
     // True distribution of all events used for the unfolding
     mcproton_ptot_ = H.DefineTH1D(hdir+"/channels", "mcproton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcdeuteron_ptot_ = H.DefineTH1D(hdir+"/channels", "mcdeuteron_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
+    noncapture_count_ = H.DefineTH1D(hdir+"/channels", "noncapture_count", "noncapture count, input", 1, -0.5, 0.5);
 
     // Migration matrices for the contained channel, two generator binnings
     containedMigration1_ = H.DefineTH3D(hdir+"/channels", "containedMigration1",
@@ -766,6 +768,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     if(imcvtxStart  != -1) {
       lost1_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
     }
+    else {
+      noncapture_lost_->Fill(0.);
+    }
   }
   if(doMCTruth_) {
     if(evt.iCaptureMcVtxStart != -1) {  // Signal event. Fill the unfolding matrix.
@@ -856,8 +861,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     // Keep protons and deuterons separately to compare hadd-ed
     // pseudodata truth to unfolding results.
     const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
-    const int mcParticle = evt.mctrack_pid[evt.iCaptureMcTrk];
     if(imcvtxStart  != -1) {
+      const int mcParticle = evt.mctrack_pid[evt.iCaptureMcTrk];
       switch(mcParticle) {
       case MuCapUtilities::PID_G3_PROTON:
         mcproton_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
@@ -866,6 +871,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
         mcdeuteron_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
         break;
       }
+    }
+    else {
+      noncapture_count_->Fill(0.);
     }
   }
 

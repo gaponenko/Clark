@@ -151,8 +151,10 @@ public :
     , contained_prange_()
     , uncontained_p_()
     , lost1_ptot_()
+    , noncapture_lost_()
     , mcproton_ptot_()
     , mcdeuteron_ptot_()
+    , noncapture_count_()
     , containedMigration1_()
     , uncontainedMigration1_()
   {}
@@ -339,8 +341,10 @@ private :
   TH2* contained_prange_;
   TH1* uncontained_p_;
   TH1* lost1_ptot_;
+  TH1* noncapture_lost_;
   TH1* mcproton_ptot_;
   TH1* mcdeuteron_ptot_;
+  TH1* noncapture_count_; // "channels" input reco events that are not true captures (e.g. DIO)
   TH3* containedMigration1_;
   TH2* uncontainedMigration1_;
 
