@@ -15,13 +15,13 @@
 #include "MuCapProtonWindow.h"
 #include "MuCapUVAnalysis.h"
 #include "MuCapTrkAnalysisHF.h"
+#include "HistMuCapAnalysisChannels.h"
 #include "HistDriftTime.h"
 #include "HistTDCWidth.h"
 #include "HistOccupancy.h"
 #include "HistAfterPulsing.h"
 #include "HistXtalk.h"
 #include "HistXT2.h"
-#include "HistMuCapTruth.h"
 #include "HistMuStopTruth.h"
 #include "HistAccidentals.h"
 #include "HistWinDCUnassigned.h"
@@ -32,7 +32,6 @@
 #include "TDCHitPreprocessing.h"
 #include "RecoResMuCapTrk.h"
 #include "MuCapTrkContainmentCut.h"
-#include "HistMuCapTrkResolution.h"
 
 #include "RooUnfold/RooUnfoldResponse.h"
 
@@ -148,15 +147,6 @@ public :
     , hVetoedPCosth_()
     , hVetoingPCosth_()
 
-    , contained_prange_()
-    , uncontained_p_()
-    , lost1_ptot_()
-    , noncapture_lost_()
-    , mcproton_ptot_()
-    , mcdeuteron_ptot_()
-    , noncapture_count_()
-    , containedMigration1_()
-    , uncontainedMigration1_()
   {}
 
 private :
@@ -189,6 +179,7 @@ private :
   TDCHitPreprocessing::IProcessor *pcHitProcessor_;
   TDCHitPreprocessing::IProcessor *dcHitProcessor_;
 
+  HistMuCapAnalysisChannels channels_;
   RecoResMuCapTrk anDnLateRes_;
   RooUnfoldResponse anDnLateResponse_;
   TH1D* hTruthMomentum_;
@@ -329,24 +320,6 @@ private :
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
   HistMuCapTruth hTruthDnCandidate_;
-  HistMuCapTruth hTruthTrkAccepted_;
-
-  HistMuCapTruth hTruthTrkContained_;
-  HistMuCapTruth hTruthTrkUncontained_;
-
-  HistMuCapTrkResolution hResolutionContained_;
-  HistMuCapTrkResolution hResolutionUncontained_;
-
-  // "channel" analysis histograms
-  TH2* contained_prange_;
-  TH1* uncontained_p_;
-  TH1* lost1_ptot_;
-  TH1* noncapture_lost_;
-  TH1* mcproton_ptot_;
-  TH1* mcdeuteron_ptot_;
-  TH1* noncapture_count_; // "channels" input reco events that are not true captures (e.g. DIO)
-  TH3* containedMigration1_;
-  TH2* uncontainedMigration1_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
