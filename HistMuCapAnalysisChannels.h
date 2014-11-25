@@ -31,27 +31,13 @@ public:
             bool isPosTrackContained,
             double rangePIDVar);
 
-  HistMuCapAnalysisChannels()
-    : doMCTruth_(false)
-    , contained_prange_()
-    , uncontained_p_()
-
-    , mclost2_ptot_()
-    , mclost2_count_()
-
-    , mcin_proton_ptot_()
-    , mcin_deuteron_ptot_()
-    , mcin_dio_count_()
-
-    , containedMigration_()
-    , uncontainedMigration_()
-
-  {}
+  HistMuCapAnalysisChannels() : doMCTruth_(false) {}
 
 private :
   bool doMCTruth_;
 
-  // "channel" analysis histograms
+  //----------------------------------------------------------------
+  // Essential "channel" analysis histograms
   TH2* contained_prange_;
   TH1* uncontained_p_;
 
@@ -59,12 +45,24 @@ private :
   TH1* mclost2_ptot_;
   TH1* mclost2_count_; // for DIO, where we don't have mcptot easily available
 
+  TH3* containedMigration_;
+  TH2* uncontainedMigration_;
+
+  //----------------------------------------------------------------
+  // Extra histograms to plot efficiencies etc.  Not essential for the
+  // unfolding.
+
   TH1* mcin_proton_ptot_;
   TH1* mcin_deuteron_ptot_;
   TH1* mcin_dio_count_;
 
-  TH3* containedMigration_;
-  TH2* uncontainedMigration_;
+  // same content as the reco hists, but which one is filled depends on MC PID
+  TH2* contained_prange_mcproton_;
+  TH2* contained_prange_mcdeuteron_;
+  TH2* contained_prange_mcdio_;
+  TH1* uncontained_p_mcproton_;
+  TH1* uncontained_p_mcdeuteron_;
+  TH1* uncontained_p_mcdio_;
 
   HistMuCapTruth hTruthTrkContained_;
   HistMuCapTruth hTruthTrkUncontained_;
