@@ -5,8 +5,10 @@
 
 #include <string>
 
+#include "HistHitBasedAnalysis.h"
 #include "HistMuCapTruth.h"
 #include "HistMuCapTrkResolution.h"
+#include "WireCluster.h"
 
 class TH1;
 class TH2;
@@ -16,6 +18,7 @@ class HistogramFactory;
 class ConfigFile;
 class DetectorGeo;
 class EventClass;
+
 
 //================================================================
 class HistMuCapAnalysisChannels {
@@ -29,7 +32,8 @@ public:
             int iPosTrack,
             int iNegTrack,
             bool isPosTrackContained,
-            double rangePIDVar);
+            double rangePIDVar,
+            const ClustersByPlane& globalPlaneClusters );
 
   HistMuCapAnalysisChannels() : doMCTruth_(false) {}
 
@@ -47,6 +51,12 @@ private :
 
   TH3* containedMigration_;
   TH2* uncontainedMigration_;
+
+  HistHitBasedAnalysis hitbased_;
+
+  // lost with 3 channels
+  TH1* mclost3_ptot_;
+  TH1* mclost3_count_;
 
   //----------------------------------------------------------------
   // Extra histograms to plot efficiencies etc.  Not essential for the

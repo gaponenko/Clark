@@ -632,7 +632,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
   const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 
-  channels_.fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
+  channels_.fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar, protonGlobalClusters);
 
   if(iNegTrack == -1) { // Veto DIO events
     if(iPosTrack != -1) { // Got a reconstructed capture track

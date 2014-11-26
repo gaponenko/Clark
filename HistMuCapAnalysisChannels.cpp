@@ -14,7 +14,7 @@
 //================================================================
 void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
                                      const std::string& hdir,
-                                     const DetectorGeo&,
+                                     const DetectorGeo& geom,
                                      const ConfigFile& conf)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
@@ -75,6 +75,9 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   }
 
   //----------------------------------------------------------------
+  hitbased_.init(hf, hdir+"/hitbased", geom, conf);
+
+  //----------------------------------------------------------------
   if(doMCTruth_) {
     // truth level binning
     const int gen1nbins = 400; // 2.5 MeV/c bins
@@ -84,6 +87,9 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     // True distribution of lost events
     mclost2_ptot_ = hf.DefineTH1D(hdir, "mclost2_ptot", "mcptot, of lost events for 2 channel analysis", gen1nbins, gen1pmin, gen1pmax);
     mclost2_count_ = hf.DefineTH1D(hdir, "mclost2_count", "count of lost events for 2 channel analysis ", 1, -0.5, 0.5);
+
+    mclost3_ptot_ = hf.DefineTH1D(hdir, "mclost3_ptot", "mcptot, of lost events for 2 channel analysis", gen1nbins, gen1pmin, gen1pmax);
+    mclost3_count_ = hf.DefineTH1D(hdir, "mclost3_count", "count of lost events for 2 channel analysis ", 1, -0.5, 0.5);
 
     // True distribution of all events used for the unfolding
     mcin_proton_ptot_ = hf.DefineTH1D(hdir, "mcin_proton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
@@ -125,12 +131,15 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
                                      int iPosTrack,
                                      int iNegTrack,
                                      bool isPosTrackContained,
-                                     double rangePIDVar)
+                                     double rangePIDVar,
+                                     const ClustersByPlane& globalPlaneClusters
+                                     )
 {
   //----------------------------------------------------------------
   // Figure out an exclusive analysis channel for this event
 
-  bool eventUsedInAChannel = false;
+  bool eventUsedInAChannel2 = false;
+  bool eventUsedInHitBased = false;
 
   const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
   // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
@@ -143,10 +152,15 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
 
       if(isPosTrackContained) {
         // The "contained tracks" analysis channel
-        eventUsedInAChannel = true;
+        eventUsedInAChannel2 = true;
         contained_prange_->Fill(prec, rangePIDVar);
 
         if(doMCTruth_) {
+
+          if(imcvtxStart  != -1) {
+            containedMigration_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
+          }
+
           switch(mcParticle) {
           case MuCapUtilities::PID_G3_PROTON:
             contained_prange_mcproton_->Fill(prec, rangePIDVar);
@@ -161,17 +175,18 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
 
           hTruthTrkContained_.fill(evt);
           hResolutionContained_.fill(evt, iPosTrack);
-
-          if(imcvtxStart  != -1) {
-            containedMigration_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
-          }
         }
       }
       else { // The non-contained tracks channel
-        eventUsedInAChannel = true;
+        eventUsedInAChannel2 = true;
         uncontained_p_->Fill(prec);
 
         if(doMCTruth_) {
+
+          if(imcvtxStart  != -1) {
+            uncontainedMigration_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+          }
+
           switch(mcParticle) {
           case MuCapUtilities::PID_G3_PROTON:
             uncontained_p_mcproton_->Fill(prec);
@@ -186,37 +201,44 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
 
           hTruthTrkUncontained_.fill(evt);
           hResolutionUncontained_.fill(evt, iPosTrack);
-
-          if(imcvtxStart  != -1) {
-            uncontainedMigration_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
-          }
         }
       }
     }
     else {
-      // No good positive tracks. Can do a hit-based analysis here.
-    }
-  }
-  if(doMCTruth_ && !eventUsedInAChannel) {
-    mclost2_count_->Fill(0.);
-    if(imcvtxStart  != -1) {
-      mclost2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      // No good positive tracks. Do a hit-based analysis here.
+      eventUsedInHitBased = hitbased_.accepted(evt, globalPlaneClusters);
     }
   }
 
-  // Truth momentum with the binning used in the unfolding
-  // Keep protons and deuterons separately to compare hadd-ed
-  // pseudodata truth to unfolding results.
-  switch(mcParticle) {
-  case MuCapUtilities::PID_G3_PROTON:
-    mcin_proton_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
-    break;
-  case MuCapUtilities::PID_G3_DEUTERON:
-    mcin_deuteron_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
-    break;
-  case 0:
-    mcin_dio_count_->Fill(0.);
-    break;
+  if(doMCTruth_) {
+    // Truth momentum with the binning used in the unfolding
+    // Keep protons and deuterons separately to compare hadd-ed
+    // pseudodata truth to unfolding results.
+    switch(mcParticle) {
+    case MuCapUtilities::PID_G3_PROTON:
+      mcin_proton_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    case MuCapUtilities::PID_G3_DEUTERON:
+      mcin_deuteron_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    case 0:
+      mcin_dio_count_->Fill(0.);
+      break;
+    }
+
+    if(!eventUsedInAChannel2) {
+      mclost2_count_->Fill(0.);
+      if(imcvtxStart  != -1) {
+        mclost2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      }
+
+      if(!eventUsedInHitBased) {
+        mclost3_count_->Fill(0.);
+        if(imcvtxStart  != -1) {
+          mclost3_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+        }
+      }
+    }
   }
 }
 
