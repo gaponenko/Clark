@@ -19,7 +19,7 @@ void HistMuCapFinal::init(HistogramFactory& hf,
 
   hNumPlanesVsWires_ = hf.DefineTH2D(hdir, "numPlanesVsWires", "num planes vs wires",
                                      200, -0.5, 199.5,
-                                     1+geom.numGlobal()/2, -0.5, geom.numGlobal()/2+0.5);
+                                     geom.numGlobal()/2, 0.5, geom.numGlobal()/2+0.5);
 
   hNumPlanesVsWires_->SetOption("colz");
 }
