@@ -14,7 +14,7 @@ public:
 
   int plane() const { return plane_; }
   double centralCell() const { return centralCell_; }
-  double numCells() const { return numCells_; }
+  int numCells() const { return numCells_; }
 
   double totalTDCWidth() const;
 
