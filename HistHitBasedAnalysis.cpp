@@ -78,6 +78,7 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   }
 
   hOuterVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "outerVetoNumHitPlanes", "outerVetoNumHitPlanes", 6, -0.5, 5.5);
+  hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "numPC7Clusters", 20, -0.5, 19.5);
 }
 
 //================================================================
@@ -96,6 +97,12 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 
   hOuterVetoNumHitPlanes_->Fill(numOuterVetoHitPlanes);
   if(numOuterVetoHitPlanes > 1) {
+    return false;
+  }
+
+  const unsigned numPC7Clusters = protonGlobalClusters.at(29).size();
+  hNumPC7Clusters_->Fill(numPC7Clusters);
+  if(!numPC7Clusters) {
     return false;
   }
 

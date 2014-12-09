@@ -51,6 +51,7 @@ private :
   HistMuCapTruth hTruth_accepted_;
 
   TH1* hOuterVetoNumHitPlanes_;
+  TH1* hNumPC7Clusters_;
 };
 
 #endif/*HistHitBasedAnalysis_h*/
