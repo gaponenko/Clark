@@ -1,6 +1,7 @@
 // Andrei Gaponenko, 2014
 
 #include "HistHitBasedAnalysis.h"
+#include "HitBasedObservables.h"
 
 #include "TH1.h"
 #include "TH2.h"
@@ -111,38 +112,27 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
   // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
   const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
 
-  // last plane in a contiguous hit range.
-  int lastcplane = 28;
-  int cwires = 0;
-  do {
-    ++lastcplane; // we do have PC7 hits  b/c of earlier cuts
-    int maxclustersize = 0;
-    for(int i=0; i<protonGlobalClusters.at(lastcplane).size(); ++i) {
-      maxclustersize = std::max(maxclustersize, protonGlobalClusters[lastcplane][i].numCells());
-    }
-    cwires += maxclustersize;
-  } while(!protonGlobalClusters.at(1+lastcplane).empty());
-  lastcplane -= 28;
+  HitBasedObservables obs(protonGlobalClusters);
 
-  lastconPlaneVsCWires_->Fill(cwires, lastcplane);
+  lastconPlaneVsCWires_->Fill(obs.dnCWires(), obs.dnCPlanes());
   noncontiguous_.fill(protonGlobalClusters, evt);
 
   if(doMCTruth_) {
     if(imcvtxStart  != -1) {
-      migration_->Fill(evt.mcvertex_ptot[imcvtxStart], cwires, lastcplane);
+      migration_->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
     }
 
     hTruth_accepted_.fill(evt);
 
     switch(mcParticle) {
     case MuCapUtilities::PID_G3_PROTON:
-      lastconPlaneVsCWires_mcproton_->Fill(cwires, lastcplane);
+      lastconPlaneVsCWires_mcproton_->Fill(obs.dnCWires(), obs.dnCPlanes());
       break;
     case MuCapUtilities::PID_G3_DEUTERON:
-      lastconPlaneVsCWires_mcdeuteron_->Fill(cwires, lastcplane);
+      lastconPlaneVsCWires_mcdeuteron_->Fill(obs.dnCWires(), obs.dnCPlanes());
       break;
     case 0:
-      lastconPlaneVsCWires_mcdio_->Fill(cwires, lastcplane);
+      lastconPlaneVsCWires_mcdio_->Fill(obs.dnCWires(), obs.dnCPlanes());
       break;
     }
   }
