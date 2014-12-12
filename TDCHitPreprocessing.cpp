@@ -51,7 +51,10 @@ namespace TDCHitPreprocessing {
                                          const DetectorGeo& geom,
                                          const ConfigFile& conf)
     : cutMinTDCWidth_(conf.read<float>("MuCapture/HitPreproc/"+WirePlane::detName(det)+"/NarrowHitDiscarder/cutMinTDCWidth"))
-  {}
+  {
+    const std::string hdir = topdir + "/" + WirePlane::detName(det);
+    hwidth_ = hf.DefineTH1D(hdir, "width", "TDC width", 800, -0.5, 399.5);
+  }
 
   //================================================================
   void NarrowHitDiscarder::process(TDCHitWPPtrCollection *res,
@@ -59,6 +62,7 @@ namespace TDCHitPreprocessing {
   {
     res->clear();
     for(unsigned i=0; i<hits.size(); ++i) {
+      hwidth_->Fill(hits[i]->width());
       if(hits[i]->width() > cutMinTDCWidth_) {
         res->push_back(hits[i]);
       }

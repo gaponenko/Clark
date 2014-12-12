@@ -69,6 +69,7 @@ namespace  TDCHitPreprocessing {
 
   private:
     float cutMinTDCWidth_;
+    TH1 *hwidth_;
   };
 
   //----------------------------------------------------------------
