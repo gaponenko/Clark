@@ -80,6 +80,11 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 
   hOuterVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "outerVetoNumHitPlanes", "outerVetoNumHitPlanes", 6, -0.5, 5.5);
   hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "numPC7Clusters", 20, -0.5, 19.5);
+
+  //----------------------------------------------------------------
+  hshot_.init(hf, hdir+"/hot", geom, conf);
+  hscold_.init(hf, hdir+"/cold", geom, conf);
+  //----------------------------------------------------------------
 }
 
 //================================================================
@@ -136,6 +141,15 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
       break;
     }
   }
+
+  //----------------------------------------------------------------
+  if((obs.dnCPlanes() == 2)&&(obs.dnCWires()>50)) {
+    hshot_.fill(evt, protonGlobalClusters);
+  }
+  else {
+    hscold_.fill(evt, protonGlobalClusters);
+  }
+  //----------------------------------------------------------------
 
   return true;
 }

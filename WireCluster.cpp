@@ -94,6 +94,29 @@ ClustersByPlane globalPlaneClusters(const ClustersByPlane& pcClusters, const Clu
 }
 
 //================================================================
+TDCHitWPPtr maxTDCWidthHit(const WireCluster& cluster) {
+  // this collection is never empty
+  TDCHitWPPtr res = cluster.hits().front();
+  for(unsigned i=1; i<cluster.hits().size(); ++i) {
+    if(res->width() < cluster.hits()[i]->width()) {
+      res = cluster.hits()[i];
+    }
+  }
+  return res;
+}
+
+TDCHitWPPtr maxTDCWidthHit(const WireClusterCollection& planeClusters) {
+  TDCHitWPPtr res = maxTDCWidthHit(planeClusters.front());
+  for(unsigned i=1; i<planeClusters.size(); ++i) {
+    TDCHitWPPtr b = maxTDCWidthHit(planeClusters[i]);
+    if(res->width() < b->width()) {
+      res = b;
+    }
+  }
+  return res;
+}
+
+//================================================================
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl) {
   return os<<"Cluster(plane="<<cl.plane()<<", hits = "<<cl.hits()<<" )";
 }

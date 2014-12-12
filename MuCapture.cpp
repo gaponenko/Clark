@@ -25,6 +25,9 @@
 #define AGDEBUG(stuff) do { std::cerr<<"AG: "<<__FILE__<<", line "<<__LINE__<<", func "<<__func__<<": "<<stuff<<std::endl; } while(0)
 //#define AGDEBUG(stuff)
 
+//  Backdoor for the hit-based hotspot debugging
+TimeWindowingResults *gwres;
+
 //================================================================
 namespace {
   struct WinHitCounter {
@@ -413,6 +416,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   TimeWindowingResults wres;
+  gwres = &wres;
   pcWindowing_.assignPCHits(filteredPCHits, &wres);
   assert(filteredPCHits.size() ==
          std::accumulate(wres.windows.begin(), wres.windows.end(), WinHitCounter()).numPCHits);

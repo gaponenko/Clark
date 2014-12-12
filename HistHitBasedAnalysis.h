@@ -7,6 +7,8 @@
 
 #include "HistMuCapTruth.h"
 #include "HistMuCapFinal.h"
+#include "HistHotSpot.h"
+#include "TimeWindow.h"
 
 class TH1;
 class TH2;
@@ -52,6 +54,14 @@ private :
 
   TH1* hOuterVetoNumHitPlanes_;
   TH1* hNumPC7Clusters_;
+
+  //----------------------------------------------------------------
+  // Understanding the "hot spot" feature in data
+
+  HistHotSpot hshot_;
+  HistHotSpot hscold_;
+
+  //----------------------------------------------------------------
 };
 
 #endif/*HistHitBasedAnalysis_h*/

@@ -18,6 +18,7 @@ HitBasedObservables::HitBasedObservables(const ClustersByPlane& protonGlobalClus
         maxclustersize = std::max(maxclustersize, protonGlobalClusters[dnCPlanes_][i].numCells());
       }
       dnCWires_ += maxclustersize;
+      clusterSize_.push_back(maxclustersize);
     } while(!protonGlobalClusters.at(1+dnCPlanes_).empty());
 
     dnCPlanes_ -= 28;

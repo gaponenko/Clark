@@ -64,6 +64,9 @@ public:
 
   const TDCHitWP* operator->() const { return &(*coll_)[idx_]; }
   const TDCHitWP& operator*() const { return (*coll_)[idx_]; }
+
+  bool operator==(const TDCHitWPPtr& b) const { return coll_ == b.coll_ && idx_ == b.idx_; }
+  bool operator!=(const TDCHitWPPtr& b) const { return !(*this == b); }
 };
 
 typedef std::vector<TDCHitWPPtr> TDCHitWPPtrCollection;

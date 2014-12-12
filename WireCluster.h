@@ -41,6 +41,10 @@ ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrColl
 // Combine PCs and DCs together
 ClustersByPlane globalPlaneClusters(const ClustersByPlane& pcClusters, const ClustersByPlane& dcClusters);
 
+TDCHitWPPtr maxTDCWidthHit(const WireCluster& cluster);
+// the caller must protect against emtpy planeClusters
+TDCHitWPPtr maxTDCWidthHit(const WireClusterCollection& planeClusters);
+
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl);
 std::ostream& operator<<(std::ostream& os, const WireClusterCollection& coll);
 std::ostream& operator<<(std::ostream& os, const ClustersByPlane& cbp);
