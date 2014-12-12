@@ -46,6 +46,7 @@ void HistTDCWidth::init(const std::string& hdir,
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC Width, plane "<<std::setw(2)<<std::setfill('0')<<i;
     byPlane_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
+    byPlane_.back()->GetXaxis()->SetTitle("TDC width [ns]");
   }
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
@@ -54,6 +55,7 @@ void HistTDCWidth::init(const std::string& hdir,
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC MIN Width in plane "<<std::setw(2)<<std::setfill('0')<<i;
     minWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
+    minWidth_.back()->GetXaxis()->SetTitle("TDC width [ns]");
   }
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
@@ -62,6 +64,7 @@ void HistTDCWidth::init(const std::string& hdir,
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC MAX Width in plane "<<std::setw(2)<<std::setfill('0')<<i;
     maxWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
+    maxWidth_.back()->GetXaxis()->SetTitle("TDC width [ns]");
   }
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
@@ -70,6 +73,7 @@ void HistTDCWidth::init(const std::string& hdir,
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC mean width in plane "<<std::setw(2)<<std::setfill('0')<<i;
     meanWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
+    meanWidth_.back()->GetXaxis()->SetTitle("TDC width [ns]");
   }
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
@@ -78,6 +82,16 @@ void HistTDCWidth::init(const std::string& hdir,
     std::ostringstream ostitle;
     ostitle<<namePrefix<<" TDC median width in plane "<<std::setw(2)<<std::setfill('0')<<i;
     medianWidth_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 2000, 0., 2000.));
+    medianWidth_.back()->GetXaxis()->SetTitle("TDC width [ns]");
+  }
+
+  for(unsigned i=0; i<=maxPlaneNumber; ++i) {
+    std::ostringstream osname;
+    osname<<namePrefix<<"_hitsPerWire_"<<std::setw(2)<<std::setfill('0')<<i;
+    std::ostringstream ostitle;
+    ostitle<<namePrefix<<" Num hits per wire in plane "<<std::setw(2)<<std::setfill('0')<<i;
+    hitsPerWire_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 10, -0.5, 9.5));
+    hitsPerWire_.back()->GetXaxis()->SetTitle("Hit multiplicity");
   }
 }
 
@@ -102,6 +116,7 @@ void HistTDCWidth::fill(const TDCHitWPCollection& hits) {
     maxWidth_[i->first]->Fill(i->second.max());
     meanWidth_[i->first]->Fill(i->second.mean());
     medianWidth_[i->first]->Fill(i->second.median());
+    hitsPerWire_[i->first]->Fill(i->second.numEntries());
   }
 }
 
@@ -120,6 +135,7 @@ void HistTDCWidth::fill(const TDCHitWPPtrCollection& hits) {
     maxWidth_[i->first]->Fill(i->second.max());
     meanWidth_[i->first]->Fill(i->second.mean());
     medianWidth_[i->first]->Fill(i->second.median());
+    hitsPerWire_[i->first]->Fill(i->second.numEntries());
   }
 }
 

@@ -34,6 +34,7 @@ private :
   std::vector<TH1*> maxWidth_;
   std::vector<TH1*> meanWidth_;
   std::vector<TH1*> medianWidth_;
+  std::vector<TH1*> hitsPerWire_;
 
   void fill(const TDCHitWP& hit);
 };
