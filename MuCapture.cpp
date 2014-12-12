@@ -162,8 +162,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   pcXTalkProcessor_ = makeXTalkPreprocessor(hdir+"/hitLevel/XTalk", WirePlane::PC, H, *E.geo, Conf);
   dcXTalkProcessor_ = makeXTalkPreprocessor(hdir+"/hitLevel/XTalk", WirePlane::DC, H, *E.geo, Conf);
 
-  pcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::PC, H, *E.geo, Conf);
-  dcHitProcessor_ = makeTDCHitPreprocessor(WirePlane::DC, H, *E.geo, Conf);
+  pcHitProcessor_ = makeTDCHitPreprocessor(hdir+"/hitLevel/HitPreProc", WirePlane::PC, H, *E.geo, Conf);
+  dcHitProcessor_ = makeTDCHitPreprocessor(hdir+"/hitLevel/HitPreProc", WirePlane::DC, H, *E.geo, Conf);
 
   hwidthPCall_.init(hdir+"/hitLevel/pcWidthAll", "pcwidth", 12, H, Conf);
   hwidthPCfiltered_.init(hdir+"/hitLevel/pcWidthFiltered", "pcwidth", 12, H, Conf);
@@ -810,20 +810,21 @@ MuCapture::makeXTalkPreprocessor(const std::string& topdir,
 
 //================================================================
 TDCHitPreprocessing::IProcessor *
-MuCapture::makeTDCHitPreprocessor(WirePlane::DetType d,
+MuCapture::makeTDCHitPreprocessor(const std::string& topdir,
+                                  WirePlane::DetType d,
                                   HistogramFactory& hf,
                                   const DetectorGeo& geom,
                                   ConfigFile& conf)
 {
   const std::string proc = conf.read<std::string>("MuCapture/HitPreproc/"+WirePlane::detName(d)+"/processor");
   if(proc == "NarrowHitDiscarder") {
-    return new TDCHitPreprocessing::NarrowHitDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
+    return new TDCHitPreprocessing::NarrowHitDiscarder(topdir, d, hf, geom, conf);
   }
   if(proc == "MOFIA_XTalkDiscarder") {
-    return new TDCHitPreprocessing::MOFIA_XTalkDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
+    return new TDCHitPreprocessing::MOFIA_XTalkDiscarder(topdir, d, hf, geom, conf);
   }
   if(proc == "SameWireHitDiscarder") {
-    return new TDCHitPreprocessing::SameWireHitDiscarder("MuCapture/HitPreproc", d, hf, geom, conf);
+    return new TDCHitPreprocessing::SameWireHitDiscarder(topdir, d, hf, geom, conf);
   }
   if(proc == "PassThrough") {
     return new TDCHitPreprocessing::PassThrough();
