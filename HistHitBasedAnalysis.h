@@ -9,6 +9,7 @@
 #include "HistMuCapFinal.h"
 #include "HistHotSpot.h"
 #include "TimeWindow.h"
+#include "HistTDCBCSWidth.h"
 
 class TH1;
 class TH2;
@@ -61,6 +62,7 @@ private :
   HistHotSpot hshot_;
   HistHotSpot hscold_;
 
+  HistTDCBCSWidth htdcwidth_;
   //----------------------------------------------------------------
 };
 

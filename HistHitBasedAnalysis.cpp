@@ -84,6 +84,7 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   //----------------------------------------------------------------
   hshot_.init(hf, hdir+"/hot", geom, conf);
   hscold_.init(hf, hdir+"/cold", geom, conf);
+  htdcwidth_.init(hf, hdir+"/tdcwidth", geom, conf);
   //----------------------------------------------------------------
 }
 
@@ -149,6 +150,8 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
   else {
     hscold_.fill(evt, protonGlobalClusters);
   }
+
+  htdcwidth_.fill(evt, protonGlobalClusters);
   //----------------------------------------------------------------
 
   return true;

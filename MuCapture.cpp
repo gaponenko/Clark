@@ -170,6 +170,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hwidthDCall_.init(hdir+"/hitLevel/dcWidthAll", "dcwidth", 44, H, Conf);
   hwidthDCfiltered_.init(hdir+"/hitLevel/dcWidthFiltered", "dcwidth", 44, H, Conf);
 
+  hwidthMuHits_.init(H, hdir+"/hitLevel/muonHitWidth", *E.geo, Conf);
+  hwidthDIOHits_.init(H, hdir+"/hitLevel/dioHitWidth", *E.geo, Conf);
+
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.init(hdir+"/hitLevel/afterPulsingPCAll", 12, 160, H, Conf);
     hAfterPulsingPCFiltered_.init(hdir+"/hitLevel/afterPulsingPCFiltered", 12, 160, H, Conf);
@@ -629,7 +632,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
   // select the normalization sample
-  dnDIONormTracks_.process(evt, muStop, decayWindow);
+  const int iDIONorm = dnDIONormTracks_.process(evt, muStop, decayWindow);
 
   const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop, decayWindow);
   const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
@@ -757,6 +760,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   if(doMCTruth_) {
     hTruthDnCandidate_.fill(evt);
+  }
+
+  hwidthMuHits_.fill(evt, muonGlobalClusters);
+  if(iDIONorm != -1) {
+    hwidthDIOHits_.fill(evt, protonGlobalClusters);
   }
 
   // Do we have any ambiguous events (both "DIO" and "proton")?

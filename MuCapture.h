@@ -18,6 +18,7 @@
 #include "HistMuCapAnalysisChannels.h"
 #include "HistDriftTime.h"
 #include "HistTDCWidth.h"
+#include "HistTDCBCSWidth.h"
 #include "HistOccupancy.h"
 #include "HistAfterPulsing.h"
 #include "HistXtalk.h"
@@ -273,6 +274,9 @@ private :
 
   HistTDCWidth hwidthDCall_;
   HistTDCWidth hwidthDCfiltered_;
+
+  HistTDCBCSWidth hwidthMuHits_;
+  HistTDCBCSWidth hwidthDIOHits_;
 
   HistAfterPulsing hAfterPulsingPCAll_;
   HistAfterPulsing hAfterPulsingPCFiltered_;

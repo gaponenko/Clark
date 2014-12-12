@@ -9,6 +9,7 @@
 #include "HistMuCapTruth.h"
 #include "HistMuCapTrkResolution.h"
 #include "WireCluster.h"
+#include "HistTDCBCSWidth.h"
 
 class TH1;
 class TH2;
@@ -79,6 +80,9 @@ private :
 
   HistMuCapTrkResolution hResolutionContained_;
   HistMuCapTrkResolution hResolutionUncontained_;
+
+  HistTDCBCSWidth hTDCWidthContained_;
+  HistTDCBCSWidth hTDCWidthUncontained_;
 };
 
 #endif/*HistMuCapAnalysisChannels_h*/

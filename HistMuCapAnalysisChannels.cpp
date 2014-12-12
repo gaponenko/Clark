@@ -77,6 +77,9 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   //----------------------------------------------------------------
   hitbased_.init(hf, hdir+"/hitbased", geom, conf);
 
+  hTDCWidthContained_.init(hf, hdir+"/contained/tdcwidth", geom, conf);
+  hTDCWidthUncontained_.init(hf, hdir+"/uncontained/tdcwidth", geom, conf);
+
   //----------------------------------------------------------------
   if(doMCTruth_) {
     // truth level binning
@@ -154,6 +157,7 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
         // The "contained tracks" analysis channel
         eventUsedInAChannel2 = true;
         contained_prange_->Fill(prec, rangePIDVar);
+        hTDCWidthContained_.fill(evt, globalPlaneClusters);
 
         if(doMCTruth_) {
 
@@ -180,6 +184,8 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
       else { // The non-contained tracks channel
         eventUsedInAChannel2 = true;
         uncontained_p_->Fill(prec);
+
+        hTDCWidthUncontained_.fill(evt, globalPlaneClusters);
 
         if(doMCTruth_) {
 
