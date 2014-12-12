@@ -26,7 +26,7 @@ namespace TDCHitPreprocessing {
                                              const DetectorGeo& geom,
                                              const ConfigFile& conf)
   {
-    const std::string hdir = topdir + "/" + WirePlane::detName(det);
+    const std::string hdir = topdir + "/" + WirePlane::detName(det) + "_XTalkDiscarder";
     hxt_ = hf.DefineTH1D(hdir, "XTFlag", "XTFlag", 2, -0.5, 1.5);
   }
 
@@ -52,7 +52,7 @@ namespace TDCHitPreprocessing {
                                          const ConfigFile& conf)
     : cutMinTDCWidth_(conf.read<float>("MuCapture/HitPreproc/"+WirePlane::detName(det)+"/NarrowHitDiscarder/cutMinTDCWidth"))
   {
-    const std::string hdir = topdir + "/" + WirePlane::detName(det);
+    const std::string hdir = topdir + "/" + WirePlane::detName(det) + "_NarrowHitDiscarder";
     hwidth_ = hf.DefineTH1D(hdir, "width", "TDC width", 800, -0.5, 399.5);
   }
 
@@ -77,7 +77,7 @@ namespace TDCHitPreprocessing {
                                              const ConfigFile& conf)
     : cutSameWireDt_(conf.read<float>("MuCapture/HitPreproc/"+WirePlane::detName(det)+"/SameWireHitDiscarder/cutSameWireDt"))
   {
-    const std::string hdir = topdir + "/" + WirePlane::detName(det);
+    const std::string hdir = topdir + "/" + WirePlane::detName(det)+"_SameWireHitDiscarder";
     const unsigned maxPlaneNumber = geom.planes(det).size();
     const unsigned maxCellNumber = geom.maxCellNumber(det);
 
