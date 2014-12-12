@@ -48,16 +48,16 @@ void HistHotSpot::init(HistogramFactory& hf,
                                     52, 54.5, 106.5, 52, 54.5, 106.5);
 
   posWidestHit8vs7_->SetOption("colz");
-  posWidestHit8vs7_->GetXaxis()->SetTitle("PC7 hit width");
-  posWidestHit8vs7_->GetYaxis()->SetTitle("PC8 hit width");
+  posWidestHit8vs7_->GetXaxis()->SetTitle("PC7 hit wire");
+  posWidestHit8vs7_->GetYaxis()->SetTitle("PC8 hit wire");
 
   //----------------------------------------------------------------
   clusterSize8vs7_ = hf.DefineTH2D(hdir, "clusterSize8vs7", "TDC cluster size, PC8 vs PC7",
                                     50, 0.5, 50.5, 50, 0.5, 50.5);
 
   clusterSize8vs7_->SetOption("colz");
-  clusterSize8vs7_->GetXaxis()->SetTitle("PC7 hit width");
-  clusterSize8vs7_->GetYaxis()->SetTitle("PC8 hit width");
+  clusterSize8vs7_->GetXaxis()->SetTitle("PC7 cluster size");
+  clusterSize8vs7_->GetYaxis()->SetTitle("PC8 cluster size");
 
   //----------------------------------------------------------------
   numUnassignedDCHits_ = hf.DefineTH1D(hdir, "numUnassignedDCHits", "Number of unassigned DC hits", 80, -0.5, 79.5);
