@@ -30,9 +30,10 @@ public:
 
   bool accepted(const EventClass& evt, const ClustersByPlane& globalPlaneClusters);
 
-  HistHitBasedAnalysis() : doMCTruth_(false) {}
+  HistHitBasedAnalysis() : geom_(0), doMCTruth_(false) {}
 
 private :
+  const DetectorGeo *geom_;
   bool doMCTruth_;
 
   TH2* lastconPlaneVsCWires_; // last plane in a contiguous range vs sum(largest cluster size)
@@ -55,6 +56,7 @@ private :
 
   TH1* hOuterVetoNumHitPlanes_;
   TH1* hNumPC7Clusters_;
+  TH2* hClusterMultiplicity_;
 
   //----------------------------------------------------------------
   // Understanding the "hot spot" feature in data
@@ -62,7 +64,8 @@ private :
   HistHotSpot hshot_;
   HistHotSpot hscold_;
 
-  HistTDCBCSWidth htdcwidth_;
+  HistTDCBCSWidth htdcwidthMaxWires_;
+  HistTDCBCSWidth htdcwidthMaxTDCWidth_;
   //----------------------------------------------------------------
 };
 

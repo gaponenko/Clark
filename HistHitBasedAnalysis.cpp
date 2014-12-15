@@ -18,6 +18,7 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
                                 const DetectorGeo& geom,
                                 const ConfigFile& conf)
 {
+  geom_ = &geom;
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
 
   const int recoCWiresNBins = 200;
@@ -81,10 +82,17 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   hOuterVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "outerVetoNumHitPlanes", "outerVetoNumHitPlanes", 6, -0.5, 5.5);
   hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "numPC7Clusters", 20, -0.5, 19.5);
 
+  hClusterMultiplicity_ = hf.DefineTH2D(hdir, "clusterMultiplicity", "Plane vs cluster multiplicity (in range, for accepted events)", 20, -0.5, 19.5, 56, 0.5, 56.5);
+  hClusterMultiplicity_->SetOption("colz");
+  hClusterMultiplicity_->GetXaxis()->SetTitle("num clusters");
+  hClusterMultiplicity_->GetYaxis()->SetTitle("plane number");
+
   //----------------------------------------------------------------
   hshot_.init(hf, hdir+"/hot", geom, conf);
   hscold_.init(hf, hdir+"/cold", geom, conf);
-  htdcwidth_.init(hf, hdir+"/tdcwidth", geom, conf);
+
+  htdcwidthMaxWires_.init(hf, hdir+"/tdcwidthMaxWires", geom, conf);
+  htdcwidthMaxTDCWidth_.init(hf, hdir+"/tdcwidthMaxTDCWidth", geom, conf);
   //----------------------------------------------------------------
 }
 
@@ -151,7 +159,31 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
     hscold_.fill(evt, protonGlobalClusters);
   }
 
-  htdcwidth_.fill(evt, protonGlobalClusters);
+  // Histogram properties of clusters in range
+  for(int iplane=29; iplane <= 28 + obs.dnCPlanes(); ++iplane) {
+    int numClusters = protonGlobalClusters[iplane].size();
+
+    hClusterMultiplicity_->Fill(numClusters, iplane);
+
+    if(numClusters > 0) {
+      WireCluster cmaxcells(protonGlobalClusters[iplane][0]);
+      WireCluster cmaxtdcwidth(cmaxcells);
+
+      for(int ic = 1; ic < numClusters; ++ic) {
+        const WireCluster& current = protonGlobalClusters[iplane][ic];
+        if(current.numCells() > cmaxcells.numCells()) {
+          cmaxcells = current;
+        }
+        if(current.maxTDCWidth() > cmaxtdcwidth.maxTDCWidth()) {
+          cmaxtdcwidth = current;
+        }
+      }
+
+      htdcwidthMaxWires_.fill(evt, geom_->global(iplane).planeType(), cmaxcells);
+      htdcwidthMaxTDCWidth_.fill(evt, geom_->global(iplane).planeType(), cmaxtdcwidth);
+    }
+  }
+
   //----------------------------------------------------------------
 
   return true;

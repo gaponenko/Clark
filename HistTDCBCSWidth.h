@@ -33,6 +33,8 @@ public:
 
   void fill(const EventClass& evt, const ClustersByPlane& globalClusters);
 
+  void fill(const EventClass& evt, WirePlane::DetType pt, const WireCluster& c);
+
 private :
   static const int maxClusterSize = 4;
 
@@ -43,8 +45,6 @@ private :
 
   std::vector<HistTDCWidth> clusterSizeBinsPC_;
   std::vector<HistTDCWidth> clusterSizeBinsDC_;
-
-  void fill(const EventClass& evt, WirePlane::DetType pt, const WireCluster& c);
 };
 
 #endif/*HistTDCBCSWidth_h*/
