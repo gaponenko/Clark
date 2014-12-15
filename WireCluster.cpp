@@ -40,6 +40,15 @@ double WireCluster::totalTDCWidth() const {
 }
 
 //================================================================
+double WireCluster::maxTDCWidth() const {
+  float res(0);
+  for(TDCHitWPPtrCollection::const_iterator i= hits_.begin(); i!=hits_.end(); ++i) {
+    res = std::max(res, (*i)->width());
+  }
+  return res;
+}
+
+//================================================================
 ClustersByPlane constructPlaneClusters(int maxPlaneNumber, const TDCHitWPPtrCollection& inhits) {
   ClustersByPlane res(1+maxPlaneNumber);
 

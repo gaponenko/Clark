@@ -17,6 +17,7 @@ public:
   int numCells() const { return numCells_; }
 
   double totalTDCWidth() const;
+  double maxTDCWidth() const;
 
   const TDCHitWPPtrCollection& hits() const { return hits_; }
 
