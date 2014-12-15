@@ -87,11 +87,11 @@ void HistTDCWidth::init(const std::string& hdir,
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
     std::ostringstream osname;
-    osname<<namePrefix<<"_hitsPerWire_"<<std::setw(2)<<std::setfill('0')<<i;
+    osname<<namePrefix<<"_hitsPerCluster_"<<std::setw(2)<<std::setfill('0')<<i;
     std::ostringstream ostitle;
-    ostitle<<namePrefix<<" Num hits per wire in plane "<<std::setw(2)<<std::setfill('0')<<i;
-    hitsPerWire_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 10, -0.5, 9.5));
-    hitsPerWire_.back()->GetXaxis()->SetTitle("Hit multiplicity");
+    ostitle<<namePrefix<<" Num hits per cluster in plane "<<std::setw(2)<<std::setfill('0')<<i;
+    hitsPerCluster_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 10, -0.5, 9.5));
+    hitsPerCluster_.back()->GetXaxis()->SetTitle("Hit multiplicity");
   }
 }
 
@@ -116,7 +116,7 @@ void HistTDCWidth::fill(const TDCHitWPCollection& hits) {
     maxWidth_[i->first]->Fill(i->second.max());
     meanWidth_[i->first]->Fill(i->second.mean());
     medianWidth_[i->first]->Fill(i->second.median());
-    hitsPerWire_[i->first]->Fill(i->second.numEntries());
+    hitsPerCluster_[i->first]->Fill(i->second.numEntries());
   }
 }
 
@@ -135,7 +135,7 @@ void HistTDCWidth::fill(const TDCHitWPPtrCollection& hits) {
     maxWidth_[i->first]->Fill(i->second.max());
     meanWidth_[i->first]->Fill(i->second.mean());
     medianWidth_[i->first]->Fill(i->second.median());
-    hitsPerWire_[i->first]->Fill(i->second.numEntries());
+    hitsPerCluster_[i->first]->Fill(i->second.numEntries());
   }
 }
 
