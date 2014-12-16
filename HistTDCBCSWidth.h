@@ -45,6 +45,9 @@ private :
 
   std::vector<HistTDCWidth> clusterSizeBinsPC_;
   std::vector<HistTDCWidth> clusterSizeBinsDC_;
+
+  HistTDCWidth perWireHitDistsPC_;
+  HistTDCWidth perWireHitDistsDC_;
 };
 
 #endif/*HistTDCBCSWidth_h*/

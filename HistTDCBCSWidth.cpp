@@ -53,6 +53,9 @@ void HistTDCBCSWidth::init(HistogramFactory& hf,
     os<<hdir<<"/dcClusterSize"<<i;
     clusterSizeBinsDC_[i-1].init(os.str(), "dcwidth", 44, hf, conf);
   }
+
+  perWireHitDistsPC_.init(hdir+"/pcPerWireDists", "pcwidth", 12, hf, conf);
+  perWireHitDistsDC_.init(hdir+"/dcPerWireDists", "dcwidth", 44, hf, conf);
 }
 
 //================================================================
@@ -73,6 +76,22 @@ void HistTDCBCSWidth::fill(const EventClass& evt, WirePlane::DetType pt, const W
       clusterSizePC_->Fill(cluster.numCells(), cluster.plane());
       HistTDCWidth& hbin = clusterSizeBinsPC_[sz - 1];
       hbin.fill(cluster.hits());
+
+      // Sort cluster hits into per-wire collections and fill the per-wire distributions
+      TDCHitWPPtrCollection clusterhits(cluster.hits());
+      std::sort(clusterhits.begin(), clusterhits.end(), TDCHitWPCmpGeom());
+      for(int wirestart = 0; wirestart < clusterhits.size(); ) {
+        TDCHitWPPtrCollection wirehits;
+        wirehits.push_back(clusterhits[wirestart]);
+        for(int i=wirestart+1; (i < clusterhits.size())&&(clusterhits[i]->cell() == wirehits.front()->cell()) ; ++i) {
+          wirehits.push_back(clusterhits[i]);
+        }
+
+        perWireHitDistsPC_.fill(wirehits);
+
+        wirestart += wirehits.size();
+      }
+
       break;
     }
   case WirePlane::DC:
@@ -80,6 +99,23 @@ void HistTDCBCSWidth::fill(const EventClass& evt, WirePlane::DetType pt, const W
       clusterSizeDC_->Fill(cluster.numCells(), cluster.plane());
       HistTDCWidth& hbin = clusterSizeBinsDC_[sz - 1];
       hbin.fill(cluster.hits());
+
+      // Sort cluster hits into per-wire collections and fill the per-wire distributions
+      TDCHitWPPtrCollection clusterhits(cluster.hits());
+      std::sort(clusterhits.begin(), clusterhits.end(), TDCHitWPCmpGeom());
+      for(int wirestart = 0; wirestart < clusterhits.size(); ) {
+        TDCHitWPPtrCollection wirehits;
+        wirehits.push_back(clusterhits[wirestart]);
+        for(int i=wirestart+1; (i < clusterhits.size())&&(clusterhits[i]->cell() == wirehits.front()->cell()) ; ++i) {
+          wirehits.push_back(clusterhits[i]);
+        }
+
+        perWireHitDistsDC_.fill(wirehits);
+
+        wirestart += wirehits.size();
+      }
+
+
       break;
     }
   }
