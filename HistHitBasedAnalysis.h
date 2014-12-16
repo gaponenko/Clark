@@ -10,6 +10,7 @@
 #include "HistHotSpot.h"
 #include "TimeWindow.h"
 #include "HistTDCBCSWidth.h"
+#include "HistXTPlane.h"
 
 class TH1;
 class TH2;
@@ -66,6 +67,9 @@ private :
 
   HistTDCBCSWidth htdcwidthMaxWires_;
   HistTDCBCSWidth htdcwidthMaxTDCWidth_;
+
+  HistXTPlane hxtplane100_;
+  HistXTPlane hxtplane300_;
   //----------------------------------------------------------------
 };
 

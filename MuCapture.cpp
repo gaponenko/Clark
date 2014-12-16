@@ -364,6 +364,16 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits());
   const TDCHitWPPtrCollection& allPCHits = allPCHitsBuf.get();
 
+//debug:  if(true) {
+//debug:    TDCHitWPPtrCollection localhits = allPCHits;
+//debug:    std::sort(localhits.begin(), localhits.end(), TDCHitWPCmpTime());
+//debug:    std::stable_sort(localhits.begin(), localhits.end(), TDCHitWPCmpGeom());
+//debug:    // here we have localhits sorted by cell then time
+//debug:      std::cout<<"#================================================================\n";
+//debug:      std::cout<<"# event "<<evt.nrun<<" "<<evt.nevt<<std::endl;
+//debug:      std::cout<<"all PC hits = "<<localhits<<std::endl;
+//debug:  }
+
   TDCHitWPPtrCollection nxtPCHits;
   pcXTalkProcessor_->process(&nxtPCHits, allPCHits);
 
@@ -384,6 +394,16 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   TDCHitPreprocessing::Hits allDCHitsBuf(evt.dc_hits());
   const TDCHitWPPtrCollection& allDCHits = allDCHitsBuf.get();
+
+//debug:  if(true) {
+//debug:    TDCHitWPPtrCollection localhits = allDCHits;
+//debug:    std::sort(localhits.begin(), localhits.end(), TDCHitWPCmpTime());
+//debug:    std::stable_sort(localhits.begin(), localhits.end(), TDCHitWPCmpGeom());
+//debug:    // here we have localhits sorted by cell then time
+//debug:      std::cout<<"#================================================================\n";
+//debug:      std::cout<<"# event "<<evt.nrun<<" "<<evt.nevt<<std::endl;
+//debug:      std::cout<<"all DC hits = "<<localhits<<std::endl;
+//debug:  }
 
   TDCHitWPPtrCollection nxtDCHits;
   dcXTalkProcessor_->process(&nxtDCHits, allDCHits);

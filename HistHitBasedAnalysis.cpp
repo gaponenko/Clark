@@ -3,6 +3,8 @@
 #include "HistHitBasedAnalysis.h"
 #include "HitBasedObservables.h"
 
+#include <fstream>
+
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
@@ -93,6 +95,9 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 
   htdcwidthMaxWires_.init(hf, hdir+"/tdcwidthMaxWires", geom, conf);
   htdcwidthMaxTDCWidth_.init(hf, hdir+"/tdcwidthMaxTDCWidth", geom, conf);
+
+  hxtplane100_.init(hf, hdir+"/xtplane100", geom, conf, 100.);
+  hxtplane300_.init(hf, hdir+"/xtplane300", geom, conf, 300.);
   //----------------------------------------------------------------
 }
 
@@ -159,11 +164,24 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
     hscold_.fill(evt, protonGlobalClusters);
   }
 
+  hxtplane100_.fill(evt, protonGlobalClusters);
+  hxtplane300_.fill(evt, protonGlobalClusters);
+
   // Histogram properties of clusters in range
   for(int iplane=29; iplane <= 28 + obs.dnCPlanes(); ++iplane) {
     int numClusters = protonGlobalClusters[iplane].size();
 
     hClusterMultiplicity_->Fill(numClusters, iplane);
+
+//debug:    if(numClusters > 1) {
+//debug:      //static std::ofstream outfile("hitbased_multicluster.dat");
+//debug:      //outfile<<evt.nrun<<" "<<evt.nevt<<std::endl;
+//debug:
+//debug:      std::cout<<"#----------------------------------------------------------------\n";
+//debug:      std::cout<<"# multiple clusters in plane "<<iplane<<std::endl;
+//debug:      std::cout<<"# evid "<<evt.nrun<<" "<<evt.nevt<<std::endl;
+//debug:      std::cout<<protonGlobalClusters<<std::endl;
+//debug:    }
 
     if(numClusters > 0) {
       WireCluster cmaxcells(protonGlobalClusters[iplane][0]);
