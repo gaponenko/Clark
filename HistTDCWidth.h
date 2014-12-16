@@ -30,11 +30,18 @@ public:
 private :
   TH1 *hWidth_;
   std::vector<TH1*> byPlane_;
+
+  TH1 *hminWidth_;
+  TH1 *hmaxWidth_;
+  TH1 *hmeanWidth_;
+  TH1 *hmedianWidth_;
+  TH1 *hhitsPerSet_;
+
   std::vector<TH1*> minWidth_;
   std::vector<TH1*> maxWidth_;
   std::vector<TH1*> meanWidth_;
   std::vector<TH1*> medianWidth_;
-  std::vector<TH1*> hitsPerCluster_;
+  std::vector<TH1*> hitsPerSet_;
 
   void fill(const TDCHitWP& hit);
 };
