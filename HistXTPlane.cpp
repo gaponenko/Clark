@@ -100,7 +100,7 @@ void HistXTPlane::bookHisto(HistogramFactory& hf, const std::string& hdir, int i
   std::ostringstream ost;
   ost<<"t(narrow in plane "<<induced<<") - t(wide in plane "<<inducing<<")";
   std::ostringstream osn;
-  osn<<std::setw(2)<<std::setfill('0')<<"dtxt_ "<<induced<<"_"<<inducing;
+  osn<<std::setw(2)<<std::setfill('0')<<"dtxt_"<<induced<<"_"<<inducing;
 
   if(hdt_[induced].empty()) {
     hdt_[induced].resize(1+geom_->numGlobal());
