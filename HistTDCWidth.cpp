@@ -87,9 +87,9 @@ void HistTDCWidth::init(const std::string& hdir,
 
   for(unsigned i=0; i<=maxPlaneNumber; ++i) {
     std::ostringstream osname;
-    osname<<namePrefix<<"_hitsPerCluster_"<<std::setw(2)<<std::setfill('0')<<i;
+    osname<<namePrefix<<"_hitsPerSet_"<<std::setw(2)<<std::setfill('0')<<i;
     std::ostringstream ostitle;
-    ostitle<<namePrefix<<" Num hits per cluster in plane "<<std::setw(2)<<std::setfill('0')<<i;
+    ostitle<<namePrefix<<" Num hits per set in plane "<<std::setw(2)<<std::setfill('0')<<i;
     hitsPerCluster_.push_back(hf.DefineTH1D(hdir, osname.str(), ostitle.str(), 10, -0.5, 9.5));
     hitsPerCluster_.back()->GetXaxis()->SetTitle("Hit multiplicity");
   }
