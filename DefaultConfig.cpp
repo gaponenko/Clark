@@ -315,7 +315,13 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/cutMuonFirstPlane", 1);
 
         SetKey(Conf, "MuCapture/Accidentals/tmax", -1100.);
-        // Cyclotron RF=25.058 MHz [Glen Marshall in the 2013-06-12 muminus meeting]
+        // Cyclotron RF=23.058 MHz [Glen Marshall in the 2013-06-12 muminus meeting]
+        // See e.g.
+        // R.~H.~M.~Gummer,
+        // %``Accelerating Voltage Control and Stabilization in the TRIUMF Cyclotron,''
+        // IEEE Trans.\ Nucl.\ Sci.\  {\bf 22}, 1257 (1975).
+        // http://inspirehep.net/record/102708
+        // http://dx.doi.org/10.1109/TNS.1975.4327860
         SetKey(Conf, "MuCapture/Accidentals/cycleLength", 1000./23.058);
         SetKey(Conf, "MuCapture/Accidentals/numCycles", 104);
         SetKey(Conf, "MuCapture/Accidentals/maxSubdivisions", 3);
