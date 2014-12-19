@@ -131,7 +131,7 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
   // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
   const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
 
-  HitBasedObservablesMaxSize obs(protonGlobalClusters);
+  HitBasedObservablesMaxWidth obs(protonGlobalClusters);
 
   lastconPlaneVsCWires_->Fill(obs.dnCWires(), obs.dnCPlanes());
   noncontiguous_.fill(protonGlobalClusters, evt);
@@ -199,6 +199,20 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 
       htdcwidthMaxWires_.fill(evt, geom_->global(iplane).planeType(), cmaxcells);
       htdcwidthMaxTDCWidth_.fill(evt, geom_->global(iplane).planeType(), cmaxtdcwidth);
+    }
+  } // for(iplane)
+
+  //----------------------------------------------------------------
+  if(true) { // Compare the cluster selection options.
+    HitBasedObservablesMaxSize oms(protonGlobalClusters);
+    if(oms.dnCWires() != obs.dnCWires()) {
+      std::cout<<"#----------------------------------------------------------------\n";
+      std::cout<<"# cluster selection option makes a difference in  evid "<<evt.nrun<<" "<<evt.nevt<<std::endl;
+      std::cout<<"# due to the planes: ";
+      for(int i=0; i<oms.clusters().size(); ++i) {
+        if(oms.clusters()[i].numCells() != obs.clusters()[i].numCells()) std::cout<<29+i<<" ";
+      }
+      std::cout<<"\n"<<protonGlobalClusters<<std::endl;
     }
   }
 
