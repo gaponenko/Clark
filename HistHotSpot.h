@@ -26,7 +26,8 @@ public:
             const DetectorGeo& geom,
             const ConfigFile& conf);
 
-  void fill(const EventClass& evt, const ClustersByPlane& globalPlaneClusters);
+  template<class Observables>
+  void fill(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, const Observables& obs);
 
 private :
   // One entry per event

@@ -76,8 +76,8 @@ void HistHotSpot::init(HistogramFactory& hf,
 }
 
 //================================================================
-void HistHotSpot::fill(const EventClass& evt, const ClustersByPlane& protonGlobalClusters) {
-  HitBasedObservablesMaxSize obs(protonGlobalClusters);
+template<class Observables>
+void HistHotSpot::fill(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, const Observables& obs) {
 
   // Require hits in both PC7 and PC8
   if(obs.dnCPlanes() < 2) {
@@ -127,5 +127,8 @@ void HistHotSpot::fill(const EventClass& evt, const ClustersByPlane& protonGloba
   }
 
 }
+
+template void HistHotSpot::fill(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, const HitBasedObservablesMaxSize& obs);
+template void HistHotSpot::fill(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, const HitBasedObservablesMaxWidth& obs);
 
 //================================================================

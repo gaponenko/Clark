@@ -158,10 +158,10 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 
   //----------------------------------------------------------------
   if((obs.dnCPlanes() == 2)&&(obs.dnCWires()>50)) {
-    hshot_.fill(evt, protonGlobalClusters);
+    hshot_.fill(evt, protonGlobalClusters, obs);
   }
   else {
-    hscold_.fill(evt, protonGlobalClusters);
+    hscold_.fill(evt, protonGlobalClusters, obs);
   }
 
   hxtplane100_.fill(evt, protonGlobalClusters);
