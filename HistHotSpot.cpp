@@ -77,7 +77,7 @@ void HistHotSpot::init(HistogramFactory& hf,
 
 //================================================================
 void HistHotSpot::fill(const EventClass& evt, const ClustersByPlane& protonGlobalClusters) {
-  HitBasedObservables obs(protonGlobalClusters);
+  HitBasedObservablesMaxSize obs(protonGlobalClusters);
 
   // Require hits in both PC7 and PC8
   if(obs.dnCPlanes() < 2) {
@@ -91,7 +91,7 @@ void HistHotSpot::fill(const EventClass& evt, const ClustersByPlane& protonGloba
   hitTimeWidest_->Fill(hit78->time());
   tdcWidthWidestHit8vs7_->Fill(hit7->width(), hit8->width());
   posWidestHit8vs7_->Fill(hit7->cell(), hit8->cell());
-  clusterSize8vs7_->Fill(obs.clusterSize().at(0), obs.clusterSize().at(1));
+  clusterSize8vs7_->Fill(obs.clusters().at(0).numCells(), obs.clusters().at(1).numCells());
 
   numUnassignedDCHits_->Fill(gwres->unassignedDCHits.size());
 

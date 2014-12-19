@@ -131,7 +131,7 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
   // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
   const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
 
-  HitBasedObservables obs(protonGlobalClusters);
+  HitBasedObservablesMaxSize obs(protonGlobalClusters);
 
   lastconPlaneVsCWires_->Fill(obs.dnCWires(), obs.dnCPlanes());
   noncontiguous_.fill(protonGlobalClusters, evt);

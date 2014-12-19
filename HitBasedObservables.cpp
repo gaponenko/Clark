@@ -2,25 +2,32 @@
 
 #include "HitBasedObservables.h"
 
-HitBasedObservables::HitBasedObservables(const ClustersByPlane& protonGlobalClusters)
+template<class ClusterCmp>
+HitBasedObservables<ClusterCmp>::HitBasedObservables(const ClustersByPlane& protonGlobalClusters)
   : dnCPlanes_(0)
   , dnCWires_(0)
 {
-  // Require a hit in PC7
-  if(!protonGlobalClusters.at(29).empty()) {
+  // Start at PC7
+  for(int iplane = 29; (iplane < protonGlobalClusters.size()) && !protonGlobalClusters.at(iplane).empty(); ++iplane) {
+    const WireClusterCollection& clusters = protonGlobalClusters[iplane];
 
-    dnCPlanes_ = 28;
-
-    do {
-      ++dnCPlanes_;
-      int maxclustersize = 0;
-      for(int i=0; i<protonGlobalClusters.at(dnCPlanes_).size(); ++i) {
-        maxclustersize = std::max(maxclustersize, protonGlobalClusters[dnCPlanes_][i].numCells());
+    // Find the best cluster
+    WireClusterCollection::const_iterator best = clusters.begin();
+    for(WireClusterCollection::const_iterator current = ++clusters.begin(); current != clusters.end(); ++current) {
+      if(cmp_(*best, *current)) {
+        best = current;
       }
-      dnCWires_ += maxclustersize;
-      clusterSize_.push_back(maxclustersize);
-    } while(!protonGlobalClusters.at(1+dnCPlanes_).empty());
+    }
+    clusters_.push_back(*best);
+  }
 
-    dnCPlanes_ -= 28;
+  dnCPlanes_ = clusters_.size();
+
+  dnCWires_ = 0;
+  for(int i=0; i<clusters_.size(); ++i) {
+    dnCWires_ += clusters_[i].numCells();
   }
 }
+
+template HitBasedObservables<WireClusterCmpNumCells>::HitBasedObservables(const ClustersByPlane&);
+template HitBasedObservables<WireClusterCmpTDCWidth>::HitBasedObservables(const ClustersByPlane&);
