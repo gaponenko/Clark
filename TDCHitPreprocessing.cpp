@@ -3,6 +3,8 @@
 #include "TDCHitPreprocessing.h"
 
 #include <algorithm>
+#include <iterator>
+#include <sstream>
 
 #include "HistogramFactory.h"
 #include "DetectorGeo.h"
@@ -50,10 +52,65 @@ namespace TDCHitPreprocessing {
                                          HistogramFactory& hf,
                                          const DetectorGeo& geom,
                                          const ConfigFile& conf)
-    : cutMinTDCWidth_(conf.read<float>("MuCapture/HitPreproc/"+WirePlane::detName(det)+"/NarrowHitDiscarder/cutMinTDCWidth"))
   {
     const std::string hdir = topdir + "/" + WirePlane::detName(det) + "_NarrowHitDiscarder";
-    hwidth_ = hf.DefineTH1D(hdir, "width", "TDC width", 800, -0.5, 399.5);
+
+    cutMinTDCWidth_.resize(1 + ((det == WirePlane::PC) ? geom.numPCs() : geom.numDCs()));
+    hwidth_.resize(cutMinTDCWidth_.size());
+
+    const std::string globalCutKey = "MuCapture/HitPreproc/"+WirePlane::detName(det)+"/NarrowHitDiscarder/cutMinTDCWidth";
+    const std::string arrayCutKey = globalCutKey + "Array";
+
+    if(conf.keyExists(arrayCutKey) && conf.keyExists(globalCutKey)) {
+      throw std::runtime_error("Config error: both "+globalCutKey+" and "
+                               +arrayCutKey+" are set.  Only one of them must be specified.");
+    }
+
+    if(conf.keyExists(globalCutKey)) {
+      const double val = conf.read<float>(globalCutKey);
+      for(int i=0; i<cutMinTDCWidth_.size(); ++i) {
+        cutMinTDCWidth_[i] = val;
+      }
+      std::cout<<"NarrowHitDiscarder: using global "
+               <<(det==WirePlane::PC ? "PC":"DC")
+               <<" TDC width cut = "<<val
+               <<std::endl;
+    }
+    else {
+      const std::string inputs = conf.read<std::string>(arrayCutKey);
+      std::istringstream iss(inputs);
+      for(int i=1; i<cutMinTDCWidth_.size(); ++i) {
+        if(!(iss>>cutMinTDCWidth_[i])) {
+          std::ostringstream os;
+          os<<"Error reading cut for plane "<<i<<" from the input string: \""<<inputs<<"\" (config key "<<arrayCutKey<<")";
+          throw std::runtime_error(os.str());
+        }
+      }
+
+      double dummy=1234.;
+      if(iss>>dummy) {
+        std::cerr<<"dummy = "<<dummy<<" cutMinTDCWidth_.size() = "<<cutMinTDCWidth_.size()<<std::endl;
+        std::copy(cutMinTDCWidth_.begin(), cutMinTDCWidth_.end(), std::ostream_iterator<double>(std::cerr, " "));
+        throw std::runtime_error("Error: too many cut values in the input string: \""
+                                 +inputs+"\" (config key "+arrayCutKey+")");
+      }
+
+      std::cout<<"NarrowHitDiscarder: using per-plane "
+               <<(det==WirePlane::PC ? "PC":"DC")
+               <<" TDC width cuts = ";
+      std::copy(/*skip the 0-th entry*/ ++cutMinTDCWidth_.begin(),
+                cutMinTDCWidth_.end(), std::ostream_iterator<double>(std::cout, " "));
+      std::cout<<std::endl;
+    }
+
+    for(int i=1; i<hwidth_.size(); ++i) {
+      std::ostringstream osn;
+      osn<<"width"<<std::setw(2)<<std::setfill('0')<<i;
+
+      std::ostringstream ost;
+      ost<<"TDC width for "<<(det==WirePlane::PC ? "PC":"DC")<<" plane "<<i;
+      hwidth_[i] = hf.DefineTH1D(hdir, osn.str(), "TDC width", 800, -0.5, 399.5);
+    }
   }
 
   //================================================================
@@ -62,8 +119,8 @@ namespace TDCHitPreprocessing {
   {
     res->clear();
     for(unsigned i=0; i<hits.size(); ++i) {
-      hwidth_->Fill(hits[i]->width());
-      if(hits[i]->width() > cutMinTDCWidth_) {
+      hwidth_[hits[i]->plane()]->Fill(hits[i]->width());
+      if(hits[i]->width() > cutMinTDCWidth_[hits[i]->plane()]) {
         res->push_back(hits[i]);
       }
     }

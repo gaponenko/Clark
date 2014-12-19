@@ -68,8 +68,8 @@ namespace  TDCHitPreprocessing {
                          const TDCHitWPPtrCollection& inputs);
 
   private:
-    float cutMinTDCWidth_;
-    TH1 *hwidth_;
+    std::vector<float> cutMinTDCWidth_;
+    std::vector<TH1*> hwidth_;
   };
 
   //----------------------------------------------------------------
