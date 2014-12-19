@@ -46,6 +46,24 @@ TDCHitWPPtr maxTDCWidthHit(const WireCluster& cluster);
 // the caller must protect against emtpy planeClusters
 TDCHitWPPtr maxTDCWidthHit(const WireClusterCollection& planeClusters);
 
+
+
+//----------------------------------------------------------------
+// Comparators
+
+struct WireClusterCmpNumCells {
+  bool operator()(const WireCluster& a, const WireCluster& b) const {
+    return a.numCells() < b.numCells();
+  }
+};
+
+struct WireClusterCmpTDCWidth {
+  bool operator()(const WireCluster& a, const WireCluster& b) const {
+    return a.maxTDCWidth() < b.maxTDCWidth();
+  }
+};
+
+//----------------------------------------------------------------
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl);
 std::ostream& operator<<(std::ostream& os, const WireClusterCollection& coll);
 std::ostream& operator<<(std::ostream& os, const ClustersByPlane& cbp);
