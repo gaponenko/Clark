@@ -210,10 +210,11 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
         }
       }
     }
-    else {
-      // No good positive tracks. Do a hit-based analysis here.
-      eventUsedInHitBased = hitbased_.accepted(evt, globalPlaneClusters);
-    }
+  }
+
+  if(!eventUsedInAChannel2) {
+    // No good positive tracks. Do a hit-based analysis here.
+    eventUsedInHitBased = hitbased_.accepted(evt, globalPlaneClusters, iNegTrack);
   }
 
   if(doMCTruth_) {

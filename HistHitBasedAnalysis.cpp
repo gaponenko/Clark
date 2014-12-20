@@ -113,8 +113,8 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 }
 
 //================================================================
-bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane& protonGlobalClusters) {
-  CutNumber c = analyzeEvent(evt, protonGlobalClusters);
+bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, int iDIOVetoTrack) {
+  CutNumber c = analyzeEvent(evt, protonGlobalClusters, iDIOVetoTrack);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -123,9 +123,13 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 }
 
 //================================================================
-HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& protonGlobalClusters) {
+HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, int iDIOVetoTrack) {
   if(doMCTruth_) {
     hTruth_in_.fill(evt);
+  }
+
+  if(iDIOVetoTrack != -1) {
+    return CUT_DIOVETO;
   }
 
   // Z containment cut

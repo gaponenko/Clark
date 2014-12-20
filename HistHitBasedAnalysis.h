@@ -26,6 +26,7 @@ class EventClass;
 //================================================================
 class HistHitBasedAnalysis {
   void set_cut_bin_labels(TAxis* ax) {
+    ax->SetBinLabel(1+CUT_DIOVETO, "DIO veto");
     ax->SetBinLabel(1+CUT_ZVETO, "Z veto");
     ax->SetBinLabel(1+CUT_NOPC7, "No PC7");
     ax->SetBinLabel(1+CUT_PCWIDTH, "PC TDC width");
@@ -34,6 +35,7 @@ class HistHitBasedAnalysis {
 
 public:
   enum CutNumber {
+    CUT_DIOVETO,
     CUT_ZVETO,
     CUT_NOPC7,
     CUT_PCWIDTH,
@@ -46,7 +48,7 @@ public:
             const DetectorGeo& geom,
             const ConfigFile& conf);
 
-  bool accepted(const EventClass& evt, const ClustersByPlane& globalPlaneClusters);
+  bool accepted(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
 
   HistHitBasedAnalysis() : geom_(0), doMCTruth_(false) {}
 
@@ -92,7 +94,7 @@ private :
   HistXTPlane hxtplane300_;
   //----------------------------------------------------------------
 
-  CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters);
+  CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
 
 };
 
