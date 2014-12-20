@@ -31,6 +31,17 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   const double recoCPlanesXMax =recoCPlanesNBins + 0.5;
 
   //----------------------------------------------------------------
+  h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
+  h_cuts_r->SetStats(kFALSE);
+  set_cut_bin_labels(h_cuts_r->GetXaxis());
+  h_cuts_r->SetOption("hist text");
+
+  h_cuts_p = hf.DefineTH1D(hdir, "cuts_p", "Events before cut", CUTS_END, -0.5, CUTS_END-0.5);
+  set_cut_bin_labels(h_cuts_p->GetXaxis());
+  h_cuts_p->SetStats(kFALSE);
+  h_cuts_p->SetOption("hist text");
+
+  //----------------------------------------------------------------
   lastconPlaneVsCWires_ = hf.DefineTH2D(hdir, "cplanes_vs_cwires", "Last contiguous plane vs sum(largest cluster size)",
                                         recoCWiresNBins, recoCWiresXMin, recoCWiresXMax, recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
 
@@ -103,6 +114,16 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 
 //================================================================
 bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane& protonGlobalClusters) {
+  CutNumber c = analyzeEvent(evt, protonGlobalClusters);
+  h_cuts_r->Fill(c);
+  for(int cut=0; cut<=c; cut++) {
+    h_cuts_p->Fill(cut);
+  }
+  return c == CUTS_ACCEPTED;
+}
+
+//================================================================
+HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& protonGlobalClusters) {
   if(doMCTruth_) {
     hTruth_in_.fill(evt);
   }
@@ -117,13 +138,13 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 
   hOuterVetoNumHitPlanes_->Fill(numOuterVetoHitPlanes);
   if(numOuterVetoHitPlanes > 1) {
-    return false;
+    return CUT_ZVETO;
   }
 
   const unsigned numPC7Clusters = protonGlobalClusters.at(29).size();
   hNumPC7Clusters_->Fill(numPC7Clusters);
   if(!numPC7Clusters) {
-    return false;
+    return CUT_NOPC7;
   }
 
   //----------------------------------------------------------------
@@ -218,7 +239,7 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 
   //----------------------------------------------------------------
 
-  return true;
+  return CUTS_ACCEPTED;
 }
 
 //================================================================

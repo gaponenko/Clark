@@ -12,6 +12,8 @@
 #include "HistTDCBCSWidth.h"
 #include "HistXTPlane.h"
 
+#include "TAxis.h"
+
 class TH1;
 class TH2;
 class TH3;
@@ -23,7 +25,22 @@ class EventClass;
 
 //================================================================
 class HistHitBasedAnalysis {
+  void set_cut_bin_labels(TAxis* ax) {
+    ax->SetBinLabel(1+CUT_ZVETO, "Z veto");
+    ax->SetBinLabel(1+CUT_NOPC7, "No PC7");
+    ax->SetBinLabel(1+CUT_PCWIDTH, "PC TDC width");
+    ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
+  }
+
 public:
+  enum CutNumber {
+    CUT_ZVETO,
+    CUT_NOPC7,
+    CUT_PCWIDTH,
+    CUTS_ACCEPTED,
+    CUTS_END
+  };
+
   void init(HistogramFactory& hf,
             const std::string& hdir,
             const DetectorGeo& geom,
@@ -36,6 +53,9 @@ public:
 private :
   const DetectorGeo *geom_;
   bool doMCTruth_;
+
+  TH1 *h_cuts_r;
+  TH1 *h_cuts_p;
 
   TH2* lastconPlaneVsCWires_; // last plane in a contiguous range vs sum(largest cluster size)
 
@@ -71,6 +91,9 @@ private :
   HistXTPlane hxtplane100_;
   HistXTPlane hxtplane300_;
   //----------------------------------------------------------------
+
+  CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters);
+
 };
 
 #endif/*HistHitBasedAnalysis_h*/
