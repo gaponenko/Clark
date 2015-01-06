@@ -229,20 +229,6 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   } // for(iplane)
 
   //----------------------------------------------------------------
-  if(true) { // Compare the cluster selection options.
-    HitBasedObservablesMaxSize oms(protonGlobalClusters);
-    if(oms.dnCWires() != obs.dnCWires()) {
-      std::cout<<"#----------------------------------------------------------------\n";
-      std::cout<<"# cluster selection option makes a difference in  evid "<<evt.nrun<<" "<<evt.nevt<<std::endl;
-      std::cout<<"# due to the planes: ";
-      for(int i=0; i<oms.clusters().size(); ++i) {
-        if(oms.clusters()[i].numCells() != obs.clusters()[i].numCells()) std::cout<<29+i<<" ";
-      }
-      std::cout<<"\n"<<protonGlobalClusters<<std::endl;
-    }
-  }
-
-  //----------------------------------------------------------------
 
   return CUTS_ACCEPTED;
 }
