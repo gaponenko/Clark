@@ -70,6 +70,7 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   }
 
   noncontiguous_.init(hf, hdir+"/noncontiguous", geom, conf);
+  hambig_.init(hf, hdir+"/clusterAmbiguities", geom, conf);
 
   //----------------------------------------------------------------
   if(doMCTruth_) {
@@ -156,7 +157,7 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
   const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
 
-  HitBasedObservablesMaxWidth obs(protonGlobalClusters);
+  HitBasedObservablesMaxWidth obs(protonGlobalClusters, &hambig_);
 
   lastconPlaneVsCWires_->Fill(obs.dnCWires(), obs.dnCPlanes());
   noncontiguous_.fill(protonGlobalClusters, evt);

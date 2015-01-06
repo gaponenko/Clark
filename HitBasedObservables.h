@@ -4,13 +4,33 @@
 #define HitBasedObservables_h
 
 #include <vector>
+#include <string>
 #include "WireCluster.h"
+
+class TH2;
+class HistogramFactory;
+class DetectorGeo;
+class ConfigFile;
+
+//================================================================
+// Histograms that can optionally be filled during the
+// HitBasedObservables computation.
+class HistHitBasedAmbiguities {
+public:
+  TH2 *hClusterMultiplicity_;
+  TH2 *hDiffNWires_;
+
+  void init(HistogramFactory& hf,
+            const std::string& hdir,
+            const DetectorGeo& geom,
+            const ConfigFile& conf);
+};
 
 //================================================================
 template<class ClusterCmp>
 class HitBasedObservables {
 public:
-  explicit HitBasedObservables(const ClustersByPlane& protonGlobalClusters);
+  explicit HitBasedObservables(const ClustersByPlane& protonGlobalClusters, HistHitBasedAmbiguities *hh=0);
 
   // count of contiguous planes hit
   unsigned dnCPlanes() const { return dnCPlanes_; }

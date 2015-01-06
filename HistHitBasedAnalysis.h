@@ -11,6 +11,7 @@
 #include "TimeWindow.h"
 #include "HistTDCBCSWidth.h"
 #include "HistXTPlane.h"
+#include "HitBasedObservables.h"
 
 #include "TAxis.h"
 
@@ -73,6 +74,7 @@ private :
   TH2* lastconPlaneVsCWires_mcdio_;
 
   HistMuCapFinal noncontiguous_;
+  HistHitBasedAmbiguities hambig_;
 
   HistMuCapTruth hTruth_in_;
   HistMuCapTruth hTruth_accepted_;
