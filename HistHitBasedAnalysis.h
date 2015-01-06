@@ -83,13 +83,11 @@ private :
   TH1* hNumPC7Clusters_;
 
   //----------------------------------------------------------------
-  // Understanding the "hot spot" feature in data
+  HistTDCBCSWidth htdcwidth_;
 
+  // Understanding the "hot spot" feature in data
   HistHotSpot hshot_;
   HistHotSpot hscold_;
-
-  HistTDCBCSWidth htdcwidthMaxWires_;
-  HistTDCBCSWidth htdcwidthMaxTDCWidth_;
 
   HistXTPlane hxtplane100_;
   HistXTPlane hxtplane300_;

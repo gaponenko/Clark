@@ -97,11 +97,10 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "numPC7Clusters", 20, -0.5, 19.5);
 
   //----------------------------------------------------------------
+  htdcwidth_.init(hf, hdir+"/tdcwidth", geom, conf);
+
   hshot_.init(hf, hdir+"/hot", geom, conf);
   hscold_.init(hf, hdir+"/cold", geom, conf);
-
-  htdcwidthMaxWires_.init(hf, hdir+"/tdcwidthMaxWires", geom, conf);
-  htdcwidthMaxTDCWidth_.init(hf, hdir+"/tdcwidthMaxTDCWidth", geom, conf);
 
   hxtplane100_.init(hf, hdir+"/xtplane100", geom, conf, 100.);
   hxtplane300_.init(hf, hdir+"/xtplane300", geom, conf, 300.);
@@ -178,6 +177,9 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   }
 
   //----------------------------------------------------------------
+  htdcwidth_.fill(evt, protonGlobalClusters);
+
+  //----------------
   if((obs.dnCPlanes() == 2)&&(obs.dnCWires()>50)) {
     hshot_.fill(evt, protonGlobalClusters, obs);
   }
@@ -187,39 +189,6 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
 
   hxtplane100_.fill(evt, protonGlobalClusters);
   hxtplane300_.fill(evt, protonGlobalClusters);
-
-  // Histogram properties of clusters in range
-  for(int iplane=29; iplane <= 28 + obs.dnCPlanes(); ++iplane) {
-    int numClusters = protonGlobalClusters[iplane].size();
-
-//debug:    if(numClusters > 1) {
-//debug:      //static std::ofstream outfile("hitbased_multicluster.dat");
-//debug:      //outfile<<evt.nrun<<" "<<evt.nevt<<std::endl;
-//debug:
-//debug:      std::cout<<"#----------------------------------------------------------------\n";
-//debug:      std::cout<<"# multiple clusters in plane "<<iplane<<std::endl;
-//debug:      std::cout<<"# evid "<<evt.nrun<<" "<<evt.nevt<<std::endl;
-//debug:      std::cout<<protonGlobalClusters<<std::endl;
-//debug:    }
-
-    if(numClusters > 0) {
-      WireCluster cmaxcells(protonGlobalClusters[iplane][0]);
-      WireCluster cmaxtdcwidth(cmaxcells);
-
-      for(int ic = 1; ic < numClusters; ++ic) {
-        const WireCluster& current = protonGlobalClusters[iplane][ic];
-        if(current.numCells() > cmaxcells.numCells()) {
-          cmaxcells = current;
-        }
-        if(current.maxTDCWidth() > cmaxtdcwidth.maxTDCWidth()) {
-          cmaxtdcwidth = current;
-        }
-      }
-
-      htdcwidthMaxWires_.fill(evt, geom_->global(iplane).planeType(), cmaxcells);
-      htdcwidthMaxTDCWidth_.fill(evt, geom_->global(iplane).planeType(), cmaxtdcwidth);
-    }
-  } // for(iplane)
 
   //----------------------------------------------------------------
 
