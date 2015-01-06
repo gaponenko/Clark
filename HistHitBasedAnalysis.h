@@ -81,7 +81,6 @@ private :
 
   TH1* hOuterVetoNumHitPlanes_;
   TH1* hNumPC7Clusters_;
-  TH2* hClusterMultiplicity_;
 
   //----------------------------------------------------------------
   // Understanding the "hot spot" feature in data

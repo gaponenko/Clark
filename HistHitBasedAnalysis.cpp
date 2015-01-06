@@ -96,11 +96,6 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   hOuterVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "outerVetoNumHitPlanes", "outerVetoNumHitPlanes", 6, -0.5, 5.5);
   hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "numPC7Clusters", 20, -0.5, 19.5);
 
-  hClusterMultiplicity_ = hf.DefineTH2D(hdir, "clusterMultiplicity", "Plane vs cluster multiplicity (in range, for accepted events)", 20, -0.5, 19.5, 56, 0.5, 56.5);
-  hClusterMultiplicity_->SetOption("colz");
-  hClusterMultiplicity_->GetXaxis()->SetTitle("num clusters");
-  hClusterMultiplicity_->GetYaxis()->SetTitle("plane number");
-
   //----------------------------------------------------------------
   hshot_.init(hf, hdir+"/hot", geom, conf);
   hscold_.init(hf, hdir+"/cold", geom, conf);
@@ -196,8 +191,6 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   // Histogram properties of clusters in range
   for(int iplane=29; iplane <= 28 + obs.dnCPlanes(); ++iplane) {
     int numClusters = protonGlobalClusters[iplane].size();
-
-    hClusterMultiplicity_->Fill(numClusters, iplane);
 
 //debug:    if(numClusters > 1) {
 //debug:      //static std::ofstream outfile("hitbased_multicluster.dat");
