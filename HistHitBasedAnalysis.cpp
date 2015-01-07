@@ -165,7 +165,7 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
 
   //----------------------------------------------------------------
   const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
-  // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
+  // Simulated DIO have no easily accessible MC truth.  We'll treat PID=zero as DIO down in this code.
   const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
 
   HitBasedObservablesMaxWidth obs(doubleFilteredClusters, &hambig_);
