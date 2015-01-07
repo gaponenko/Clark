@@ -116,6 +116,11 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   hshot_.init(hf, hdir+"/hot", geom, conf);
   hscold_.init(hf, hdir+"/cold", geom, conf);
 
+  // This histogram is only iteresting for real data.  Here is our run number range:
+  const int firstrun = 47607;
+  const int lastrun =  47798;
+  hshotrun_ = hf.DefineTH1D(hdir, "hshotrun", "Run number for hot spot events", 1+lastrun-firstrun, firstrun-0.5, lastrun+0.5);
+
   hxtplane100_.init(hf, hdir+"/xtplane100", geom, conf, 100.);
   hxtplane300_.init(hf, hdir+"/xtplane300", geom, conf, 300.);
   //----------------------------------------------------------------
@@ -202,6 +207,7 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   //----------------
   if((obs.dnCPlanes() == 2)&&(obs.dnCWires()>50)) {
     hshot_.fill(evt, inputClusters, obs);
+    hshotrun_->Fill(evt.nrun);
   }
   else {
     hscold_.fill(evt, inputClusters, obs);

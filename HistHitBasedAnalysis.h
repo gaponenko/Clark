@@ -95,6 +95,8 @@ private :
   HistHotSpot hshot_;
   HistHotSpot hscold_;
 
+  TH1 *hshotrun_;
+
   HistXTPlane hxtplane100_;
   HistXTPlane hxtplane300_;
   //----------------------------------------------------------------
