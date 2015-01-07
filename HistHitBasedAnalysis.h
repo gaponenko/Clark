@@ -57,6 +57,7 @@ private :
   const DetectorGeo *geom_;
   bool doMCTruth_;
   double tdcWidthFilterCutPC_;
+  int maxClusterWiresFilterCutPC_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
@@ -101,6 +102,7 @@ private :
   CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
 
   void filterDnPCNoise(ClustersByPlane *out, const ClustersByPlane& in);
+  void filterClusterSize(WireClusterCollection *out, const WireClusterCollection& in);
   void fillFilterEffectHist(TH2* h, const WireClusterCollection& orig, const WireClusterCollection& filtered);
 };
 

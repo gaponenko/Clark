@@ -23,6 +23,8 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   geom_ = &geom;
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
   tdcWidthFilterCutPC_ = conf.read<double>("HitBasedAnalysis/tdcWidthFilterCutPC");
+  // Art's suggestion: discard clusters that are too large
+  maxClusterWiresFilterCutPC_ = conf.read<int>("HitBasedAnalysis/maxClusterWiresFilterCutPC");
 
   const int recoCWiresNBins = 200;
   const double recoCWiresXMin = -0.5;
@@ -245,13 +247,23 @@ void HistHitBasedAnalysis::filterDnPCNoise(ClustersByPlane *out, const ClustersB
   fillFilterEffectHist(hFilterEffectPC8_, in[30], dnPCClusters[8]);
 
   // Record the new clusters
-  (*out)[29] = dnPCClusters[7]; // pc7
-  (*out)[30] = dnPCClusters[8]; // pc8
+  filterClusterSize( &(*out)[29], dnPCClusters[7]); // pc7
+  filterClusterSize( &(*out)[30], dnPCClusters[8]); // pc8
 
-  (*out)[53] = dnPCClusters[9]; // pc9
-  (*out)[54] = dnPCClusters[10];
-  (*out)[55] = dnPCClusters[11];
-  (*out)[56] = dnPCClusters[12];
+  filterClusterSize( &(*out)[53], dnPCClusters[9]); // pc9
+  filterClusterSize( &(*out)[54], dnPCClusters[10]);
+  filterClusterSize( &(*out)[55], dnPCClusters[11]);
+  filterClusterSize( &(*out)[56], dnPCClusters[12]);
+}
+
+//================================================================
+void HistHitBasedAnalysis::filterClusterSize(WireClusterCollection *out, const WireClusterCollection& in) {
+  out->clear();
+  for(WireClusterCollection::const_iterator i=in.begin(); i!=in.end(); ++i) {
+    if(i->numCells() <= maxClusterWiresFilterCutPC_) {
+      out->push_back(*i);
+    }
+  }
 }
 
 //================================================================

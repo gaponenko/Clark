@@ -440,5 +440,8 @@ void SetDefault(ConfigFile &Conf)
         // from slide 3 this is <~13 cm
         SetKey(Conf, "MuCapture/ProtonWindow/RextMax", 13.);
 
+        // This cut is inactive by default
+        SetKey(Conf, "HitBasedAnalysis/maxClusterWiresFilterCutPC", 999);
+
         //================================================================
 }
