@@ -83,6 +83,9 @@ private :
   TH1* hOuterVetoNumHitPlanes_;
   TH1* hNumPC7Clusters_;
 
+  TH2 *hFilterEffectPC7_;
+  TH2 *hFilterEffectPC8_;
+
   //----------------------------------------------------------------
   HistTDCBCSWidth htdcwidthInput_;
   HistTDCBCSWidth htdcwidthDoubleFiltered_;
@@ -98,6 +101,7 @@ private :
   CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
 
   void filterDnPCNoise(ClustersByPlane *out, const ClustersByPlane& in);
+  void fillFilterEffectHist(TH2* h, const WireClusterCollection& orig, const WireClusterCollection& filtered);
 };
 
 #endif/*HistHitBasedAnalysis_h*/

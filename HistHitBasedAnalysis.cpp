@@ -97,6 +97,16 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   hOuterVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "outerVetoNumHitPlanes", "outerVetoNumHitPlanes", 6, -0.5, 5.5);
   hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "numPC7Clusters", 20, -0.5, 19.5);
 
+  hFilterEffectPC7_ = hf.DefineTH2D(hdir, "hitFilterPC7", "Hit filter effect on PC7", 51, -25.5, +25.5, 50, -49.5, 0.5);
+  hFilterEffectPC7_->SetOption("colz");
+  hFilterEffectPC7_->GetXaxis()->SetTitle("nclusters filtered - orig");
+  hFilterEffectPC7_->GetYaxis()->SetTitle("nwires filtered - orig");
+
+  hFilterEffectPC8_ = hf.DefineTH2D(hdir, "hitFilterPC8", "Hit filter effect on PC8", 51, -25.5, +25.5, 50, -49.5, 0.5);
+  hFilterEffectPC8_->SetOption("colz");
+  hFilterEffectPC8_->GetXaxis()->SetTitle("nclusters filtered - orig");
+  hFilterEffectPC8_->GetYaxis()->SetTitle("nwires filtered - orig");
+
   //----------------------------------------------------------------
   htdcwidthInput_.init(hf, hdir+"/tdcwidthInput", geom, conf);
   htdcwidthDoubleFiltered_.init(hf, hdir+"/tdcwidthDoubleFiltered", geom, conf);
@@ -231,6 +241,9 @@ void HistHitBasedAnalysis::filterDnPCNoise(ClustersByPlane *out, const ClustersB
   // Combine filtered hits into clusters
   ClustersByPlane dnPCClusters = constructPlaneClusters(geom_->numPCs(), pchits);
 
+  fillFilterEffectHist(hFilterEffectPC7_, in[29], dnPCClusters[7]);
+  fillFilterEffectHist(hFilterEffectPC8_, in[30], dnPCClusters[8]);
+
   // Record the new clusters
   (*out)[29] = dnPCClusters[7]; // pc7
   (*out)[30] = dnPCClusters[8]; // pc8
@@ -239,6 +252,25 @@ void HistHitBasedAnalysis::filterDnPCNoise(ClustersByPlane *out, const ClustersB
   (*out)[54] = dnPCClusters[10];
   (*out)[55] = dnPCClusters[11];
   (*out)[56] = dnPCClusters[12];
+}
+
+//================================================================
+void HistHitBasedAnalysis::fillFilterEffectHist(TH2* hh, const WireClusterCollection& orig, const WireClusterCollection& filtered) {
+  int dcluster = filtered.size() - orig.size();
+
+  int nworig=0;
+  for(WireClusterCollection::const_iterator i=orig.begin(); i!=orig.end(); ++i) {
+    nworig += i->numCells();
+  }
+
+  int nwfiltered=0;
+  for(WireClusterCollection::const_iterator i=filtered.begin(); i!=filtered.end(); ++i) {
+    nwfiltered += i->numCells();
+  }
+
+  int dnw = nwfiltered - nworig;
+
+  hh->Fill(dcluster, dnw);
 }
 
 //================================================================
