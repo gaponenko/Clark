@@ -51,11 +51,12 @@ public:
 
   bool accepted(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
 
-  HistHitBasedAnalysis() : geom_(0), doMCTruth_(false) {}
+  HistHitBasedAnalysis() : geom_(0), doMCTruth_(false), tdcWidthFilterCutPC_() {}
 
 private :
   const DetectorGeo *geom_;
   bool doMCTruth_;
+  double tdcWidthFilterCutPC_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
@@ -83,7 +84,8 @@ private :
   TH1* hNumPC7Clusters_;
 
   //----------------------------------------------------------------
-  HistTDCBCSWidth htdcwidth_;
+  HistTDCBCSWidth htdcwidthInput_;
+  HistTDCBCSWidth htdcwidthDoubleFiltered_;
 
   // Understanding the "hot spot" feature in data
   HistHotSpot hshot_;
@@ -95,6 +97,7 @@ private :
 
   CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
 
+  void filterDnPCNoise(ClustersByPlane *out, const ClustersByPlane& in);
 };
 
 #endif/*HistHitBasedAnalysis_h*/

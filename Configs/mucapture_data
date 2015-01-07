@@ -4,6 +4,8 @@ MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 61
 Detector/Geometry/dc_ppc = 25
 Detector/Geometry/pc_ppc = 5
+HitBasedAnalysis/tdcWidthFilterCutPC = 40.
+
 # MuCapture/ProtonWindow/TightProtonsFileName = tightProtons.txt
 # MuCapture/uvOutFileName = muStopUV.txt
 # MuCapture/commonSkimOutFileName = commonSkim.txt

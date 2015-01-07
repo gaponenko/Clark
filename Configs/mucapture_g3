@@ -7,3 +7,4 @@ MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 66
 Detector/Geometry/dc_ppc = 25
 Detector/Geometry/pc_ppc = 5
+HitBasedAnalysis/tdcWidthFilterCutPC = 0.

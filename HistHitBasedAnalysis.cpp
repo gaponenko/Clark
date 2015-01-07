@@ -22,6 +22,7 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 {
   geom_ = &geom;
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
+  tdcWidthFilterCutPC_ = conf.read<double>("HitBasedAnalysis/tdcWidthFilterCutPC");
 
   const int recoCWiresNBins = 200;
   const double recoCWiresXMin = -0.5;
@@ -97,7 +98,8 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   hNumPC7Clusters_ = hf.DefineTH1D(hdir, "numPC7Clusters", "numPC7Clusters", 20, -0.5, 19.5);
 
   //----------------------------------------------------------------
-  htdcwidth_.init(hf, hdir+"/tdcwidth", geom, conf);
+  htdcwidthInput_.init(hf, hdir+"/tdcwidthInput", geom, conf);
+  htdcwidthDoubleFiltered_.init(hf, hdir+"/tdcwidthDoubleFiltered", geom, conf);
 
   hshot_.init(hf, hdir+"/hot", geom, conf);
   hscold_.init(hf, hdir+"/cold", geom, conf);
@@ -118,7 +120,7 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 }
 
 //================================================================
-HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, int iDIOVetoTrack) {
+HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& inputClusters, int iDIOVetoTrack) {
   if(doMCTruth_) {
     hTruth_in_.fill(evt);
   }
@@ -127,10 +129,15 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
     return CUT_DIOVETO;
   }
 
+  // Filter out noise hits in downstream PCs.
+  // We accept the loss of some real electron hits at this stage.
+  ClustersByPlane doubleFilteredClusters;
+  filterDnPCNoise(&doubleFilteredClusters, inputClusters);
+
   // Z containment cut
   int numOuterVetoHitPlanes(0);
   for(int i=0; i<4; ++i) {
-    if(!protonGlobalClusters[56-i].empty()) {
+    if(!doubleFilteredClusters[56-i].empty()) {
       ++numOuterVetoHitPlanes;
     }
   }
@@ -140,7 +147,7 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
     return CUT_ZVETO;
   }
 
-  const unsigned numPC7Clusters = protonGlobalClusters.at(29).size();
+  const unsigned numPC7Clusters = doubleFilteredClusters.at(29).size();
   hNumPC7Clusters_->Fill(numPC7Clusters);
   if(!numPC7Clusters) {
     return CUT_NOPC7;
@@ -151,10 +158,10 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
   const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
 
-  HitBasedObservablesMaxWidth obs(protonGlobalClusters, &hambig_);
+  HitBasedObservablesMaxWidth obs(doubleFilteredClusters, &hambig_);
 
   lastconPlaneVsCWires_->Fill(obs.dnCWires(), obs.dnCPlanes());
-  noncontiguous_.fill(protonGlobalClusters, evt);
+  noncontiguous_.fill(doubleFilteredClusters, evt);
 
   if(doMCTruth_) {
     if(imcvtxStart  != -1) {
@@ -177,22 +184,61 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   }
 
   //----------------------------------------------------------------
-  htdcwidth_.fill(evt, protonGlobalClusters);
+  htdcwidthInput_.fill(evt, inputClusters);
+  htdcwidthDoubleFiltered_.fill(evt, doubleFilteredClusters);
 
   //----------------
   if((obs.dnCPlanes() == 2)&&(obs.dnCWires()>50)) {
-    hshot_.fill(evt, protonGlobalClusters, obs);
+    hshot_.fill(evt, inputClusters, obs);
   }
   else {
-    hscold_.fill(evt, protonGlobalClusters, obs);
+    hscold_.fill(evt, inputClusters, obs);
   }
 
-  hxtplane100_.fill(evt, protonGlobalClusters);
-  hxtplane300_.fill(evt, protonGlobalClusters);
+  hxtplane100_.fill(evt, inputClusters);
+  hxtplane300_.fill(evt, inputClusters);
 
   //----------------------------------------------------------------
 
   return CUTS_ACCEPTED;
+}
+
+//================================================================
+void HistHitBasedAnalysis::filterDnPCNoise(ClustersByPlane *out, const ClustersByPlane& in) {
+
+  out->resize(in.size());
+
+  TDCHitWPPtrCollection pchits;
+
+  for(int iplane=1; iplane<in.size(); ++iplane) {
+    // Filter hist from donwstream PCs into a new collection.
+    // Copy over clusters for other planes;
+    if( (iplane > 28) && (geom_->global(iplane).planeType() == WirePlane::PC)) {
+      const WireClusterCollection& clusters = in[iplane];
+      for(WireClusterCollection::const_iterator ic = clusters.begin(); ic != clusters.end(); ++ic) {
+        for(TDCHitWPPtrCollection::const_iterator ih = ic->hits().begin(); ih != ic->hits().end(); ++ih) {
+          if((*ih)->width() > tdcWidthFilterCutPC_) {
+            pchits.push_back(*ih);
+          }
+        }
+      }
+    }
+    else {
+      (*out)[iplane] = in[iplane];
+    }
+  }
+
+  // Combine filtered hits into clusters
+  ClustersByPlane dnPCClusters = constructPlaneClusters(geom_->numPCs(), pchits);
+
+  // Record the new clusters
+  (*out)[29] = dnPCClusters[7]; // pc7
+  (*out)[30] = dnPCClusters[8]; // pc8
+
+  (*out)[53] = dnPCClusters[9]; // pc9
+  (*out)[54] = dnPCClusters[10];
+  (*out)[55] = dnPCClusters[11];
+  (*out)[56] = dnPCClusters[12];
 }
 
 //================================================================
