@@ -45,6 +45,9 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   h_cuts_p->SetOption("hist text");
 
   //----------------------------------------------------------------
+  cutpc78_.init(hf, hdir+"/pc78cut", geom, conf);
+
+  //----------------------------------------------------------------
   lastconPlaneVsCWires_ = hf.DefineTH2D(hdir, "cplanes_vs_cwires", "Last contiguous plane vs sum(largest cluster size)",
                                         recoCWiresNBins, recoCWiresXMin, recoCWiresXMax, recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
 
@@ -169,6 +172,10 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
   if(!numPC7Clusters) {
     return CUT_NOPC7;
   }
+
+  if(!cutpc78_.accepted(evt, doubleFilteredClusters)) {
+    return CUT_PCWIDTH;
+ }
 
   //----------------------------------------------------------------
   const unsigned imcvtxStart = evt.iCaptureMcVtxStart;

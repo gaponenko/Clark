@@ -4,7 +4,15 @@ MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 61
 Detector/Geometry/dc_ppc = 25
 Detector/Geometry/pc_ppc = 5
+
+# Clean up noise hits on data.
 HitBasedAnalysis/tdcWidthFilterCutPC = 40.
+
+# # An alternative to tdcWidthFilterCutPC: reject large clusters
+# HitBasedAnalysis/maxClusterWiresFilterCutPC = 45
+
+# This is to get a higher purity sample of p&d, with fewer DIO tracks
+MuCapture/CutPC78/cutTDCwidth = 240.
 
 # MuCapture/ProtonWindow/TightProtonsFileName = tightProtons.txt
 # MuCapture/uvOutFileName = muStopUV.txt

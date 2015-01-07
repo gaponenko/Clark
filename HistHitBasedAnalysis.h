@@ -12,6 +12,7 @@
 #include "HistTDCBCSWidth.h"
 #include "HistXTPlane.h"
 #include "HitBasedObservables.h"
+#include "MuCapPC78Cut.h"
 
 #include "TAxis.h"
 
@@ -61,6 +62,8 @@ private :
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
+
+  MuCapPC78Cut cutpc78_;
 
   TH2* lastconPlaneVsCWires_; // last plane in a contiguous range vs sum(largest cluster size)
 
