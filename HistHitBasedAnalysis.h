@@ -68,6 +68,8 @@ private :
   TH2* lastconPlaneVsCWires_; // last plane in a contiguous range vs sum(largest cluster size)
 
   TH3* migration_;
+  TH3* migration_mcproton_;
+  TH3* migration_mcdeuteron_;
 
   //----------------------------------------------------------------
   // Extra histograms to plot efficiencies etc.  Not essential for the

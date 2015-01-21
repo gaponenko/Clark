@@ -95,6 +95,24 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
     migration_->GetYaxis()->SetTitle("cluster wires");
     migration_->GetZaxis()->SetTitle("cplane");
 
+    migration_mcproton_ = hf.DefineTH3D(hdir, "migration_mcproton", "Hit based channel migration, proton",
+                                        gen1nbins, gen1pmin, gen1pmax,
+                                        recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                        recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+
+    migration_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
+    migration_mcproton_->GetYaxis()->SetTitle("cluster wires");
+    migration_mcproton_->GetZaxis()->SetTitle("cplane");
+
+    migration_mcdeuteron_ = hf.DefineTH3D(hdir, "migration_mcdeuteron", "Hit based channel migration, deuteron",
+                                        gen1nbins, gen1pmin, gen1pmax,
+                                        recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                        recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+
+    migration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
+    migration_mcdeuteron_->GetYaxis()->SetTitle("cluster wires");
+    migration_mcdeuteron_->GetZaxis()->SetTitle("cplane");
+
     hTruth_in_.init(hf, hdir+"/MCTruth_in", conf);
     hTruth_accepted_.init(hf, hdir+"/MCTruth_accepted", conf);
   }
@@ -197,9 +215,11 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
     switch(mcParticle) {
     case MuCapUtilities::PID_G3_PROTON:
       lastconPlaneVsCWires_mcproton_->Fill(obs.dnCWires(), obs.dnCPlanes());
+      migration_mcproton_->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
       break;
     case MuCapUtilities::PID_G3_DEUTERON:
       lastconPlaneVsCWires_mcdeuteron_->Fill(obs.dnCWires(), obs.dnCPlanes());
+      migration_mcdeuteron_->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
       break;
     case 0:
       lastconPlaneVsCWires_mcdio_->Fill(obs.dnCWires(), obs.dnCPlanes());

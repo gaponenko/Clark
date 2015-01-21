@@ -51,7 +51,12 @@ private :
   TH1* mclost2_count_; // for DIO, where we don't have mcptot easily available
 
   TH3* containedMigration_;
+  TH3* containedMigration_mcproton_;
+  TH3* containedMigration_mcdeuteron_;
+
   TH2* uncontainedMigration_;
+  TH2* uncontainedMigration_mcproton_;
+  TH2* uncontainedMigration_mcdeuteron_;
 
   HistHitBasedAnalysis hitbased_;
 

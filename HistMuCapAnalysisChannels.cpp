@@ -99,7 +99,7 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     mcin_deuteron_ptot_ = hf.DefineTH1D(hdir, "mcin_deuteron_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcin_dio_count_ = hf.DefineTH1D(hdir, "mcin_dio_count", "noncapture count, input", 1, -0.5, 0.5);
 
-    // Migration matrices for the contained channel, two generator binnings
+    // Migration matrices for the contained channel
     containedMigration_ = hf.DefineTH3D(hdir+"/contained", "migration",
                                         "Contained channel migration",
                                         gen1nbins, gen1pmin, gen1pmax,
@@ -110,6 +110,26 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     containedMigration_->GetYaxis()->SetTitle("p reco, MeV/c");
     containedMigration_->GetZaxis()->SetTitle("range");
 
+    containedMigration_mcproton_ = hf.DefineTH3D(hdir+"/contained", "migration_mcproton",
+                                                 "Contained channel migration, proton",
+                                                 gen1nbins, gen1pmin, gen1pmax,
+                                                 recoContPNbins, recoContPMin, recoContPMax,
+                                                 recoContRNbins, recoContRMin, recoContRMax);
+
+    containedMigration_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
+    containedMigration_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
+    containedMigration_mcproton_->GetZaxis()->SetTitle("range");
+
+    containedMigration_mcdeuteron_ = hf.DefineTH3D(hdir+"/contained", "migration_mcdeuteron",
+                                                 "Contained channel migration, deuteron",
+                                                 gen1nbins, gen1pmin, gen1pmax,
+                                                 recoContPNbins, recoContPMin, recoContPMax,
+                                                 recoContRNbins, recoContRMin, recoContRMax);
+
+    containedMigration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
+    containedMigration_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
+    containedMigration_mcdeuteron_->GetZaxis()->SetTitle("range");
+
     // Migration matrices for the non contained channel, two generator binnings
     uncontainedMigration_ = hf.DefineTH2D(hdir+"/uncontained","migration",
                                           "Non-contained channel migration",
@@ -119,6 +139,24 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     uncontainedMigration_->SetOption("colz");
     uncontainedMigration_->GetXaxis()->SetTitle("p true, MeV/c");
     uncontainedMigration_->GetYaxis()->SetTitle("p reco, MeV/c");
+
+    uncontainedMigration_mcproton_ = hf.DefineTH2D(hdir+"/uncontained","migration_mcproton",
+                                                   "Non-contained channel migration, proton",
+                                                   gen1nbins, gen1pmin, gen1pmax,
+                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
+
+    uncontainedMigration_mcproton_->SetOption("colz");
+    uncontainedMigration_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
+    uncontainedMigration_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
+
+    uncontainedMigration_mcdeuteron_ = hf.DefineTH2D(hdir+"/uncontained","migration_mcdeuteron",
+                                                   "Non-contained channel migration, deuteron",
+                                                   gen1nbins, gen1pmin, gen1pmax,
+                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
+
+    uncontainedMigration_mcdeuteron_->SetOption("colz");
+    uncontainedMigration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
+    uncontainedMigration_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
 
     hTruthTrkContained_.init(hf, hdir+"/contained/MCTruthTrk", conf);
     hTruthTrkUncontained_.init(hf, hdir+"/uncontained/MCTruthTrk", conf);
@@ -168,9 +206,11 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
           switch(mcParticle) {
           case MuCapUtilities::PID_G3_PROTON:
             contained_prange_mcproton_->Fill(prec, rangePIDVar);
+            containedMigration_mcproton_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
             break;
           case MuCapUtilities::PID_G3_DEUTERON:
             contained_prange_mcdeuteron_->Fill(prec, rangePIDVar);
+            containedMigration_mcdeuteron_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
             break;
           case 0:
             contained_prange_mcdio_->Fill(prec, rangePIDVar);
@@ -196,9 +236,11 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
           switch(mcParticle) {
           case MuCapUtilities::PID_G3_PROTON:
             uncontained_p_mcproton_->Fill(prec);
+            uncontainedMigration_mcproton_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
             break;
           case MuCapUtilities::PID_G3_DEUTERON:
             uncontained_p_mcdeuteron_->Fill(prec);
+            uncontainedMigration_mcdeuteron_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
             break;
           case 0:
             uncontained_p_mcdio_->Fill(prec);
