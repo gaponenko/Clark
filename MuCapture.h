@@ -190,6 +190,11 @@ private :
   TH1D* hMeasuredMomentum_;
 
   RooUnfoldResponse anDnLateResponseWithPID_;
+  TH2D* hWithPIDTruthMomentum_;
+  TH2D* hWithPIDTruthMomentumReco_;
+  TH2D* hWithPIDMeasVsTruthMomentumTruProtons_;
+  TH2D* hWithPIDMeasVsTruthMomentumTruDeuterons_;
+  TH2D* hWithPIDTruthMomentumNotReco_;
   TH2D* hWithPIDMeasuredMomentum_;
 
   RooUnfoldResponse anDnLateResponseContained_;
