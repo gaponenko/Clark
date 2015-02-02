@@ -81,9 +81,9 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
   //----------------------------------------------------------------
   if(doMCTruth_) {
     // truth level binning
-    const int gen1nbins = 400; // 2.5 MeV/c bins
+    const int gen1nbins = 500;
     const double gen1pmin = 0.;
-    const double gen1pmax = 400.;
+    const double gen1pmax = 500.;
 
     // Migration matrices for the contained channel, two generator binnings
     migration_ = hf.DefineTH3D(hdir, "migration", "Hit based channel migration",

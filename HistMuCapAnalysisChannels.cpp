@@ -91,9 +91,9 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   //----------------------------------------------------------------
   if(doMCTruth_) {
     // truth level binning
-    const int gen1nbins = 400; // 2.5 MeV/c bins
+    const int gen1nbins = 500;
     const double gen1pmin = 0.;
-    const double gen1pmax = 400.;
+    const double gen1pmax = 500.;
 
     // True distribution of all events used for the unfolding
     mcin_proton_ptot_ = hf.DefineTH1D(hdir, "mcin_proton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
