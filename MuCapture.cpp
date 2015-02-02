@@ -363,6 +363,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_EVENT_NUMBER;
   }
 
+  channels_.fillReferenceSample(evt);
+
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits());
   const TDCHitWPPtrCollection& allPCHits = allPCHitsBuf.get();
 

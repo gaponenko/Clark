@@ -50,7 +50,7 @@ public:
             const DetectorGeo& geom,
             const ConfigFile& conf);
 
-  bool accepted(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
+  bool accepted(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack, bool referenceSampleAccepted);
 
   HistHitBasedAnalysis() : geom_(0), doMCTruth_(false), tdcWidthFilterCutPC_() {}
 
@@ -70,6 +70,10 @@ private :
   TH3* migration_;
   TH3* migration_mcproton_;
   TH3* migration_mcdeuteron_;
+
+  TH3* contamination_;
+  TH3* contamination_mcproton_;
+  TH3* contamination_mcdeuteron_;
 
   //----------------------------------------------------------------
   // Extra histograms to plot efficiencies etc.  Not essential for the
@@ -106,7 +110,7 @@ private :
   HistXTPlane hxtplane300_;
   //----------------------------------------------------------------
 
-  CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack);
+  CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack, bool referenceSampleAccepted);
 
   void filterDnPCNoise(ClustersByPlane *out, const ClustersByPlane& in);
   void filterClusterSize(WireClusterCollection *out, const WireClusterCollection& in);

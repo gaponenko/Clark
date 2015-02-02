@@ -113,6 +113,35 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
     migration_mcdeuteron_->GetYaxis()->SetTitle("cluster wires");
     migration_mcdeuteron_->GetZaxis()->SetTitle("cplane");
 
+    // Contamination matrices for the contained channel, two generator binnings
+    contamination_ = hf.DefineTH3D(hdir, "contamination", "Hit based channel contamination",
+                               gen1nbins, gen1pmin, gen1pmax,
+                               recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                               recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+
+    contamination_->GetXaxis()->SetTitle("p true, MeV/c");
+    contamination_->GetYaxis()->SetTitle("cluster wires");
+    contamination_->GetZaxis()->SetTitle("cplane");
+
+    contamination_mcproton_ = hf.DefineTH3D(hdir, "contamination_mcproton", "Hit based channel contamination, proton",
+                                        gen1nbins, gen1pmin, gen1pmax,
+                                        recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                        recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+
+    contamination_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
+    contamination_mcproton_->GetYaxis()->SetTitle("cluster wires");
+    contamination_mcproton_->GetZaxis()->SetTitle("cplane");
+
+    contamination_mcdeuteron_ = hf.DefineTH3D(hdir, "contamination_mcdeuteron", "Hit based channel contamination, deuteron",
+                                        gen1nbins, gen1pmin, gen1pmax,
+                                        recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                        recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+
+    contamination_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
+    contamination_mcdeuteron_->GetYaxis()->SetTitle("cluster wires");
+    contamination_mcdeuteron_->GetZaxis()->SetTitle("cplane");
+
+    //----------------
     hTruth_in_.init(hf, hdir+"/MCTruth_in", conf);
     hTruth_accepted_.init(hf, hdir+"/MCTruth_accepted", conf);
   }
@@ -148,8 +177,8 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 }
 
 //================================================================
-bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, int iDIOVetoTrack) {
-  CutNumber c = analyzeEvent(evt, protonGlobalClusters, iDIOVetoTrack);
+bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, int iDIOVetoTrack, bool referenceSampleAccepted) {
+  CutNumber c = analyzeEvent(evt, protonGlobalClusters, iDIOVetoTrack, referenceSampleAccepted);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -158,7 +187,7 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 }
 
 //================================================================
-HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& inputClusters, int iDIOVetoTrack) {
+HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& inputClusters, int iDIOVetoTrack, bool referenceSampleAccepted) {
   if(doMCTruth_) {
     hTruth_in_.fill(evt);
   }
@@ -207,7 +236,7 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
 
   if(doMCTruth_) {
     if(imcvtxStart  != -1) {
-      migration_->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
+      (referenceSampleAccepted ? migration_ : contamination_)->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
     }
 
     hTruth_accepted_.fill(evt);
@@ -215,11 +244,13 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
     switch(mcParticle) {
     case MuCapUtilities::PID_G3_PROTON:
       lastconPlaneVsCWires_mcproton_->Fill(obs.dnCWires(), obs.dnCPlanes());
-      migration_mcproton_->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
+      (referenceSampleAccepted ? migration_mcproton_ : contamination_mcproton_)
+        ->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
       break;
     case MuCapUtilities::PID_G3_DEUTERON:
       lastconPlaneVsCWires_mcdeuteron_->Fill(obs.dnCWires(), obs.dnCPlanes());
-      migration_mcdeuteron_->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
+      (referenceSampleAccepted ? migration_mcdeuteron_ : contamination_mcdeuteron_)
+        ->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
       break;
     case 0:
       lastconPlaneVsCWires_mcdio_->Fill(obs.dnCWires(), obs.dnCPlanes());

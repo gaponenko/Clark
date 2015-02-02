@@ -29,6 +29,9 @@ public:
             const DetectorGeo& geom,
             const ConfigFile& conf);
 
+  // Must be called for all events.  Must be called before fill() on the same event.
+  void fillReferenceSample(const EventClass& evt);
+
   void fill(const EventClass& evt,
             int iPosTrack,
             int iNegTrack,
@@ -36,19 +39,32 @@ public:
             double rangePIDVar,
             const ClustersByPlane& globalPlaneClusters );
 
-  HistMuCapAnalysisChannels() : doMCTruth_(false) {}
+  HistMuCapAnalysisChannels() : doMCTruth_(false), referenceSample_nrun_(0), referenceSample_nevt_(0) {}
 
 private :
   bool doMCTruth_;
+
+  int referenceSample_nrun_;
+  int referenceSample_nevt_;
+  bool referenceSampleAccepted_;
+
+  TH1* refsample_muminus_multiplicity_;
+  TH1* refsample_endvtx_time_;
+  TH1* refsample_num_stops_;
+
+  TH1* refsample_in_zstop_;
+  TH1* refsample_accepted_count_;
+
+  // Reference sample spectrum: common for all reco channels
+  TH1* mcin_proton_ptot_;
+  TH1* mcin_deuteron_ptot_;
+  TH1* mcin_dio_count_;
+
 
   //----------------------------------------------------------------
   // Essential "channel" analysis histograms
   TH2* contained_prange_;
   TH1* uncontained_p_;
-
-  // lost with 2 channels
-  TH1* mclost2_ptot_;
-  TH1* mclost2_count_; // for DIO, where we don't have mcptot easily available
 
   TH3* containedMigration_;
   TH3* containedMigration_mcproton_;
@@ -58,19 +74,16 @@ private :
   TH2* uncontainedMigration_mcproton_;
   TH2* uncontainedMigration_mcdeuteron_;
 
+  // Contamination: like migration, but for events not in the reference sample: no true tgt stop.
+  TH3* containedContamination_;
+  TH3* containedContamination_mcproton_;
+  TH3* containedContamination_mcdeuteron_;
+
+  TH2* uncontainedContamination_;
+  TH2* uncontainedContamination_mcproton_;
+  TH2* uncontainedContamination_mcdeuteron_;
+
   HistHitBasedAnalysis hitbased_;
-
-  // lost with 3 channels
-  TH1* mclost3_ptot_;
-  TH1* mclost3_count_;
-
-  //----------------------------------------------------------------
-  // Extra histograms to plot efficiencies etc.  Not essential for the
-  // unfolding.
-
-  TH1* mcin_proton_ptot_;
-  TH1* mcin_deuteron_ptot_;
-  TH1* mcin_dio_count_;
 
   // same content as the reco hists, but which one is filled depends on MC PID
   TH2* contained_prange_mcproton_;
@@ -79,6 +92,8 @@ private :
   TH1* uncontained_p_mcproton_;
   TH1* uncontained_p_mcdeuteron_;
   TH1* uncontained_p_mcdio_;
+
+  //----------------
 
   HistMuCapTruth hTruthTrkContained_;
   HistMuCapTruth hTruthTrkUncontained_;

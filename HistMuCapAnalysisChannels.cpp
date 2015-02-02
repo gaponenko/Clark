@@ -18,6 +18,14 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
                                      const ConfigFile& conf)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
+  if(doMCTruth_) {
+    refsample_muminus_multiplicity_ = hf.DefineTH1D(hdir+"/refsample", "muminus_multiplicity", "Mu- multiplicity, input", 10, -0.5, 9.5);
+    refsample_endvtx_time_ = hf.DefineTH1D(hdir+"/refsample", "endvtx_time", "Candidate vtx time", 400, -500., 3500.);
+    refsample_num_stops_ = hf.DefineTH1D(hdir+"/refsample", "num_stops", "Num selected stops per event", 10, -0.5, 9.5);
+
+    refsample_in_zstop_ = hf.DefineTH1D(hdir+"/refsample", "in_zstop", "Z stop position, input events", 120, -0.0200, -0.0080);
+    refsample_accepted_count_ = hf.DefineTH1D(hdir+"/refsample", "acc_count", "Count of accepted ref sample events", 1, -0.5, 0.5);
+  }
 
   //----------------------------------------------------------------
   // "channel" analysis histograms
@@ -87,13 +95,6 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     const double gen1pmin = 0.;
     const double gen1pmax = 400.;
 
-    // True distribution of lost events
-    mclost2_ptot_ = hf.DefineTH1D(hdir, "mclost2_ptot", "mcptot, of lost events for 2 channel analysis", gen1nbins, gen1pmin, gen1pmax);
-    mclost2_count_ = hf.DefineTH1D(hdir, "mclost2_count", "count of lost events for 2 channel analysis ", 1, -0.5, 0.5);
-
-    mclost3_ptot_ = hf.DefineTH1D(hdir, "mclost3_ptot", "mcptot, of lost events for 2 channel analysis", gen1nbins, gen1pmin, gen1pmax);
-    mclost3_count_ = hf.DefineTH1D(hdir, "mclost3_count", "count of lost events for 2 channel analysis ", 1, -0.5, 0.5);
-
     // True distribution of all events used for the unfolding
     mcin_proton_ptot_ = hf.DefineTH1D(hdir, "mcin_proton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcin_deuteron_ptot_ = hf.DefineTH1D(hdir, "mcin_deuteron_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
@@ -130,7 +131,7 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     containedMigration_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
     containedMigration_mcdeuteron_->GetZaxis()->SetTitle("range");
 
-    // Migration matrices for the non contained channel, two generator binnings
+    // Migration matrices for the non contained channel
     uncontainedMigration_ = hf.DefineTH2D(hdir+"/uncontained","migration",
                                           "Non-contained channel migration",
                                           gen1nbins, gen1pmin, gen1pmax,
@@ -158,6 +159,66 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     uncontainedMigration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
     uncontainedMigration_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
 
+    // Contamination matrices for the contained channel
+    containedContamination_ = hf.DefineTH3D(hdir+"/contained", "contamination",
+                                        "Contained channel contamination",
+                                        gen1nbins, gen1pmin, gen1pmax,
+                                        recoContPNbins, recoContPMin, recoContPMax,
+                                        recoContRNbins, recoContRMin, recoContRMax);
+
+    containedContamination_->GetXaxis()->SetTitle("p true, MeV/c");
+    containedContamination_->GetYaxis()->SetTitle("p reco, MeV/c");
+    containedContamination_->GetZaxis()->SetTitle("range");
+
+    containedContamination_mcproton_ = hf.DefineTH3D(hdir+"/contained", "contamination_mcproton",
+                                                 "Contained channel contamination, proton",
+                                                 gen1nbins, gen1pmin, gen1pmax,
+                                                 recoContPNbins, recoContPMin, recoContPMax,
+                                                 recoContRNbins, recoContRMin, recoContRMax);
+
+    containedContamination_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
+    containedContamination_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
+    containedContamination_mcproton_->GetZaxis()->SetTitle("range");
+
+    containedContamination_mcdeuteron_ = hf.DefineTH3D(hdir+"/contained", "contamination_mcdeuteron",
+                                                 "Contained channel contamination, deuteron",
+                                                 gen1nbins, gen1pmin, gen1pmax,
+                                                 recoContPNbins, recoContPMin, recoContPMax,
+                                                 recoContRNbins, recoContRMin, recoContRMax);
+
+    containedContamination_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
+    containedContamination_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
+    containedContamination_mcdeuteron_->GetZaxis()->SetTitle("range");
+
+    // Contamination matrices for the non contained channel
+    uncontainedContamination_ = hf.DefineTH2D(hdir+"/uncontained","contamination",
+                                          "Non-contained channel contamination",
+                                          gen1nbins, gen1pmin, gen1pmax,
+                                          recoUncPNbins, recoUncPMin, recoUncPMax);
+
+    uncontainedContamination_->SetOption("colz");
+    uncontainedContamination_->GetXaxis()->SetTitle("p true, MeV/c");
+    uncontainedContamination_->GetYaxis()->SetTitle("p reco, MeV/c");
+
+    uncontainedContamination_mcproton_ = hf.DefineTH2D(hdir+"/uncontained","contamination_mcproton",
+                                                   "Non-contained channel contamination, proton",
+                                                   gen1nbins, gen1pmin, gen1pmax,
+                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
+
+    uncontainedContamination_mcproton_->SetOption("colz");
+    uncontainedContamination_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
+    uncontainedContamination_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
+
+    uncontainedContamination_mcdeuteron_ = hf.DefineTH2D(hdir+"/uncontained","contamination_mcdeuteron",
+                                                   "Non-contained channel contamination, deuteron",
+                                                   gen1nbins, gen1pmin, gen1pmax,
+                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
+
+    uncontainedContamination_mcdeuteron_->SetOption("colz");
+    uncontainedContamination_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
+    uncontainedContamination_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
+
+    //----------------------------------------------------------------
     hTruthTrkContained_.init(hf, hdir+"/contained/MCTruthTrk", conf);
     hTruthTrkUncontained_.init(hf, hdir+"/uncontained/MCTruthTrk", conf);
 
@@ -165,6 +226,99 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     hResolutionUncontained_.init(hf, hdir+"/uncontained/resolution", conf);
   }
 
+}
+
+//================================================================
+namespace {
+  int getFirstMCVertexIndexForTrack(const EventClass& evt, int imctrk) {
+    int res = 0;
+    for(unsigned i = 0; i < imctrk; ++i) {
+      res += evt.mctrack_nv[i];
+    }
+    return res;
+  }
+}
+
+void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
+  referenceSampleAccepted_ = false;
+  if(doMCTruth_) {
+    referenceSample_nrun_ = evt.nrun;
+    referenceSample_nevt_ = evt.nevt;
+
+    // Look for the trigger muon stop
+    int numInputMuons = 0;
+    int numMuStopCandidates = 0;
+    int iMuStopTrack = -1;
+    int iMuStopVtxEnd = -1;
+    int iMuStopVtxStart = -1;
+
+    for(unsigned i=0; i<evt.nmctr; ++i) {
+      if(evt.mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) {
+        ++numInputMuons;
+
+        // Look at the end vertex of the muon track
+        const int itmpvtxstart = getFirstMCVertexIndexForTrack(evt, i);
+        const int itmpvtxend = itmpvtxstart + evt.mctrack_nv[i] - 1;
+        const double stoptime = evt.mcvertex_time[itmpvtxend];
+        refsample_endvtx_time_->Fill(stoptime);
+        if(std::abs(stoptime) < 100.) {
+          ++numMuStopCandidates;
+          if(iMuStopTrack == -1) {
+            iMuStopTrack = i;
+          }
+        }
+      }
+    }
+    if(iMuStopTrack != -1) {
+      // Set vertex indexes
+      iMuStopVtxStart = getFirstMCVertexIndexForTrack(evt, iMuStopTrack);
+      iMuStopVtxEnd = iMuStopVtxStart + evt.mctrack_nv[iMuStopTrack] - 1;
+    }
+
+    refsample_muminus_multiplicity_->Fill(numInputMuons);
+    refsample_num_stops_->Fill(numMuStopCandidates);
+
+    // Apply reference sample cuts
+    if(iMuStopVtxEnd != -1) {
+      const double zstop = evt.mcvertex_vz[iMuStopVtxEnd];
+      refsample_in_zstop_->Fill(zstop);
+      // From dt_geo.00066:
+      // tgt mylar foil at -0.00904 cm, thickness 0.0025 cm
+      // tgt Al  0.0071 cm thick
+      static const double zmax = -0.00904 - 0.0025/2;
+      static const double zmin = zmax - 0.0071;
+      referenceSampleAccepted_ = (zmin<=zstop) && (zstop<=zmax);
+
+      if(referenceSampleAccepted_) {
+        refsample_accepted_count_->Fill(0.);
+
+        // Truth momentum with the binning used in the unfolding
+        // Keep protons and deuterons separately to compare hadd-ed
+        // pseudodata truth to unfolding results.
+
+        const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+        // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
+        const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
+
+        switch(mcParticle) {
+        case MuCapUtilities::PID_G3_PROTON:
+          mcin_proton_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+          break;
+        case MuCapUtilities::PID_G3_DEUTERON:
+          mcin_deuteron_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+          break;
+        case 0:
+          mcin_dio_count_->Fill(0.);
+          break;
+        }
+      }
+    }
+    else {
+      std::ostringstream os;
+      os<<"HistMuCapAnalysisChannels::fillReferenceSample(): no mu stop vtx in run "<<evt.nrun<<", event "<<evt.nevt;
+      throw std::runtime_error(os.str());
+    }
+  }
 }
 
 //================================================================
@@ -176,11 +330,14 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
                                      const ClustersByPlane& globalPlaneClusters
                                      )
 {
+  if(doMCTruth_ && ((referenceSample_nrun_ != evt.nrun)||(referenceSample_nevt_ != evt.nevt))) {
+    throw std::runtime_error("Error: HistMuCapAnalysisChannels::fill() is called before fillReferenceSample() on that event.");
+  }
+
   //----------------------------------------------------------------
   // Figure out an exclusive analysis channel for this event
 
   bool eventUsedInAChannel2 = false;
-  bool eventUsedInHitBased = false;
 
   const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
   // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
@@ -200,17 +357,20 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
         if(doMCTruth_) {
 
           if(imcvtxStart  != -1) {
-            containedMigration_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
+            (referenceSampleAccepted_ ? containedMigration_ : containedContamination_)
+              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
           }
 
           switch(mcParticle) {
           case MuCapUtilities::PID_G3_PROTON:
             contained_prange_mcproton_->Fill(prec, rangePIDVar);
-            containedMigration_mcproton_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
+            (referenceSampleAccepted_ ? containedMigration_mcproton_ : containedContamination_mcproton_)
+              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
             break;
           case MuCapUtilities::PID_G3_DEUTERON:
             contained_prange_mcdeuteron_->Fill(prec, rangePIDVar);
-            containedMigration_mcdeuteron_->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
+            (referenceSampleAccepted_ ? containedMigration_mcdeuteron_ : containedContamination_mcdeuteron_)
+              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
             break;
           case 0:
             contained_prange_mcdio_->Fill(prec, rangePIDVar);
@@ -230,17 +390,20 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
         if(doMCTruth_) {
 
           if(imcvtxStart  != -1) {
-            uncontainedMigration_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+            (referenceSampleAccepted_ ? uncontainedMigration_ : uncontainedContamination_)
+              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
           }
 
           switch(mcParticle) {
           case MuCapUtilities::PID_G3_PROTON:
             uncontained_p_mcproton_->Fill(prec);
-            uncontainedMigration_mcproton_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+            (referenceSampleAccepted_ ? uncontainedMigration_mcproton_ : uncontainedContamination_mcproton_)
+              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
             break;
           case MuCapUtilities::PID_G3_DEUTERON:
             uncontained_p_mcdeuteron_->Fill(prec);
-            uncontainedMigration_mcdeuteron_->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+            (referenceSampleAccepted_ ? uncontainedMigration_mcdeuteron_ : uncontainedContamination_mcdeuteron_)
+              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
             break;
           case 0:
             uncontained_p_mcdio_->Fill(prec);
@@ -256,38 +419,7 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
 
   if(!eventUsedInAChannel2) {
     // No good positive tracks. Do a hit-based analysis here.
-    eventUsedInHitBased = hitbased_.accepted(evt, globalPlaneClusters, iNegTrack);
-  }
-
-  if(doMCTruth_) {
-    // Truth momentum with the binning used in the unfolding
-    // Keep protons and deuterons separately to compare hadd-ed
-    // pseudodata truth to unfolding results.
-    switch(mcParticle) {
-    case MuCapUtilities::PID_G3_PROTON:
-      mcin_proton_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
-      break;
-    case MuCapUtilities::PID_G3_DEUTERON:
-      mcin_deuteron_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
-      break;
-    case 0:
-      mcin_dio_count_->Fill(0.);
-      break;
-    }
-
-    if(!eventUsedInAChannel2) {
-      mclost2_count_->Fill(0.);
-      if(imcvtxStart  != -1) {
-        mclost2_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
-      }
-
-      if(!eventUsedInHitBased) {
-        mclost3_count_->Fill(0.);
-        if(imcvtxStart  != -1) {
-          mclost3_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
-        }
-      }
-    }
+    hitbased_.accepted(evt, globalPlaneClusters, iNegTrack, referenceSampleAccepted_);
   }
 }
 
