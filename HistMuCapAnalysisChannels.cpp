@@ -316,7 +316,8 @@ void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
     else {
       std::ostringstream os;
       os<<"HistMuCapAnalysisChannels::fillReferenceSample(): no mu stop vtx in run "<<evt.nrun<<", event "<<evt.nevt;
-      throw std::runtime_error(os.str());
+      //throw std::runtime_error(os.str());
+      std::cout<<os.str()<<std::endl;
     }
   }
 }
