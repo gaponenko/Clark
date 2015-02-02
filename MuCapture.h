@@ -197,6 +197,14 @@ private :
   TH2D* hWithPIDTruthMomentumNotReco_;
   TH2D* hWithPIDMeasuredMomentum_;
 
+  RooUnfoldResponse anDnLateResponseWithPIDAllTrks_;
+  TH2D* hWithPIDAllTrksTruthMomentum_;
+  TH2D* hWithPIDAllTrksTruthMomentumReco_;
+  TH2D* hWithPIDAllTrksMeasVsTruthMomentumTruProtons_;
+  TH2D* hWithPIDAllTrksMeasVsTruthMomentumTruDeuterons_;
+  TH2D* hWithPIDAllTrksTruthMomentumNotReco_;
+  TH2D* hWithPIDAllTrksMeasuredMomentum_;
+
   RooUnfoldResponse anDnLateResponseContained_;
   TH1D* hContainedTruthMomentum_;
   TH1D* hContainedTruthMomentumReco_;
