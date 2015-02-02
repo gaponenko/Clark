@@ -233,7 +233,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   // Make the bin size half a cell
   hMuStopUVCell_ = H.DefineTH2D(hdir, "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
+  hMuStopUVCell_->SetOption("colz");
   hMuStopUVPos_ = H.DefineTH2D(hdir, "MuStopUVPos", "Muon stop V vs U position (cm)", 201, -10.05, +10.05, 201, -10.05, +10.05 );
+  hMuStopUVPos_->SetOption("colz");
   hMuStopRadius_ = H.DefineTH1D(hdir, "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
   pactCut_.init(H, Conf);
