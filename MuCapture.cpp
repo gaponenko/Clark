@@ -96,6 +96,18 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     anDnLateResponsePlnVsPCutZone4_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
     H.Store(&anDnLateResponsePlnVsPCutZone4_, "anDnLateResponsePlnVsPCutZone4", hdir);
 
+    // Contained + uncontained tracks
+    anDnLateResponsePlnVsPCutZone1AllTrks_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
+    H.Store(&anDnLateResponsePlnVsPCutZone1AllTrks_, "anDnLateResponsePlnVsPCutZone1AllTrks", hdir);
+    anDnLateResponsePlnVsPCutZone2AllTrks_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
+    H.Store(&anDnLateResponsePlnVsPCutZone2AllTrks_, "anDnLateResponsePlnVsPCutZone2AllTrks", hdir);
+
+    // Contained + tracks
+    anDnLateResponsePlnVsPCutZone5_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
+    H.Store(&anDnLateResponsePlnVsPCutZone5_, "anDnLateResponsePlnVsPCutZone5", hdir);
+    anDnLateResponsePlnVsPCutZone6_.Setup(NbBinP, 0., MaxP, NbBinP, 0., MaxP);
+    H.Store(&anDnLateResponsePlnVsPCutZone6_, "anDnLateResponsePlnVsPCutZone6", hdir);
+
     // Temporary histos just to define the 2D response functions
     TH2D *MeasuredTmp = new TH2D("MeasuredMomentumVsPID", "Measured momentum vs PID;PID;Momentum", 2,0,2., NbBinP, 0., MaxP);
     TH2D *TrueTmp = new TH2D("TrueMomentumVsPID", "True momentum vs PID;PID;Momentum", 2,0,2., NbBinP, 0., MaxP);
@@ -128,6 +140,26 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hPlnVsPCutZone2TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
     hPlnVsPCutZone2MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone2", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
     hPlnVsPCutZone2TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
+
+    hPlnVsPCutZone1AllTrksTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1AllTrks", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone1AllTrksTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1AllTrks", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone1AllTrksMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone1AllTrks", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone1AllTrksTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone1AllTrks", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
+
+    hPlnVsPCutZone2AllTrksTruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2AllTrks", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone2AllTrksTruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2AllTrks", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone2AllTrksMeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone2AllTrks", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone2AllTrksTruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone2AllTrks", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
+
+    hPlnVsPCutZone5TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone5", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone5TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone5", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone5MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone5", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone5TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone5", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
+
+    hPlnVsPCutZone6TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone6", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone6TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone6", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
+    hPlnVsPCutZone6MeasVsTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponsePlnVsPCutZone6", "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
+    hPlnVsPCutZone6TruthMomentumNotReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone6", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NbBinP, 0., MaxP);
 
     hPlnVsPCutZone3TruthMomentum_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NbBinP, 0., MaxP);
     hPlnVsPCutZone3TruthMomentumReco_ = H.DefineTH1D(hdir+"/LateResponsePlnVsPCutZone3", "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NbBinP, 0., MaxP);
@@ -727,6 +759,21 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
           TruePIDProton = 1;
         }
       }
+
+      bool anDnLateResponseWithPIDAllTrks_Filled = false;
+      bool anDnLateResponseWithPID_Filled = false;
+      bool anDnLateResponseContained_Filled = false;
+      bool anDnLateResponsePlnRngCutPln_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone1_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone4_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone2_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone3_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone5_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone6_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone1AllTrks_Filled = false;
+      bool anDnLateResponsePlnVsPCutZone2AllTrks_Filled = false;
+
+
       if( iNegTrack == -1 && iPosTrack != -1) {
         double trackEnd = double(evt.hefit_pstop[iPosTrack]);
         IsContained = isPosTrackContained;
@@ -735,15 +782,17 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
         IsInTrkRangeDeuteron = (trackEnd-28) > 14;
         // 0 for protons, 1 for deuterons
         int RecoPIDProton = int(double(trackEnd-28) < (0.40 * evt.ptot[iPosTrack] - 22.));
-		anDnLateResponseWithPIDAllTrks_.Fill(RecoPIDProton, evt.ptot[iPosTrack], TruePIDProton, p_true);
-		hWithPIDAllTrksTruthMomentum_->Fill(TruePIDProton, p_true);
-		hWithPIDAllTrksTruthMomentumReco_->Fill(TruePIDProton, p_true);
-		if (TruePIDProton == 0){
-		  hWithPIDAllTrksMeasVsTruthMomentumTruProtons_->Fill(p_true,evt.ptot[iPosTrack]);
-		} else {                        
-		  hWithPIDAllTrksMeasVsTruthMomentumTruDeuterons_->Fill(p_true,evt.ptot[iPosTrack]);
-		}
+        anDnLateResponseWithPIDAllTrks_Filled = true;
+        anDnLateResponseWithPIDAllTrks_.Fill(RecoPIDProton, evt.ptot[iPosTrack], TruePIDProton, p_true);
+        hWithPIDAllTrksTruthMomentum_->Fill(TruePIDProton, p_true);
+        hWithPIDAllTrksTruthMomentumReco_->Fill(TruePIDProton, p_true);
+        if (TruePIDProton == 0){
+          hWithPIDAllTrksMeasVsTruthMomentumTruProtons_->Fill(p_true,evt.ptot[iPosTrack]);
+        } else {                        
+          hWithPIDAllTrksMeasVsTruthMomentumTruDeuterons_->Fill(p_true,evt.ptot[iPosTrack]);
+        }
         if (IsContained ) {
+          anDnLateResponseWithPID_Filled = true;
           anDnLateResponseWithPID_.Fill(RecoPIDProton, evt.ptot[iPosTrack], TruePIDProton, p_true);
           hWithPIDTruthMomentum_->Fill(TruePIDProton, p_true);
           hWithPIDTruthMomentumReco_->Fill(TruePIDProton, p_true);
@@ -753,11 +802,13 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
             hWithPIDMeasVsTruthMomentumTruDeuterons_->Fill(p_true,evt.ptot[iPosTrack]);
           }
           
+          anDnLateResponseContained_Filled = true;
           anDnLateResponseContained_.Fill(evt.ptot[iPosTrack], p_true);
           hContainedTruthMomentum_->Fill(p_true);
           hContainedTruthMomentumReco_->Fill(p_true);
           hContainedMeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
           if ( (trackEnd-28) > 10) {
+            anDnLateResponsePlnRngCutPln_Filled = true;
             anDnLateResponsePlnRngCutPln_.Fill(evt.ptot[iPosTrack], p_true);
             hPlnRngCutPlnTruthMomentum_->Fill(p_true);
             hPlnRngCutPlnTruthMomentumReco_->Fill(p_true);
@@ -766,12 +817,14 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
           if ( RecoPIDProton == 0 ){
             if ( IsInTrkRangeProton) {
               // Zone 1
+              anDnLateResponsePlnVsPCutZone1_Filled = true;
               anDnLateResponsePlnVsPCutZone1_.Fill(evt.ptot[iPosTrack], p_true);
               hPlnVsPCutZone1TruthMomentum_->Fill(p_true);
               hPlnVsPCutZone1TruthMomentumReco_->Fill(p_true);
               hPlnVsPCutZone1MeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
             } else {
               // Zone 4
+              anDnLateResponsePlnVsPCutZone4_Filled = true;
               anDnLateResponsePlnVsPCutZone4_.Fill(evt.ptot[iPosTrack], p_true);
               hPlnVsPCutZone4TruthMomentum_->Fill(p_true);
               hPlnVsPCutZone4TruthMomentumReco_->Fill(p_true);
@@ -780,34 +833,124 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
           } else {
             if ( IsInTrkRangeDeuteron ){
               // Zone 2
+              anDnLateResponsePlnVsPCutZone2_Filled = true;
               anDnLateResponsePlnVsPCutZone2_.Fill(evt.ptot[iPosTrack], p_true);
               hPlnVsPCutZone2TruthMomentum_->Fill(p_true);
               hPlnVsPCutZone2TruthMomentumReco_->Fill(p_true);
               hPlnVsPCutZone2MeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
             } else {
               // Zone 3
+              anDnLateResponsePlnVsPCutZone3_Filled = true;
               anDnLateResponsePlnVsPCutZone3_.Fill(evt.ptot[iPosTrack], p_true);
               hPlnVsPCutZone3TruthMomentum_->Fill(p_true);
               hPlnVsPCutZone3TruthMomentumReco_->Fill(p_true);
               hPlnVsPCutZone3MeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
             }
           }
+        } else {
+          // uncontained tracks
+          if ( RecoPIDProton == 0 ){
+            if ( IsInTrkRangeProton) {
+              // Zone 1
+              anDnLateResponsePlnVsPCutZone5_Filled = true;
+              anDnLateResponsePlnVsPCutZone5_.Fill(evt.ptot[iPosTrack], p_true);
+              hPlnVsPCutZone5TruthMomentum_->Fill(p_true);
+              hPlnVsPCutZone5TruthMomentumReco_->Fill(p_true);
+              hPlnVsPCutZone5MeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
+            }
+          } else {
+            if ( IsInTrkRangeDeuteron ){
+              // Zone 2
+              anDnLateResponsePlnVsPCutZone6_Filled = true;
+              anDnLateResponsePlnVsPCutZone6_.Fill(evt.ptot[iPosTrack], p_true);
+              hPlnVsPCutZone6TruthMomentum_->Fill(p_true);
+              hPlnVsPCutZone6TruthMomentumReco_->Fill(p_true);
+              hPlnVsPCutZone6MeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
+            }
+          }
+        } 
+        // contained + uncontained tracks
+        if ( RecoPIDProton == 0 ){
+          if ( IsInTrkRangeProton) {
+            // Zone 1
+            anDnLateResponsePlnVsPCutZone1AllTrks_Filled = true;
+            anDnLateResponsePlnVsPCutZone1AllTrks_.Fill(evt.ptot[iPosTrack], p_true);
+            hPlnVsPCutZone1AllTrksTruthMomentum_->Fill(p_true);
+            hPlnVsPCutZone1AllTrksTruthMomentumReco_->Fill(p_true);
+            hPlnVsPCutZone1AllTrksMeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
+          }
+        } else {
+          if ( IsInTrkRangeDeuteron ){
+            // Zone 2
+            anDnLateResponsePlnVsPCutZone2AllTrks_Filled = true;
+            anDnLateResponsePlnVsPCutZone2AllTrks_.Fill(evt.ptot[iPosTrack], p_true);
+            hPlnVsPCutZone2AllTrksTruthMomentum_->Fill(p_true);
+            hPlnVsPCutZone2AllTrksTruthMomentumReco_->Fill(p_true);
+            hPlnVsPCutZone2AllTrksMeasVsTruthMomentum_->Fill(p_true,evt.ptot[iPosTrack]);
+          }
         }
       }
       // If contained in false, then we haven't saved
       // the event yet and we must save it now.
-      if ( ! IsContained ) {
-        anDnLateResponseContained_.Miss(p_true);
-        hContainedTruthMomentum_->Fill(p_true);
-        hContainedTruthMomentumNotReco_->Fill(p_true);
+      if( !anDnLateResponseWithPIDAllTrks_Filled){
+        anDnLateResponseWithPIDAllTrks_.Miss(TruePIDProton, p_true);
+        hWithPIDAllTrksTruthMomentum_->Fill(TruePIDProton, p_true);
+        hWithPIDAllTrksTruthMomentumNotReco_->Fill(TruePIDProton, p_true);
+      }
+      if( !anDnLateResponseWithPID_Filled){
         anDnLateResponseWithPID_.Miss(TruePIDProton, p_true);
         hWithPIDTruthMomentum_->Fill(TruePIDProton, p_true);
         hWithPIDTruthMomentumNotReco_->Fill(TruePIDProton, p_true);
-        if ( ! IsInTrkRange) {
-          anDnLateResponsePlnRngCutPln_.Miss(p_true);
-          hPlnRngCutPlnTruthMomentum_->Fill(p_true);
-          hPlnRngCutPlnTruthMomentumNotReco_->Fill(p_true);
-        }
+      }
+      if( !anDnLateResponseContained_Filled){
+        anDnLateResponseContained_.Miss(p_true);
+        hContainedTruthMomentum_->Fill(p_true);
+        hContainedTruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnRngCutPln_Filled){
+        anDnLateResponsePlnRngCutPln_.Miss(p_true);
+        hPlnRngCutPlnTruthMomentum_->Fill(p_true);
+        hPlnRngCutPlnTruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone1_Filled){
+        anDnLateResponsePlnVsPCutZone1_.Miss(p_true);
+        hPlnVsPCutZone1TruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone1TruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone4_Filled){
+        anDnLateResponsePlnVsPCutZone4_.Miss(p_true);
+        hPlnVsPCutZone4TruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone4TruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone2_Filled){
+        anDnLateResponsePlnVsPCutZone2_.Miss(p_true);
+        hPlnVsPCutZone2TruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone2TruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone3_Filled){
+        anDnLateResponsePlnVsPCutZone3_.Miss(p_true);
+        hPlnVsPCutZone3TruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone3TruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone5_Filled){
+        anDnLateResponsePlnVsPCutZone5_.Miss(p_true);
+        hPlnVsPCutZone5TruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone5TruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone6_Filled){
+        anDnLateResponsePlnVsPCutZone6_.Miss(p_true);
+        hPlnVsPCutZone6TruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone6TruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone1AllTrks_Filled){
+        anDnLateResponsePlnVsPCutZone1AllTrks_.Miss(p_true);
+        hPlnVsPCutZone1AllTrksTruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone1AllTrksTruthMomentumNotReco_->Fill(p_true);
+      }
+      if( !anDnLateResponsePlnVsPCutZone2AllTrks_Filled){
+        anDnLateResponsePlnVsPCutZone2AllTrks_.Miss(p_true);
+        hPlnVsPCutZone2AllTrksTruthMomentum_->Fill(p_true);
+        hPlnVsPCutZone2AllTrksTruthMomentumNotReco_->Fill(p_true);
       }
     }
   }

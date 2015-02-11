@@ -219,6 +219,7 @@ private :
   TH1D* hPlnRngCutPlnTruthMomentumNotReco_;
   TH1D* hPlnRngCutPlnMeasuredMomentum_;
 
+  // Contained tracks
   RooUnfoldResponse anDnLateResponsePlnVsPCutZone1_;
   TH1D* hPlnVsPCutZone1TruthMomentum_;
   TH1D* hPlnVsPCutZone1TruthMomentumReco_;
@@ -246,6 +247,36 @@ private :
   TH2D* hPlnVsPCutZone4MeasVsTruthMomentum_;
   TH1D* hPlnVsPCutZone4TruthMomentumNotReco_;
   TH1D* hPlnVsPCutZone4MeasuredMomentum_;
+
+  // Contained + uncontained tracks
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone1AllTrks_;
+  TH1D* hPlnVsPCutZone1AllTrksTruthMomentum_;
+  TH1D* hPlnVsPCutZone1AllTrksTruthMomentumReco_;
+  TH2D* hPlnVsPCutZone1AllTrksMeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone1AllTrksTruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone1AllTrksMeasuredMomentum_;
+
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone2AllTrks_;
+  TH1D* hPlnVsPCutZone2AllTrksTruthMomentum_;
+  TH1D* hPlnVsPCutZone2AllTrksTruthMomentumReco_;
+  TH2D* hPlnVsPCutZone2AllTrksMeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone2AllTrksTruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone2AllTrksMeasuredMomentum_;
+
+  // Uncontained tracks
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone5_;
+  TH1D* hPlnVsPCutZone5TruthMomentum_;
+  TH1D* hPlnVsPCutZone5TruthMomentumReco_;
+  TH2D* hPlnVsPCutZone5MeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone5TruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone5MeasuredMomentum_;
+
+  RooUnfoldResponse anDnLateResponsePlnVsPCutZone6_;
+  TH1D* hPlnVsPCutZone6TruthMomentum_;
+  TH1D* hPlnVsPCutZone6TruthMomentumReco_;
+  TH2D* hPlnVsPCutZone6MeasVsTruthMomentum_;
+  TH1D* hPlnVsPCutZone6TruthMomentumNotReco_;
+  TH1D* hPlnVsPCutZone6MeasuredMomentum_;
 
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
