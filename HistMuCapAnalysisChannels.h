@@ -32,6 +32,8 @@ public:
   // Must be called for all events.  Must be called before fill() on the same event.
   void fillReferenceSample(const EventClass& evt);
 
+  bool referenceSampleAccepted() const { return referenceSampleAccepted_; }
+
   void fill(const EventClass& evt,
             int iPosTrack,
             int iNegTrack,
