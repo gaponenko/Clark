@@ -13,9 +13,48 @@ class DetectorGeo;
 class EventClass;
 
 
+
 //================================================================
 class HistMuCapRooUnfold {
 public:
+  class HistUnfold1D {
+    private:
+      bool Selected;
+      RooUnfoldResponse Response_;
+      TH1D* hTruthMomentum_;
+      TH1D* hTruthMomentumReco_;
+      TH2D* hMeasVsTruthMomentum_;
+      TH1D* hTruthMomentumNotReco_;
+      TH1D* hMeasuredMomentum_;
+
+    public:
+      HistUnfold1D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP);
+      void Reset();
+      void FillMeasured(double mom);
+      void FillTruth(double reco, double tru);
+      void MissTruth(double tru);
+
+  };
+	
+  class HistUnfold2D {
+    private:
+      bool Selected;
+      RooUnfoldResponse Response_;
+      TH1D* hTruthMomentum_;
+      TH1D* hTruthMomentumReco_;
+      TH2D* hMeasVsTruthMomentum_;
+      TH1D* hTruthMomentumNotReco_;
+      TH1D* hMeasuredMomentum_;
+
+    public:
+      HistUnfold1D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP);
+      void Reset();
+      void FillMeasured(double mom);
+      void FillTruth(double reco, double tru);
+      void MissTruth(double tru);
+
+  };
+	
   void init(HistogramFactory& H,
             const std::string& hdir,
             const ConfigFile& conf);
@@ -40,27 +79,20 @@ private :
   int TruePIDProton_;
   bool truCaptEvt_;
 
-  bool anDnLateResponse_Filled_;
+  HistUnfold1D *FullSpectrum_;
+  HistUnfold1D *Contained_;
+  HistUnfold1D *PlnRngCutPln_;
+  HistUnfold1D *PlnVsPCutZone1_;
+  HistUnfold1D *PlnVsPCutZone2_;
+  HistUnfold1D *PlnVsPCutZone3_;
+  HistUnfold1D *PlnVsPCutZone4_;
+  HistUnfold1D *PlnVsPCutZone5_;
+  HistUnfold1D *PlnVsPCutZone6_;
+  HistUnfold1D *PlnVsPCutZone1AllTrks_;
+  HistUnfold1D *PlnVsPCutZone2AllTrks_;
 
   bool anDnLateResponseWithPIDAllTrks_Filled_;
   bool anDnLateResponseWithPID_Filled_;
-  bool anDnLateResponseContained_Filled_;
-  bool anDnLateResponsePlnRngCutPln_Filled_;
-  bool anDnLateResponsePlnVsPCutZone1_Filled_;
-  bool anDnLateResponsePlnVsPCutZone4_Filled_;
-  bool anDnLateResponsePlnVsPCutZone2_Filled_;
-  bool anDnLateResponsePlnVsPCutZone3_Filled_;
-  bool anDnLateResponsePlnVsPCutZone5_Filled_;
-  bool anDnLateResponsePlnVsPCutZone6_Filled_;
-  bool anDnLateResponsePlnVsPCutZone1AllTrks_Filled_;
-  bool anDnLateResponsePlnVsPCutZone2AllTrks_Filled_;
-
-  RooUnfoldResponse anDnLateResponse_;
-  TH1D* hTruthMomentum_;
-  TH1D* hTruthMomentumReco_;
-  TH2D* hMeasVsTruthMomentum_;
-  TH1D* hTruthMomentumNotReco_;
-  TH1D* hMeasuredMomentum_;
 
   RooUnfoldResponse anDnLateResponseWithPID_;
   TH2D* hWithPIDTruthMomentum_;
@@ -77,79 +109,6 @@ private :
   TH2D* hWithPIDAllTrksMeasVsTruthMomentumTruDeuterons_;
   TH2D* hWithPIDAllTrksTruthMomentumNotReco_;
   TH2D* hWithPIDAllTrksMeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponseContained_;
-  TH1D* hContainedTruthMomentum_;
-  TH1D* hContainedTruthMomentumReco_;
-  TH2D* hContainedMeasVsTruthMomentum_;
-  TH1D* hContainedTruthMomentumNotReco_;
-  TH1D* hContainedMeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponsePlnRngCutPln_;
-  TH1D* hPlnRngCutPlnTruthMomentum_;
-  TH1D* hPlnRngCutPlnTruthMomentumReco_;
-  TH2D* hPlnRngCutPlnMeasVsTruthMomentum_;
-  TH1D* hPlnRngCutPlnTruthMomentumNotReco_;
-  TH1D* hPlnRngCutPlnMeasuredMomentum_;
-
-  // Contained tracks
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone1_;
-  TH1D* hPlnVsPCutZone1TruthMomentum_;
-  TH1D* hPlnVsPCutZone1TruthMomentumReco_;
-  TH2D* hPlnVsPCutZone1MeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone1TruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone1MeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone2_;
-  TH1D* hPlnVsPCutZone2TruthMomentum_;
-  TH1D* hPlnVsPCutZone2TruthMomentumReco_;
-  TH2D* hPlnVsPCutZone2MeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone2TruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone2MeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone3_;
-  TH1D* hPlnVsPCutZone3TruthMomentum_;
-  TH1D* hPlnVsPCutZone3TruthMomentumReco_;
-  TH2D* hPlnVsPCutZone3MeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone3TruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone3MeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone4_;
-  TH1D* hPlnVsPCutZone4TruthMomentum_;
-  TH1D* hPlnVsPCutZone4TruthMomentumReco_;
-  TH2D* hPlnVsPCutZone4MeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone4TruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone4MeasuredMomentum_;
-
-  // Contained + uncontained tracks
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone1AllTrks_;
-  TH1D* hPlnVsPCutZone1AllTrksTruthMomentum_;
-  TH1D* hPlnVsPCutZone1AllTrksTruthMomentumReco_;
-  TH2D* hPlnVsPCutZone1AllTrksMeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone1AllTrksTruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone1AllTrksMeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone2AllTrks_;
-  TH1D* hPlnVsPCutZone2AllTrksTruthMomentum_;
-  TH1D* hPlnVsPCutZone2AllTrksTruthMomentumReco_;
-  TH2D* hPlnVsPCutZone2AllTrksMeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone2AllTrksTruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone2AllTrksMeasuredMomentum_;
-
-  // Uncontained tracks
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone5_;
-  TH1D* hPlnVsPCutZone5TruthMomentum_;
-  TH1D* hPlnVsPCutZone5TruthMomentumReco_;
-  TH2D* hPlnVsPCutZone5MeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone5TruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone5MeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponsePlnVsPCutZone6_;
-  TH1D* hPlnVsPCutZone6TruthMomentum_;
-  TH1D* hPlnVsPCutZone6TruthMomentumReco_;
-  TH2D* hPlnVsPCutZone6MeasVsTruthMomentum_;
-  TH1D* hPlnVsPCutZone6TruthMomentumNotReco_;
-  TH1D* hPlnVsPCutZone6MeasuredMomentum_;
 
 };
 
