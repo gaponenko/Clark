@@ -579,8 +579,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 
   channels_.fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar, protonGlobalClusters);
-  rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
-
+  if(channels_.referenceSampleAccepted()) {
+    rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
+  }
 
 
   //----------------------------------------------------------------
