@@ -31,8 +31,10 @@ public:
 
 private :
   TH2 *planeRangeVsPz_;
+  TH2 *planeRangeVsP_;
   TH2 *planeRangecosVsP_;
   TH2 *trackRangeVsPz_;
+  TH2 *trackRangeVsP_;
   TH2 *trackRangecosVsP_;
 };
 
