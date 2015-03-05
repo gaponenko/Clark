@@ -428,7 +428,9 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
-        SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 55);
+        // Require the track to NOT hit the last plane of the dense stack.
+        // So that it is not sensitive to hits in the outer PCs.
+        SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 51);
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxRout", 15.);
 
         //----------------
