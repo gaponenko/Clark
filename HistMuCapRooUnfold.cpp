@@ -19,7 +19,7 @@ HistMuCapRooUnfold::HistUnfold1D::HistUnfold1D(HistogramFactory &H, std::string 
 
   if(MCTruth){
     Response_.Setup(NBinP, 0., MaxP, NBinP, 0., MaxP);
-    H.Store(&Response_, "anDnLateResponse", Dir);
+    H.Store(&Response_, "anDnLateResponse"+Name, Dir);
 
     hTruthMomentum_        = H.DefineTH1D(Dir+"/LateResponse"+Name, "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NBinP, 0., MaxP);
     hTruthMomentumReco_    = H.DefineTH1D(Dir+"/LateResponse"+Name, "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NBinP, 0., MaxP);
@@ -54,7 +54,62 @@ void HistMuCapRooUnfold::HistUnfold1D::MissTruth(double tru){
     return;
   Response_.Miss(tru);
   hTruthMomentum_->Fill(tru);
-  hTruthMomentumReco_->Fill(tru);
+  hTruthMomentumNotReco_->Fill(tru);
+}
+
+//****************************************************************
+
+
+//================================================================
+HistMuCapRooUnfold::HistUnfold2D::HistUnfold2D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP){
+  hMeasuredMomentum_  = H.DefineTH2D(Dir+"/LateResponse"+Name, "MeasuredMomentum", "Measured momentum spectrum;PID;Momentum [MeV/c]",2,0.,2.,NBinP, 0., MaxP);
+
+  if(MCTruth){
+    std::string tmpStr = "MeasuredMomentumVsPID"+Name;
+    TH2D *MeasuredTmp = new TH2D(tmpStr.c_str(), "Measured momentum vs PID;PID;Momentum", 2,0,2., NBinP, 0., MaxP);
+    tmpStr = "TrueMomentumVsPID"+Name;
+    TH2D *TrueTmp     = new TH2D(tmpStr.c_str(), "True momentum vs PID;PID;Momentum", 2,0,2., NBinP, 0., MaxP);
+    Response_.Setup(MeasuredTmp, TrueTmp);
+    H.Store(&Response_, "anDnLateResponse"+Name, Dir);
+
+    hTruthMomentum_        = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCTruthMomentum", "True momentum used in response function;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
+    hTruthMomentumReco_    = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCTruthMomentumReco", "True momentum of reconstructed tracks;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
+    hMeasVsTruthMomentumTruProtons_   = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCMeasVsTruthMomentumTruProtons", "Measured vs. true momentum used in response function for tru protons;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
+    hMeasVsTruthMomentumTruDeuterons_ = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCMeasVsTruthMomentumTruDeuterons", "Measured vs. true momentum used in response function for tru deuterons;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
+    hTruthMomentumNotReco_ = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
+  }
+}
+
+//================================================================
+void HistMuCapRooUnfold::HistUnfold2D::Reset(){
+  Selected = false;
+}
+
+//================================================================
+void HistMuCapRooUnfold::HistUnfold2D::FillMeasured(int PID, double mom){
+  hMeasuredMomentum_->Fill(PID, mom);
+}
+
+//================================================================
+void HistMuCapRooUnfold::HistUnfold2D::FillTruth(int recoPID, int truPID, double reco, double tru){
+  Selected = true;
+  Response_.Fill(recoPID, reco, truPID, tru);
+  hTruthMomentum_->Fill(truPID, tru);
+  hTruthMomentumReco_->Fill(recoPID, reco);
+  if (truPID == 0){
+    hMeasVsTruthMomentumTruProtons_->Fill(tru,reco);
+  } else {                        
+    hMeasVsTruthMomentumTruDeuterons_->Fill(tru,reco);
+  }
+}
+
+//================================================================
+void HistMuCapRooUnfold::HistUnfold2D::MissTruth(int truPID, double tru){
+  if (Selected)
+    return;
+  Response_.Miss(truPID, tru);
+  hTruthMomentum_->Fill(truPID, tru);
+  hTruthMomentumNotReco_->Fill(truPID, tru);
 }
 
 //****************************************************************
@@ -70,45 +125,23 @@ void HistMuCapRooUnfold::init(HistogramFactory& H,
   //----------------------------------------------------------------
   int NbBinP = 30;
   double MaxP = 300.;
+  int N1D = 0;
 
-  FullSpectrum_ = new HistUnfold1D(H, hdir, "", doMCTruth_, NbBinP, MaxP);
-  Contained_ = new HistUnfold1D(H, hdir, "Contained", doMCTruth_, NbBinP, MaxP);
-  PlnRngCutPln_ = new HistUnfold1D(H, hdir, "PlnRngCutPln", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone1_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone1", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone2_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone2", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone3_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone3", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone4_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone4", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone5_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone5", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone6_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone6", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone1AllTrks_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone1AllTrks", doMCTruth_, NbBinP, MaxP);
-  PlnVsPCutZone2AllTrks_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone2AllTrks", doMCTruth_, NbBinP, MaxP);
+  FullSpectrum_   = new HistUnfold1D(H, hdir, "", doMCTruth_, NbBinP, MaxP);               AllUnfold1D_[N1D++] = FullSpectrum_;
+  Contained_      = new HistUnfold1D(H, hdir, "Contained", doMCTruth_, NbBinP, MaxP);      AllUnfold1D_[N1D++] = Contained_;
+  PlnRngCutPln_   = new HistUnfold1D(H, hdir, "PlnRngCutPln", doMCTruth_, NbBinP, MaxP);   AllUnfold1D_[N1D++] = PlnRngCutPln_;
+  PlnVsPCutZone1_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone1", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone1_;
+  PlnVsPCutZone2_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone2", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone2_;
+  PlnVsPCutZone3_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone3", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone3_;
+  PlnVsPCutZone4_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone4", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone4_;
+  PlnVsPCutZone5_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone5", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone5_;
+  PlnVsPCutZone6_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone6", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone6_;
+  PlnVsPCutZone1AllTrks_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone1AllTrks", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone1AllTrks_;
+  PlnVsPCutZone2AllTrks_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone2AllTrks", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone2AllTrks_;
 
-  hWithPIDMeasuredMomentum_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]", 2,0,2.,NbBinP, 0., MaxP);
+  WithPID_ = new HistUnfold2D(H, hdir, "WithPID", doMCTruth_, NbBinP, MaxP);
+  WithPIDAllTrks_ = new HistUnfold2D(H, hdir, "WithPIDAllTrks", doMCTruth_, NbBinP, MaxP);
 
-
-  //----------------------------------------------------------------
-  if(doMCTruth_) {
-
-    // Temporary histos just to define the 2D response functions
-    TH2D *MeasuredTmp = new TH2D("MeasuredMomentumVsPID", "Measured momentum vs PID;PID;Momentum", 2,0,2., NbBinP, 0., MaxP);
-    TH2D *TrueTmp = new TH2D("TrueMomentumVsPID", "True momentum vs PID;PID;Momentum", 2,0,2., NbBinP, 0., MaxP);
-    anDnLateResponseWithPID_.Setup(MeasuredTmp, TrueTmp);
-    H.Store(&anDnLateResponseWithPID_, "anDnLateResponseWithPID", hdir);
-    anDnLateResponseWithPIDAllTrks_.Setup(MeasuredTmp, TrueTmp);
-    H.Store(&anDnLateResponseWithPIDAllTrks_, "anDnLateResponseWithPIDAllTrks", hdir);
-
-    hWithPIDTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MCTruthMomentum", "True momentum used in response function, contained trks;PID;Momentum [MeV/c]",2,0,2., NbBinP, 0., MaxP);
-    hWithPIDTruthMomentumReco_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MCTruthMomentumReco", "True momentum of reconstructed tracks, contained trks;PID;Momentum [MeV/c]",2,0,2., NbBinP, 0., MaxP);
-    hWithPIDMeasVsTruthMomentumTruProtons_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MCMeasVsTruthMomentumTruProtons", "Measured vs. true momentum used in response function for tru protons, contained trks;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
-    hWithPIDMeasVsTruthMomentumTruDeuterons_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MCMeasVsTruthMomentumTruDeuterons", "Measured vs. true momentum used in response function for tru deuterons, contained trks;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
-    hWithPIDTruthMomentumNotReco_ = H.DefineTH2D(hdir+"/LateResponseWithPID", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed, contained trks;PID;Momentum [MeV/c]",2,0,2., NbBinP, 0., MaxP);
-
-    hWithPIDAllTrksTruthMomentum_ = H.DefineTH2D(hdir+"/LateResponseWithPIDAllTrks", "MCTruthMomentum", "True momentum used in response function;PID;Momentum [MeV/c]",2,0,2., NbBinP, 0., MaxP);
-    hWithPIDAllTrksTruthMomentumReco_ = H.DefineTH2D(hdir+"/LateResponseWithPIDAllTrks", "MCTruthMomentumReco", "True momentum of reconstructed tracks;PID;Momentum [MeV/c]",2,0,2., NbBinP, 0., MaxP);
-    hWithPIDAllTrksMeasVsTruthMomentumTruProtons_ = H.DefineTH2D(hdir+"/LateResponseWithPIDAllTrks", "MCMeasVsTruthMomentumTruProtons", "Measured vs. true momentum used in response function for tru protons;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
-    hWithPIDAllTrksMeasVsTruthMomentumTruDeuterons_ = H.DefineTH2D(hdir+"/LateResponseWithPIDAllTrks", "MCMeasVsTruthMomentumTruDeuterons", "Measured vs. true momentum used in response function for tru deuterons;True momentum [MeV/c];Measured momentum [MeV/c]",NbBinP, 0., MaxP,NbBinP, 0., MaxP);
-    hWithPIDAllTrksTruthMomentumNotReco_ = H.DefineTH2D(hdir+"/LateResponseWithPIDAllTrks", "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;PID;Momentum [MeV/c]",2,0,2., NbBinP, 0., MaxP);
-  }
 
 }
 
@@ -116,11 +149,11 @@ void HistMuCapRooUnfold::init(HistogramFactory& H,
 void HistMuCapRooUnfold::SaveEventVariables(const EventClass& evt) {
   truCaptEvt_ = false;
   if(doMCTruth_) {
-
+    p_true_ = 0.0;
     const int imctrk = evt.iCaptureMcTrk;
-    p_true_ = evt.mcvertex_ptot[evt.iCaptureMcVtxStart];
     TruePIDProton_ = -1;
     if ( imctrk > -1 ){
+      p_true_ = evt.mcvertex_ptot[evt.iCaptureMcVtxStart];
       if ( evt.mctrack_pid[imctrk] == MuCapUtilities::PID_G3_PROTON){
         TruePIDProton_ = 0;
       } else if ( evt.mctrack_pid[imctrk] == MuCapUtilities::PID_G3_DEUTERON){
@@ -130,8 +163,12 @@ void HistMuCapRooUnfold::SaveEventVariables(const EventClass& evt) {
     truCaptEvt_ = evt.iCaptureMcVtxStart != -1;
   }
 
-  anDnLateResponseWithPIDAllTrks_Filled_ = false;
-  anDnLateResponseWithPID_Filled_ = false;
+  WithPID_->Reset();
+  WithPIDAllTrks_->Reset();
+
+  for (int n = 0; n < NBUNFOLD1D; n++)
+    AllUnfold1D_[n]->Reset();
+
 }
 
 //================================================================
@@ -142,10 +179,11 @@ void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrac
       FullSpectrum_->FillMeasured(evt.ptot[iPosTrack]);
       double trackEnd = double(evt.hefit_pstop[iPosTrack]);
       int RecoPIDProton = int(double(trackEnd-28) < (0.40 * evt.ptot[iPosTrack] - 22.));
+      WithPIDAllTrks_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack]);
       if(isPosTrackContained) {
         // The "contained tracks" analysis channel
         Contained_->FillMeasured(evt.ptot[iPosTrack]);
-        hWithPIDMeasuredMomentum_->Fill(RecoPIDProton, evt.ptot[iPosTrack]);
+        WithPID_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack]);
         if( (trackEnd-28) > 10){
           PlnRngCutPln_->FillMeasured(evt.ptot[iPosTrack]);
         }
@@ -196,25 +234,10 @@ void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrac
         IsInTrkRangeDeuteron = (trackEnd-28) > 14;
         // 0 for protons, 1 for deuterons
         int RecoPIDProton = int(double(trackEnd-28) < (0.40 * evt.ptot[iPosTrack] - 22.));
-        anDnLateResponseWithPIDAllTrks_Filled_ = true;
-        anDnLateResponseWithPIDAllTrks_.Fill(RecoPIDProton, evt.ptot[iPosTrack], TruePIDProton_, p_true_);
-        hWithPIDAllTrksTruthMomentum_->Fill(TruePIDProton_, p_true_);
-        hWithPIDAllTrksTruthMomentumReco_->Fill(TruePIDProton_, p_true_);
-        if (TruePIDProton_ == 0){
-          hWithPIDAllTrksMeasVsTruthMomentumTruProtons_->Fill(p_true_,evt.ptot[iPosTrack]);
-        } else {                        
-          hWithPIDAllTrksMeasVsTruthMomentumTruDeuterons_->Fill(p_true_,evt.ptot[iPosTrack]);
-        }
+
+        WithPIDAllTrks_->FillTruth(RecoPIDProton, TruePIDProton_, evt.ptot[iPosTrack], p_true_);
         if (IsContained ) {
-          anDnLateResponseWithPID_Filled_ = true;
-          anDnLateResponseWithPID_.Fill(RecoPIDProton, evt.ptot[iPosTrack], TruePIDProton_, p_true_);
-          hWithPIDTruthMomentum_->Fill(TruePIDProton_, p_true_);
-          hWithPIDTruthMomentumReco_->Fill(TruePIDProton_, p_true_);
-          if (TruePIDProton_ == 0){
-            hWithPIDMeasVsTruthMomentumTruProtons_->Fill(p_true_,evt.ptot[iPosTrack]);
-          } else {                        
-            hWithPIDMeasVsTruthMomentumTruDeuterons_->Fill(p_true_,evt.ptot[iPosTrack]);
-          }
+          WithPID_->FillTruth(RecoPIDProton, TruePIDProton_, evt.ptot[iPosTrack], p_true_);
 
           Contained_->FillTruth(evt.ptot[iPosTrack], p_true_);
           if ( (trackEnd-28) > 10) {
@@ -275,29 +298,11 @@ void HistMuCapRooUnfold::FillAndMiss(){
 
     FullSpectrum_->MissTruth(p_true_);
 
+    WithPID_->MissTruth(TruePIDProton_, p_true_);
+    WithPIDAllTrks_->MissTruth(TruePIDProton_, p_true_);
 
-    // If contained in false, then we haven't saved
-    // the event yet and we must save it now.
-    if( !anDnLateResponseWithPIDAllTrks_Filled_){
-      anDnLateResponseWithPIDAllTrks_.Miss(TruePIDProton_, p_true_);
-      hWithPIDAllTrksTruthMomentum_->Fill(TruePIDProton_, p_true_);
-      hWithPIDAllTrksTruthMomentumNotReco_->Fill(TruePIDProton_, p_true_);
-    }
-    if( !anDnLateResponseWithPID_Filled_){
-      anDnLateResponseWithPID_.Miss(TruePIDProton_, p_true_);
-      hWithPIDTruthMomentum_->Fill(TruePIDProton_, p_true_);
-      hWithPIDTruthMomentumNotReco_->Fill(TruePIDProton_, p_true_);
-    }
-    Contained_->MissTruth(p_true_);
-    PlnRngCutPln_->MissTruth(p_true_);
-    PlnVsPCutZone1_->MissTruth(p_true_);
-    PlnVsPCutZone4_->MissTruth(p_true_);
-    PlnVsPCutZone2_->MissTruth(p_true_);
-    PlnVsPCutZone3_->MissTruth(p_true_);
-    PlnVsPCutZone5_->MissTruth(p_true_);
-    PlnVsPCutZone6_->MissTruth(p_true_);
-    PlnVsPCutZone1AllTrks_->MissTruth(p_true_);
-    PlnVsPCutZone2AllTrks_->MissTruth(p_true_);
+    for (int n = 0; n < NBUNFOLD1D; n++)
+      AllUnfold1D_[n]->MissTruth(p_true_);
 
   }
 }

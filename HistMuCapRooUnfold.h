@@ -7,6 +7,8 @@
 
 #include "RooUnfold/RooUnfoldResponse.h"
 
+#define NBUNFOLD1D 11
+
 class HistogramFactory;
 class ConfigFile;
 class DetectorGeo;
@@ -40,18 +42,19 @@ public:
     private:
       bool Selected;
       RooUnfoldResponse Response_;
-      TH1D* hTruthMomentum_;
-      TH1D* hTruthMomentumReco_;
-      TH2D* hMeasVsTruthMomentum_;
-      TH1D* hTruthMomentumNotReco_;
-      TH1D* hMeasuredMomentum_;
+      TH2D* hTruthMomentum_;
+      TH2D* hTruthMomentumReco_;
+      TH2D* hMeasVsTruthMomentumTruProtons_;
+      TH2D* hMeasVsTruthMomentumTruDeuterons_;
+      TH2D* hTruthMomentumNotReco_;
+      TH2D* hMeasuredMomentum_;
 
     public:
-      HistUnfold1D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP);
+      HistUnfold2D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP);
       void Reset();
-      void FillMeasured(double mom);
-      void FillTruth(double reco, double tru);
-      void MissTruth(double tru);
+      void FillMeasured(int PID, double mom);
+      void FillTruth(int recoPID, int truPID, double reco, double tru);
+      void MissTruth(int truPID, double tru);
 
   };
 	
@@ -91,24 +94,10 @@ private :
   HistUnfold1D *PlnVsPCutZone1AllTrks_;
   HistUnfold1D *PlnVsPCutZone2AllTrks_;
 
-  bool anDnLateResponseWithPIDAllTrks_Filled_;
-  bool anDnLateResponseWithPID_Filled_;
+  HistUnfold1D *AllUnfold1D_[NBUNFOLD1D];
 
-  RooUnfoldResponse anDnLateResponseWithPID_;
-  TH2D* hWithPIDTruthMomentum_;
-  TH2D* hWithPIDTruthMomentumReco_;
-  TH2D* hWithPIDMeasVsTruthMomentumTruProtons_;
-  TH2D* hWithPIDMeasVsTruthMomentumTruDeuterons_;
-  TH2D* hWithPIDTruthMomentumNotReco_;
-  TH2D* hWithPIDMeasuredMomentum_;
-
-  RooUnfoldResponse anDnLateResponseWithPIDAllTrks_;
-  TH2D* hWithPIDAllTrksTruthMomentum_;
-  TH2D* hWithPIDAllTrksTruthMomentumReco_;
-  TH2D* hWithPIDAllTrksMeasVsTruthMomentumTruProtons_;
-  TH2D* hWithPIDAllTrksMeasVsTruthMomentumTruDeuterons_;
-  TH2D* hWithPIDAllTrksTruthMomentumNotReco_;
-  TH2D* hWithPIDAllTrksMeasuredMomentum_;
+  HistUnfold2D *WithPID_;
+  HistUnfold2D *WithPIDAllTrks_;
 
 };
 
