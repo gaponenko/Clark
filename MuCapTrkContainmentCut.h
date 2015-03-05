@@ -23,6 +23,7 @@ class EventClass;
 //================================================================
 class MuCapTrkContainmentCut {
   void set_cut_bin_labels(TAxis* ax) {
+    ax->SetBinLabel(1+CUT_NO_TRACK, "no track");
     ax->SetBinLabel(1+CUT_ZRANGE, "z range");
     ax->SetBinLabel(1+CUT_ROUT, "r out");
     ax->SetBinLabel(1+CUTS_ACCEPTED, "Accepted");
@@ -30,6 +31,7 @@ class MuCapTrkContainmentCut {
 
 public:
   enum CutNumber {
+    CUT_NO_TRACK,
     CUT_ZRANGE,
     CUT_ROUT,
     CUTS_ACCEPTED,
@@ -51,7 +53,9 @@ public:
     , h_cuts_p()
 
     , hExtendedLastPlane_()
+    , hExtendedLastPlaneFinal_()
     , hRout_()
+    , hRoutFinal_()
   {}
 
 private :
@@ -62,9 +66,10 @@ private :
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
 
-  // before cut histograms
   TH1 *hExtendedLastPlane_;
+  TH1 *hExtendedLastPlaneFinal_;
   TH1 *hRout_;
+  TH1 *hRoutFinal_;
 
   CutNumber analyzeTrack(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
 };

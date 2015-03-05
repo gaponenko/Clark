@@ -34,7 +34,13 @@ void MuCapTrkContainmentCut::init(const std::string& hdir,
 
   //----------------------------------------------------------------
   hExtendedLastPlane_ = hf.DefineTH1D(hdir, "extendedLastPlane", "Extended last plane", 56, 0.5, 56.5);
+
+  hExtendedLastPlaneFinal_ = hf.DefineTH1D(hdir, "extendedLastPlaneFinal", "Extended last plane, after cuts", 56, 0.5, 56.5);
+  hExtendedLastPlaneFinal_->SetLineColor(kRed);
+
   hRout_ = hf.DefineTH1D(hdir, "rout", "Rout", 400, 0., 40.);
+  hRoutFinal_ = hf.DefineTH1D(hdir, "rout_final", "Rout, after cuts", 400, 0., 40.);
+  hRoutFinal_->SetLineColor(kRed);
 }
 
 //================================================================
@@ -52,6 +58,10 @@ bool MuCapTrkContainmentCut::contained(const EventClass& evt, int itrack,  const
 MuCapTrkContainmentCut::CutNumber MuCapTrkContainmentCut::
 analyzeTrack(const EventClass& evt, int i, const ClustersByPlane& protonGlobalClusters)
 {
+  if(i < 0) {
+    // There is no contained track.  There is no track at all :
+   return CUT_NO_TRACK;
+  }
 
   int extendedLastPlane = MuCapUtilities::findExtendedLastPlane(evt, i, protonGlobalClusters);
   hExtendedLastPlane_->Fill(extendedLastPlane);
@@ -68,6 +78,10 @@ analyzeTrack(const EventClass& evt, int i, const ClustersByPlane& protonGlobalCl
   if(rout > cutMaxRout_) {
     return CUT_ROUT;
   }
+
+  //----------------------------------------------------------------
+  hExtendedLastPlaneFinal_->Fill(extendedLastPlane);
+  hRoutFinal_->Fill(rout);
 
   //----------------------------------------------------------------
   return CUTS_ACCEPTED;
