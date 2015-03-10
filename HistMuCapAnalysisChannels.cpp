@@ -52,19 +52,19 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   //----------------------------------------------------------------
   // Extra distributions
 
-  hTDCWidthContained_.init(hf, hdir+"/tdcwidth_contained", geom, conf);
-  hTDCWidthUncontained_.init(hf, hdir+"/tdcwidth_uncontained", geom, conf);
-  hTDCWidthHitbased_.init(hf, hdir+"/tdcwidth_hitbased", geom, conf);
-  hTDCWidthNone_.init(hf, hdir+"/tdcwidth_nochannel", geom, conf);
+  hTDCWidthContained_.init(hf, hdir+"/contained/tdcwidth", geom, conf);
+  hTDCWidthUncontained_.init(hf, hdir+"/uncontained/tdcwidth", geom, conf);
+  hTDCWidthHitbased_.init(hf, hdir+"/hitbased/tdcwidth", geom, conf);
+  hTDCWidthNone_.init(hf, hdir+"/nochannel/tdcwidth", geom, conf);
 
   if(doMCTruth_) {
-    hTruthContained_.init(hf, hdir+"/MCTruth_contained", conf);
-    hTruthUncontained_.init(hf, hdir+"/MCTruth_uncontained", conf);
-    hTruthHitbased_.init(hf, hdir+"/MCTruth_hitbased", conf);
-    hTruthNone_.init(hf, hdir+"/MCTruth_nochannel", conf);
+    hTruthContained_.init(hf, hdir+"/contained/MCTruth", conf);
+    hTruthUncontained_.init(hf, hdir+"/uncontained/MCTruth", conf);
+    hTruthHitbased_.init(hf, hdir+"/hitbased/MCTruth", conf);
+    hTruthNone_.init(hf, hdir+"/nochannel/MCTruth", conf);
 
-    hResolutionContained_.init(hf, hdir+"/resolution_contained", conf);
-    hResolutionUncontained_.init(hf, hdir+"/resolution_uncontained", conf);
+    hResolutionContained_.init(hf, hdir+"/contained/resolution", conf);
+    hResolutionUncontained_.init(hf, hdir+"/uncontained/resolution", conf);
   }
 
 }
