@@ -436,6 +436,8 @@ void SetDefault(ConfigFile &Conf)
         //----------------
         SetKey(Conf, "MuCapture/channels/versions", "legacy");
 
+        SetKey(Conf, "MuCapture/channels/legacy/contained/vars", "RangeCosVsP");
+
         SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxPlane", 55);
         SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxRout", 15.);
 

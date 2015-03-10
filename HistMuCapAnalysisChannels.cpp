@@ -2,6 +2,8 @@
 
 #include "HistMuCapAnalysisChannels.h"
 
+#include <stdexcept>
+
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
@@ -32,8 +34,14 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   }
 
   //----------------------------------------------------------------
-  static MuCapContainedVars::RangeCosVsP cvp_rangeCosVsP;
-  contained_.init(hf, htopdir, channelsetname, geom, conf, cvp_rangeCosVsP);
+  const std::string containedVars = conf.read<std::string>(hdir+"/contained/vars");
+  if(containedVars == "RangeCosVsP") {
+    // leak the memory - no elegant solution here without C++11
+    contained_.init(hf, htopdir, channelsetname, geom, conf, *new MuCapContainedVars::RangeCosVsP());
+  }
+  else {
+    throw std::runtime_error("HistMuCapAnalysisChannels::init(): unknow set of contained vars \""+containedVars+"\"");
+  }
 
   uncontained_.init(hf, htopdir, channelsetname, geom, conf);
 
