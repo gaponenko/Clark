@@ -5,11 +5,15 @@
 
 #include <string>
 
+#include "WireCluster.h"
+
+#include "HistMuCapContainedChannel.h"
+#include "HistMuCapUncontainedChannel.h"
 #include "HistHitBasedAnalysis.h"
+
+#include "HistTDCBCSWidth.h"
 #include "HistMuCapTruth.h"
 #include "HistMuCapTrkResolution.h"
-#include "WireCluster.h"
-#include "HistTDCBCSWidth.h"
 
 class TH1;
 class TH2;
@@ -20,12 +24,12 @@ class ConfigFile;
 class DetectorGeo;
 class EventClass;
 
-
 //================================================================
 class HistMuCapAnalysisChannels {
 public:
   void init(HistogramFactory& hf,
-            const std::string& hdir,
+            const std::string& htopdir,
+            const std::string& channelsetname,
             const DetectorGeo& geom,
             const ConfigFile& conf);
 
@@ -37,9 +41,7 @@ public:
   void fill(const EventClass& evt,
             int iPosTrack,
             int iNegTrack,
-            bool isPosTrackContained,
-            double rangePIDVar,
-            const ClustersByPlane& globalPlaneClusters );
+            const ClustersByPlane& globalPlaneClusters);
 
   HistMuCapAnalysisChannels() : doMCTruth_(false), referenceSample_nrun_(0), referenceSample_nevt_(0) {}
 
@@ -57,54 +59,32 @@ private :
   TH1* refsample_in_zstop_;
   TH1* refsample_accepted_count_;
 
+  //----------------------------------------------------------------
+  // Essential "channel" analysis histograms
+  HistMuCapContainedChannel contained_;
+  HistMuCapUncontainedChannel uncontained_;
+  HistHitBasedAnalysis hitbased_;
+
   // Reference sample spectrum: common for all reco channels
+  // Essential for normalization of the unfolding
   TH1* mcin_proton_ptot_;
   TH1* mcin_deuteron_ptot_;
   TH1* mcin_dio_count_;
 
-
-  //----------------------------------------------------------------
-  // Essential "channel" analysis histograms
-  TH2* contained_prange_;
-  TH1* uncontained_p_;
-
-  TH3* containedMigration_;
-  TH3* containedMigration_mcproton_;
-  TH3* containedMigration_mcdeuteron_;
-
-  TH2* uncontainedMigration_;
-  TH2* uncontainedMigration_mcproton_;
-  TH2* uncontainedMigration_mcdeuteron_;
-
-  // Contamination: like migration, but for events not in the reference sample: no true tgt stop.
-  TH3* containedContamination_;
-  TH3* containedContamination_mcproton_;
-  TH3* containedContamination_mcdeuteron_;
-
-  TH2* uncontainedContamination_;
-  TH2* uncontainedContamination_mcproton_;
-  TH2* uncontainedContamination_mcdeuteron_;
-
-  HistHitBasedAnalysis hitbased_;
-
-  // same content as the reco hists, but which one is filled depends on MC PID
-  TH2* contained_prange_mcproton_;
-  TH2* contained_prange_mcdeuteron_;
-  TH2* contained_prange_mcdio_;
-  TH1* uncontained_p_mcproton_;
-  TH1* uncontained_p_mcdeuteron_;
-  TH1* uncontained_p_mcdio_;
-
   //----------------
+  // Extra distributions
+  HistTDCBCSWidth hTDCWidthContained_;
+  HistTDCBCSWidth hTDCWidthUncontained_;
+  HistTDCBCSWidth hTDCWidthHitbased_;
+  HistTDCBCSWidth hTDCWidthNone_;
 
-  HistMuCapTruth hTruthTrkContained_;
-  HistMuCapTruth hTruthTrkUncontained_;
+  HistMuCapTruth hTruthContained_;
+  HistMuCapTruth hTruthUncontained_;
+  HistMuCapTruth hTruthHitbased_;
+  HistMuCapTruth hTruthNone_;
 
   HistMuCapTrkResolution hResolutionContained_;
   HistMuCapTrkResolution hResolutionUncontained_;
-
-  HistTDCBCSWidth hTDCWidthContained_;
-  HistTDCBCSWidth hTDCWidthUncontained_;
 };
 
 #endif/*HistMuCapAnalysisChannels_h*/

@@ -75,7 +75,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
   //       --------- Histograms initialization ---------          //
-  channels_.init(H, "MuCapture/channels", *E.geo, Conf);
+  channels_.init(H, "MuCapture", "channels1", *E.geo, Conf);
   rooUnfHits_.init(H, "MuCapture", Conf);
 
   //----------------------------------------------------------------
@@ -578,7 +578,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
   const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 
-  channels_.fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar, protonGlobalClusters);
+  channels_.fill(evt, iPosTrack, iNegTrack, protonGlobalClusters);
+
   if(channels_.referenceSampleAccepted()) {
     rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
   }

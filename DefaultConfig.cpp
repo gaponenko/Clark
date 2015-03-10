@@ -434,6 +434,11 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxRout", 15.);
 
         //----------------
+        SetKey(Conf, "MuCapture/channels1/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels1/genpmin", 0.);
+        SetKey(Conf, "MuCapture/channels1/genpmax", 500.);
+
+        //----------------
         //# Use downstream PC planes as a veto
         //NB: need implement ganged wires to include PC9,10 in the range.
         SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 52);

@@ -13,11 +13,15 @@
 
 //================================================================
 void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
-                                     const std::string& hdir,
+                                     const std::string& htopdir,
+                                     const std::string& channelsetname,
                                      const DetectorGeo& geom,
                                      const ConfigFile& conf)
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
+
+  const std::string hdir = htopdir + "/" + channelsetname;
+
   if(doMCTruth_) {
     refsample_muminus_multiplicity_ = hf.DefineTH1D(hdir+"/refsample", "muminus_multiplicity", "Mu- multiplicity, input", 10, -0.5, 9.5);
     refsample_endvtx_time_ = hf.DefineTH1D(hdir+"/refsample", "endvtx_time", "Candidate vtx time", 400, -500., 3500.);
@@ -28,202 +32,39 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   }
 
   //----------------------------------------------------------------
-  // "channel" analysis histograms
-  const int recoContPNbins = 88;
-  const double recoContPMin = 30.;
-  const double recoContPMax = 250.;
-  const int recoContRNbins = 6;
-  const double recoContRMin = 8.;
-  const double recoContRMax = 32.;
+  static MuCapContainedVars::RangeCosVsP cvp_rangeCosVsP;
+  contained_.init(hf, htopdir, channelsetname, geom, conf, cvp_rangeCosVsP);
 
-  const int recoUncPNbins = 88;
-  const double recoUncPMin = 30.;
-  const double recoUncPMax = 250.;
+  uncontained_.init(hf, htopdir, channelsetname, geom, conf);
 
-  //----------------------------------------------------------------
-  contained_prange_ = hf.DefineTH2D(hdir+"/contained", "rangecosVsP", "Last plane hit/|cos(theta)| vs p, contained",
-                                    recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
-  contained_prange_->SetOption("colz");
-  contained_prange_->GetXaxis()->SetTitle("p [MeV/c]");
-  contained_prange_->GetYaxis()->SetTitle("(plane-28)/|cos(theta)|");
-
-  if(doMCTruth_) {
-    contained_prange_mcproton_ = hf.DefineTH2D(hdir+"/contained", "rangecosVsP_mcproton", "Last plane hit/|cos(theta)| vs p, contained mcproton",
-                                               recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
-    contained_prange_mcproton_->SetOption("colz");
-    contained_prange_mcproton_->GetXaxis()->SetTitle("p [MeV/c]");
-    contained_prange_mcproton_->GetYaxis()->SetTitle("(plane-28)/|cos(theta)|");
-
-    contained_prange_mcdeuteron_ = hf.DefineTH2D(hdir+"/contained", "rangecosVsP_mcdeuteron", "Last plane hit/|cos(theta)| vs p, contained mcdeuteron",
-                                                 recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
-    contained_prange_mcdeuteron_->SetOption("colz");
-    contained_prange_mcdeuteron_->GetXaxis()->SetTitle("p [MeV/c]");
-    contained_prange_mcdeuteron_->GetYaxis()->SetTitle("(plane-28)/|cos(theta)|");
-
-    contained_prange_mcdio_ = hf.DefineTH2D(hdir+"/contained", "rangecosVsP_mcdio", "Last plane hit/|cos(theta)| vs p, contained mcdio",
-                                            recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
-    contained_prange_mcdio_->SetOption("colz");
-    contained_prange_mcdio_->GetXaxis()->SetTitle("p [MeV/c]");
-    contained_prange_mcdio_->GetYaxis()->SetTitle("(plane-28)/|cos(theta)|");
-  }
-
-  //----------------------------------------------------------------
-  uncontained_p_ = hf.DefineTH1D(hdir+"/uncontained", "ptot", "ptot, non contained", recoUncPNbins, recoUncPMin, recoUncPMax);
-  uncontained_p_->GetXaxis()->SetTitle("p, MeV/c");
-
-  if(doMCTruth_) {
-    uncontained_p_mcproton_ = hf.DefineTH1D(hdir+"/uncontained", "ptot_mcproton", "ptot, non contained mcproton", recoUncPNbins, recoUncPMin, recoUncPMax);
-    uncontained_p_mcproton_->GetXaxis()->SetTitle("p, MeV/c");
-
-    uncontained_p_mcdeuteron_ = hf.DefineTH1D(hdir+"/uncontained", "ptot_mcdeuteron", "ptot, non contained mcdeuteron", recoUncPNbins, recoUncPMin, recoUncPMax);
-    uncontained_p_mcdeuteron_->GetXaxis()->SetTitle("p, MeV/c");
-
-    uncontained_p_mcdio_ = hf.DefineTH1D(hdir+"/uncontained", "ptot_mcdio", "ptot, non contained mcdio", recoUncPNbins, recoUncPMin, recoUncPMax);
-    uncontained_p_mcdio_->GetXaxis()->SetTitle("p, MeV/c");
-  }
-
-  //----------------------------------------------------------------
   hitbased_.init(hf, hdir+"/hitbased", geom, conf);
 
-  hTDCWidthContained_.init(hf, hdir+"/contained/tdcwidth", geom, conf);
-  hTDCWidthUncontained_.init(hf, hdir+"/uncontained/tdcwidth", geom, conf);
-
-  //----------------------------------------------------------------
   if(doMCTruth_) {
-    // truth level binning
-    const int gen1nbins = 500;
-    const double gen1pmin = 0.;
-    const double gen1pmax = 500.;
-
-    // True distribution of all events used for the unfolding
+    const int gen1nbins = conf.read<int>("MuCapture/"+channelsetname+"/numGeneratorBins");
+    const double gen1pmin = conf.read<double>("MuCapture/"+channelsetname+"/genpmin");
+    const double gen1pmax = conf.read<double>("MuCapture/"+channelsetname+"/genpmax");
+    // truth level binning must be consistent for all channels
     mcin_proton_ptot_ = hf.DefineTH1D(hdir, "mcin_proton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcin_deuteron_ptot_ = hf.DefineTH1D(hdir, "mcin_deuteron_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcin_dio_count_ = hf.DefineTH1D(hdir, "mcin_dio_count", "noncapture count, input", 1, -0.5, 0.5);
+  }
 
-    // Migration matrices for the contained channel
-    containedMigration_ = hf.DefineTH3D(hdir+"/contained", "migration",
-                                        "Contained channel migration",
-                                        gen1nbins, gen1pmin, gen1pmax,
-                                        recoContPNbins, recoContPMin, recoContPMax,
-                                        recoContRNbins, recoContRMin, recoContRMax);
+  //----------------------------------------------------------------
+  // Extra distributions
 
-    containedMigration_->GetXaxis()->SetTitle("p true, MeV/c");
-    containedMigration_->GetYaxis()->SetTitle("p reco, MeV/c");
-    containedMigration_->GetZaxis()->SetTitle("range");
+  hTDCWidthContained_.init(hf, hdir+"/tdcwidth_contained", geom, conf);
+  hTDCWidthUncontained_.init(hf, hdir+"/tdcwidth_uncontained", geom, conf);
+  hTDCWidthHitbased_.init(hf, hdir+"/tdcwidth_hitbased", geom, conf);
+  hTDCWidthNone_.init(hf, hdir+"/tdcwidth_nochannel", geom, conf);
 
-    containedMigration_mcproton_ = hf.DefineTH3D(hdir+"/contained", "migration_mcproton",
-                                                 "Contained channel migration, proton",
-                                                 gen1nbins, gen1pmin, gen1pmax,
-                                                 recoContPNbins, recoContPMin, recoContPMax,
-                                                 recoContRNbins, recoContRMin, recoContRMax);
+  if(doMCTruth_) {
+    hTruthContained_.init(hf, hdir+"/MCTruth_contained", conf);
+    hTruthUncontained_.init(hf, hdir+"/MCTruth_uncontained", conf);
+    hTruthHitbased_.init(hf, hdir+"/MCTruth_hitbased", conf);
+    hTruthNone_.init(hf, hdir+"/MCTruth_nochannel", conf);
 
-    containedMigration_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
-    containedMigration_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
-    containedMigration_mcproton_->GetZaxis()->SetTitle("range");
-
-    containedMigration_mcdeuteron_ = hf.DefineTH3D(hdir+"/contained", "migration_mcdeuteron",
-                                                 "Contained channel migration, deuteron",
-                                                 gen1nbins, gen1pmin, gen1pmax,
-                                                 recoContPNbins, recoContPMin, recoContPMax,
-                                                 recoContRNbins, recoContRMin, recoContRMax);
-
-    containedMigration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
-    containedMigration_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
-    containedMigration_mcdeuteron_->GetZaxis()->SetTitle("range");
-
-    // Migration matrices for the non contained channel
-    uncontainedMigration_ = hf.DefineTH2D(hdir+"/uncontained","migration",
-                                          "Non-contained channel migration",
-                                          gen1nbins, gen1pmin, gen1pmax,
-                                          recoUncPNbins, recoUncPMin, recoUncPMax);
-
-    uncontainedMigration_->SetOption("colz");
-    uncontainedMigration_->GetXaxis()->SetTitle("p true, MeV/c");
-    uncontainedMigration_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    uncontainedMigration_mcproton_ = hf.DefineTH2D(hdir+"/uncontained","migration_mcproton",
-                                                   "Non-contained channel migration, proton",
-                                                   gen1nbins, gen1pmin, gen1pmax,
-                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
-
-    uncontainedMigration_mcproton_->SetOption("colz");
-    uncontainedMigration_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
-    uncontainedMigration_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    uncontainedMigration_mcdeuteron_ = hf.DefineTH2D(hdir+"/uncontained","migration_mcdeuteron",
-                                                   "Non-contained channel migration, deuteron",
-                                                   gen1nbins, gen1pmin, gen1pmax,
-                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
-
-    uncontainedMigration_mcdeuteron_->SetOption("colz");
-    uncontainedMigration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
-    uncontainedMigration_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    // Contamination matrices for the contained channel
-    containedContamination_ = hf.DefineTH3D(hdir+"/contained", "contamination",
-                                        "Contained channel contamination",
-                                        gen1nbins, gen1pmin, gen1pmax,
-                                        recoContPNbins, recoContPMin, recoContPMax,
-                                        recoContRNbins, recoContRMin, recoContRMax);
-
-    containedContamination_->GetXaxis()->SetTitle("p true, MeV/c");
-    containedContamination_->GetYaxis()->SetTitle("p reco, MeV/c");
-    containedContamination_->GetZaxis()->SetTitle("range");
-
-    containedContamination_mcproton_ = hf.DefineTH3D(hdir+"/contained", "contamination_mcproton",
-                                                 "Contained channel contamination, proton",
-                                                 gen1nbins, gen1pmin, gen1pmax,
-                                                 recoContPNbins, recoContPMin, recoContPMax,
-                                                 recoContRNbins, recoContRMin, recoContRMax);
-
-    containedContamination_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
-    containedContamination_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
-    containedContamination_mcproton_->GetZaxis()->SetTitle("range");
-
-    containedContamination_mcdeuteron_ = hf.DefineTH3D(hdir+"/contained", "contamination_mcdeuteron",
-                                                 "Contained channel contamination, deuteron",
-                                                 gen1nbins, gen1pmin, gen1pmax,
-                                                 recoContPNbins, recoContPMin, recoContPMax,
-                                                 recoContRNbins, recoContRMin, recoContRMax);
-
-    containedContamination_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
-    containedContamination_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
-    containedContamination_mcdeuteron_->GetZaxis()->SetTitle("range");
-
-    // Contamination matrices for the non contained channel
-    uncontainedContamination_ = hf.DefineTH2D(hdir+"/uncontained","contamination",
-                                          "Non-contained channel contamination",
-                                          gen1nbins, gen1pmin, gen1pmax,
-                                          recoUncPNbins, recoUncPMin, recoUncPMax);
-
-    uncontainedContamination_->SetOption("colz");
-    uncontainedContamination_->GetXaxis()->SetTitle("p true, MeV/c");
-    uncontainedContamination_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    uncontainedContamination_mcproton_ = hf.DefineTH2D(hdir+"/uncontained","contamination_mcproton",
-                                                   "Non-contained channel contamination, proton",
-                                                   gen1nbins, gen1pmin, gen1pmax,
-                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
-
-    uncontainedContamination_mcproton_->SetOption("colz");
-    uncontainedContamination_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
-    uncontainedContamination_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    uncontainedContamination_mcdeuteron_ = hf.DefineTH2D(hdir+"/uncontained","contamination_mcdeuteron",
-                                                   "Non-contained channel contamination, deuteron",
-                                                   gen1nbins, gen1pmin, gen1pmax,
-                                                   recoUncPNbins, recoUncPMin, recoUncPMax);
-
-    uncontainedContamination_mcdeuteron_->SetOption("colz");
-    uncontainedContamination_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
-    uncontainedContamination_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    //----------------------------------------------------------------
-    hTruthTrkContained_.init(hf, hdir+"/contained/MCTruthTrk", conf);
-    hTruthTrkUncontained_.init(hf, hdir+"/uncontained/MCTruthTrk", conf);
-
-    hResolutionContained_.init(hf, hdir+"/contained/resolution", conf);
-    hResolutionUncontained_.init(hf, hdir+"/uncontained/resolution", conf);
+    hResolutionContained_.init(hf, hdir+"/resolution_contained", conf);
+    hResolutionUncontained_.init(hf, hdir+"/resolution_uncontained", conf);
   }
 
 }
@@ -326,10 +167,7 @@ void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
 void HistMuCapAnalysisChannels::fill(const EventClass& evt,
                                      int iPosTrack,
                                      int iNegTrack,
-                                     bool isPosTrackContained,
-                                     double rangePIDVar,
-                                     const ClustersByPlane& globalPlaneClusters
-                                     )
+                                     const ClustersByPlane& globalPlaneClusters )
 {
   if(doMCTruth_ && ((referenceSample_nrun_ != evt.nrun)||(referenceSample_nevt_ != evt.nevt))) {
     throw std::runtime_error("Error: HistMuCapAnalysisChannels::fill() is called before fillReferenceSample() on that event.");
@@ -338,89 +176,57 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
   //----------------------------------------------------------------
   // Figure out an exclusive analysis channel for this event
 
-  bool eventUsedInAChannel2 = false;
+  enum Channel { CONTAINED, UNCONTAINED, HITBASED, NONE};
+  const Channel ch =
+    contained_.accepted(evt, referenceSampleAccepted_, iPosTrack, iNegTrack, globalPlaneClusters) ?
+    CONTAINED
+    : ( uncontained_.accepted(evt, referenceSampleAccepted_, iPosTrack, iNegTrack) ?
+        UNCONTAINED
+        : ( hitbased_.accepted(evt, globalPlaneClusters, iNegTrack, referenceSampleAccepted_) ?
+            HITBASED
+            : NONE
+            )
+        );
 
-  const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
-  // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
-  const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
+  // Fill extra distributions
+  switch(ch) {
+  case CONTAINED: hTDCWidthContained_.fill(evt, globalPlaneClusters);
+    break;
 
-  if(iNegTrack == -1) { // Veto DIO events
-    if(iPosTrack != -1) { // Got a reconstructed capture track
+  case UNCONTAINED: hTDCWidthUncontained_.fill(evt, globalPlaneClusters);
+    break;
 
-      const double prec = evt.ptot[iPosTrack];
+  case HITBASED: hTDCWidthHitbased_.fill(evt, globalPlaneClusters);
+    break;
 
-      if(isPosTrackContained) {
-        // The "contained tracks" analysis channel
-        eventUsedInAChannel2 = true;
-        contained_prange_->Fill(prec, rangePIDVar);
-        hTDCWidthContained_.fill(evt, globalPlaneClusters);
-
-        if(doMCTruth_) {
-
-          if(imcvtxStart  != -1) {
-            (referenceSampleAccepted_ ? containedMigration_ : containedContamination_)
-              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
-          }
-
-          switch(mcParticle) {
-          case MuCapUtilities::PID_G3_PROTON:
-            contained_prange_mcproton_->Fill(prec, rangePIDVar);
-            (referenceSampleAccepted_ ? containedMigration_mcproton_ : containedContamination_mcproton_)
-              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
-            break;
-          case MuCapUtilities::PID_G3_DEUTERON:
-            contained_prange_mcdeuteron_->Fill(prec, rangePIDVar);
-            (referenceSampleAccepted_ ? containedMigration_mcdeuteron_ : containedContamination_mcdeuteron_)
-              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec, rangePIDVar);
-            break;
-          case 0:
-            contained_prange_mcdio_->Fill(prec, rangePIDVar);
-            break;
-          }
-
-          hTruthTrkContained_.fill(evt);
-          hResolutionContained_.fill(evt, iPosTrack);
-        }
-      }
-      else { // The non-contained tracks channel
-        eventUsedInAChannel2 = true;
-        uncontained_p_->Fill(prec);
-
-        hTDCWidthUncontained_.fill(evt, globalPlaneClusters);
-
-        if(doMCTruth_) {
-
-          if(imcvtxStart  != -1) {
-            (referenceSampleAccepted_ ? uncontainedMigration_ : uncontainedContamination_)
-              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
-          }
-
-          switch(mcParticle) {
-          case MuCapUtilities::PID_G3_PROTON:
-            uncontained_p_mcproton_->Fill(prec);
-            (referenceSampleAccepted_ ? uncontainedMigration_mcproton_ : uncontainedContamination_mcproton_)
-              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
-            break;
-          case MuCapUtilities::PID_G3_DEUTERON:
-            uncontained_p_mcdeuteron_->Fill(prec);
-            (referenceSampleAccepted_ ? uncontainedMigration_mcdeuteron_ : uncontainedContamination_mcdeuteron_)
-              ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
-            break;
-          case 0:
-            uncontained_p_mcdio_->Fill(prec);
-            break;
-          }
-
-          hTruthTrkUncontained_.fill(evt);
-          hResolutionUncontained_.fill(evt, iPosTrack);
-        }
-      }
-    }
+  case NONE: hTDCWidthNone_.fill(evt, globalPlaneClusters);
+    break;
   }
 
-  if(!eventUsedInAChannel2) {
-    // No good positive tracks. Do a hit-based analysis here.
-    hitbased_.accepted(evt, globalPlaneClusters, iNegTrack, referenceSampleAccepted_);
+  if(doMCTruth_) {
+    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+    // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
+    const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
+
+    switch(ch) {
+    case CONTAINED:
+      hTruthContained_.fill(evt);
+      hResolutionContained_.fill(evt, iPosTrack);
+      break;
+
+    case UNCONTAINED:
+      hTruthUncontained_.fill(evt);
+      hResolutionUncontained_.fill(evt, iPosTrack);
+      break;
+
+    case HITBASED:
+      hTruthHitbased_.fill(evt);
+      break;
+
+    case NONE:
+      hTruthNone_.fill(evt);
+      break;
+    }
   }
 }
 
