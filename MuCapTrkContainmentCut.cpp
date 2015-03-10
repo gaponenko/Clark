@@ -18,8 +18,8 @@ void MuCapTrkContainmentCut::init(const std::string& hdir,
                                   const DetectorGeo&,
                                   const ConfigFile& conf)
 {
-  cutMaxPlane_ = conf.read<int>("MuCapture/TrkContainmentCut/cutMaxPlane");
-  cutMaxRout_ = conf.read<double>("MuCapture/TrkContainmentCut/cutMaxRout");
+  cutMaxPlane_ = conf.read<int>(hdir+"/cutMaxPlane");
+  cutMaxRout_ = conf.read<double>(hdir+"/cutMaxRout");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Tracks rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);

@@ -430,11 +430,14 @@ void SetDefault(ConfigFile &Conf)
         //----------------
         // Require the track to NOT hit the last plane of the dense stack.
         // So that it is not sensitive to hits in the outer PCs.
-        SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxPlane", 51);
-        SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxRout", 15.);
+        SetKey(Conf, "MuCapture/dnPosTrkContainment/cutMaxPlane", 51);
+        SetKey(Conf, "MuCapture/dnPosTrkContainment/cutMaxRout", 15.);
 
         //----------------
         SetKey(Conf, "MuCapture/channels/versions", "legacy");
+
+        SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxPlane", 55);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxRout", 15.);
 
         SetKey(Conf, "MuCapture/channels/legacy/numGeneratorBins", 500);
         SetKey(Conf, "MuCapture/channels/legacy/genpmin", 0.);
