@@ -40,9 +40,9 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   hitbased_.init(hf, hdir+"/hitbased", geom, conf);
 
   if(doMCTruth_) {
-    const int gen1nbins = conf.read<int>("MuCapture/"+channelsetname+"/numGeneratorBins");
-    const double gen1pmin = conf.read<double>("MuCapture/"+channelsetname+"/genpmin");
-    const double gen1pmax = conf.read<double>("MuCapture/"+channelsetname+"/genpmax");
+    const int gen1nbins = conf.read<int>(hdir+"/numGeneratorBins");
+    const double gen1pmin = conf.read<double>(hdir+"/genpmin");
+    const double gen1pmax = conf.read<double>(hdir+"/genpmax");
     // truth level binning must be consistent for all channels
     mcin_proton_ptot_ = hf.DefineTH1D(hdir, "mcin_proton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcin_deuteron_ptot_ = hf.DefineTH1D(hdir, "mcin_deuteron_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
@@ -204,10 +204,6 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
   }
 
   if(doMCTruth_) {
-    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
-    // Simulated DIO have no easily accessible MC truth.  We'll tread PID=zero as DIO down in this code.
-    const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
-
     switch(ch) {
     case CONTAINED:
       hTruthContained_.fill(evt);

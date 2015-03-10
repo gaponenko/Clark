@@ -75,7 +75,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
   //       --------- Histograms initialization ---------          //
-  channels_.init(H, "MuCapture", "channels1", *E.geo, Conf);
+  channels_.init(H, "MuCapture/channels", "legacy", *E.geo, Conf);
   rooUnfHits_.init(H, "MuCapture", Conf);
 
   //----------------------------------------------------------------

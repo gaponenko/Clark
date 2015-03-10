@@ -20,7 +20,8 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
 {
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
 
-  const std::string hdir = hgrandtopdir+"/"+channelsetname+"/contained";
+  const std::string htopdir = hgrandtopdir+"/"+channelsetname;
+  const std::string hdir = htopdir+"/contained";
 
   cvp_ = &cvp;
   cvp_->init(hdir+"/ccut", hf, geom, conf);
@@ -41,35 +42,38 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
 
   //----------------------------------------------------------------
   // "channel" analysis histograms
-  const int recoContPNbins = 88;
-  const double recoContPMin = 30.;
-  const double recoContPMax = 250.;
-  const int recoContRNbins = 6;
-  const double recoContRMin = 8.;
-  const double recoContRMax = 32.;
+  const int xvarnbins = conf.read<int>(hdir+"/xvarnbins");
+  const double xvarmin = conf.read<double>(hdir+"/xvarmin");
+  const double xvarmax = conf.read<double>(hdir+"/xvarmax");
+
+  const int yvarnbins = conf.read<int>(hdir+"/yvarnbins");
+  const double yvarmin = conf.read<double>(hdir+"/yvarmin");
+  const double yvarmax = conf.read<double>(hdir+"/yvarmax");
 
   //----------------------------------------------------------------
   reco_ = hf.DefineTH2D(hdir, "reco", "reco",
-                        recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
+                        xvarnbins, xvarmin, xvarmax,
+                        yvarnbins, yvarmin, yvarmax);
+
   reco_->SetOption("colz");
   reco_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
   reco_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
 
   if(doMCTruth_) {
     reco_mcproton_ = hf.DefineTH2D(hdir, "reco_mcproton", "reco, mcproton",
-                                   recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
+                                   xvarnbins, xvarmin, xvarmax, yvarnbins, yvarmin, yvarmax);
     reco_mcproton_->SetOption("colz");
     reco_mcproton_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
     reco_mcproton_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
 
     reco_mcdeuteron_ = hf.DefineTH2D(hdir, "reco_mcdeuteron", "reco, mcdeuteron",
-                                     recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
+                                     xvarnbins, xvarmin, xvarmax, yvarnbins, yvarmin, yvarmax);
     reco_mcdeuteron_->SetOption("colz");
     reco_mcdeuteron_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
     reco_mcdeuteron_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
 
     reco_mcdio_ = hf.DefineTH2D(hdir, "reco_mcdio", "reco, mcdio",
-                                recoContPNbins, recoContPMin, recoContPMax, recoContRNbins, recoContRMin, recoContRMax);
+                                xvarnbins, xvarmin, xvarmax, yvarnbins, yvarmin, yvarmax);
     reco_mcdio_->SetOption("colz");
     reco_mcdio_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
     reco_mcdio_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
@@ -78,16 +82,16 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
   //----------------------------------------------------------------
   if(doMCTruth_) {
     // truth level binning must be consistent for all channels
-    const int gen1nbins = conf.read<int>("MuCapture/"+channelsetname+"/numGeneratorBins");
-    const double gen1pmin = conf.read<double>("MuCapture/"+channelsetname+"/genpmin");
-    const double gen1pmax = conf.read<double>("MuCapture/"+channelsetname+"/genpmax");
+    const int gen1nbins = conf.read<int>(htopdir+"/numGeneratorBins");
+    const double gen1pmin = conf.read<double>(htopdir+"/genpmin");
+    const double gen1pmax = conf.read<double>(htopdir+"/genpmax");
 
     // Migration matrices for the contained channel
     migration_ = hf.DefineTH3D(hdir, "migration",
                                "Contained channel migration",
                                gen1nbins, gen1pmin, gen1pmax,
-                               recoContPNbins, recoContPMin, recoContPMax,
-                               recoContRNbins, recoContRMin, recoContRMax);
+                               xvarnbins, xvarmin, xvarmax,
+                               yvarnbins, yvarmin, yvarmax);
 
     migration_->GetXaxis()->SetTitle("p true [MeV/c]");
     migration_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
@@ -96,8 +100,8 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     migration_mcproton_ = hf.DefineTH3D(hdir, "migration_mcproton",
                                         "Contained channel migration, proton",
                                         gen1nbins, gen1pmin, gen1pmax,
-                                        recoContPNbins, recoContPMin, recoContPMax,
-                                        recoContRNbins, recoContRMin, recoContRMax);
+                                        xvarnbins, xvarmin, xvarmax,
+                                        yvarnbins, yvarmin, yvarmax);
 
     migration_mcproton_->GetXaxis()->SetTitle("p true [MeV/c]");
     migration_mcproton_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
@@ -106,8 +110,8 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     migration_mcdeuteron_ = hf.DefineTH3D(hdir, "migration_mcdeuteron",
                                           "Contained channel migration, deuteron",
                                           gen1nbins, gen1pmin, gen1pmax,
-                                          recoContPNbins, recoContPMin, recoContPMax,
-                                          recoContRNbins, recoContRMin, recoContRMax);
+                                          xvarnbins, xvarmin, xvarmax,
+                                          yvarnbins, yvarmin, yvarmax);
 
     migration_mcdeuteron_->GetXaxis()->SetTitle("p true [MeV/c]");
     migration_mcdeuteron_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
@@ -117,8 +121,8 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     contamination_ = hf.DefineTH3D(hdir, "contamination",
                                    "Contained channel contamination",
                                    gen1nbins, gen1pmin, gen1pmax,
-                                   recoContPNbins, recoContPMin, recoContPMax,
-                                   recoContRNbins, recoContRMin, recoContRMax);
+                                   xvarnbins, xvarmin, xvarmax,
+                                   yvarnbins, yvarmin, yvarmax);
 
     contamination_->GetXaxis()->SetTitle("p true [MeV/c]");
     contamination_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
@@ -127,8 +131,8 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     contamination_mcproton_ = hf.DefineTH3D(hdir, "contamination_mcproton",
                                             "Contained channel contamination, proton",
                                             gen1nbins, gen1pmin, gen1pmax,
-                                            recoContPNbins, recoContPMin, recoContPMax,
-                                            recoContRNbins, recoContRMin, recoContRMax);
+                                            xvarnbins, xvarmin, xvarmax,
+                                            yvarnbins, yvarmin, yvarmax);
 
     contamination_mcproton_->GetXaxis()->SetTitle("p true [MeV/c]");
     contamination_mcproton_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
@@ -137,8 +141,8 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     contamination_mcdeuteron_ = hf.DefineTH3D(hdir, "contamination_mcdeuteron",
                                               "Contained channel contamination, deuteron",
                                               gen1nbins, gen1pmin, gen1pmax,
-                                              recoContPNbins, recoContPMin, recoContPMax,
-                                              recoContRNbins, recoContRMin, recoContRMax);
+                                              xvarnbins, xvarmin, xvarmax,
+                                              yvarnbins, yvarmin, yvarmax);
 
     contamination_mcdeuteron_->GetXaxis()->SetTitle("p true [MeV/c]");
     contamination_mcdeuteron_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());

@@ -434,9 +434,23 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkContainmentCut/cutMaxRout", 15.);
 
         //----------------
-        SetKey(Conf, "MuCapture/channels1/numGeneratorBins", 500);
-        SetKey(Conf, "MuCapture/channels1/genpmin", 0.);
-        SetKey(Conf, "MuCapture/channels1/genpmax", 500.);
+        SetKey(Conf, "MuCapture/channels/versions", "legacy");
+
+        SetKey(Conf, "MuCapture/channels/legacy/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/legacy/genpmin", 0.);
+        SetKey(Conf, "MuCapture/channels/legacy/genpmax", 500.);
+
+        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarnbins", 88);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmin", 30.);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmax", 250.);
+
+        SetKey(Conf, "MuCapture/channels/legacy/contained/yvarnbins", 6);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmin", 8.);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmax", 32.);
+
+        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopnbins", 88);
+        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmin", 30.);
+        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmax", 250.);
 
         //----------------
         //# Use downstream PC planes as a veto
