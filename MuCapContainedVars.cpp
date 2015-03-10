@@ -30,7 +30,7 @@ namespace MuCapContainedVars {
       rangePIDVar = (lastPlane-28)/std::abs(evt.costh[iPosTrack]);
     }
 
-    return Result(rangePIDVar, ptot, contained);
+    return Result(ptot, rangePIDVar, contained);
   }
 
 }
