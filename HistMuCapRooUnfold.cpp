@@ -15,16 +15,16 @@
 
 //================================================================
 HistMuCapRooUnfold::HistUnfold1D::HistUnfold1D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP){
-  hMeasuredMomentum_ = H.DefineTH1D(Dir+"/LateResponse"+Name, "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NBinP, 0., MaxP);
+  hMeasuredMomentum_ = H.DefineTH1D(Dir+"/rooUnfold/"+Name, "MeasuredMomentum", "Measured momentum spectrum;Momentum [MeV/c]",NBinP, 0., MaxP);
 
   if(MCTruth){
     Response_.Setup(NBinP, 0., MaxP, NBinP, 0., MaxP);
-    H.Store(&Response_, "anDnLateResponse"+Name, Dir);
+    H.Store(&Response_, "unfoldMatrix"+Name, Dir+"/rooUnfold");
 
-    hTruthMomentum_        = H.DefineTH1D(Dir+"/LateResponse"+Name, "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NBinP, 0., MaxP);
-    hTruthMomentumReco_    = H.DefineTH1D(Dir+"/LateResponse"+Name, "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NBinP, 0., MaxP);
-    hMeasVsTruthMomentum_  = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
-    hTruthMomentumNotReco_ = H.DefineTH1D(Dir+"/LateResponse"+Name, "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NBinP, 0., MaxP);
+    hTruthMomentum_        = H.DefineTH1D(Dir+"/rooUnfold/"+Name, "MCTruthMomentum", "True momentum used in response function;Momentum [MeV/c]",NBinP, 0., MaxP);
+    hTruthMomentumReco_    = H.DefineTH1D(Dir+"/rooUnfold/"+Name, "MCTruthMomentumReco", "True momentum of reconstructed tracks;Momentum [MeV/c]",NBinP, 0., MaxP);
+    hMeasVsTruthMomentum_  = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MCMeasVsTruthMomentum", "Measured vs. true momentum used in response function;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
+    hTruthMomentumNotReco_ = H.DefineTH1D(Dir+"/rooUnfold/"+Name, "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;Momentum [MeV/c]",NBinP, 0., MaxP);
   }
 }
   
@@ -62,7 +62,7 @@ void HistMuCapRooUnfold::HistUnfold1D::MissTruth(double tru){
 
 //================================================================
 HistMuCapRooUnfold::HistUnfold2D::HistUnfold2D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP){
-  hMeasuredMomentum_  = H.DefineTH2D(Dir+"/LateResponse"+Name, "MeasuredMomentum", "Measured momentum spectrum;PID;Momentum [MeV/c]",2,0.,2.,NBinP, 0., MaxP);
+  hMeasuredMomentum_  = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MeasuredMomentum", "Measured momentum spectrum;PID;Momentum [MeV/c]",2,0.,2.,NBinP, 0., MaxP);
 
   if(MCTruth){
     std::string tmpStr = "MeasuredMomentumVsPID"+Name;
@@ -70,13 +70,13 @@ HistMuCapRooUnfold::HistUnfold2D::HistUnfold2D(HistogramFactory &H, std::string 
     tmpStr = "TrueMomentumVsPID"+Name;
     TH2D *TrueTmp     = new TH2D(tmpStr.c_str(), "True momentum vs PID;PID;Momentum", 2,0,2., NBinP, 0., MaxP);
     Response_.Setup(MeasuredTmp, TrueTmp);
-    H.Store(&Response_, "anDnLateResponse"+Name, Dir);
+    H.Store(&Response_, "unfoldMatrix"+Name, Dir+"/rooUnfold");
 
-    hTruthMomentum_        = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCTruthMomentum", "True momentum used in response function;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
-    hTruthMomentumReco_    = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCTruthMomentumReco", "True momentum of reconstructed tracks;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
-    hMeasVsTruthMomentumTruProtons_   = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCMeasVsTruthMomentumTruProtons", "Measured vs. true momentum used in response function for tru protons;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
-    hMeasVsTruthMomentumTruDeuterons_ = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCMeasVsTruthMomentumTruDeuterons", "Measured vs. true momentum used in response function for tru deuterons;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
-    hTruthMomentumNotReco_ = H.DefineTH2D(Dir+"/LateResponse"+Name, "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
+    hTruthMomentum_        = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MCTruthMomentum", "True momentum used in response function;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
+    hTruthMomentumReco_    = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MCTruthMomentumReco", "True momentum of reconstructed tracks;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
+    hMeasVsTruthMomentumTruProtons_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MCMeasVsTruthMomentumTruProtons", "Measured vs. true momentum used in response function for tru protons;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
+    hMeasVsTruthMomentumTruDeuterons_ = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MCMeasVsTruthMomentumTruDeuterons", "Measured vs. true momentum used in response function for tru deuterons;True momentum [MeV/c];Measured momentum [MeV/c]",NBinP, 0., MaxP,NBinP, 0., MaxP);
+    hTruthMomentumNotReco_ = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MCTruthMomentumNotReco", "True momentum of tracks not reconstructed;PID;Momentum [MeV/c]",2,0,2., NBinP, 0., MaxP);
   }
 }
 
