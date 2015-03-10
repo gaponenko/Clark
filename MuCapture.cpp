@@ -75,7 +75,14 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   gEventList = EventList(Conf.read<std::string>("MuCapture/debugEventList"));
 
   //       --------- Histograms initialization ---------          //
-  channels_.init(H, "MuCapture/channels", "legacy", *E.geo, Conf);
+  const std::string chanstr = Conf.read<std::string>("MuCapture/channels/versions");
+  const std::vector<std::string> channelNames = StrToStrVect(chanstr);
+  for(unsigned i=0; i<channelNames.size(); ++i) {
+    std::cout<<"MuCapture: adding channel "<<channelNames[i]<<std::endl;
+    channels_.push_back(HistMuCapAnalysisChannels());
+    channels_.back().init(H, "MuCapture/channels", channelNames[i], *E.geo, Conf);
+  }
+
   rooUnfHits_.init(H, "MuCapture", Conf);
 
   //----------------------------------------------------------------
@@ -277,7 +284,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_EVENT_NUMBER;
   }
 
-  channels_.fillReferenceSample(evt);
+  for(unsigned i=0; i<channels_.size(); i++) {
+    channels_[i].fillReferenceSample(evt);
+  }
+
   rooUnfHits_.SaveEventVariables(evt);
 
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits());
@@ -578,9 +588,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
   const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 
-  channels_.fill(evt, iPosTrack, iNegTrack, protonGlobalClusters);
+  for(unsigned i=0; i<channels_.size(); i++) {
+    channels_[i].fill(evt, iPosTrack, iNegTrack, protonGlobalClusters);
+  }
 
-  if(channels_.referenceSampleAccepted()) {
+  if(channels_[0].referenceSampleAccepted()) {
     rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
   }
 

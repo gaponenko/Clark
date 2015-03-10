@@ -180,7 +180,7 @@ private :
   TDCHitPreprocessing::IProcessor *pcHitProcessor_;
   TDCHitPreprocessing::IProcessor *dcHitProcessor_;
 
-  HistMuCapAnalysisChannels channels_;
+  std::vector<HistMuCapAnalysisChannels> channels_;
   HistMuCapRooUnfold rooUnfHits_;
   RecoResMuCapTrk anDnLateRes_;
   TimeWindowingPC pcWindowing_;
