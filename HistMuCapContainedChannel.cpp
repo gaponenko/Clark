@@ -27,9 +27,6 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
   cvp_->init(hdir+"/ccut", hf, geom, conf);
 
   //----------------------------------------------------------------
-  dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", hf, geom, conf);
-
-  //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
   h_cuts_r->SetStats(kFALSE);
   set_cut_bin_labels(h_cuts_r->GetXaxis());
@@ -183,11 +180,11 @@ HistMuCapContainedChannel::analyzeEvent(const EventClass& evt,
     return CUT_DIO;
   }
 
-  if(!dnPosTrkContainment_.contained(evt,iPosTrack,protonGlobalClusters)) {
+  MuCapContainedVars::Result cv = cvp_->compute(evt,iPosTrack,protonGlobalClusters);
+  if(!cv.contained) {
     return CUT_CONTAINED;
   }
 
-  MuCapContainedVars::Result cv = cvp_->compute(evt,iPosTrack,protonGlobalClusters);
   reco_->Fill(cv.xvar, cv.yvar);
 
   if(doMCTruth_) {

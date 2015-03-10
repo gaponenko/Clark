@@ -5,7 +5,6 @@
 
 #include <string>
 
-#include "MuCapTrkContainmentCut.h"
 #include "MuCapContainedVars.h"
 #include "WireCluster.h"
 
@@ -57,7 +56,6 @@ private :
   bool doMCTruth_;
 
   MuCapContainedVars::IVarProcessor* cvp_;
-  MuCapTrkContainmentCut dnPosTrkContainment_;
 
   TH1 *h_cuts_r;
   TH1 *h_cuts_p;
