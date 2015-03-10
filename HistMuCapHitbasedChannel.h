@@ -1,7 +1,7 @@
 // Andrei Gaponenko, 2014
 
-#ifndef HistHitBasedAnalysis_h
-#define HistHitBasedAnalysis_h
+#ifndef HistMuCapHitbasedChannel_h
+#define HistMuCapHitbasedChannel_h
 
 #include <string>
 
@@ -26,7 +26,7 @@ class DetectorGeo;
 class EventClass;
 
 //================================================================
-class HistHitBasedAnalysis {
+class HistMuCapHitbasedChannel {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_DIOVETO, "DIO veto");
     ax->SetBinLabel(1+CUT_ZVETO, "Z veto");
@@ -52,7 +52,7 @@ public:
 
   bool accepted(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack, bool referenceSampleAccepted);
 
-  HistHitBasedAnalysis() : geom_(0), doMCTruth_(false), tdcWidthFilterCutPC_() {}
+  HistMuCapHitbasedChannel() : geom_(0), doMCTruth_(false), tdcWidthFilterCutPC_() {}
 
 private :
   const DetectorGeo *geom_;
@@ -117,4 +117,4 @@ private :
   void fillFilterEffectHist(TH2* h, const WireClusterCollection& orig, const WireClusterCollection& filtered);
 };
 
-#endif/*HistHitBasedAnalysis_h*/
+#endif/*HistMuCapHitbasedChannel_h*/

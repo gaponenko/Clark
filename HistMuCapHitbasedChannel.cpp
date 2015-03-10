@@ -1,6 +1,6 @@
 // Andrei Gaponenko, 2014
 
-#include "HistHitBasedAnalysis.h"
+#include "HistMuCapHitbasedChannel.h"
 #include "HitBasedObservables.h"
 
 #include <fstream>
@@ -15,10 +15,10 @@
 #include "MuCapUtilities.h"
 
 //================================================================
-void HistHitBasedAnalysis::init(HistogramFactory& hf,
-                                const std::string& hdir,
-                                const DetectorGeo& geom,
-                                const ConfigFile& conf)
+void HistMuCapHitbasedChannel::init(HistogramFactory& hf,
+                                    const std::string& hdir,
+                                    const DetectorGeo& geom,
+                                    const ConfigFile& conf)
 {
   geom_ = &geom;
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
@@ -63,13 +63,13 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
     lastconPlaneVsCWires_mcproton_->GetYaxis()->SetTitle("cplane");
 
     lastconPlaneVsCWires_mcdeuteron_ = hf.DefineTH2D(hdir, "cplanes_vs_cwires_mcdeuteron", "Last contiguous plane vs sum(largest cluster size), mcdeuteron",
-                                                   recoCWiresNBins, recoCWiresXMin, recoCWiresXMax, recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+                                                     recoCWiresNBins, recoCWiresXMin, recoCWiresXMax, recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
     lastconPlaneVsCWires_mcdeuteron_->SetOption("colz");
     lastconPlaneVsCWires_mcdeuteron_->GetXaxis()->SetTitle("cluster wires");
     lastconPlaneVsCWires_mcdeuteron_->GetYaxis()->SetTitle("cplane");
 
     lastconPlaneVsCWires_mcdio_ = hf.DefineTH2D(hdir, "cplanes_vs_cwires_mcdio", "Last contiguous plane vs sum(largest cluster size), mcdio",
-                                                   recoCWiresNBins, recoCWiresXMin, recoCWiresXMax, recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+                                                recoCWiresNBins, recoCWiresXMin, recoCWiresXMax, recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
     lastconPlaneVsCWires_mcdio_->SetOption("colz");
     lastconPlaneVsCWires_mcdio_->GetXaxis()->SetTitle("cluster wires");
     lastconPlaneVsCWires_mcdio_->GetYaxis()->SetTitle("cplane");
@@ -105,9 +105,9 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
     migration_mcproton_->GetZaxis()->SetTitle("cplane");
 
     migration_mcdeuteron_ = hf.DefineTH3D(hdir, "migration_mcdeuteron", "Hit based channel migration, deuteron",
-                                        gen1nbins, gen1pmin, gen1pmax,
-                                        recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
-                                        recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+                                          gen1nbins, gen1pmin, gen1pmax,
+                                          recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                          recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
 
     migration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
     migration_mcdeuteron_->GetYaxis()->SetTitle("cluster wires");
@@ -115,27 +115,27 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 
     // Contamination matrices for the contained channel, two generator binnings
     contamination_ = hf.DefineTH3D(hdir, "contamination", "Hit based channel contamination",
-                               gen1nbins, gen1pmin, gen1pmax,
-                               recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
-                               recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+                                   gen1nbins, gen1pmin, gen1pmax,
+                                   recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                   recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
 
     contamination_->GetXaxis()->SetTitle("p true, MeV/c");
     contamination_->GetYaxis()->SetTitle("cluster wires");
     contamination_->GetZaxis()->SetTitle("cplane");
 
     contamination_mcproton_ = hf.DefineTH3D(hdir, "contamination_mcproton", "Hit based channel contamination, proton",
-                                        gen1nbins, gen1pmin, gen1pmax,
-                                        recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
-                                        recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+                                            gen1nbins, gen1pmin, gen1pmax,
+                                            recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                            recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
 
     contamination_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
     contamination_mcproton_->GetYaxis()->SetTitle("cluster wires");
     contamination_mcproton_->GetZaxis()->SetTitle("cplane");
 
     contamination_mcdeuteron_ = hf.DefineTH3D(hdir, "contamination_mcdeuteron", "Hit based channel contamination, deuteron",
-                                        gen1nbins, gen1pmin, gen1pmax,
-                                        recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
-                                        recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
+                                              gen1nbins, gen1pmin, gen1pmax,
+                                              recoCWiresNBins, recoCWiresXMin, recoCWiresXMax,
+                                              recoCPlanesNBins, recoCPlanesXMin, recoCPlanesXMax);
 
     contamination_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
     contamination_mcdeuteron_->GetYaxis()->SetTitle("cluster wires");
@@ -177,7 +177,7 @@ void HistHitBasedAnalysis::init(HistogramFactory& hf,
 }
 
 //================================================================
-bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, int iDIOVetoTrack, bool referenceSampleAccepted) {
+bool HistMuCapHitbasedChannel::accepted(const EventClass& evt, const ClustersByPlane& protonGlobalClusters, int iDIOVetoTrack, bool referenceSampleAccepted) {
   CutNumber c = analyzeEvent(evt, protonGlobalClusters, iDIOVetoTrack, referenceSampleAccepted);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
@@ -187,7 +187,7 @@ bool HistHitBasedAnalysis::accepted(const EventClass& evt, const ClustersByPlane
 }
 
 //================================================================
-HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventClass& evt, const ClustersByPlane& inputClusters, int iDIOVetoTrack, bool referenceSampleAccepted) {
+HistMuCapHitbasedChannel::CutNumber HistMuCapHitbasedChannel::analyzeEvent(const EventClass& evt, const ClustersByPlane& inputClusters, int iDIOVetoTrack, bool referenceSampleAccepted) {
   if(doMCTruth_) {
     hTruth_in_.fill(evt);
   }
@@ -222,7 +222,7 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
 
   if(!cutpc78_.accepted(evt, doubleFilteredClusters)) {
     return CUT_PCWIDTH;
- }
+  }
 
   //----------------------------------------------------------------
   const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
@@ -280,7 +280,7 @@ HistHitBasedAnalysis::CutNumber HistHitBasedAnalysis::analyzeEvent(const EventCl
 }
 
 //================================================================
-void HistHitBasedAnalysis::filterDnPCNoise(ClustersByPlane *out, const ClustersByPlane& in) {
+void HistMuCapHitbasedChannel::filterDnPCNoise(ClustersByPlane *out, const ClustersByPlane& in) {
 
   out->resize(in.size());
 
@@ -321,7 +321,7 @@ void HistHitBasedAnalysis::filterDnPCNoise(ClustersByPlane *out, const ClustersB
 }
 
 //================================================================
-void HistHitBasedAnalysis::filterClusterSize(WireClusterCollection *out, const WireClusterCollection& in) {
+void HistMuCapHitbasedChannel::filterClusterSize(WireClusterCollection *out, const WireClusterCollection& in) {
   out->clear();
   for(WireClusterCollection::const_iterator i=in.begin(); i!=in.end(); ++i) {
     if(i->numCells() <= maxClusterWiresFilterCutPC_) {
@@ -331,7 +331,7 @@ void HistHitBasedAnalysis::filterClusterSize(WireClusterCollection *out, const W
 }
 
 //================================================================
-void HistHitBasedAnalysis::fillFilterEffectHist(TH2* hh, const WireClusterCollection& orig, const WireClusterCollection& filtered) {
+void HistMuCapHitbasedChannel::fillFilterEffectHist(TH2* hh, const WireClusterCollection& orig, const WireClusterCollection& filtered) {
   int dcluster = filtered.size() - orig.size();
 
   int nworig=0;
