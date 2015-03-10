@@ -16,22 +16,30 @@
 
 //================================================================
 void HistMuCapHitbasedChannel::init(HistogramFactory& hf,
-                                    const std::string& hdir,
+                                    const std::string& hgrandtopdir,
+                                    const std::string& channelsetname,
                                     const DetectorGeo& geom,
                                     const ConfigFile& conf)
 {
   geom_ = &geom;
+
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
+
+  const std::string htopdir = hgrandtopdir+"/"+channelsetname;
+  const std::string hdir = htopdir+"/hitbased";
+
   tdcWidthFilterCutPC_ = conf.read<double>("HitBasedAnalysis/tdcWidthFilterCutPC");
   // Art's suggestion: discard clusters that are too large
   maxClusterWiresFilterCutPC_ = conf.read<int>("HitBasedAnalysis/maxClusterWiresFilterCutPC");
 
-  const int recoCWiresNBins = 200;
-  const double recoCWiresXMin = -0.5;
-  const double recoCWiresXMax = 199.5;
-  const int recoCPlanesNBins = geom.numGlobal()/2;
-  const double recoCPlanesXMin = 0.5;
-  const double recoCPlanesXMax =recoCPlanesNBins + 0.5;
+  // Binning for the principal analysis channel histogram
+  const int recoCWiresNBins = conf.read<int>(hdir+"/cwiresnbins");
+  const double recoCWiresXMin = conf.read<int>(hdir+"/cwiresmin");
+  const double recoCWiresXMax = conf.read<int>(hdir+"/cwiresmax");
+
+  const int recoCPlanesNBins = conf.read<int>(hdir+"/cplanesnbins");
+  const double recoCPlanesXMin = conf.read<int>(hdir+"/cplanesmin"); 
+  const double recoCPlanesXMax = conf.read<int>(hdir+"/cplanesmax");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -80,10 +88,10 @@ void HistMuCapHitbasedChannel::init(HistogramFactory& hf,
 
   //----------------------------------------------------------------
   if(doMCTruth_) {
-    // truth level binning
-    const int gen1nbins = 500;
-    const double gen1pmin = 0.;
-    const double gen1pmax = 500.;
+    // truth level binning must be consistent for all channels
+    const int gen1nbins = conf.read<int>(htopdir+"/numGeneratorBins");
+    const double gen1pmin = conf.read<double>(htopdir+"/genpmin");
+    const double gen1pmax = conf.read<double>(htopdir+"/genpmax");
 
     // Migration matrices for the contained channel, two generator binnings
     migration_ = hf.DefineTH3D(hdir, "migration", "Hit based channel migration",

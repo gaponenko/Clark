@@ -46,7 +46,8 @@ public:
   };
 
   void init(HistogramFactory& hf,
-            const std::string& hdir,
+            const std::string& hgrandtopdir,
+            const std::string& channelsetname,
             const DetectorGeo& geom,
             const ConfigFile& conf);
 

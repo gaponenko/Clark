@@ -37,7 +37,7 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
 
   uncontained_.init(hf, htopdir, channelsetname, geom, conf);
 
-  hitbased_.init(hf, hdir+"/hitbased", geom, conf);
+  hitbased_.init(hf, htopdir, channelsetname, geom, conf);
 
   if(doMCTruth_) {
     const int gen1nbins = conf.read<int>(hdir+"/numGeneratorBins");

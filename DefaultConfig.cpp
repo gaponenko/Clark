@@ -443,7 +443,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/legacy/contained/xvarnbins", 88);
         SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmin", 30.);
         SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmax", 250.);
-
         SetKey(Conf, "MuCapture/channels/legacy/contained/yvarnbins", 6);
         SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmin", 8.);
         SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmax", 32.);
@@ -451,6 +450,13 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopnbins", 88);
         SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmin", 30.);
         SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmax", 250.);
+
+        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresnbins", 200);
+        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresmin", -0.5);
+        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresmax", 199.5);
+        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cplanesnbins", 28);
+        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cplanesmin", 0.5);
+        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cplanesmax", 28.5);
 
         //----------------
         //# Use downstream PC planes as a veto
