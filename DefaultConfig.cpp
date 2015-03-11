@@ -433,9 +433,10 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/dnPosTrkContainment/cutMaxPlane", 51);
         SetKey(Conf, "MuCapture/dnPosTrkContainment/cutMaxRout", 15.);
 
-        //----------------
-        SetKey(Conf, "MuCapture/channels/versions", "legacy");
+        //================================================================
+        SetKey(Conf, "MuCapture/channels/versions", "legacy,rcp1,rp1,rpz1");
 
+        //----------------
         SetKey(Conf, "MuCapture/channels/legacy/contained/vars", "RangeCosVsP");
 
         SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxPlane", 55);
@@ -464,6 +465,93 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/legacy/hitbased/cplanesmax", 28.5);
 
         //----------------
+        // rangecos vs p: like legacy, but exclude outer PCs from contained tracks
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/vars", "RangeCosVsP");
+
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/ccut/cutMaxPlane", 51);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/ccut/cutMaxRout", 15.);
+
+        SetKey(Conf, "MuCapture/channels/rcp1/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/rcp1/genpmin", 0.);
+        SetKey(Conf, "MuCapture/channels/rcp1/genpmax", 500.);
+
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarnbins", 88);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarmin", 30.);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/yvarnbins", 6);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/yvarmin", 8.);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/yvarmax", 32.);
+
+        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopnbins", 88);
+        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopmin", 30.);
+        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopmax", 250.);
+
+        SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cwiresnbins", 200);
+        SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cwiresmin", -0.5);
+        SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cwiresmax", 199.5);
+        SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cplanesnbins", 28);
+        SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cplanesmin", 0.5);
+        SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cplanesmax", 28.5);
+
+        //----------------
+        // range vs p set of vars
+        SetKey(Conf, "MuCapture/channels/rp1/contained/vars", "RangeVsP");
+
+        SetKey(Conf, "MuCapture/channels/rp1/contained/ccut/cutMaxPlane", 51);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/ccut/cutMaxRout", 15.);
+
+        SetKey(Conf, "MuCapture/channels/rp1/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/rp1/genpmin", 0.);
+        SetKey(Conf, "MuCapture/channels/rp1/genpmax", 500.);
+
+        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarnbins", 88);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarmin", 30.);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/yvarnbins", 28);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/yvarmin", 0.5);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/yvarmax", 28.5);
+
+        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopnbins", 88);
+        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopmin", 30.);
+        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopmax", 250.);
+
+        SetKey(Conf, "MuCapture/channels/rp1/hitbased/cwiresnbins", 200);
+        SetKey(Conf, "MuCapture/channels/rp1/hitbased/cwiresmin", -0.5);
+        SetKey(Conf, "MuCapture/channels/rp1/hitbased/cwiresmax", 199.5);
+        SetKey(Conf, "MuCapture/channels/rp1/hitbased/cplanesnbins", 28);
+        SetKey(Conf, "MuCapture/channels/rp1/hitbased/cplanesmin", 0.5);
+        SetKey(Conf, "MuCapture/channels/rp1/hitbased/cplanesmax", 28.5);
+
+        //----------------
+        // range vs pz set of vars
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/vars", "RangeVsPz");
+
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/ccut/cutMaxPlane", 51);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/ccut/cutMaxRout", 15.);
+
+        SetKey(Conf, "MuCapture/channels/rpz1/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/rpz1/genpmin", 0.);
+        SetKey(Conf, "MuCapture/channels/rpz1/genpmax", 500.);
+
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/xvarnbins", 100);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/xvarmin",  0.);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/xvarmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/yvarnbins", 28);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/yvarmin", 0.5);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/yvarmax", 28.5);
+
+        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopnbins", 88);
+        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopmin", 30.);
+        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopmax", 250.);
+
+        SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cwiresnbins", 200);
+        SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cwiresmin", -0.5);
+        SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cwiresmax", 199.5);
+        SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cplanesnbins", 28);
+        SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cplanesmin", 0.5);
+        SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cplanesmax", 28.5);
+
+        //================================================================
         //# Use downstream PC planes as a veto
         //NB: need implement ganged wires to include PC9,10 in the range.
         SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 52);
