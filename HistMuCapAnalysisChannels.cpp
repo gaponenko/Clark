@@ -39,6 +39,12 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     // leak the memory - no elegant solution here without C++11
     contained_.init(hf, htopdir, channelsetname, geom, conf, *new MuCapContainedVars::RangeCosVsP());
   }
+  else if(containedVars == "RangeVsP") {
+    contained_.init(hf, htopdir, channelsetname, geom, conf, *new MuCapContainedVars::RangeVsP());
+  }
+  else if(containedVars == "RangeVsPz") {
+    contained_.init(hf, htopdir, channelsetname, geom, conf, *new MuCapContainedVars::RangeVsPz());
+  }
   else {
     throw std::runtime_error("HistMuCapAnalysisChannels::init(): unknow set of contained vars \""+containedVars+"\"");
   }

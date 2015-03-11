@@ -62,6 +62,40 @@ namespace MuCapContainedVars {
   };
 
   //================================================================
+  class RangeVsP: virtual public IVarProcessor {
+    static std::string xtitle_;
+    static std::string ytitle_;
+    MuCapTrkContainmentCut ccut_;
+  public:
+    virtual const std::string& xtitle() const { return xtitle_; }
+    virtual const std::string& ytitle() const { return ytitle_; }
+
+    virtual void init(const std::string& hdir,
+                      HistogramFactory &hf,
+                      const DetectorGeo&,
+                      const ConfigFile& conf);
+
+    virtual Result compute(const EventClass& evt, int iPosTrack, const ClustersByPlane& globalPlaneClusters);
+  };
+
+  //================================================================
+  class RangeVsPz: virtual public IVarProcessor {
+    static std::string xtitle_;
+    static std::string ytitle_;
+    MuCapTrkContainmentCut ccut_;
+  public:
+    virtual const std::string& xtitle() const { return xtitle_; }
+    virtual const std::string& ytitle() const { return ytitle_; }
+
+    virtual void init(const std::string& hdir,
+                      HistogramFactory &hf,
+                      const DetectorGeo&,
+                      const ConfigFile& conf);
+
+    virtual Result compute(const EventClass& evt, int iPosTrack, const ClustersByPlane& globalPlaneClusters);
+  };
+
+  //================================================================
 }
 
 
