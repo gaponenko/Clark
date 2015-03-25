@@ -14,6 +14,5 @@ HitBasedAnalysis/tdcWidthFilterCutPC = 40.
 # This is to get a higher purity sample of p&d, with fewer DIO tracks
 MuCapture/CutPC78/cutTDCwidth = 240.
 
-# MuCapture/ProtonWindow/TightProtonsFileName = tightProtons.txt
 # MuCapture/uvOutFileName = muStopUV.txt
 # MuCapture/commonSkimOutFileName = commonSkim.txt

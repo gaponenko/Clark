@@ -368,9 +368,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/uvOutFileName", "");
         SetKey(Conf, "MuCapture/commonSkimOutFileName", "");
 
-        // make sure the planes are not adjacent at dz=0.4cm
-        SetKey(Conf, "MuCapture/ProtonWindow/Containment1D/minPlanedz", 0.5);
-
         //----------------
         SetKey(Conf, "MuCapture/UVAnalysis/cutTrackRmax", 6.3);//cm
         // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
@@ -552,14 +549,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cplanesmax", 28.5);
 
         //================================================================
-        //# Use downstream PC planes as a veto
-        //NB: need implement ganged wires to include PC9,10 in the range.
-        SetKey(Conf, "MuCapture/ProtonWindow/maxPlane", 52);
-        // See Andrei's slides for 2013-05-01.
-        // From purity vs eff Want proton eff~=0.2,
-        // from slide 3 this is <~13 cm
-        SetKey(Conf, "MuCapture/ProtonWindow/RextMax", 13.);
-
         // This cut is inactive by default
         SetKey(Conf, "HitBasedAnalysis/maxClusterWiresFilterCutPC", 999);
 

@@ -12,7 +12,6 @@
 #include "WireCluster.h"
 
 #include "MuCapPACTCut.h"
-#include "MuCapProtonWindow.h"
 #include "MuCapUVAnalysis.h"
 #include "MuCapTrkAnalysisHF.h"
 #include "HistMuCapAnalysisChannels.h"
@@ -186,7 +185,6 @@ private :
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
   MuCapPACTCut pactCut_;
-  MuCapProtonWindow protonWindow_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;

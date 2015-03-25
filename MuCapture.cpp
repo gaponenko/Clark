@@ -244,10 +244,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   }
 
   //----------------------------------------------------------------
-  // Obsolete, but keep it as an example of PID histograms
-  protonWindow_.init(H, *E.geo, Conf, TimeWindow::DOWNSTREAM, 1050./*FIXME*/);
-
-  //----------------------------------------------------------------
 
   return true;
 }
@@ -468,7 +464,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // Call the subanalyses
   winDCUnassignedMuStop_.fill(wres);
   haccidentalsStop_.fill(wres);
-  protonWindow_.process(muStop, wres, evt);
 
   int idio = dioUp_.process(evt, muStop);
   if(idio >= 0) {
