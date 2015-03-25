@@ -73,6 +73,7 @@ private :
 
   //----------------
   // Extra distributions
+  bool fillExtras_TDC_;
   HistTDCBCSWidth hTDCWidthContained_;
   HistTDCBCSWidth hTDCWidthUncontained_;
   HistTDCBCSWidth hTDCWidthHitbased_;

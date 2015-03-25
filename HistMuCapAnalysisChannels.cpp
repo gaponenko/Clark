@@ -20,9 +20,10 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
                                      const DetectorGeo& geom,
                                      const ConfigFile& conf)
 {
-  doMCTruth_ = conf.read<bool>("TruthBank/Do");
-
   const std::string hdir = htopdir + "/" + channelsetname;
+
+  doMCTruth_ = conf.read<bool>("TruthBank/Do");
+  fillExtras_TDC_ = conf.read<bool>(hdir+"/fillExtras_TDC", false);
 
   if(doMCTruth_) {
     refsample_muminus_multiplicity_ = hf.DefineTH1D(hdir+"/refsample", "muminus_multiplicity", "Mu- multiplicity, input", 10, -0.5, 9.5);
@@ -66,10 +67,12 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   //----------------------------------------------------------------
   // Extra distributions
 
-  hTDCWidthContained_.init(hf, hdir+"/contained/tdcwidth", geom, conf);
-  hTDCWidthUncontained_.init(hf, hdir+"/uncontained/tdcwidth", geom, conf);
-  hTDCWidthHitbased_.init(hf, hdir+"/hitbased/tdcwidth", geom, conf);
-  hTDCWidthNone_.init(hf, hdir+"/nochannel/tdcwidth", geom, conf);
+  if(fillExtras_TDC_) {
+    hTDCWidthContained_.init(hf, hdir+"/contained/tdcwidth", geom, conf);
+    hTDCWidthUncontained_.init(hf, hdir+"/uncontained/tdcwidth", geom, conf);
+    hTDCWidthHitbased_.init(hf, hdir+"/hitbased/tdcwidth", geom, conf);
+    hTDCWidthNone_.init(hf, hdir+"/nochannel/tdcwidth", geom, conf);
+  }
 
   if(doMCTruth_) {
     hTruthContained_.init(hf, hdir+"/contained/MCTruth", conf);
@@ -204,16 +207,16 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
 
   // Fill extra distributions
   switch(ch) {
-  case CONTAINED: hTDCWidthContained_.fill(evt, globalPlaneClusters);
+  case CONTAINED: if(fillExtras_TDC_) { hTDCWidthContained_.fill(evt, globalPlaneClusters); }
     break;
 
-  case UNCONTAINED: hTDCWidthUncontained_.fill(evt, globalPlaneClusters);
+  case UNCONTAINED: if(fillExtras_TDC_) { hTDCWidthUncontained_.fill(evt, globalPlaneClusters); }
     break;
 
-  case HITBASED: hTDCWidthHitbased_.fill(evt, globalPlaneClusters);
+  case HITBASED: if(fillExtras_TDC_) { hTDCWidthHitbased_.fill(evt, globalPlaneClusters); }
     break;
 
-  case NONE: hTDCWidthNone_.fill(evt, globalPlaneClusters);
+  case NONE: if(fillExtras_TDC_) { hTDCWidthNone_.fill(evt, globalPlaneClusters); }
     break;
   }
 
