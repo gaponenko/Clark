@@ -126,6 +126,8 @@ public :
 
     , hMuonFirstPlane_()
     , hMuonLastPlaneAfterGaps_()
+    , hTruePProtonVsLastPlane_()
+    , hTruePDeuteronVsLastPlane_()
     , hStoppedMuonRangeGaps_()
     , hStoppedMuonMissingPlanes_()
     , hMuonMissingPlanes_()
@@ -195,6 +197,8 @@ private :
 
   TH1 *hMuonFirstPlane_;
   TH1 *hMuonLastPlaneAfterGaps_;
+  TH2 *hTruePProtonVsLastPlane_;
+  TH2 *hTruePDeuteronVsLastPlane_;
 
   TH2 *hStoppedMuonRangeGaps_;
   TH1 *hStoppedMuonMissingPlanes_;

@@ -168,6 +168,18 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuonFirstPlane_ = H.DefineTH1D(hdir, "muonFirstPlane", "Muon first plane", 56, 0.5, 56.5);
   hMuonLastPlaneAfterGaps_ = H.DefineTH1D(hdir, "muonLastPlaneAfterGaps", "Muon last plane", 56, 0.5, 56.5);
 
+  hTruePProtonVsLastPlane_ = H.DefineTH2D(hdir, "muonLastPlaneVsTruePCapture_proton", "Muon last plane vs true p proton",
+                                          56, 0.5, 56.5, 500, 0., 500.);
+  hTruePProtonVsLastPlane_->SetOption("colz");
+  hTruePProtonVsLastPlane_->GetXaxis()->SetTitle("Muon last plane");
+  hTruePProtonVsLastPlane_->GetYaxis()->SetTitle("p proton, MeV/c");
+
+  hTruePDeuteronVsLastPlane_ = H.DefineTH2D(hdir, "muonLastPlaneVsTruePCapture_deuteron", "Muon last plane vs true p deuteron",
+                                            56, 0.5, 56.5, 500, 0., 500.);
+  hTruePDeuteronVsLastPlane_->SetOption("colz");
+  hTruePDeuteronVsLastPlane_->GetXaxis()->SetTitle("Muon last plane");
+  hTruePDeuteronVsLastPlane_->GetYaxis()->SetTitle("p deuteron, MeV/c");
+
   hMuonMissingPlanes_ = H.DefineTH1D(hdir, "muonMissingPlanes", "Missing muon planes after range cuts", 28, 0.5, 28.5);
   hNumMuonPlanesAfterRangeCuts_ = H.DefineTH1D(hdir, "numMuonMissingPlanes", "Number of missing muon planes after range cuts", 28, -0.5, 27.5);
 
@@ -408,10 +420,23 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------
   if(doMCTruth_) {
     hmuStopTruthAfterGaps_.fill(evt);
+
+    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+    const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
+    switch(mcParticle) {
+    case MuCapUtilities::PID_G3_PROTON:
+      hTruePProtonVsLastPlane_->Fill(muonRange.max(), evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    case MuCapUtilities::PID_G3_DEUTERON:
+      hTruePDeuteronVsLastPlane_->Fill(muonRange.max(), evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    default:
+      break;
+    }
   }
 
-  //----------------
   hMuonLastPlaneAfterGaps_->Fill(muonRange.max());
+
   if(muonRange.max() != 28) {
     return CUT_MUON_LAST_PLANE;
   }
