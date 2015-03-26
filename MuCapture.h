@@ -128,6 +128,8 @@ public :
     , hMuonLastPlaneAfterGaps_()
     , hStoppedMuonRangeGaps_()
     , hStoppedMuonMissingPlanes_()
+    , hMuonMissingPlanes_()
+    , hNumMuonPlanesAfterRangeCuts_()
 
     , hMuStopUVCell_()
     , hMuStopUVPos_()
@@ -196,6 +198,9 @@ private :
 
   TH2 *hStoppedMuonRangeGaps_;
   TH1 *hStoppedMuonMissingPlanes_;
+
+  TH1 *hMuonMissingPlanes_;
+  TH1 *hNumMuonPlanesAfterRangeCuts_;
 
   TH2 *hMuStopUVCell_;
   TH2 *hMuStopUVPos_;

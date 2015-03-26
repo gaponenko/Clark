@@ -168,6 +168,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuonFirstPlane_ = H.DefineTH1D(hdir, "muonFirstPlane", "Muon first plane", 56, 0.5, 56.5);
   hMuonLastPlaneAfterGaps_ = H.DefineTH1D(hdir, "muonLastPlaneAfterGaps", "Muon last plane", 56, 0.5, 56.5);
 
+  hMuonMissingPlanes_ = H.DefineTH1D(hdir, "muonMissingPlanes", "Missing muon planes after range cuts", 28, 0.5, 28.5);
+  hNumMuonPlanesAfterRangeCuts_ = H.DefineTH1D(hdir, "numMuonMissingPlanes", "Number of missing muon planes after range cuts", 28, -0.5, 27.5);
+
   // Make the bin size half a cell
   hMuStopUVCell_ = H.DefineTH2D(hdir, "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
   hMuStopUVCell_->SetOption("colz");
@@ -412,6 +415,15 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if(muonRange.max() != 28) {
     return CUT_MUON_LAST_PLANE;
   }
+
+  int numMissingMuonPlanes = 0;
+  for(int iplane=1; iplane <= 28; ++iplane) {
+    if(muonGlobalClusters[iplane].empty()) {
+      ++numMissingMuonPlanes;
+      hMuonMissingPlanes_->Fill(iplane);
+    }
+  }
+  hNumMuonPlanesAfterRangeCuts_->Fill(numMissingMuonPlanes);
 
   //----------------------------------------------------------------
   if(gEventList.requested(evt)) {
