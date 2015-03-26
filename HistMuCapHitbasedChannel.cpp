@@ -83,7 +83,6 @@ void HistMuCapHitbasedChannel::init(HistogramFactory& hf,
     lastconPlaneVsCWires_mcdio_->GetYaxis()->SetTitle("cplane");
   }
 
-  noncontiguous_.init(hf, hdir+"/noncontiguous", geom, conf);
   hambig_.init(hf, hdir+"/clusterAmbiguities", geom, conf);
 
   //----------------------------------------------------------------
@@ -240,7 +239,6 @@ HistMuCapHitbasedChannel::CutNumber HistMuCapHitbasedChannel::analyzeEvent(const
   HitBasedObservablesMaxWidth obs(doubleFilteredClusters, &hambig_);
 
   lastconPlaneVsCWires_->Fill(obs.dnCWires(), obs.dnCPlanes());
-  noncontiguous_.fill(doubleFilteredClusters, evt);
 
   if(doMCTruth_) {
     if(imcvtxStart  != -1) {

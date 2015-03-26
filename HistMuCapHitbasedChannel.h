@@ -6,7 +6,6 @@
 #include <string>
 
 #include "HistMuCapTruth.h"
-#include "HistMuCapFinal.h"
 #include "HistHotSpot.h"
 #include "TimeWindow.h"
 #include "HistTDCBCSWidth.h"
@@ -85,7 +84,6 @@ private :
   TH2* lastconPlaneVsCWires_mcdeuteron_;
   TH2* lastconPlaneVsCWires_mcdio_;
 
-  HistMuCapFinal noncontiguous_;
   HistHitBasedAmbiguities hambig_;
 
   HistMuCapTruth hTruth_in_;
