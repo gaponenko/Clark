@@ -23,6 +23,7 @@
 #include "HistXtalk.h"
 #include "HistXT2.h"
 #include "HistMuStopTruth.h"
+#include "HistMuCapMuonRange.h"
 #include "HistAccidentals.h"
 #include "HistWinDCUnassigned.h"
 #include "HistProtonPID.h"
@@ -123,15 +124,11 @@ public :
     , h_cuts_r()
     , h_cuts_p()
     , hPCPreTrigSeparation_()
-
     , hMuonFirstPlane_()
-    , hMuonLastPlaneAfterGaps_()
-    , hTruePProtonVsLastPlane_()
-    , hTruePDeuteronVsLastPlane_()
+    , hMuonRMaxDCvsPC_()
+    , hMuonRMaxVsRStop_()
     , hStoppedMuonRangeGaps_()
     , hStoppedMuonMissingPlanes_()
-    , hMuonMissingPlanes_()
-    , hNumMuonPlanesAfterRangeCuts_()
 
     , hMuStopUVCell_()
     , hMuStopUVPos_()
@@ -196,15 +193,15 @@ private :
   TH1 *hPCPreTrigSeparation_;
 
   TH1 *hMuonFirstPlane_;
-  TH1 *hMuonLastPlaneAfterGaps_;
-  TH2 *hTruePProtonVsLastPlane_;
-  TH2 *hTruePDeuteronVsLastPlane_;
+
+  TH2 *hMuonRMaxDCvsPC_;
+  TH2 *hMuonRMaxVsRStop_;
+
+  HistMuCapMuonRange hMuonRangeUnrestricted_;
+  HistMuCapMuonRange hMuonRangeRestricted_;
 
   TH2 *hStoppedMuonRangeGaps_;
   TH1 *hStoppedMuonMissingPlanes_;
-
-  TH1 *hMuonMissingPlanes_;
-  TH1 *hNumMuonPlanesAfterRangeCuts_;
 
   TH2 *hMuStopUVCell_;
   TH2 *hMuStopUVPos_;

@@ -166,22 +166,15 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hPCPreTrigSeparation_ = H.DefineTH1D(hdir, "pcPreTrigSeparation", "PC win pre-trigger separation", 600, -6000., 0.);
 
   hMuonFirstPlane_ = H.DefineTH1D(hdir, "muonFirstPlane", "Muon first plane", 56, 0.5, 56.5);
-  hMuonLastPlaneAfterGaps_ = H.DefineTH1D(hdir, "muonLastPlaneAfterGaps", "Muon last plane", 56, 0.5, 56.5);
 
-  hTruePProtonVsLastPlane_ = H.DefineTH2D(hdir, "muonLastPlaneVsTruePCapture_proton", "Muon last plane vs true p proton",
-                                          56, 0.5, 56.5, 500, 0., 500.);
-  hTruePProtonVsLastPlane_->SetOption("colz");
-  hTruePProtonVsLastPlane_->GetXaxis()->SetTitle("Muon last plane");
-  hTruePProtonVsLastPlane_->GetYaxis()->SetTitle("p proton, MeV/c");
+  hMuonRMaxDCvsPC_ = H.DefineTH2D(hdir, "muonRMaxDCvsPC", "Muon Rmax DC vs PC", 45, 0., 18., 45, 0., 18.);
+  hMuonRMaxDCvsPC_->SetOption("colz");
 
-  hTruePDeuteronVsLastPlane_ = H.DefineTH2D(hdir, "muonLastPlaneVsTruePCapture_deuteron", "Muon last plane vs true p deuteron",
-                                            56, 0.5, 56.5, 500, 0., 500.);
-  hTruePDeuteronVsLastPlane_->SetOption("colz");
-  hTruePDeuteronVsLastPlane_->GetXaxis()->SetTitle("Muon last plane");
-  hTruePDeuteronVsLastPlane_->GetYaxis()->SetTitle("p deuteron, MeV/c");
+  hMuonRMaxVsRStop_ = H.DefineTH2D(hdir, "muonRMaxVsRStop", "Muon Rmax vs Rstop", 45, 0., 18., 45, 0., 18.);
+  hMuonRMaxVsRStop_->SetOption("colz");
 
-  hMuonMissingPlanes_ = H.DefineTH1D(hdir, "muonMissingPlanes", "Missing muon planes after range cuts", 28, 0.5, 28.5);
-  hNumMuonPlanesAfterRangeCuts_ = H.DefineTH1D(hdir, "numMuonMissingPlanes", "Number of missing muon planes after range cuts", 28, -0.5, 27.5);
+  hMuonRangeUnrestricted_.init(H, hdir+"/muonRangeUR", *E.geo, Conf);
+  hMuonRangeRestricted_.init(H, hdir+"/muonRangeRestricted", *E.geo, Conf);
 
   // Make the bin size half a cell
   hMuStopUVCell_ = H.DefineTH2D(hdir, "MuStopUVCell", "Muon stop V vs U position (cell units)", 107, 53.75, 107.25,  107, 53.75, 107.25);
@@ -418,37 +411,18 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   //----------------
-  if(doMCTruth_) {
-    hmuStopTruthAfterGaps_.fill(evt);
-
-    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
-    const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
-    switch(mcParticle) {
-    case MuCapUtilities::PID_G3_PROTON:
-      hTruePProtonVsLastPlane_->Fill(muonRange.max(), evt.mcvertex_ptot[imcvtxStart]);
-      break;
-    case MuCapUtilities::PID_G3_DEUTERON:
-      hTruePDeuteronVsLastPlane_->Fill(muonRange.max(), evt.mcvertex_ptot[imcvtxStart]);
-      break;
-    default:
-      break;
-    }
+  const double muonRMaxPC = MuCapUtilities::computeHitRMax(trigWin.pcHits, WirePlane::PC, *evt.geo);
+  const double muonRMaxDC = MuCapUtilities::computeHitRMax(trigWin.dcHits, WirePlane::DC, *evt.geo);
+  const double muonRMax = std::max(muonRMaxPC, muonRMaxDC);
+  hMuonRMaxDCvsPC_->Fill(muonRMaxPC, muonRMaxDC);
+  hMuonRangeUnrestricted_.fill(muonRange, muonGlobalClusters, evt);
+  if(muonRMax < 4.0 /*cm, hardcoded same value as for MOFIA's H34159 in dplot.f90  */) {
+    hMuonRangeRestricted_.fill(muonRange, muonGlobalClusters, evt);
   }
-
-  hMuonLastPlaneAfterGaps_->Fill(muonRange.max());
 
   if(muonRange.max() != 28) {
     return CUT_MUON_LAST_PLANE;
   }
-
-  int numMissingMuonPlanes = 0;
-  for(int iplane=1; iplane <= 28; ++iplane) {
-    if(muonGlobalClusters[iplane].empty()) {
-      ++numMissingMuonPlanes;
-      hMuonMissingPlanes_->Fill(iplane);
-    }
-  }
-  hNumMuonPlanesAfterRangeCuts_->Fill(numMissingMuonPlanes);
 
   //----------------------------------------------------------------
   if(gEventList.requested(evt)) {
@@ -477,6 +451,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   const double muStopRadius = muStop.R();
   hMuStopRadius_->Fill(muStopRadius);
+  hMuonRMaxVsRStop_->Fill(muStopRadius, muonRMax);
   if(muStopRadius > muStopRMax_) {
     return CUT_MUSTOP_UV;
   }

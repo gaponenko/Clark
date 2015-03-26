@@ -6,6 +6,7 @@
 #include <vector>
 #include "TDCHitWP.h"
 #include "WireCluster.h"
+#include "DetectorGeo.h"
 
 class EventClass;
 
@@ -58,6 +59,9 @@ namespace MuCapUtilities {
     double max_;
     int numEntries_;
   };
+
+  //================================================================
+  double computeHitRMax(const TDCHitWPPtrCollection& hits, WirePlane::DetType pt, const DetectorGeo& geo);
 
   //================================================================
 

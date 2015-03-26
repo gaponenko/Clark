@@ -147,4 +147,17 @@ namespace MuCapUtilities {
   }
 
   //================================================================
+  double computeHitRMax(const TDCHitWPPtrCollection& hits, WirePlane::DetType pt, const DetectorGeo& geo) {
+    double rmax = 0.;
+    for(unsigned ihit = 0; ihit < hits.size(); ++ihit) {
+      const TDCHitWPPtr& hit = hits[ihit];
+      const double rhit = std::abs(geo.planes(pt)[hit->plane()].measurement(hit->cell()).coordinate);
+      if(rmax < rhit) {
+        rmax = rhit;
+      }
+    }
+    return rmax;
+  }
+
+  //================================================================
 }
