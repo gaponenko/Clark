@@ -168,18 +168,18 @@ void HistMuCapHitbasedChannel::init(HistogramFactory& hf,
 
   //----------------------------------------------------------------
   htdcwidthInput_.init(hf, hdir+"/tdcwidthInput", geom, conf);
-  htdcwidthDoubleFiltered_.init(hf, hdir+"/tdcwidthDoubleFiltered", geom, conf);
+//mem:  htdcwidthDoubleFiltered_.init(hf, hdir+"/tdcwidthDoubleFiltered", geom, conf);
 
-  hshot_.init(hf, hdir+"/hot", geom, conf);
-  hscold_.init(hf, hdir+"/cold", geom, conf);
+//mem:  hshot_.init(hf, hdir+"/hot", geom, conf);
+//mem:  hscold_.init(hf, hdir+"/cold", geom, conf);
 
   // This histogram is only iteresting for real data.  Here is our run number range:
   const int firstrun = 47607;
   const int lastrun =  47798;
   hshotrun_ = hf.DefineTH1D(hdir, "hshotrun", "Run number for hot spot events", 1+lastrun-firstrun, firstrun-0.5, lastrun+0.5);
 
-  hxtplane100_.init(hf, hdir+"/xtplane100", geom, conf, 100.);
-  hxtplane300_.init(hf, hdir+"/xtplane300", geom, conf, 300.);
+//mem:  hxtplane100_.init(hf, hdir+"/xtplane100", geom, conf, 100.);
+//mem:  hxtplane300_.init(hf, hdir+"/xtplane300", geom, conf, 300.);
   //----------------------------------------------------------------
 }
 
@@ -266,19 +266,19 @@ HistMuCapHitbasedChannel::CutNumber HistMuCapHitbasedChannel::analyzeEvent(const
 
   //----------------------------------------------------------------
   htdcwidthInput_.fill(evt, inputClusters);
-  htdcwidthDoubleFiltered_.fill(evt, doubleFilteredClusters);
+  //mem:htdcwidthDoubleFiltered_.fill(evt, doubleFilteredClusters);
 
   //----------------
   if((obs.dnCPlanes() == 2)&&(obs.dnCWires()>50)) {
-    hshot_.fill(evt, inputClusters, obs);
+    //mem:hshot_.fill(evt, inputClusters, obs);
     hshotrun_->Fill(evt.nrun);
   }
   else {
-    hscold_.fill(evt, inputClusters, obs);
+    //mem:hscold_.fill(evt, inputClusters, obs);
   }
 
-  hxtplane100_.fill(evt, inputClusters);
-  hxtplane300_.fill(evt, inputClusters);
+//mem:  hxtplane100_.fill(evt, inputClusters);
+//mem:  hxtplane300_.fill(evt, inputClusters);
 
   //----------------------------------------------------------------
 

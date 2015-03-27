@@ -97,16 +97,16 @@ private :
 
   //----------------------------------------------------------------
   HistTDCBCSWidth htdcwidthInput_;
-  HistTDCBCSWidth htdcwidthDoubleFiltered_;
-
-  // Understanding the "hot spot" feature in data
-  HistHotSpot hshot_;
-  HistHotSpot hscold_;
+//mem:  HistTDCBCSWidth htdcwidthDoubleFiltered_;
+//mem:
+//mem:  // Understanding the "hot spot" feature in data
+//mem:  HistHotSpot hshot_;
+//mem:  HistHotSpot hscold_;
 
   TH1 *hshotrun_;
 
-  HistXTPlane hxtplane100_;
-  HistXTPlane hxtplane300_;
+//mem:  HistXTPlane hxtplane100_;
+//mem:  HistXTPlane hxtplane300_;
   //----------------------------------------------------------------
 
   CutNumber analyzeEvent(const EventClass& evt, const ClustersByPlane& globalPlaneClusters, int iDIOVetoTrack, bool referenceSampleAccepted);
