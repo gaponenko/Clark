@@ -34,12 +34,12 @@ void HistMuCapHitbasedChannel::init(HistogramFactory& hf,
 
   // Binning for the principal analysis channel histogram
   const int recoCWiresNBins = conf.read<int>(hdir+"/cwiresnbins");
-  const double recoCWiresXMin = conf.read<int>(hdir+"/cwiresmin");
-  const double recoCWiresXMax = conf.read<int>(hdir+"/cwiresmax");
+  const double recoCWiresXMin = conf.read<double>(hdir+"/cwiresmin");
+  const double recoCWiresXMax = conf.read<double>(hdir+"/cwiresmax");
 
   const int recoCPlanesNBins = conf.read<int>(hdir+"/cplanesnbins");
-  const double recoCPlanesXMin = conf.read<int>(hdir+"/cplanesmin"); 
-  const double recoCPlanesXMax = conf.read<int>(hdir+"/cplanesmax");
+  const double recoCPlanesXMin = conf.read<double>(hdir+"/cplanesmin"); 
+  const double recoCPlanesXMax = conf.read<double>(hdir+"/cplanesmax");
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Events rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
