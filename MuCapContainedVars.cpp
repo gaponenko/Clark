@@ -64,7 +64,7 @@ namespace MuCapContainedVars {
   }
 
   //================================================================
-  std::string RangeVsPz::xtitle_("ptot [MeV/c]");
+  std::string RangeVsPz::xtitle_("pz [MeV/c]");
   std::string RangeVsPz::ytitle_("(extplane-28)");
 
 
