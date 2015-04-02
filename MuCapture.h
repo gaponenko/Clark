@@ -34,7 +34,7 @@
 #include "TDCHitPreprocessing.h"
 #include "RecoResMuCapTrk.h"
 #include "MuCapTrkContainmentCut.h"
-
+#include "HistRangeStudies.h"
 
 #include "TAxis.h"
 class TH1;
@@ -262,6 +262,7 @@ private :
   MuCapTrkAnalysisHF dnDIONormTracks_;
 
   MuCapTrkContainmentCut dnPosTrkContainment_;
+  HistRangeStudies dnPosTrkRangeStudies_;
 
   HistProtonPID hProtonPID_;
   HistProtonPID hContainedProtonPID_;

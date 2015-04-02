@@ -34,6 +34,8 @@ namespace MuCapUtilities {
 
   // Find the last plane in a hit plane range contiguous with the track
   int findExtendedLastPlane(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
+  // No extension, use just the track range.  Affected by "broken tracks" and hit loss at the end of range.
+  int findTrackLastPlane(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
 
   //================================================================
   class Stats {

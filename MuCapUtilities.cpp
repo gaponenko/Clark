@@ -87,6 +87,11 @@ namespace MuCapUtilities {
   }
 
   //================================================================
+  int findTrackLastPlane(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters) {
+    return evt.hefit_pstop[itrack];
+  }
+
+  //================================================================
   Stats::Stats()
     : sum_(0.)
     , min_(std::numeric_limits<double>::max())

@@ -91,6 +91,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
+  dnPosTrkRangeStudies_.init(H, hdir+"/dnPosTrkRangeStudies", *E.geo, Conf);
 
   hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
   hContainedProtonPID_.init(hdir+"/posContainedTrackPID", H, Conf);
@@ -643,6 +644,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
       std::cout<<"iwin="<<iwin<<" tstart "<<wres.windows[iwin].tstart<<": PC = "<<wres.windows[iwin].pcHits<<std::endl;
       std::cout<<"iwin="<<iwin<<" tstartDC "<<wres.windows[iwin].tstartDC<<": DC = "<<wres.windows[iwin].dcHits<<std::endl;
     }
+  }
+
+  if(isPosTrackContained) {
+    dnPosTrkRangeStudies_.fill(evt, iPosTrack, protonGlobalClusters);
   }
 
   //----------------
