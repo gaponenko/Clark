@@ -429,6 +429,7 @@ void SetDefault(ConfigFile &Conf)
         // So that it is not sensitive to hits in the outer PCs.
         SetKey(Conf, "MuCapture/dnPosTrkContainment/cutMaxPlane", 51);
         SetKey(Conf, "MuCapture/dnPosTrkContainment/cutMaxRout", 15.);
+        SetKey(Conf, "MuCapture/dnPosTrkContainment/useExtendedRange", true);
 
         //================================================================
         SetKey(Conf, "MuCapture/channels/versions", "legacy,rcp1,rp1,rpz1");
@@ -438,6 +439,7 @@ void SetDefault(ConfigFile &Conf)
 
         SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxPlane", 55);
         SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxRout", 15.);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/useExtendedRange", true);
 
         SetKey(Conf, "MuCapture/channels/legacy/numGeneratorBins", 500);
         SetKey(Conf, "MuCapture/channels/legacy/genpmin", 0.);
@@ -467,6 +469,7 @@ void SetDefault(ConfigFile &Conf)
 
         SetKey(Conf, "MuCapture/channels/rcp1/contained/ccut/cutMaxPlane", 51);
         SetKey(Conf, "MuCapture/channels/rcp1/contained/ccut/cutMaxRout", 15.);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/ccut/useExtendedRange", true);
 
         SetKey(Conf, "MuCapture/channels/rcp1/numGeneratorBins", 500);
         SetKey(Conf, "MuCapture/channels/rcp1/genpmin", 0.);
@@ -496,6 +499,7 @@ void SetDefault(ConfigFile &Conf)
 
         SetKey(Conf, "MuCapture/channels/rp1/contained/ccut/cutMaxPlane", 51);
         SetKey(Conf, "MuCapture/channels/rp1/contained/ccut/cutMaxRout", 15.);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/ccut/useExtendedRange", true);
 
         SetKey(Conf, "MuCapture/channels/rp1/numGeneratorBins", 500);
         SetKey(Conf, "MuCapture/channels/rp1/genpmin", 0.);
@@ -525,6 +529,7 @@ void SetDefault(ConfigFile &Conf)
 
         SetKey(Conf, "MuCapture/channels/rpz1/contained/ccut/cutMaxPlane", 51);
         SetKey(Conf, "MuCapture/channels/rpz1/contained/ccut/cutMaxRout", 15.);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/ccut/useExtendedRange", true);
 
         SetKey(Conf, "MuCapture/channels/rpz1/numGeneratorBins", 500);
         SetKey(Conf, "MuCapture/channels/rpz1/genpmin", 0.);

@@ -20,15 +20,13 @@ namespace MuCapContainedVars {
   }
 
   Result RangeCosVsP::compute(const EventClass& evt, int iPosTrack, const ClustersByPlane& protonGlobalClusters) {
-    const bool contained = ccut_.contained(evt, iPosTrack, protonGlobalClusters);
+    int lastPlane=0;
+    const bool contained = ccut_.contained(evt, iPosTrack, protonGlobalClusters, &lastPlane);
     double ptot = 0.;
     double rangePIDVar = 0.;
 
     if(contained) {
       ptot = evt.ptot[iPosTrack];
-
-      // Find the last plane contiguous with the track
-      const int lastPlane = MuCapUtilities::findExtendedLastPlane(evt, iPosTrack, protonGlobalClusters);
       rangePIDVar = (lastPlane-28)/std::abs(evt.costh[iPosTrack]);
     }
 
@@ -48,15 +46,13 @@ namespace MuCapContainedVars {
   }
 
   Result RangeVsP::compute(const EventClass& evt, int iPosTrack, const ClustersByPlane& protonGlobalClusters) {
-    const bool contained = ccut_.contained(evt, iPosTrack, protonGlobalClusters);
+    int lastPlane = 0;
+    const bool contained = ccut_.contained(evt, iPosTrack, protonGlobalClusters, &lastPlane);
     double ptot = 0.;
     double rangePIDVar = 0.;
 
     if(contained) {
       ptot = evt.ptot[iPosTrack];
-
-      // Find the last plane contiguous with the track
-      const int lastPlane = MuCapUtilities::findExtendedLastPlane(evt, iPosTrack, protonGlobalClusters);
       rangePIDVar = (lastPlane-28);
     }
 
@@ -77,15 +73,13 @@ namespace MuCapContainedVars {
   }
 
   Result RangeVsPz::compute(const EventClass& evt, int iPosTrack, const ClustersByPlane& protonGlobalClusters) {
-    const bool contained = ccut_.contained(evt, iPosTrack, protonGlobalClusters);
+    int lastPlane = 0;
+    const bool contained = ccut_.contained(evt, iPosTrack, protonGlobalClusters, &lastPlane);
     double pz = 0.;
     double rangePIDVar = 0.;
 
     if(contained) {
       pz = evt.ptot[iPosTrack] * evt.costh[iPosTrack];
-
-      // Find the last plane contiguous with the track
-      const int lastPlane = MuCapUtilities::findExtendedLastPlane(evt, iPosTrack, protonGlobalClusters);
       rangePIDVar = (lastPlane-28);
     }
 

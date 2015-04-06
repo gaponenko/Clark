@@ -43,7 +43,7 @@ public:
             const DetectorGeo& geom,
             const ConfigFile &conf);
 
-  bool contained(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
+  bool contained(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters, int *outLastPlane=0);
 
   MuCapTrkContainmentCut()
     : cutMaxPlane_()
@@ -56,6 +56,7 @@ public:
     , hExtendedLastPlaneFinal_()
     , hRout_()
     , hRoutFinal_()
+    , rangeFinder_()
   {}
 
 private :
@@ -71,7 +72,8 @@ private :
   TH1 *hRout_;
   TH1 *hRoutFinal_;
 
-  CutNumber analyzeTrack(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
+  CutNumber analyzeTrack(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters, int *outLastPlane);
+  int (*rangeFinder_)(const EventClass& evt, int itrack, const ClustersByPlane& protonGlobalClusters);
 };
 
 #endif/*MuCapTrkContainmentCut_h*/

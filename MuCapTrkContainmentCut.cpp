@@ -20,6 +20,8 @@ void MuCapTrkContainmentCut::init(const std::string& hdir,
 {
   cutMaxPlane_ = conf.read<int>(hdir+"/cutMaxPlane");
   cutMaxRout_ = conf.read<double>(hdir+"/cutMaxRout");
+  const bool useExtendedRange = conf.read<bool>(hdir+"/useExtendedRange");
+  rangeFinder_ = useExtendedRange ? &MuCapUtilities::findExtendedLastPlane : &MuCapUtilities::findTrackLastPlane;
 
   //----------------------------------------------------------------
   h_cuts_r = hf.DefineTH1D(hdir, "cuts_r", "Tracks rejected by cut", CUTS_END, -0.5, CUTS_END-0.5);
@@ -44,9 +46,10 @@ void MuCapTrkContainmentCut::init(const std::string& hdir,
 }
 
 //================================================================
-bool MuCapTrkContainmentCut::contained(const EventClass& evt, int itrack,  const ClustersByPlane& protonGlobalClusters)
+bool MuCapTrkContainmentCut::contained(const EventClass& evt, int itrack,  const ClustersByPlane& protonGlobalClusters, int *outLastPlane)
 {
-  CutNumber c = analyzeTrack(evt, itrack, protonGlobalClusters);
+  int dummy = 0;
+  CutNumber c = analyzeTrack(evt, itrack, protonGlobalClusters, outLastPlane ? outLastPlane : &dummy);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -56,14 +59,15 @@ bool MuCapTrkContainmentCut::contained(const EventClass& evt, int itrack,  const
 
 //================================================================
 MuCapTrkContainmentCut::CutNumber MuCapTrkContainmentCut::
-analyzeTrack(const EventClass& evt, int i, const ClustersByPlane& protonGlobalClusters)
+analyzeTrack(const EventClass& evt, int i, const ClustersByPlane& protonGlobalClusters, int *outLastPlane)
 {
   if(i < 0) {
     // There is no contained track.  There is no track at all :
    return CUT_NO_TRACK;
   }
 
-  int extendedLastPlane = MuCapUtilities::findExtendedLastPlane(evt, i, protonGlobalClusters);
+  int extendedLastPlane = rangeFinder_(evt, i, protonGlobalClusters);
+  *outLastPlane = extendedLastPlane;
   hExtendedLastPlane_->Fill(extendedLastPlane);
   if(extendedLastPlane > cutMaxPlane_) {
     return CUT_ZRANGE;
