@@ -44,6 +44,11 @@ void HistRangeStudies::init(HistogramFactory& hf,
   clusterMultiplicity_->GetYaxis()->SetTitle("plane");
 
   //----------------------------------------------------------------
+  tdcWidthTrack_ = hf.DefineTH1D(hdir, "tdcWidthTrack", "DC TDC width for hits in track range", 400, 0., 10000.);
+  tdcWidthExtended_ = hf.DefineTH1D(hdir, "tdcWidthExtended", "DC TDC width for hits adjacent to track range", 400, 0., 10000.);
+
+  hocc_.init(hdir, "extendedHitMapDC", 44, 80, hf, conf);
+
 }
 
 //================================================================
@@ -60,6 +65,34 @@ void HistRangeStudies::fill(const EventClass& evt, int itrack, const ClustersByP
     const unsigned numClusters= protonGlobalClusters.at(iplane).size();
     clusterMultiplicity_->Fill(ptot, iplane, numClusters);
   }
+
+  //----------------------------------------------------------------
+  // Process hits in range
+  for(int iplane = evt.hefit_pstart[itrack]; iplane <= evt.hefit_pstop[itrack]; ++iplane) {
+    const WireClusterCollection& planeClusters = protonGlobalClusters[iplane];
+    for(int icluster=0; icluster<planeClusters.size(); ++icluster) {
+      const TDCHitWPPtrCollection& hits = planeClusters[icluster].hits();
+      for(int ihit=0; ihit<hits.size(); ++ihit) {
+        tdcWidthTrack_->Fill(hits[ihit]->width());
+      }
+    }
+  }
+
+  // Process extended hits
+  for(int iplane=1+evt.hefit_pstop[itrack];
+      (iplane<protonGlobalClusters.size()) && !protonGlobalClusters[iplane].empty();
+      ++iplane) {
+
+    const WireClusterCollection& planeClusters = protonGlobalClusters[iplane];
+    for(int icluster=0; icluster<planeClusters.size(); ++icluster) {
+      const TDCHitWPPtrCollection& hits = planeClusters[icluster].hits();
+      for(int ihit=0; ihit<hits.size(); ++ihit) {
+        tdcWidthExtended_->Fill(hits[ihit]->width());
+        hocc_.fill(*hits[ihit]);
+      }
+    }
+  }
+
 }
 
 //================================================================

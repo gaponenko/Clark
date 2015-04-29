@@ -9,6 +9,7 @@
 #include <string>
 
 #include "WireCluster.h"
+#include "HistOccupancy.h"
 
 class TH1;
 class TH2;
@@ -33,6 +34,10 @@ private :
   TH2* extendedVsTrackRange_;
   TH2* rangeDiffVsPrec_;
   TProfile2D *clusterMultiplicity_;
+
+  TH1* tdcWidthTrack_;
+  TH1* tdcWidthExtended_;
+  HistOccupancy hocc_;
 };
 
 #endif/*HistRangeStudies_h*/
