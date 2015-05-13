@@ -4,6 +4,7 @@
 #include <limits>
 #include <cmath>
 #include <algorithm>
+#include <cstdlib>
 
 #include "HitBasedObservables.h"
 #include "EventClass.h"
@@ -47,6 +48,12 @@ void HistRangeStudies::init(HistogramFactory& hf,
   tdcWidthTrack_ = hf.DefineTH1D(hdir, "tdcWidthTrack", "DC TDC width for hits in track range", 400, 0., 10000.);
   tdcWidthExtended_ = hf.DefineTH1D(hdir, "tdcWidthExtended", "DC TDC width for hits adjacent to track range", 400, 0., 10000.);
 
+  tdcMaxWidthTrack_ = hf.DefineTH1D(hdir, "tdcMaxWidthTrack", "DC TDC max  width for hits in track range", 400, 0., 10000.);
+  tdcMaxWidthExtended_ = hf.DefineTH1D(hdir, "tdcMaxWidthExtended", "DC TDC max width for hits adjacent to track range", 400, 0., 10000.);
+
+  tdcMaxWidthDenseTrack_ = hf.DefineTH1D(hdir, "tdcMaxWidthDenseTrack", "DC TDC max width for hits in track range, DS", 400, 0., 10000.);
+  tdcMaxWidthDenseExtended_ = hf.DefineTH1D(hdir, "tdcMaxWidthDenseExtended", "DC TDC max width for hits adjacent to track range, DS", 400, 0., 10000.);
+
   hocc_.init(hdir, "extendedHitMapDC", 44, 80, hf, conf);
 
 }
@@ -70,11 +77,18 @@ void HistRangeStudies::fill(const EventClass& evt, int itrack, const ClustersByP
   // Process hits in range
   for(int iplane = evt.hefit_pstart[itrack]; iplane <= evt.hefit_pstop[itrack]; ++iplane) {
     const WireClusterCollection& planeClusters = protonGlobalClusters[iplane];
+    double maxWidthInPlane = 0.;
     for(int icluster=0; icluster<planeClusters.size(); ++icluster) {
       const TDCHitWPPtrCollection& hits = planeClusters[icluster].hits();
       for(int ihit=0; ihit<hits.size(); ++ihit) {
         tdcWidthTrack_->Fill(hits[ihit]->width());
+        maxWidthInPlane = std::max<double>(hits[ihit]->width(), maxWidthInPlane);
       }
+    }
+    tdcMaxWidthTrack_->Fill(maxWidthInPlane);
+    // 56 - 4(pc) - 8(dense) = 44
+    if((44 <= iplane) && (iplane <= 52)) {
+      tdcMaxWidthDenseTrack_->Fill(maxWidthInPlane);
     }
   }
 
@@ -84,12 +98,20 @@ void HistRangeStudies::fill(const EventClass& evt, int itrack, const ClustersByP
       ++iplane) {
 
     const WireClusterCollection& planeClusters = protonGlobalClusters[iplane];
+    double maxWidthInPlane = 0.;
     for(int icluster=0; icluster<planeClusters.size(); ++icluster) {
       const TDCHitWPPtrCollection& hits = planeClusters[icluster].hits();
       for(int ihit=0; ihit<hits.size(); ++ihit) {
         tdcWidthExtended_->Fill(hits[ihit]->width());
+        maxWidthInPlane = std::max<double>(hits[ihit]->width(), maxWidthInPlane);
         hocc_.fill(*hits[ihit]);
       }
+    }
+
+    tdcMaxWidthExtended_->Fill(maxWidthInPlane);
+    // 56 - 4(pc) - 8(dense) = 44
+    if((44 <= iplane) && (iplane <= 52)) {
+      tdcMaxWidthDenseExtended_->Fill(maxWidthInPlane);
     }
   }
 

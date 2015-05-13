@@ -37,6 +37,13 @@ private :
 
   TH1* tdcWidthTrack_;
   TH1* tdcWidthExtended_;
+
+  TH1* tdcMaxWidthTrack_;
+  TH1* tdcMaxWidthExtended_;
+
+  TH1* tdcMaxWidthDenseTrack_;
+  TH1* tdcMaxWidthDenseExtended_;
+
   HistOccupancy hocc_;
 };
 
