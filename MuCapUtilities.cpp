@@ -38,6 +38,7 @@ namespace MuCapUtilities {
       switch(pdgId) {
       case PID_G3_PROTON: return protonMass;
       case PID_G3_DEUTERON: return deuteronMass;
+      case PID_G3_EMINUS: return electronMass;
       default:
         std::ostringstream os;
         os<<"MuCapUtilities::mass(): unknown G3 pdgId = "<<pdgId;
