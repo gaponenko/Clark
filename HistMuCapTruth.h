@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include "HistMCElectrons.h"
+
 class TH1;
 class TH2;
 
@@ -42,6 +44,7 @@ public:
   {}
 
 private :
+  HistMCElectrons helectrons_;
   TH1 *hNumMCCaptureTracks_;
   TH1 *hCaptureTime_;
   TH1 *hptot_;

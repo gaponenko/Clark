@@ -19,6 +19,8 @@ void HistMuCapTruth::init(HistogramFactory &hf,
 {
   static const double PI = 4.*atan(1.);
 
+  helectrons_.init(hf, hdir+"/electrons", conf);
+
   hNumMCCaptureTracks_ = hf.DefineTH1D(hdir, "numCaptureMcTrkCandidates", "numCaptureMcTrkCandidates", 10, -0.5, 9.5);
   hCaptureTime_ = hf.DefineTH1D(hdir, "time", "MC time", 640, -100., 1500.);
   hptot_ = hf.DefineTH1D(hdir, "ptot", "MC ptot", 500, 0., 500.);
@@ -50,6 +52,7 @@ void HistMuCapTruth::init(HistogramFactory &hf,
 
 //================================================================
 void HistMuCapTruth::fill(const EventClass& evt) {
+  helectrons_.fill(evt);
   hNumMCCaptureTracks_->Fill(evt.numCaptureMcTrkCandidates);
   if(evt.iCaptureMcTrk != -1) {
     const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
