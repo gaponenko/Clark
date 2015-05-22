@@ -987,7 +987,7 @@ bool EventClass::GetEcalib(string EcalibFile, string EcalibArray)
 }
 
 //================================================================
-int EventClass::getFirstMCVertexIndexForTrack(int imctrk) {
+int EventClass::getFirstMCVertexIndexForTrack(int imctrk) const {
   int res = 0;
   for(unsigned i = 0; i < imctrk; ++i) {
     res += mctrack_nv[i];

@@ -464,6 +464,8 @@ class EventClass{
   enum MCType { G3, G4 };
   MCType mctype;
 
+  int getFirstMCVertexIndexForTrack(int imctrk) const;
+
 private :
   map <std::string, bool>ExistList;
 
@@ -476,8 +478,6 @@ private :
 
   void LoadMuCapture();
   void InitMuCaptureVar(TTree* T);
-
-  int getFirstMCVertexIndexForTrack(int imctrk);
 };
 
 
