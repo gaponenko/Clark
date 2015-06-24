@@ -39,7 +39,7 @@ void HistRangeStudies::init(HistogramFactory& hf,
   rangeDiffVsPrec_->GetYaxis()->SetTitle("range diff");
 
   //----------------------------------------------------------------
-  clusterMultiplicity_ = hf.DefineTProfile2D(hdir, "clusterMultiplicity", "cluster multiplicity  in track range profile", 88, 30., 250., 28, 28.5, 56.5);
+  clusterMultiplicity_ = hf.DefineTProfile2D(hdir, "clusterMultiplicity", "cluster multiplicity - 1  in track range profile", 88, 30., 250., 28, 28.5, 56.5);
   clusterMultiplicity_->SetOption("colz");
   clusterMultiplicity_->GetXaxis()->SetTitle("p [MeV/c]");
   clusterMultiplicity_->GetYaxis()->SetTitle("plane");
@@ -69,8 +69,8 @@ void HistRangeStudies::fill(const EventClass& evt, int itrack, const ClustersByP
   rangeDiffVsPrec_->Fill(ptot, extended-trange);
 
   for(int iplane=29; iplane<=trange; ++iplane) {
-    const unsigned numClusters= protonGlobalClusters.at(iplane).size();
-    clusterMultiplicity_->Fill(ptot, iplane, numClusters);
+    const int numClusters= protonGlobalClusters.at(iplane).size();
+    clusterMultiplicity_->Fill(ptot, iplane, numClusters - 1);
   }
 
   //----------------------------------------------------------------
