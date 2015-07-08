@@ -35,6 +35,7 @@
 #include "RecoResMuCapTrk.h"
 #include "MuCapTrkContainmentCut.h"
 #include "HistRangeStudies.h"
+#include "HistTrkClass.h"
 
 #include "TAxis.h"
 class TH1;
@@ -263,6 +264,7 @@ private :
 
   MuCapTrkContainmentCut dnPosTrkContainment_;
   HistRangeStudies dnPosTrkRangeStudies_;
+  HistTrkClass     dnPosTrkClassification_;
 
   HistProtonPID hProtonPID_;
   HistProtonPID hContainedProtonPID_;

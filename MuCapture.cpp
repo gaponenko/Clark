@@ -92,6 +92,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
   dnPosTrkRangeStudies_.init(H, hdir+"/dnPosTrkRangeStudies", *E.geo, Conf);
+  dnPosTrkClassification_.init(H, hdir+"/dnPosTrkClassification", *E.geo, Conf);
 
   hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
   hContainedProtonPID_.init(hdir+"/posContainedTrackPID", H, Conf);
@@ -649,6 +650,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if(isPosTrackContained) {
     dnPosTrkRangeStudies_.fill(evt, iPosTrack, protonGlobalClusters);
   }
+
+  dnPosTrkClassification_.fill(evt, iPosTrack, protonGlobalClusters);
 
   //----------------
   if(commonSkimOutFile_) {
