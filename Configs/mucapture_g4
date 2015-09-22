@@ -7,3 +7,13 @@ MuCapture/doDefaultTWIST = false
 Detector/GeometryFile = 61
 Detector/Geometry/dc_ppc = 0
 Detector/Geometry/pc_ppc = 0
+
+# No noise in MC
+HitBasedAnalysis/tdcWidthFilterCutPC = 0.
+
+# # An alternative to tdcWidthFilterCutPC: reject large clusters
+# HitBasedAnalysis/maxClusterWiresFilterCutPC = 45
+
+# Keep MC electrons to get statistics in the BG sample:
+# rejection on data is not perfect
+MuCapture/CutPC78/cutTDCwidth = 0.

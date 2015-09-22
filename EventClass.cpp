@@ -603,10 +603,12 @@ void EventClass::InitVar( TTree* T)
 
         if(AnalyseTruthBank) {
           //_________________________ MCBankOutput  __________________________//
-          GetVar(T, "MCSet", "spectrum",        &spectrum);
-          GetVar(T, "MCSet", "sample",          &sample);
-          GetVar(T, "MCSet", "ndecays",         &ndecays);
-          GetVar(T, "MCSet", "spin3",           &spin3);
+          if(loadDefaultTWISTVars) {
+            GetVar(T, "MCSet", "spectrum",        &spectrum);
+            GetVar(T, "MCSet", "sample",          &sample);
+            GetVar(T, "MCSet", "ndecays",         &ndecays);
+            GetVar(T, "MCSet", "spin3",           &spin3);
+          }
           GetVar(T, "", "nmctr",                &nmctr);
           GetVar(T, "", "mctrack_itrack",       mctrack_itrack);
           GetVar(T, "", "mctrack_pid",          mctrack_pid);
