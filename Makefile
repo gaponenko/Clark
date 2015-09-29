@@ -1,5 +1,7 @@
 # First get the general variable definitions.
 
+OPTFLAGS      := -O2
+
 ROOTCFLAGS    := $(shell root-config --cflags)
 ROOTLDFLAGS    := $(shell root-config --ldflags)
 ROOTLIBS      := -L$(shell root-config --libdir) -lGenVector $(shell root-config --libs)
@@ -16,11 +18,11 @@ endif
 
 # Flags for the compiler
 CXX = g++
-CXXFLAGS := -g -O2 $(ROOTCFLAGS) -Wall -Wno-parentheses -Wno-sign-compare
+CXXFLAGS := -g $(OPTFLAGS) $(ROOTCFLAGS) -Wall -Wno-parentheses -Wno-sign-compare
 
 # Flags for the linker
 LINKER = g++
-LDFLAGS := -g -O2 $(ROOTLDFLAGS) -Xlinker -rpath=/twist/local/lib -Xlinker -rpath=$(shell root-config --libdir)  -Xlinker -rpath=/twist/datap/muminus/mu2esoft/RooUnfold/trunk
+LDFLAGS := -g $(OPTFLAGS) $(ROOTLDFLAGS) -Xlinker -rpath=/twist/local/lib -Xlinker -rpath=$(shell root-config --libdir)  -Xlinker -rpath=/twist/datap/muminus/mu2esoft/RooUnfold/trunk
 
 #
 HEADERS := $(shell ls *.h)
