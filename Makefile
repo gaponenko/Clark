@@ -1,6 +1,6 @@
 # First get the general variable definitions.
 
-OPTFLAGS      := -O0
+OPTFLAGS      := -O2
 
 ROOTCFLAGS    := $(shell root-config --cflags)
 ROOTLDFLAGS    := $(shell root-config --ldflags)
