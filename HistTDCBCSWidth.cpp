@@ -22,6 +22,8 @@ extern TimeWindowingResults *gwres;
 //#define AGDEBUG(stuff) do { std::cerr<<"AG: "<<__FILE__<<", line "<<__LINE__<<", func "<<__func__<<": "<<stuff<<std::endl; } while(0)
 #define AGDEBUG(stuff)
 
+const int HistTDCBCSWidth::maxClusterSize = 4;
+
 //================================================================
 void HistTDCBCSWidth::init(HistogramFactory& hf,
                            const std::string& hdir,

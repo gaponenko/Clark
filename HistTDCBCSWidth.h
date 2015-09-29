@@ -36,7 +36,7 @@ public:
   void fill(const EventClass& evt, WirePlane::DetType pt, const WireCluster& c);
 
 private :
-  static const int maxClusterSize = 4;
+  static const int maxClusterSize;
 
   const DetectorGeo *geom_;
 
