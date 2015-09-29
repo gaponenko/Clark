@@ -1,6 +1,6 @@
 # First get the general variable definitions.
 
-OPTFLAGS      := -O2
+OPTFLAGS      := -O0
 
 ROOTCFLAGS    := $(shell root-config --cflags)
 ROOTLDFLAGS    := $(shell root-config --ldflags)
@@ -12,8 +12,8 @@ ifeq ($(UPS_DIR),)
 	INCLUDE = -I/twist/local/include -I/twist/datap/muminus/mu2esoft/RooUnfold/trunk
 	LIBS += $(ROOTLIBS) -L/twist/local/lib -L/twist/datap/muminus/mu2esoft/RooUnfold/trunk -lRooUnfold -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
 else
-	INCLUDE = -I$(LOG4CPP_DIR)/include -I$(GSL_DIR)/include -I$(BOOST_INC)
-	LIBS += $(ROOTLIBS) -L$(LOG4CPP_DIR)/lib  -L$(GSL_DIR)/lib -L$(BOOST_LIB) -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
+	INCLUDE =  $(shell log4cpp-config --cflags) $(shell gsl-config --cflags) -I$(BOOST_INC)
+	LIBS += $(ROOTLIBS) $(shell log4cpp-config --libs) $(shell gsl-config --libs) -L$(BOOST_LIB) -lboost_regex
 endif
 
 # Flags for the compiler
