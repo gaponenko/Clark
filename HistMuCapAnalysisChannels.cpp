@@ -111,7 +111,9 @@ void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
     int iMuStopVtxStart = -1;
 
     for(unsigned i=0; i<evt.nmctr; ++i) {
-      if(evt.mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) {
+      if((evt.mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) ||
+         (evt.mctrack_pid[i] == MuCapUtilities::PID_G4_MUMINUS)) {
+
         ++numInputMuons;
 
         // Look at the end vertex of the muon track
