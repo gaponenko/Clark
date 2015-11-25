@@ -152,6 +152,12 @@ void EventClass::LoadMuCapture() {
       iPrimaryMcVtxStart = -1;
       iPrimaryMcVtxEnd = -1;
 
+      iMuStopMcTrk = -1;
+      iMuStopMcVtxStart = -1;
+      iMuStopMcVtxEnd = -1;
+      mcMuonTotalMultiplicity = 0;
+      mcMuonTrigCandidateMultiplicity = 0;
+
       for(int i=0; i<nmctr; ++i) {
         const int ivtx = getFirstMCVertexIndexForTrack(i);
         if((mctrack_nv[i] > 0) && (mcvertex_istop[ivtx] == MuCapUtilities::PROC_G4_PRIMARY))
@@ -160,7 +166,27 @@ void EventClass::LoadMuCapture() {
             iPrimaryMcTrk = i;
             iPrimaryMcVtxStart = ivtx;
             iPrimaryMcVtxEnd = iPrimaryMcVtxStart + mctrack_nv[i] - 1;
-          }
+
+            if(mctrack_pid[i] == MuCapUtilities::PID_G4_MUMINUS) {
+
+              ++mcMuonTotalMultiplicity;
+
+              // Look at the end vertex of the muon track
+              const int itmpvtxstart = getFirstMCVertexIndexForTrack(i);
+              const int itmpvtxend = itmpvtxstart + mctrack_nv[i] - 1;
+              const double stoptime = mcvertex_time[itmpvtxend];
+
+              if(stoptime > 0.) { // MC trigger muon starts at t==0.
+                ++mcMuonTrigCandidateMultiplicity;
+                if((iMuStopMcTrk == -1) || (stoptime < mcvertex_time[iMuStopMcVtxEnd])) {
+                  iMuStopMcTrk = i;
+                  iMuStopMcVtxStart = itmpvtxstart;
+                  iMuStopMcVtxEnd = itmpvtxend;
+                }
+              }
+
+            } // if(muon)
+          } // if(primary)
       }
 
       iCaptureMcTrk = -1;
@@ -219,12 +245,50 @@ void EventClass::LoadMuCapture() {
       iPrimaryMcVtxStart = -1;
       iPrimaryMcVtxEnd = -1;
 
+      iMuStopMcTrk = -1;
+      iMuStopMcVtxStart = -1;
+      iMuStopMcVtxEnd = -1;
+      mcMuonTotalMultiplicity = 0;
+      mcMuonTrigCandidateMultiplicity = 0;
+
+      for(int i=0; i<nmctr; ++i) {
+        const int ivtx = getFirstMCVertexIndexForTrack(i);
+        if((mctrack_nv[i] > 0) /*&& (mcvertex_istop[ivtx] == MuCapUtilities::PROC_G3_PRIMARY)*/) {
+          ++numPrimaryMcTrkCandidates;
+          iPrimaryMcTrk = i;
+          iPrimaryMcVtxStart = ivtx;
+          iPrimaryMcVtxEnd = iPrimaryMcVtxStart + mctrack_nv[i] - 1;
+
+          if(mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) {
+
+            ++mcMuonTotalMultiplicity;
+
+            // Look at the end vertex of the muon track
+            const int itmpvtxstart = getFirstMCVertexIndexForTrack(i);
+            const int itmpvtxend = itmpvtxstart + mctrack_nv[i] - 1;
+            const double stoptime = mcvertex_time[itmpvtxend];
+
+            if(stoptime > 0.) { // MC trigger muon starts at t==0.
+              ++mcMuonTrigCandidateMultiplicity;
+              if((iMuStopMcTrk == -1) || (stoptime < mcvertex_time[iMuStopMcVtxEnd])) {
+                iMuStopMcTrk = i;
+                iMuStopMcVtxStart = itmpvtxstart;
+                iMuStopMcVtxEnd = itmpvtxend;
+              }
+            }
+
+          } // if(muon)
+        } // if(primary)
+      }
+
       break;
 
     default:
       throw std::runtime_error("EventClass::LoadMuCapture() internal error loading truth.");
-    }
-  }
+
+    } // switch(mctype)
+
+  } //if(AnalyseTruthBank)
 }
 
 bool EventClass::Load( )

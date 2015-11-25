@@ -461,6 +461,13 @@ class EventClass{
   unsigned iPrimaryMcVtxStart;
   unsigned iPrimaryMcVtxEnd;
 
+  // A guess at the MC particle that is the trigger muon
+  int iMuStopMcTrk;  // the closest to t==0 among those with t>0.
+  int iMuStopMcVtxStart;
+  int iMuStopMcVtxEnd;
+  int mcMuonTotalMultiplicity;
+  int mcMuonTrigCandidateMultiplicity;
+
   enum MCType { G3, G4 };
   MCType mctype;
 
