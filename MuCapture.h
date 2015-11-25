@@ -36,6 +36,7 @@
 #include "MuCapTrkContainmentCut.h"
 #include "HistRangeStudies.h"
 #include "HistTrkClass.h"
+#include "HistMuCapMCTgtStops.h"
 
 #include "TAxis.h"
 class TH1;
@@ -280,6 +281,11 @@ private :
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
   HistMuCapTruth hTruthDnCandidate_;
+
+  HistMuCapMCTgtStops hMcMuStopsAll_;
+  HistMuCapMCTgtStops hMcMuStopsLastPlane_;
+  HistMuCapMCTgtStops hMcMuStopsPACT_;
+  HistMuCapMCTgtStops hMcMuStopsDnPC_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

@@ -251,6 +251,11 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthAll_.init(H, hdir+"/MCTruthAll", Conf);
     hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
     hTruthDnCandidate_.init(H, hdir+"/MCTruthDnCandidate", Conf);
+
+    hMcMuStopsAll_.init(H, hdir+"/mcMuStop/all", *E.geo, Conf);
+    hMcMuStopsLastPlane_.init(H, hdir+"/mcMuStop/lastPlane", *E.geo, Conf);
+    hMcMuStopsPACT_.init(H, hdir+"/mcMuStop/pact", *E.geo, Conf);
+    hMcMuStopsDnPC_.init(H, hdir+"/mcMuStop/dnPC", *E.geo, Conf);
   }
 
   //----------------------------------------------------------------
@@ -364,6 +369,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if(doMCTruth_) {
     hmuStopTruthAll_.fill(evt);
     hTruthAll_.fill(evt);
+    hMcMuStopsAll_.fill(evt);
   }
 
   //----------------------------------------------------------------
@@ -426,6 +432,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_MUON_LAST_PLANE;
   }
 
+  if(doMCTruth_) {
+    hMcMuStopsLastPlane_.fill(evt);
+  }
+
   //----------------------------------------------------------------
   if(gEventList.requested(evt)) {
     std::cout<<__func__<<": run "<<evt.nrun<<" event "<<evt.nevt
@@ -461,6 +471,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   if(1 != pactCut_.quadrant(muonGlobalClusters[27].front(), muonGlobalClusters[28].front())) {
     return CUT_MUSTOP_PACT;
+  }
+
+  if(doMCTruth_) {
+    hMcMuStopsPACT_.fill(evt);
   }
 
   //----------------------------------------------------------------
@@ -536,6 +550,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   if(!have_downstream_pchits) {
     return CUT_DOWNSTREAM_PCHITS;
+  }
+  if(doMCTruth_) {
+    hMcMuStopsDnPC_.fill(evt);
   }
 
   const unsigned iDecayWin = 1 + wres.iTrigWin;
