@@ -232,15 +232,15 @@ HistMuCapHitbasedChannel::CutNumber HistMuCapHitbasedChannel::analyzeEvent(const
   }
 
   //----------------------------------------------------------------
-  const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
-  // Simulated DIO have no easily accessible MC truth.  We'll treat PID=zero as DIO down in this code.
-  const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
-
   HitBasedObservablesMaxWidth obs(doubleFilteredClusters, &hambig_);
 
   lastconPlaneVsCWires_->Fill(obs.dnCWires(), obs.dnCPlanes());
 
   if(doMCTruth_) {
+    const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
+    // Simulated DIO have no easily accessible MC truth.  We'll treat PID=zero as DIO down in this code.
+    const int mcParticle = (imcvtxStart != -1) ? evt.mctrack_pid[evt.iCaptureMcTrk] : 0;
+
     if(imcvtxStart  != -1) {
       (referenceSampleAccepted ? migration_ : contamination_)->Fill(evt.mcvertex_ptot[imcvtxStart], obs.dnCWires(), obs.dnCPlanes());
     }
