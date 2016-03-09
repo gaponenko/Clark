@@ -11,7 +11,7 @@
 #include "TDCHitWP.h"
 #include "WireCluster.h"
 
-#include "MuCapPACTCut.h"
+#include "MuCapPACTScan.h"
 #include "MuCapUVAnalysis.h"
 #include "MuCapTrkAnalysisHF.h"
 #include "HistMuCapAnalysisChannels.h"
@@ -187,7 +187,7 @@ private :
   RecoResMuCapTrk anDnLateRes_;
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
-  MuCapPACTCut pactCut_;
+  MuCapPACTScan pactCut_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;

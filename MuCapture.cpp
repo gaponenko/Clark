@@ -185,7 +185,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuStopUVPos_->SetOption("colz");
   hMuStopRadius_ = H.DefineTH1D(hdir, "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
-  pactCut_.init(H, Conf);
+  pactCut_.init(H, *E.geo, Conf);
 
   hStoppedMuonRangeGaps_ = H.DefineTH2D(hdir+"/AcceptedMuStop", "muStopRangeGaps", "Stopped muon range gap end vs start", 57, -0.5, 56.5, 57, -0.5, 56.5);
   hStoppedMuonRangeGaps_->SetOption("colz");
@@ -468,14 +468,19 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_MUSTOP_UV;
   }
 
-  //----------------------------------------------------------------
-  if(1 != pactCut_.quadrant(muonGlobalClusters[27].front(), muonGlobalClusters[28].front())) {
-    return CUT_MUSTOP_PACT;
-  }
+// pact_scan:   //----------------------------------------------------------------
+// pact_scan:   if(1 != pactCut_.quadrant(muonGlobalClusters[27].front(), muonGlobalClusters[28].front())) {
+// pact_scan:     return CUT_MUSTOP_PACT;
+// pact_scan:   }
+// pact_scan:
+// pact_scan:   if(doMCTruth_) {
+// pact_scan:     hMcMuStopsPACT_.fill(evt);
+// pact_scan:   }
 
-  if(doMCTruth_) {
-    hMcMuStopsPACT_.fill(evt);
-  }
+  pactCut_.fill(evt, muonGlobalClusters[27].front(), muonGlobalClusters[28].front());
+
+  // pact_scan branch: this is to speed up the job:
+  return CUT_MUSTOP_PACT;
 
   //----------------------------------------------------------------
   // Here we have an accepted muon stop
