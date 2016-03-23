@@ -4,7 +4,6 @@
 #define MuCapPACTScan_h
 
 #include <vector>
-#include "MuCapPACTScanQuadrant.h"
 
 class TH1;
 class TH2;
@@ -16,7 +15,7 @@ class EventClass;
 class DetectorGeo;
 
 //================================================================
-class MuCapPACTScan {
+template<class T> class MuCapPACTScan {
 public:
 
   // Does Clark allow book histograms in the constructor?  Perhaps not...
@@ -28,7 +27,7 @@ public:
 
 private :
   TH2 *hClusterSize_;
-  typedef std::vector<std::vector<MuCapPACTScanQuadrant> > Quadrants;
+  typedef std::vector<std::vector<T> > Quadrants;
   Quadrants qq_;
 };
 
