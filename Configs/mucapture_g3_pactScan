@@ -1,0 +1,95 @@
+AnalyzeAllEvents = true
+MuCapture/Do = true
+TruthBank/Do = true
+MuCapture/MCType = G3
+MuCapture/loadDefaultTWISTVars = true
+MuCapture/doDefaultTWIST = false
+Detector/GeometryFile = 66
+Detector/Geometry/dc_ppc = 25
+Detector/Geometry/pc_ppc = 5
+
+# No noise in MC
+HitBasedAnalysis/tdcWidthFilterCutPC = 0.
+
+# # An alternative to tdcWidthFilterCutPC: reject large clusters
+# HitBasedAnalysis/maxClusterWiresFilterCutPC = 45
+
+# Keep MC electrons to get statistics in the BG sample:
+# rejection on data is not perfect
+MuCapture/CutPC78/cutTDCwidth = 0.
+
+#================================================================
+MuCapture/PACT/slopea_11 = 1.634
+MuCapture/PACT/intercepta_11 = -140
+MuCapture/PACT/slopeb_11 = -5
+MuCapture/PACT/interceptb_min_11 = 350
+MuCapture/PACT/interceptb_max_11 = 1550
+MuCapture/PACT/interceptb_npoints_11 = 10
+
+MuCapture/PACT/slopea_12 = 2.941
+MuCapture/PACT/intercepta_12 = -235.3
+MuCapture/PACT/slopeb_12 = -5
+MuCapture/PACT/interceptb_min_12 = 300
+MuCapture/PACT/interceptb_max_12 = 1550
+MuCapture/PACT/interceptb_npoints_12 = 10
+
+MuCapture/PACT/slopea_21 = 1.25
+MuCapture/PACT/intercepta_21 = -62.5
+MuCapture/PACT/slopeb_21 = -5
+MuCapture/PACT/interceptb_min_21 = 350
+MuCapture/PACT/interceptb_max_21 = 1550
+MuCapture/PACT/interceptb_npoints_21 = 10
+
+MuCapture/PACT/slopea_22 = 1.852
+MuCapture/PACT/intercepta_22 = -148.1
+MuCapture/PACT/slopeb_22 = -5
+MuCapture/PACT/interceptb_min_22 = 350
+MuCapture/PACT/interceptb_max_22 = 1550
+MuCapture/PACT/interceptb_npoints_22 = 10
+
+#================================================================
+MuCapture/PACTss/slopea_11 = 1.634
+MuCapture/PACTss/slopeb_min_11 = -9
+MuCapture/PACTss/slopeb_max_11 = -1
+MuCapture/PACTss/slopeb_npoints_11 = 9
+MuCapture/PACTss/ia_min_11 = 100
+MuCapture/PACTss/ia_max_11 = 2600
+MuCapture/PACTss/ia_nbins_11 = 500
+MuCapture/PACTss/ib_min_11 = -250
+MuCapture/PACTss/ib_max_11 = +250
+MuCapture/PACTss/ib_nbins_11 = 500
+
+MuCapture/PACTss/slopea_12 = 1.634
+MuCapture/PACTss/slopeb_min_12 = -9
+MuCapture/PACTss/slopeb_max_12 = -1
+MuCapture/PACTss/slopeb_npoints_12 = 9
+MuCapture/PACTss/ia_min_12 = 100
+MuCapture/PACTss/ia_max_12 = 2600
+MuCapture/PACTss/ia_nbins_12 = 500
+MuCapture/PACTss/ib_min_12 = -250
+MuCapture/PACTss/ib_max_12 = +250
+MuCapture/PACTss/ib_nbins_12 = 500
+
+MuCapture/PACTss/slopea_21 = 1.634
+MuCapture/PACTss/slopeb_min_21 = -9
+MuCapture/PACTss/slopeb_max_21 = -1
+MuCapture/PACTss/slopeb_npoints_21 = 9
+MuCapture/PACTss/ia_min_21 = 100
+MuCapture/PACTss/ia_max_21 = 2600
+MuCapture/PACTss/ia_nbins_21 = 500
+MuCapture/PACTss/ib_min_21 = -250
+MuCapture/PACTss/ib_max_21 = +250
+MuCapture/PACTss/ib_nbins_21 = 500
+
+MuCapture/PACTss/slopea_22 = 1.634
+MuCapture/PACTss/slopeb_min_22 = -9
+MuCapture/PACTss/slopeb_max_22 = -1
+MuCapture/PACTss/slopeb_npoints_22 = 9
+MuCapture/PACTss/ia_min_22 = 100
+MuCapture/PACTss/ia_max_22 = 2600
+MuCapture/PACTss/ia_nbins_22 = 500
+MuCapture/PACTss/ib_min_22 = -250
+MuCapture/PACTss/ib_max_22 = +250
+MuCapture/PACTss/ib_nbins_22 = 500
+
+#================================================================

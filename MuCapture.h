@@ -13,6 +13,7 @@
 
 #include "MuCapPACTScan.h"
 #include "MuCapPACTScanQuadrant.h"
+#include "MuCapPACTScanSlope.h"
 
 #include "MuCapUVAnalysis.h"
 #include "MuCapTrkAnalysisHF.h"
@@ -190,6 +191,7 @@ private :
   TimeWindowingPC pcWindowing_;
   TimeWindowingDC dcWindowing_;
   MuCapPACTScan<MuCapPACTScanQuadrant> pactCut_;
+  MuCapPACTScan<MuCapPACTScanSlope> pactSlope_;
 
   TH1D *h_cuts_r;
   TH1D *h_cuts_p;

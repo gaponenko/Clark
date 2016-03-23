@@ -7,18 +7,19 @@
 #include "WireCluster.h"
 
 #include "MuCapPACTScanQuadrant.h"
+#include "MuCapPACTScanSlope.h"
 
 template<class T>
-void MuCapPACTScan<T>::init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf) {
-  hClusterSize_ = hf.DefineTH2D("MuCapture/PACTScan", "MuStopClusterSize", "Muon stop cluster V vs U width (cell units)", 6, 0.5, 6.5,  6, 0.5, 6.5);
+void MuCapPACTScan<T>::init(HistogramFactory &hf, const std::string& hdir, const DetectorGeo& geom, const ConfigFile& conf) {
+  hClusterSize_ = hf.DefineTH2D(hdir, "MuStopClusterSize", "Muon stop cluster V vs U width (cell units)", 6, 0.5, 6.5,  6, 0.5, 6.5);
   hClusterSize_->SetOption("colz");
 
   qq_.resize(2);
 
-  qq_[0].push_back(T(hf, "MuCapture/PACTScan", geom, conf, "11"));
-  qq_[0].push_back(T(hf, "MuCapture/PACTScan", geom, conf, "12"));
-  qq_[1].push_back(T(hf, "MuCapture/PACTScan", geom, conf, "21"));
-  qq_[1].push_back(T(hf, "MuCapture/PACTScan", geom, conf, "22"));
+  qq_[0].push_back(T(hf, hdir, geom, conf, "11"));
+  qq_[0].push_back(T(hf, hdir, geom, conf, "12"));
+  qq_[1].push_back(T(hf, hdir, geom, conf, "21"));
+  qq_[1].push_back(T(hf, hdir, geom, conf, "22"));
 }
 
 template<class T>
@@ -31,3 +32,4 @@ void MuCapPACTScan<T>::fill(const EventClass& evt, const WireCluster& pc5cluster
 }
 
 template class MuCapPACTScan<MuCapPACTScanQuadrant>;
+template class MuCapPACTScan<MuCapPACTScanSlope>;

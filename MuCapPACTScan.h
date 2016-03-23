@@ -4,6 +4,7 @@
 #define MuCapPACTScan_h
 
 #include <vector>
+#include <string>
 
 class TH1;
 class TH2;
@@ -19,7 +20,7 @@ template<class T> class MuCapPACTScan {
 public:
 
   // Does Clark allow book histograms in the constructor?  Perhaps not...
-  void init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile &conf);
+  void init(HistogramFactory &hf, const std::string& hdir, const DetectorGeo& geom, const ConfigFile &conf);
 
   void fill(const EventClass& evt, const WireCluster& pc5cluster, const WireCluster& pc6cluster);
 
