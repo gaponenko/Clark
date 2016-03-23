@@ -9,7 +9,7 @@
 
 
 void MuCapPACTScan::init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf) {
-  hClusterSize_ = hf.DefineTH2D("MuCapture/PACT", "MuStopClusterSize", "Muon stop cluster V vs U width (cell units)", 6, 0.5, 6.5,  6, 0.5, 6.5);
+  hClusterSize_ = hf.DefineTH2D("MuCapture/PACTScan", "MuStopClusterSize", "Muon stop cluster V vs U width (cell units)", 6, 0.5, 6.5,  6, 0.5, 6.5);
   hClusterSize_->SetOption("colz");
 
   qq_.resize(2);
