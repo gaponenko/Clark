@@ -29,6 +29,8 @@ public:
                         const std::string& suffix);
 
 private :
+  bool doMCTruth_;
+
   double slopea_;
   double intercepta_;
 

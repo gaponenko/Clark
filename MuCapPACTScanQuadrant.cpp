@@ -15,7 +15,8 @@ MuCapPACTScanQuadrant::MuCapPACTScanQuadrant(HistogramFactory& hf,
                                              const DetectorGeo& geom,
                                              const ConfigFile& conf,
                                              const std::string& suffix)
-  : slopea_(conf.read<double>("MuCapture/PACT/slopea_"+suffix))
+  : doMCTruth_(conf.read<bool>("TruthBank/Do"))
+  , slopea_(conf.read<double>("MuCapture/PACT/slopea_"+suffix))
   , intercepta_(conf.read<double>("MuCapture/PACT/intercepta_"+suffix))
 
   , slopeb_(conf.read<double>("MuCapture/PACT/slopeb_"+suffix))
@@ -47,10 +48,12 @@ MuCapPACTScanQuadrant::MuCapPACTScanQuadrant(HistogramFactory& hf,
     hpc6vs5widthQ1_scanb_.push_back(hf.DefineTH2D(hdir, osname.str(), ostitle.str(), 500, 0., 500.,  500, 0., 500.));
     hpc6vs5widthQ1_scanb_.back()->SetOption("colz");
 
-    std::ostringstream mcdir;
-    mcdir << hdir <<"/"<<i;
-    hMcMuStops_scanb_.push_back(new HistMuCapMCTgtStops());
-    hMcMuStops_scanb_.back()->init(hf, mcdir.str(), geom, conf);
+    if(doMCTruth_) {
+      std::ostringstream mcdir;
+      mcdir << hdir <<"/"<<i;
+      hMcMuStops_scanb_.push_back(new HistMuCapMCTgtStops());
+      hMcMuStops_scanb_.back()->init(hf, mcdir.str(), geom, conf);
+    }
   }
 }
 
@@ -67,7 +70,9 @@ void MuCapPACTScanQuadrant::fill(const EventClass& evt, const WireCluster& pc5cl
     if (pc6width > linea && pc6width < lineb) {
       // accepted - quadrant 1
       hpc6vs5widthQ1_scanb_[i]->Fill(pc5width, pc6width);
-      hMcMuStops_scanb_[i]->fill(evt);
+      if(doMCTruth_) {
+        hMcMuStops_scanb_[i]->fill(evt);
+      }
     }
   }
 
