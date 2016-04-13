@@ -5,7 +5,13 @@
 
 #include <string>
 
-#include "RooUnfold/RooUnfoldResponse.h"
+//#include "RooUnfold/RooUnfoldResponse.h"
+#include "RooUnfoldDummy.h"
+typedef RooUnfoldDummy RooUnfoldResponse;
+class TH1D;
+class TH2D;
+class TH3D;
+
 
 #define NBUNFOLD1D 11
 
