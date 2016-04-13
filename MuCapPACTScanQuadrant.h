@@ -31,9 +31,11 @@ public:
 private :
   bool doMCTruth_;
 
+  bool cuta_down_;
   double slopea_;
   double intercepta_;
 
+  bool cutb_down_;
   double slopeb_;
   double interceptb_min_;
   double interceptb_max_;

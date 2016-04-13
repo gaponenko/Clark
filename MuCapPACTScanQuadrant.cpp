@@ -16,9 +16,10 @@ MuCapPACTScanQuadrant::MuCapPACTScanQuadrant(HistogramFactory& hf,
                                              const ConfigFile& conf,
                                              const std::string& suffix)
   : doMCTruth_(conf.read<bool>("TruthBank/Do"))
+  , cuta_down_(conf.read<double>("MuCapture/PACT/cuta_sign") > 0.)
   , slopea_(conf.read<double>("MuCapture/PACT/slopea_"+suffix))
   , intercepta_(conf.read<double>("MuCapture/PACT/intercepta_"+suffix))
-
+  , cutb_down_(conf.read<double>("MuCapture/PACT/cutb_sign") > 0.)
   , slopeb_(conf.read<double>("MuCapture/PACT/slopeb_"+suffix))
   , interceptb_min_(conf.read<double>("MuCapture/PACT/interceptb_min_"+suffix))
   , interceptb_max_(conf.read<double>("MuCapture/PACT/interceptb_max_"+suffix))
@@ -67,7 +68,9 @@ void MuCapPACTScanQuadrant::fill(const EventClass& evt, const WireCluster& pc5cl
     const double linea = intercepta_ + slopea_ * pc5width;
     const double lineb = interceptb_[i] + slopeb_ * pc5width;
 
-    if (pc6width > linea && pc6width < lineb) {
+    bool passedA = (cuta_down_ == (pc6width > linea));
+    bool passedB = (cutb_down_ == (pc6width > lineb));
+    if (passedA && passedB) {
       // accepted - quadrant 1
       hpc6vs5widthQ1_scanb_[i]->Fill(pc5width, pc6width);
       if(doMCTruth_) {
