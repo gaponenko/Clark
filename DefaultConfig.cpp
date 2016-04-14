@@ -335,6 +335,9 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/cutWinTimeMin", 400.); // ns
         SetKey(Conf, "MuCapture/cutWinTimeMax", 10000. - 1050.); // ns, make sure DC window ends.
 
+        SetKey(Conf, "MuCapture/PACT/cuta_sign", +1.);
+        SetKey(Conf, "MuCapture/PACT/cutb_sign", -1.);
+
         SetKey(Conf, "MuCapture/PACT/slopea_11", 1.634);
         SetKey(Conf, "MuCapture/PACT/slopeb_11", -1.59);
         SetKey(Conf, "MuCapture/PACT/intercepta_11", -90);
