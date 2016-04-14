@@ -45,8 +45,9 @@ MuCapPACTScanSlope::MuCapPACTScanSlope(HistogramFactory& hf,
     ostitle<<"PACT ia vs ib "<<suffix<<", sa="<<slopea_<<", sb="<<sb;
 
     hia_vs_ib_scan_.push_back(hf.DefineTH2D(hdir, osname.str(), ostitle.str(),
-                                            ia_nbins, ia_min, ia_max,
-                                            ib_nbins, ib_min, ib_max));
+                                            ib_nbins, ib_min, ib_max,
+                                            ia_nbins, ia_min, ia_max
+                                            ));
     hia_vs_ib_scan_.back()->SetOption("colz");
   }
 }
