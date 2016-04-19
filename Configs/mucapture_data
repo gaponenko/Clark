@@ -16,3 +16,25 @@ MuCapture/CutPC78/cutTDCwidth = 240.
 
 # MuCapture/uvOutFileName = muStopUV.txt
 # MuCapture/commonSkimOutFileName = commonSkim.txt
+
+#================================================================
+MuCapture/PACT/slopea_11 = 1.25
+MuCapture/PACT/intercepta_11 = -51
+MuCapture/PACT/slopeb_11 =  -4.55
+MuCapture/PACT/interceptb_11 = 690.
+
+MuCapture/PACT/slopea_12 = 2.4
+MuCapture/PACT/intercepta_12 = -164
+MuCapture/PACT/slopeb_12 = -7.14
+MuCapture/PACT/interceptb_12 = 1070.
+
+MuCapture/PACT/slopea_21 = 0.8
+MuCapture/PACT/intercepta_21 = -18
+MuCapture/PACT/slopeb_21 = -4.00
+MuCapture/PACT/interceptb_21 = 700.
+
+MuCapture/PACT/slopea_22 = 1.4
+MuCapture/PACT/intercepta_22 = -76
+MuCapture/PACT/slopeb_22 = -5.56
+MuCapture/PACT/interceptb_22 = 1100.
+#================================================================

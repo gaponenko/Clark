@@ -335,25 +335,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/cutWinTimeMin", 400.); // ns
         SetKey(Conf, "MuCapture/cutWinTimeMax", 10000. - 1050.); // ns, make sure DC window ends.
 
-        SetKey(Conf, "MuCapture/PACT/slopea_11", 1.634);
-        SetKey(Conf, "MuCapture/PACT/slopeb_11", -1.59);
-        SetKey(Conf, "MuCapture/PACT/intercepta_11", -90);
-        SetKey(Conf, "MuCapture/PACT/interceptb_11", 350);
-
-        SetKey(Conf, "MuCapture/PACT/slopea_12", 2.941);
-        SetKey(Conf, "MuCapture/PACT/slopeb_12", -0.857);
-        SetKey(Conf, "MuCapture/PACT/intercepta_12", -235.3);
-        SetKey(Conf, "MuCapture/PACT/interceptb_12", 300);
-
-        SetKey(Conf, "MuCapture/PACT/slopea_21", 1.25);
-        SetKey(Conf, "MuCapture/PACT/slopeb_21", -1.40);
-        SetKey(Conf, "MuCapture/PACT/intercepta_21", -62.5);
-        SetKey(Conf, "MuCapture/PACT/interceptb_21", 350);
-
-        SetKey(Conf, "MuCapture/PACT/slopea_22", 1.852);
-        SetKey(Conf, "MuCapture/PACT/slopeb_22", -1.0);
-        SetKey(Conf, "MuCapture/PACT/intercepta_22", -148.1);
-        SetKey(Conf, "MuCapture/PACT/interceptb_22", 350);
+        // PACT cuts have been moved to config files: different settings for data and MC
 
         SetKey(Conf, "MuCapture/cutBeamVetoMaxPCplanes", 1);
 
