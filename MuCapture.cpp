@@ -618,6 +618,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     channels_[i].fill(evt, iPosTrack, iNegTrack, protonGlobalClusters);
   }
 
+  rooUnfHits_.FillMeasured(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
   if(channels_[0].referenceSampleAccepted()) {
     rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
   }

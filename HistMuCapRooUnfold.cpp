@@ -172,7 +172,7 @@ void HistMuCapRooUnfold::SaveEventVariables(const EventClass& evt) {
 }
 
 //================================================================
-void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrack, bool isPosTrackContained, double rangePIDVar) {
+void HistMuCapRooUnfold::FillMeasured(const EventClass& evt, int iPosTrack, int iNegTrack, bool isPosTrackContained, double rangePIDVar) {
 
   if(iNegTrack == -1) { // Veto DIO events
     if(iPosTrack != -1) { // Got a reconstructed capture track
@@ -216,7 +216,9 @@ void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrac
       }
     }
   }
+}
 
+void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrack, bool isPosTrackContained, double rangePIDVar) {
   if(doMCTruth_ && truCaptEvt_) {
     if(evt.iCaptureMcVtxStart != -1) {  // ANT: Should be removed ???
       bool IsContained = false;

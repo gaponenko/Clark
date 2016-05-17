@@ -37,7 +37,7 @@ public:
       void MissTruth(double tru);
 
   };
-	
+
   class HistUnfold2D {
     private:
       bool Selected;
@@ -57,13 +57,19 @@ public:
       void MissTruth(int truPID, double tru);
 
   };
-	
+
   void init(HistogramFactory& H,
             const std::string& hdir,
             const ConfigFile& conf);
 
   // Must be called for all events.  Must be called BEFORE analyze() in process
   void SaveEventVariables(const EventClass& evt);
+
+  void FillMeasured(const EventClass& evt,
+            int iPosTrack,
+            int iNegTrack,
+            bool isPosTrackContained,
+            double rangePIDVar);
 
   void Fill(const EventClass& evt,
             int iPosTrack,
