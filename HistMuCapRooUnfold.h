@@ -48,11 +48,13 @@ public:
       TH2D* hMeasVsTruthMomentumTruDeuterons_;
       TH2D* hTruthMomentumNotReco_;
       TH2D* hMeasuredMomentum_;
+      TH2D* hPlaneVsMomentum_;
+      TH2D* hPlaneCosThVsMomentum_;
 
     public:
       HistUnfold2D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP);
       void Reset();
-      void FillMeasured(int PID, double mom);
+      void FillMeasured(int PID, double mom, int lastPlane, double lastPlaneOvCosTh);
       void FillTruth(int recoPID, int truPID, double reco, double tru);
       void MissTruth(int truPID, double tru);
 

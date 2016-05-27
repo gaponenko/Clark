@@ -63,6 +63,8 @@ void HistMuCapRooUnfold::HistUnfold1D::MissTruth(double tru){
 //================================================================
 HistMuCapRooUnfold::HistUnfold2D::HistUnfold2D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP){
   hMeasuredMomentum_  = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MeasuredMomentum", "Measured momentum spectrum;PID;Momentum [MeV/c]",2,0.,2.,NBinP, 0., MaxP);
+  hPlaneVsMomentum_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneVsMomentum", "Last plane reached vs momentum;Momentum [MeV/c];plane-28",NBinP, 0., MaxP,36,0.,36.);
+  hPlaneCosThVsMomentum_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneCosThVsMomentum", "Last plane reached vs momentum;Momentum [MeV/c];(plane-28)/|cos(theta)|",NBinP, 0., MaxP,36,0.,36.);
 
   if(MCTruth){
     std::string tmpStr = "MeasuredMomentumVsPID"+Name;
@@ -86,8 +88,10 @@ void HistMuCapRooUnfold::HistUnfold2D::Reset(){
 }
 
 //================================================================
-void HistMuCapRooUnfold::HistUnfold2D::FillMeasured(int PID, double mom){
+void HistMuCapRooUnfold::HistUnfold2D::FillMeasured(int PID, double mom, int lastPlane, double lastPlaneOvCosTh){
   hMeasuredMomentum_->Fill(PID, mom);
+  hPlaneVsMomentum_->Fill(mom, lastPlane);
+  hPlaneCosThVsMomentum_->Fill(mom, lastPlaneOvCosTh);
 }
 
 //================================================================
@@ -179,11 +183,11 @@ void HistMuCapRooUnfold::FillMeasured(const EventClass& evt, int iPosTrack, int 
       FullSpectrum_->FillMeasured(evt.ptot[iPosTrack]);
       double trackEnd = double(evt.hefit_pstop[iPosTrack]);
       int RecoPIDProton = int(double(trackEnd-28) < (0.40 * evt.ptot[iPosTrack] - 22.));
-      WithPIDAllTrks_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack]);
+      WithPIDAllTrks_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack], (trackEnd-28), (trackEnd-28)/fabs(evt.costh[iPosTrack]));
       if(isPosTrackContained) {
         // The "contained tracks" analysis channel
         Contained_->FillMeasured(evt.ptot[iPosTrack]);
-        WithPID_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack]);
+        WithPID_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack], (trackEnd-28), (trackEnd-28)/fabs(evt.costh[iPosTrack]));
         if( (trackEnd-28) > 10){
           PlnRngCutPln_->FillMeasured(evt.ptot[iPosTrack]);
         }
