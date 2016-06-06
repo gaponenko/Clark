@@ -64,6 +64,8 @@ void HistMuCapRooUnfold::HistUnfold1D::MissTruth(double tru){
 HistMuCapRooUnfold::HistUnfold2D::HistUnfold2D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP){
   hMeasuredMomentum_  = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "MeasuredMomentum", "Measured momentum spectrum;PID;Momentum [MeV/c]",2,0.,2.,NBinP, 0., MaxP);
   hPlaneVsMomentum_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneVsMomentum", "Last plane reached vs momentum;Momentum [MeV/c];plane-28",NBinP, 0., MaxP,36,0.,36.);
+  hPlaneVsMomentumProt_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneVsMomentumProt", "Last plane reached vs momentum, proton candidates;Momentum [MeV/c];plane-28",NBinP, 0., MaxP,36,0.,36.);
+  hPlaneVsMomentumDeut_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneVsMomentumDeut", "Last plane reached vs momentum, deuteron candidates;Momentum [MeV/c];plane-28",NBinP, 0., MaxP,36,0.,36.);
   hPlaneCosThVsMomentum_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneCosThVsMomentum", "Last plane reached vs momentum;Momentum [MeV/c];(plane-28)/|cos(theta)|",NBinP, 0., MaxP,36,0.,36.);
 
   if(MCTruth){
@@ -91,6 +93,11 @@ void HistMuCapRooUnfold::HistUnfold2D::Reset(){
 void HistMuCapRooUnfold::HistUnfold2D::FillMeasured(int PID, double mom, int lastPlane, double lastPlaneOvCosTh){
   hMeasuredMomentum_->Fill(PID, mom);
   hPlaneVsMomentum_->Fill(mom, lastPlane);
+  if (PID == 0){
+    hPlaneVsMomentumProt_->Fill(mom, lastPlane);
+  } else {
+    hPlaneVsMomentumDeut_->Fill(mom, lastPlane);
+  }
   hPlaneCosThVsMomentum_->Fill(mom, lastPlaneOvCosTh);
 }
 

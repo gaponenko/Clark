@@ -49,6 +49,8 @@ public:
       TH2D* hTruthMomentumNotReco_;
       TH2D* hMeasuredMomentum_;
       TH2D* hPlaneVsMomentum_;
+      TH2D* hPlaneVsMomentumProt_;
+      TH2D* hPlaneVsMomentumDeut_;
       TH2D* hPlaneCosThVsMomentum_;
 
     public:
