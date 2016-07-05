@@ -52,6 +52,8 @@ public:
       TH2D* hPlaneVsMomentumProt_;
       TH2D* hPlaneVsMomentumDeut_;
       TH2D* hPlaneCosThVsMomentum_;
+      TH2D* hPlaneCosThVsMomentumProt_;
+      TH2D* hPlaneCosThVsMomentumDeut_;
 
     public:
       HistUnfold2D(HistogramFactory &H, std::string Dir, std::string Name, bool MCTruth, int NBinP, double MaxP);
@@ -107,6 +109,7 @@ private :
   HistUnfold1D *AllUnfold1D_[NBUNFOLD1D];
 
   HistUnfold2D *WithPID_;
+  HistUnfold2D *WithPIDRestrictPlane_;
   HistUnfold2D *WithPIDAllTrks_;
 
 };

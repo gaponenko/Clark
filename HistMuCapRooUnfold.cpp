@@ -67,6 +67,8 @@ HistMuCapRooUnfold::HistUnfold2D::HistUnfold2D(HistogramFactory &H, std::string 
   hPlaneVsMomentumProt_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneVsMomentumProt", "Last plane reached vs momentum, proton candidates;Momentum [MeV/c];plane-28",NBinP, 0., MaxP,36,0.,36.);
   hPlaneVsMomentumDeut_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneVsMomentumDeut", "Last plane reached vs momentum, deuteron candidates;Momentum [MeV/c];plane-28",NBinP, 0., MaxP,36,0.,36.);
   hPlaneCosThVsMomentum_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneCosThVsMomentum", "Last plane reached vs momentum;Momentum [MeV/c];(plane-28)/|cos(theta)|",NBinP, 0., MaxP,36,0.,36.);
+  hPlaneCosThVsMomentumProt_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneCosThVsMomentumProt", "Last plane reached vs momentum, proton candidates;Momentum [MeV/c];(plane-28)/|cos(theta)|",NBinP, 0., MaxP,36,0.,36.);
+  hPlaneCosThVsMomentumDeut_   = H.DefineTH2D(Dir+"/rooUnfold/"+Name, "PlaneCosThVsMomentumDeut", "Last plane reached vs momentum, deuteron candidates;Momentum [MeV/c];(plane-28)/|cos(theta)|",NBinP, 0., MaxP,36,0.,36.);
 
   if(MCTruth){
     std::string tmpStr = "MeasuredMomentumVsPID"+Name;
@@ -93,12 +95,14 @@ void HistMuCapRooUnfold::HistUnfold2D::Reset(){
 void HistMuCapRooUnfold::HistUnfold2D::FillMeasured(int PID, double mom, int lastPlane, double lastPlaneOvCosTh){
   hMeasuredMomentum_->Fill(PID, mom);
   hPlaneVsMomentum_->Fill(mom, lastPlane);
+  hPlaneCosThVsMomentum_->Fill(mom, lastPlaneOvCosTh);
   if (PID == 0){
     hPlaneVsMomentumProt_->Fill(mom, lastPlane);
+    hPlaneCosThVsMomentumProt_->Fill(mom, lastPlaneOvCosTh);
   } else {
     hPlaneVsMomentumDeut_->Fill(mom, lastPlane);
+    hPlaneCosThVsMomentumDeut_->Fill(mom, lastPlaneOvCosTh);
   }
-  hPlaneCosThVsMomentum_->Fill(mom, lastPlaneOvCosTh);
 }
 
 //================================================================
@@ -151,6 +155,7 @@ void HistMuCapRooUnfold::init(HistogramFactory& H,
   PlnVsPCutZone2AllTrks_ = new HistUnfold1D(H, hdir, "PlnVsPCutZone2AllTrks", doMCTruth_, NbBinP, MaxP); AllUnfold1D_[N1D++] = PlnVsPCutZone2AllTrks_;
 
   WithPID_ = new HistUnfold2D(H, hdir, "WithPID", doMCTruth_, NbBinP, MaxP);
+  WithPIDRestrictPlane_ = new HistUnfold2D(H, hdir, "WithPIDRestrictPlane", doMCTruth_, NbBinP, MaxP);
   WithPIDAllTrks_ = new HistUnfold2D(H, hdir, "WithPIDAllTrks", doMCTruth_, NbBinP, MaxP);
 
 
@@ -175,6 +180,7 @@ void HistMuCapRooUnfold::SaveEventVariables(const EventClass& evt) {
   }
 
   WithPID_->Reset();
+  WithPIDRestrictPlane_->Reset();
   WithPIDAllTrks_->Reset();
 
   for (int n = 0; n < NBUNFOLD1D; n++)
@@ -195,6 +201,9 @@ void HistMuCapRooUnfold::FillMeasured(const EventClass& evt, int iPosTrack, int 
         // The "contained tracks" analysis channel
         Contained_->FillMeasured(evt.ptot[iPosTrack]);
         WithPID_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack], (trackEnd-28), (trackEnd-28)/fabs(evt.costh[iPosTrack]));
+        if( (trackEnd-28)/fabs(evt.costh[iPosTrack]) < 20){
+          WithPIDRestrictPlane_->FillMeasured(RecoPIDProton, evt.ptot[iPosTrack], (trackEnd-28), (trackEnd-28)/fabs(evt.costh[iPosTrack]));
+        }
         if( (trackEnd-28) > 10){
           PlnRngCutPln_->FillMeasured(evt.ptot[iPosTrack]);
         }
@@ -251,6 +260,9 @@ void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrac
         WithPIDAllTrks_->FillTruth(RecoPIDProton, TruePIDProton_, evt.ptot[iPosTrack], p_true_);
         if (IsContained ) {
           WithPID_->FillTruth(RecoPIDProton, TruePIDProton_, evt.ptot[iPosTrack], p_true_);
+          if( (trackEnd-28)/fabs(evt.costh[iPosTrack]) < 20){
+            WithPIDRestrictPlane_->FillTruth(RecoPIDProton, TruePIDProton_, evt.ptot[iPosTrack], p_true_);
+          }
 
           Contained_->FillTruth(evt.ptot[iPosTrack], p_true_);
           if ( (trackEnd-28) > 10) {
@@ -312,6 +324,7 @@ void HistMuCapRooUnfold::FillAndMiss(){
     FullSpectrum_->MissTruth(p_true_);
 
     WithPID_->MissTruth(TruePIDProton_, p_true_);
+    WithPIDRestrictPlane_->MissTruth(TruePIDProton_, p_true_);
     WithPIDAllTrks_->MissTruth(TruePIDProton_, p_true_);
 
     for (int n = 0; n < NBUNFOLD1D; n++)
