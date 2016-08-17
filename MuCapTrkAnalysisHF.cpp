@@ -121,14 +121,14 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   costhVsPtot_ = hf.DefineTH2D(hdir,
                                "ptotVsCosth",
                                "ptot vs costh",
-                               500, 0., 500., 100, -1., +1.);
+                               650, 0., 650., 100, -1., +1.);
 
   costhVsPtot_->SetOption("colz");
 
   final_costhVsPtot_ = hf.DefineTH2D(hdir,
                                      "final_ptotVsCosth",
                                      "final ptot vs costh",
-                                     500, 0., 500., 100, -1., +1.);
+                                     650, 0., 650., 100, -1., +1.);
 
   final_costhVsPtot_->SetOption("colz");
 

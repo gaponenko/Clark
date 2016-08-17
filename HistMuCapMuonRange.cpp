@@ -26,13 +26,13 @@ void HistMuCapMuonRange::init(HistogramFactory& hf,
 
   if(doMCTruth_) {
     hTruePProtonVsLastPlane_ = hf.DefineTH2D(hdir, "muonLastPlaneVsTruePCapture_proton", "Muon last plane vs true p proton",
-                                             56, 0.5, 56.5, 500, 0., 500.);
+                                             56, 0.5, 56.5, 650, 0., 650.);
     hTruePProtonVsLastPlane_->SetOption("colz");
     hTruePProtonVsLastPlane_->GetXaxis()->SetTitle("Muon last plane");
     hTruePProtonVsLastPlane_->GetYaxis()->SetTitle("p proton, MeV/c");
 
     hTruePDeuteronVsLastPlane_ = hf.DefineTH2D(hdir, "muonLastPlaneVsTruePCapture_deuteron", "Muon last plane vs true p deuteron",
-                                               56, 0.5, 56.5, 500, 0., 500.);
+                                               56, 0.5, 56.5, 650, 0., 650.);
     hTruePDeuteronVsLastPlane_->SetOption("colz");
     hTruePDeuteronVsLastPlane_->GetXaxis()->SetTitle("Muon last plane");
     hTruePDeuteronVsLastPlane_->GetYaxis()->SetTitle("p deuteron, MeV/c");

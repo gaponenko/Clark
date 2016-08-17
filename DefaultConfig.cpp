@@ -375,7 +375,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPzMin", 28.4); // MeV/c = 30cm L
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtotMin", 0.); // MeV/c
         // NB: remember about "name helixfit helixfitmommax=..." in the KCM file.
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtotMax", 250.); // MeV/c
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutPtotMax", 99999.); // MeV/c
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackMuonOffset", 1.5);//cm
 
         //----------------
@@ -424,20 +424,20 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxRout", 15.);
         SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/useExtendedRange", true);
 
-        SetKey(Conf, "MuCapture/channels/legacy/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/legacy/numGeneratorBins", 650);
         SetKey(Conf, "MuCapture/channels/legacy/genpmin", 0.);
-        SetKey(Conf, "MuCapture/channels/legacy/genpmax", 500.);
+        SetKey(Conf, "MuCapture/channels/legacy/genpmax", 650.);
 
-        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarnbins", 88);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmin", 30.);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmax", 250.);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarnbins", 250);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmin", 25.);
+        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmax", 650.);
         SetKey(Conf, "MuCapture/channels/legacy/contained/yvarnbins", 6);
         SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmin", 8.);
         SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmax", 32.);
 
-        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopnbins", 88);
-        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmin", 30.);
-        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmax", 250.);
+        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopnbins", 250);
+        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmin", 25.);
+        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmax", 650.);
 
         SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresnbins", 60);
         SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresmin", 0.5);
@@ -454,20 +454,20 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/rcp1/contained/ccut/cutMaxRout", 15.);
         SetKey(Conf, "MuCapture/channels/rcp1/contained/ccut/useExtendedRange", true);
 
-        SetKey(Conf, "MuCapture/channels/rcp1/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/rcp1/numGeneratorBins", 650);
         SetKey(Conf, "MuCapture/channels/rcp1/genpmin", 0.);
-        SetKey(Conf, "MuCapture/channels/rcp1/genpmax", 500.);
+        SetKey(Conf, "MuCapture/channels/rcp1/genpmax", 650.);
 
-        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarnbins", 88);
-        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarmin", 30.);
-        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarnbins", 250);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarmin", 25.);
+        SetKey(Conf, "MuCapture/channels/rcp1/contained/xvarmax", 650.);
         SetKey(Conf, "MuCapture/channels/rcp1/contained/yvarnbins", 6);
         SetKey(Conf, "MuCapture/channels/rcp1/contained/yvarmin", 8.);
         SetKey(Conf, "MuCapture/channels/rcp1/contained/yvarmax", 32.);
 
-        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopnbins", 88);
-        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopmin", 30.);
-        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopnbins", 250);
+        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopmin", 25.);
+        SetKey(Conf, "MuCapture/channels/rcp1/uncontained/recopmax", 650.);
 
         SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cwiresnbins", 60);
         SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cwiresmin", 0.5);
@@ -484,20 +484,20 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/rp1/contained/ccut/cutMaxRout", 15.);
         SetKey(Conf, "MuCapture/channels/rp1/contained/ccut/useExtendedRange", true);
 
-        SetKey(Conf, "MuCapture/channels/rp1/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/rp1/numGeneratorBins", 650);
         SetKey(Conf, "MuCapture/channels/rp1/genpmin", 0.);
-        SetKey(Conf, "MuCapture/channels/rp1/genpmax", 500.);
+        SetKey(Conf, "MuCapture/channels/rp1/genpmax", 650.);
 
-        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarnbins", 44);
-        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarmin", 30.);
-        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarnbins", 125);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarmin", 25.);
+        SetKey(Conf, "MuCapture/channels/rp1/contained/xvarmax", 650.);
         SetKey(Conf, "MuCapture/channels/rp1/contained/yvarnbins", 16);
         SetKey(Conf, "MuCapture/channels/rp1/contained/yvarmin", 7.5);
         SetKey(Conf, "MuCapture/channels/rp1/contained/yvarmax", 23.5);
 
-        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopnbins", 88);
-        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopmin", 30.);
-        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopnbins", 250);
+        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopmin", 25.);
+        SetKey(Conf, "MuCapture/channels/rp1/uncontained/recopmax", 650.);
 
         SetKey(Conf, "MuCapture/channels/rp1/hitbased/cwiresnbins", 60);
         SetKey(Conf, "MuCapture/channels/rp1/hitbased/cwiresmin", 0.5);
@@ -514,20 +514,20 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/rpz1/contained/ccut/cutMaxRout", 15.);
         SetKey(Conf, "MuCapture/channels/rpz1/contained/ccut/useExtendedRange", true);
 
-        SetKey(Conf, "MuCapture/channels/rpz1/numGeneratorBins", 500);
+        SetKey(Conf, "MuCapture/channels/rpz1/numGeneratorBins", 650);
         SetKey(Conf, "MuCapture/channels/rpz1/genpmin", 0.);
-        SetKey(Conf, "MuCapture/channels/rpz1/genpmax", 500.);
+        SetKey(Conf, "MuCapture/channels/rpz1/genpmax", 650.);
 
         SetKey(Conf, "MuCapture/channels/rpz1/contained/xvarnbins", 50);
         SetKey(Conf, "MuCapture/channels/rpz1/contained/xvarmin",  0.);
-        SetKey(Conf, "MuCapture/channels/rpz1/contained/xvarmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rpz1/contained/xvarmax", 650.);
         SetKey(Conf, "MuCapture/channels/rpz1/contained/yvarnbins", 16);
         SetKey(Conf, "MuCapture/channels/rpz1/contained/yvarmin", 7.5);
         SetKey(Conf, "MuCapture/channels/rpz1/contained/yvarmax", 23.5);
 
-        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopnbins", 88);
-        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopmin", 30.);
-        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopmax", 250.);
+        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopnbins", 250);
+        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopmin", 25.);
+        SetKey(Conf, "MuCapture/channels/rpz1/uncontained/recopmax", 650.);
 
         SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cwiresnbins", 60);
         SetKey(Conf, "MuCapture/channels/rpz1/hitbased/cwiresmin", 0.5);
