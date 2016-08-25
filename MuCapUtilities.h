@@ -14,8 +14,13 @@ namespace MuCapUtilities {
 
   static int const PID_G3_PROTON = 14;
   static int const PID_G3_DEUTERON = 45;
+  static int const PID_G3_TRITON = 46;
+  static int const PID_G3_ALPHA = 47;
+
   static int const PID_G3_MUMINUS = 66;
   static int const PID_G3_EMINUS = 3;
+  static int const PID_G3_PHOTON = 1;
+  static int const PID_G3_NEUTRON = 13;
 
   static int const PID_G4_MUMINUS = +13;
   static int const PID_G4_EMINUS = +11;
