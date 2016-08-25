@@ -10,6 +10,31 @@
 #include "ConfigFile.h"
 #include "MuCapUtilities.h"
 
+#define SETUP_RECOMC_HIST_UNCONTAINED(hname)                            \
+  do {                                                                  \
+    reco##hname##_ = hf.DefineTH1D(hdir, "ptot"#hname,                  \
+                                   "ptot, non contained"#hname,         \
+                                   recopnbins, recopmin, recopmax);     \
+                                                                        \
+    reco##hname##_->GetXaxis()->SetTitle("p, MeV/c");                   \
+  } while(0)
+
+#define SETUP_RESPONSE_HIST_UNCONTAINTED(kind, hname)                   \
+  do {                                                                  \
+    kind##hname##_ = hf.DefineTH2D(hdir, #kind #hname,                  \
+                                   "Non-contained channel "#kind#hname, \
+                                   gen1nbins, gen1pmin, gen1pmax,       \
+                                   recopnbins, recopmin, recopmax);     \
+                                                                        \
+                                                                        \
+    kind##hname##_->SetOption("colz");                                  \
+    kind##hname##_->GetXaxis()->SetTitle("p true, MeV/c");              \
+    kind##hname##_->GetYaxis()->SetTitle("p reco, MeV/c");              \
+  } while(0)
+
+
+
+
 //================================================================
 void HistMuCapUncontainedChannel::init(HistogramFactory& hf,
                                        const std::string& hgrandtopdir,
@@ -40,18 +65,14 @@ void HistMuCapUncontainedChannel::init(HistogramFactory& hf,
   const double recopmax = conf.read<double>(hdir+"/recopmax");
 
   //----------------------------------------------------------------
-  reco_ = hf.DefineTH1D(hdir, "ptot", "ptot, non contained", recopnbins, recopmin, recopmax);
-  reco_->GetXaxis()->SetTitle("p, MeV/c");
+  SETUP_RECOMC_HIST_UNCONTAINED();
 
   if(doMCTruth_) {
-    reco_mcproton_ = hf.DefineTH1D(hdir, "ptot_mcproton", "ptot, non contained mcproton", recopnbins, recopmin, recopmax);
-    reco_mcproton_->GetXaxis()->SetTitle("p, MeV/c");
-
-    reco_mcdeuteron_ = hf.DefineTH1D(hdir, "ptot_mcdeuteron", "ptot, non contained mcdeuteron", recopnbins, recopmin, recopmax);
-    reco_mcdeuteron_->GetXaxis()->SetTitle("p, MeV/c");
-
-    reco_mcdio_ = hf.DefineTH1D(hdir, "ptot_mcdio", "ptot, non contained mcdio", recopnbins, recopmin, recopmax);
-    reco_mcdio_->GetXaxis()->SetTitle("p, MeV/c");
+    SETUP_RECOMC_HIST_UNCONTAINED(_mcproton);
+    SETUP_RECOMC_HIST_UNCONTAINED(_mcdeuteron);
+    SETUP_RECOMC_HIST_UNCONTAINED(_mctriton);
+    SETUP_RECOMC_HIST_UNCONTAINED(_mcalpha);
+    SETUP_RECOMC_HIST_UNCONTAINED(_mcdio);
   }
 
   //----------------------------------------------------------------
@@ -62,60 +83,18 @@ void HistMuCapUncontainedChannel::init(HistogramFactory& hf,
     const double gen1pmax = conf.read<double>(htopdir+"/genpmax");
 
     // Migration matrices for the non contained channel
-    migration_ = hf.DefineTH2D(hdir,"migration",
-                               "Non-contained channel migration",
-                               gen1nbins, gen1pmin, gen1pmax,
-                               recopnbins, recopmin, recopmax);
-
-    migration_->SetOption("colz");
-    migration_->GetXaxis()->SetTitle("p true, MeV/c");
-    migration_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    migration_mcproton_ = hf.DefineTH2D(hdir,"migration_mcproton",
-                                        "Non-contained channel migration, proton",
-                                        gen1nbins, gen1pmin, gen1pmax,
-                                        recopnbins, recopmin, recopmax);
-
-    migration_mcproton_->SetOption("colz");
-    migration_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
-    migration_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    migration_mcdeuteron_ = hf.DefineTH2D(hdir,"migration_mcdeuteron",
-                                          "Non-contained channel migration, deuteron",
-                                          gen1nbins, gen1pmin, gen1pmax,
-                                          recopnbins, recopmin, recopmax);
-
-    migration_mcdeuteron_->SetOption("colz");
-    migration_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
-    migration_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
+    SETUP_RESPONSE_HIST_UNCONTAINTED(migration,);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(migration, _mcproton);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(migration, _mcdeuteron);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(migration, _mctriton);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(migration, _mcalpha);
 
     // Contamination matrices for the non contained channel
-    contamination_ = hf.DefineTH2D(hdir,"contamination",
-                                   "Non-contained channel contamination",
-                                   gen1nbins, gen1pmin, gen1pmax,
-                                   recopnbins, recopmin, recopmax);
-
-    contamination_->SetOption("colz");
-    contamination_->GetXaxis()->SetTitle("p true, MeV/c");
-    contamination_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    contamination_mcproton_ = hf.DefineTH2D(hdir,"contamination_mcproton",
-                                            "Non-contained channel contamination, proton",
-                                            gen1nbins, gen1pmin, gen1pmax,
-                                            recopnbins, recopmin, recopmax);
-
-    contamination_mcproton_->SetOption("colz");
-    contamination_mcproton_->GetXaxis()->SetTitle("p true, MeV/c");
-    contamination_mcproton_->GetYaxis()->SetTitle("p reco, MeV/c");
-
-    contamination_mcdeuteron_ = hf.DefineTH2D(hdir,"contamination_mcdeuteron",
-                                              "Non-contained channel contamination, deuteron",
-                                              gen1nbins, gen1pmin, gen1pmax,
-                                              recopnbins, recopmin, recopmax);
-
-    contamination_mcdeuteron_->SetOption("colz");
-    contamination_mcdeuteron_->GetXaxis()->SetTitle("p true, MeV/c");
-    contamination_mcdeuteron_->GetYaxis()->SetTitle("p reco, MeV/c");
+    SETUP_RESPONSE_HIST_UNCONTAINTED(contamination,);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(contamination, _mcproton);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(contamination, _mcdeuteron);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(contamination, _mctriton);
+    SETUP_RESPONSE_HIST_UNCONTAINTED(contamination, _mcalpha);
   }
 
 }
@@ -175,9 +154,23 @@ HistMuCapUncontainedChannel::analyzeEvent(const EventClass& evt,
       (referenceSampleAccepted ? migration_mcdeuteron_ : contamination_mcdeuteron_)
         ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
       break;
+    case MuCapUtilities::PID_G3_TRITON:
+      reco_mctriton_->Fill(prec);
+      (referenceSampleAccepted ? migration_mctriton_ : contamination_mctriton_)
+        ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+      break;
+    case MuCapUtilities::PID_G3_ALPHA:
+      reco_mcalpha_->Fill(prec);
+      (referenceSampleAccepted ? migration_mcalpha_ : contamination_mcalpha_)
+        ->Fill(evt.mcvertex_ptot[imcvtxStart], prec);
+      break;
     case 0:
       reco_mcdio_->Fill(prec);
       break;
+    default:
+      std::ostringstream os;
+      os<<"HistMuCapUncontainedChannel: unknown capture PID="<<mcParticle;
+      throw std::runtime_error(os.str());
     }
   }
 

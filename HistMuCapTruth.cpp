@@ -26,6 +26,8 @@ void HistMuCapTruth::init(HistogramFactory &hf,
   hptot_ = hf.DefineTH1D(hdir, "ptot", "MC ptot", 650, 0., 650.);
   hptot_proton_ = hf.DefineTH1D(hdir, "ptot_proton", "MC ptot proton", 650, 0., 650.);
   hptot_deuteron_ = hf.DefineTH1D(hdir, "ptot_deuteron", "MC ptot deuteron", 650, 0., 650.);
+  hptot_triton_ = hf.DefineTH1D(hdir, "ptot_triton", "MC ptot triton", 650, 0., 650.);
+  hptot_alpha_ = hf.DefineTH1D(hdir, "ptot_alpha", "MC ptot alpha", 650, 0., 650.);
   hek_ = hf.DefineTH1D(hdir, "ek", "MC Ek", 500, 0., 50.);
   hphi_ = hf.DefineTH1D(hdir, "phi", "MC momentum phi", 100, -PI, +PI);
   hpcos_ = hf.DefineTH2D(hdir, "cosVsPtos", "MC cosTheta vs ptot", 650, 0., 650., 100, -1., 1.);
@@ -70,6 +72,16 @@ void HistMuCapTruth::fill(const EventClass& evt) {
     case MuCapUtilities::PID_G3_DEUTERON:
       hptot_deuteron_->Fill(evt.mcvertex_ptot[imcvtxStart]);
       break;
+    case MuCapUtilities::PID_G3_TRITON:
+      hptot_triton_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    case MuCapUtilities::PID_G3_ALPHA:
+      hptot_alpha_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+      break;
+    default:
+      std::ostringstream os;
+      os<<"HistMuCapTruth: unknown capture PID="<<mcParticle;
+      throw std::runtime_error(os.str());
     }
 
     hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtxStart], evt));

@@ -10,6 +10,30 @@
 #include "ConfigFile.h"
 #include "MuCapUtilities.h"
 
+
+#define SETUP_RECOMC_HIST_CONTAINED(hname)                              \
+  do {                                                                  \
+    reco##hname##_ = hf.DefineTH2D(hdir, "reco"#hname, "reco"#hname,    \
+                                   xvarnbins, xvarmin, xvarmax,         \
+                                   yvarnbins, yvarmin, yvarmax);        \
+    reco##hname##_->SetOption("colz");                                  \
+    reco##hname##_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());       \
+    reco##hname##_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());       \
+  } while(0)
+
+#define SETUP_RESPONSE_HIST_CONTAINTED(kind, hname)                     \
+  do {                                                                  \
+    kind##hname##_ = hf.DefineTH3D(hdir, #kind #hname,                  \
+                                   "Contained channel "#kind#hname,     \
+                                   gen1nbins, gen1pmin, gen1pmax,       \
+                                   xvarnbins, xvarmin, xvarmax,         \
+                                   yvarnbins, yvarmin, yvarmax);        \
+                                                                        \
+    kind##hname##_->GetXaxis()->SetTitle("p true [MeV/c]");             \
+    kind##hname##_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());       \
+    kind##hname##_->GetZaxis()->SetTitle(cvp_->ytitle().c_str());       \
+  } while(0)
+
 //================================================================
 void HistMuCapContainedChannel::init(HistogramFactory& hf,
                                      const std::string& hgrandtopdir,
@@ -48,32 +72,13 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
   const double yvarmax = conf.read<double>(hdir+"/yvarmax");
 
   //----------------------------------------------------------------
-  reco_ = hf.DefineTH2D(hdir, "reco", "reco",
-                        xvarnbins, xvarmin, xvarmax,
-                        yvarnbins, yvarmin, yvarmax);
-
-  reco_->SetOption("colz");
-  reco_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
-  reco_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
-
+  SETUP_RECOMC_HIST_CONTAINED();
   if(doMCTruth_) {
-    reco_mcproton_ = hf.DefineTH2D(hdir, "reco_mcproton", "reco, mcproton",
-                                   xvarnbins, xvarmin, xvarmax, yvarnbins, yvarmin, yvarmax);
-    reco_mcproton_->SetOption("colz");
-    reco_mcproton_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
-    reco_mcproton_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
-
-    reco_mcdeuteron_ = hf.DefineTH2D(hdir, "reco_mcdeuteron", "reco, mcdeuteron",
-                                     xvarnbins, xvarmin, xvarmax, yvarnbins, yvarmin, yvarmax);
-    reco_mcdeuteron_->SetOption("colz");
-    reco_mcdeuteron_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
-    reco_mcdeuteron_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
-
-    reco_mcdio_ = hf.DefineTH2D(hdir, "reco_mcdio", "reco, mcdio",
-                                xvarnbins, xvarmin, xvarmax, yvarnbins, yvarmin, yvarmax);
-    reco_mcdio_->SetOption("colz");
-    reco_mcdio_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
-    reco_mcdio_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
+    SETUP_RECOMC_HIST_CONTAINED(_mcproton);
+    SETUP_RECOMC_HIST_CONTAINED(_mcdeuteron);
+    SETUP_RECOMC_HIST_CONTAINED(_mctriton);
+    SETUP_RECOMC_HIST_CONTAINED(_mcalpha);
+    SETUP_RECOMC_HIST_CONTAINED(_mcdio);
   }
 
   //----------------------------------------------------------------
@@ -84,66 +89,18 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     const double gen1pmax = conf.read<double>(htopdir+"/genpmax");
 
     // Migration matrices for the contained channel
-    migration_ = hf.DefineTH3D(hdir, "migration",
-                               "Contained channel migration",
-                               gen1nbins, gen1pmin, gen1pmax,
-                               xvarnbins, xvarmin, xvarmax,
-                               yvarnbins, yvarmin, yvarmax);
-
-    migration_->GetXaxis()->SetTitle("p true [MeV/c]");
-    migration_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
-    migration_->GetZaxis()->SetTitle(cvp_->ytitle().c_str());
-
-    migration_mcproton_ = hf.DefineTH3D(hdir, "migration_mcproton",
-                                        "Contained channel migration, proton",
-                                        gen1nbins, gen1pmin, gen1pmax,
-                                        xvarnbins, xvarmin, xvarmax,
-                                        yvarnbins, yvarmin, yvarmax);
-
-    migration_mcproton_->GetXaxis()->SetTitle("p true [MeV/c]");
-    migration_mcproton_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
-    migration_mcproton_->GetZaxis()->SetTitle(cvp_->ytitle().c_str());
-
-    migration_mcdeuteron_ = hf.DefineTH3D(hdir, "migration_mcdeuteron",
-                                          "Contained channel migration, deuteron",
-                                          gen1nbins, gen1pmin, gen1pmax,
-                                          xvarnbins, xvarmin, xvarmax,
-                                          yvarnbins, yvarmin, yvarmax);
-
-    migration_mcdeuteron_->GetXaxis()->SetTitle("p true [MeV/c]");
-    migration_mcdeuteron_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
-    migration_mcdeuteron_->GetZaxis()->SetTitle(cvp_->ytitle().c_str());
+    SETUP_RESPONSE_HIST_CONTAINTED(migration,);
+    SETUP_RESPONSE_HIST_CONTAINTED(migration, _mcproton);
+    SETUP_RESPONSE_HIST_CONTAINTED(migration, _mcdeuteron);
+    SETUP_RESPONSE_HIST_CONTAINTED(migration, _mctriton);
+    SETUP_RESPONSE_HIST_CONTAINTED(migration, _mcalpha);
 
     // Contamination matrices for the contained channel
-    contamination_ = hf.DefineTH3D(hdir, "contamination",
-                                   "Contained channel contamination",
-                                   gen1nbins, gen1pmin, gen1pmax,
-                                   xvarnbins, xvarmin, xvarmax,
-                                   yvarnbins, yvarmin, yvarmax);
-
-    contamination_->GetXaxis()->SetTitle("p true [MeV/c]");
-    contamination_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
-    contamination_->GetZaxis()->SetTitle(cvp_->ytitle().c_str());
-
-    contamination_mcproton_ = hf.DefineTH3D(hdir, "contamination_mcproton",
-                                            "Contained channel contamination, proton",
-                                            gen1nbins, gen1pmin, gen1pmax,
-                                            xvarnbins, xvarmin, xvarmax,
-                                            yvarnbins, yvarmin, yvarmax);
-
-    contamination_mcproton_->GetXaxis()->SetTitle("p true [MeV/c]");
-    contamination_mcproton_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
-    contamination_mcproton_->GetZaxis()->SetTitle(cvp_->ytitle().c_str());
-
-    contamination_mcdeuteron_ = hf.DefineTH3D(hdir, "contamination_mcdeuteron",
-                                              "Contained channel contamination, deuteron",
-                                              gen1nbins, gen1pmin, gen1pmax,
-                                              xvarnbins, xvarmin, xvarmax,
-                                              yvarnbins, yvarmin, yvarmax);
-
-    contamination_mcdeuteron_->GetXaxis()->SetTitle("p true [MeV/c]");
-    contamination_mcdeuteron_->GetYaxis()->SetTitle(cvp_->xtitle().c_str());
-    contamination_mcdeuteron_->GetZaxis()->SetTitle(cvp_->ytitle().c_str());
+    SETUP_RESPONSE_HIST_CONTAINTED(contamination,);
+    SETUP_RESPONSE_HIST_CONTAINTED(contamination, _mcproton);
+    SETUP_RESPONSE_HIST_CONTAINTED(contamination, _mcdeuteron);
+    SETUP_RESPONSE_HIST_CONTAINTED(contamination, _mctriton);
+    SETUP_RESPONSE_HIST_CONTAINTED(contamination, _mcalpha);
   }
 
 }
@@ -209,9 +166,26 @@ HistMuCapContainedChannel::analyzeEvent(const EventClass& evt,
       (referenceSampleAccepted ? migration_mcdeuteron_ : contamination_mcdeuteron_)
         ->Fill(evt.mcvertex_ptot[imcvtxStart], cv.xvar, cv.yvar);
       break;
+
+    case MuCapUtilities::PID_G3_TRITON:
+      reco_mctriton_->Fill(cv.xvar, cv.yvar);
+      (referenceSampleAccepted ? migration_mctriton_ : contamination_mctriton_)
+        ->Fill(evt.mcvertex_ptot[imcvtxStart], cv.xvar, cv.yvar);
+      break;
+
+    case MuCapUtilities::PID_G3_ALPHA:
+      reco_mcalpha_->Fill(cv.xvar, cv.yvar);
+      (referenceSampleAccepted ? migration_mcalpha_ : contamination_mcalpha_)
+        ->Fill(evt.mcvertex_ptot[imcvtxStart], cv.xvar, cv.yvar);
+      break;
+
     case 0:
       reco_mcdio_->Fill(cv.xvar, cv.yvar);
       break;
+    default:
+      std::ostringstream os;
+      os<<"HistMuCapContainedChannel: unknown capture PID="<<mcParticle;
+      throw std::runtime_error(os.str());
     }
   }
 

@@ -218,8 +218,10 @@ void EventClass::LoadMuCapture() {
       numCaptureMcTrkCandidates = 0;
       for(unsigned i=0; i<nmctr; ++i) {
 
-        if((mctrack_pid[i] == MuCapUtilities::PID_G3_PROTON) ||
-           (mctrack_pid[i] == MuCapUtilities::PID_G3_DEUTERON) ) {
+        if((mctrack_pid[i] == MuCapUtilities::PID_G3_PROTON)  ||
+           (mctrack_pid[i] == MuCapUtilities::PID_G3_DEUTERON)||
+           (mctrack_pid[i] == MuCapUtilities::PID_G3_TRITON)  ||
+           (mctrack_pid[i] == MuCapUtilities::PID_G3_ALPHA)      ) {
 
           ++numCaptureMcTrkCandidates;
           if(iCaptureMcTrk == -1) {

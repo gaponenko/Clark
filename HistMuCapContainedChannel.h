@@ -63,16 +63,22 @@ private :
   TH2* reco_;
   TH2* reco_mcproton_;
   TH2* reco_mcdeuteron_;
+  TH2* reco_mctriton_;
+  TH2* reco_mcalpha_;
   TH2* reco_mcdio_;
 
   TH3* migration_;
   TH3* migration_mcproton_;
   TH3* migration_mcdeuteron_;
+  TH3* migration_mctriton_;
+  TH3* migration_mcalpha_;
 
   // Contamination: like migration, but for events not in the reference sample: no true tgt stop.
   TH3* contamination_;
   TH3* contamination_mcproton_;
   TH3* contamination_mcdeuteron_;
+  TH3* contamination_mctriton_;
+  TH3* contamination_mcalpha_;
 
   CutNumber analyzeEvent(const EventClass& evt,
                          bool referenceSampleAccepted,
