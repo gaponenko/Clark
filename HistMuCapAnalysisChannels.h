@@ -69,6 +69,8 @@ private :
   // Essential for normalization of the unfolding
   TH1* mcin_proton_ptot_;
   TH1* mcin_deuteron_ptot_;
+  TH1* mcin_triton_ptot_;
+  TH1* mcin_alpha_ptot_;
   TH1* mcin_dio_count_;
 
   //----------------

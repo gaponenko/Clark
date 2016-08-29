@@ -61,6 +61,8 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     // truth level binning must be consistent for all channels
     mcin_proton_ptot_ = hf.DefineTH1D(hdir, "mcin_proton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcin_deuteron_ptot_ = hf.DefineTH1D(hdir, "mcin_deuteron_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
+    mcin_triton_ptot_ = hf.DefineTH1D(hdir, "mcin_triton_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
+    mcin_alpha_ptot_ = hf.DefineTH1D(hdir, "mcin_alpha_ptot", "mcptot, input", gen1nbins, gen1pmin, gen1pmax);
     mcin_dio_count_ = hf.DefineTH1D(hdir, "mcin_dio_count", "noncapture count, input", 1, -0.5, 0.5);
   }
 
@@ -166,6 +168,12 @@ void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
           break;
         case MuCapUtilities::PID_G3_DEUTERON:
           mcin_deuteron_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+          break;
+        case MuCapUtilities::PID_G3_TRITON:
+          mcin_triton_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
+          break;
+        case MuCapUtilities::PID_G3_ALPHA:
+          mcin_alpha_ptot_->Fill(evt.mcvertex_ptot[imcvtxStart]);
           break;
         case 0:
           mcin_dio_count_->Fill(0.);
