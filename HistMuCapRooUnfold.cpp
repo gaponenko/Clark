@@ -242,7 +242,7 @@ void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrac
   if(doMCTruth_ && truCaptEvt_) {
     if(evt.iCaptureMcVtxStart != -1) {  // ANT: Should be removed ???
       bool IsContained = false;
-      bool IsInTrkRange = false;
+      //bool IsInTrkRange = false;
       bool IsInTrkRangeProton = false;
       bool IsInTrkRangeDeuteron = false;
 
@@ -251,7 +251,7 @@ void HistMuCapRooUnfold::Fill(const EventClass& evt, int iPosTrack, int iNegTrac
 
         double trackEnd = double(evt.hefit_pstop[iPosTrack]);
         IsContained = isPosTrackContained;
-        IsInTrkRange = (trackEnd-28) > 10;
+        //IsInTrkRange = (trackEnd-28) > 10;
         IsInTrkRangeProton = (trackEnd-28) > 10;
         IsInTrkRangeDeuteron = (trackEnd-28) > 14;
         // 0 for protons, 1 for deuterons

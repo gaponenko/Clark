@@ -35,6 +35,8 @@ namespace {
   }
 }
 
+std::string (*dummy_use_formatTrack)(const EventClass&, unsigned) = &formatTrack;
+
 //================================================================
 void MuCapUVAnalysis::init(const std::string& hdir,
                            HistogramFactory &hf,
