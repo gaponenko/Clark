@@ -46,7 +46,9 @@ TDCHitWPPtr maxTDCWidthHit(const WireCluster& cluster);
 // the caller must protect against emtpy planeClusters
 TDCHitWPPtr maxTDCWidthHit(const WireClusterCollection& planeClusters);
 
-
+TDCHitWPPtr earliestTimeHit(const WireCluster& cluster);
+// the caller must protect against emtpy planeClusters
+unsigned iearliestTimeCluster(const WireClusterCollection& planeClusters);
 
 //----------------------------------------------------------------
 // Comparators

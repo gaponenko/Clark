@@ -130,6 +130,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hXT2PlaneDC_.init(hdir+"/hitLevel/xt2PlaneDC", 44, 1, 999, 50., H, Conf);
   }
 
+  hXT3_.init(hdir+"/hitLevel/xt3", H, Conf);
+
   hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init(hdir+"/hitLevel", "hitMapDCAll", 44, 80, H, Conf);
 
@@ -670,6 +672,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   dnPosTrkClassification_.fill(evt, iPosTrack, protonGlobalClusters);
+
+  if(iPosTrack != -1) {
+    hXT3_.fill(evt, iPosTrack, protonGlobalClusters);
+  }
 
   //----------------
   if(commonSkimOutFile_) {

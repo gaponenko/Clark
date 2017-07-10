@@ -22,6 +22,7 @@
 #include "HistAfterPulsing.h"
 #include "HistXtalk.h"
 #include "HistXT2.h"
+#include "HistXT3.h"
 #include "HistMuStopTruth.h"
 #include "HistMuCapMuonRange.h"
 #include "HistAccidentals.h"
@@ -250,6 +251,7 @@ private :
   HistXtalk hXtalkPlaneDC_;
   HistXT2   hXT2PlanePC_;
   HistXT2   hXT2PlaneDC_;
+  HistXT3   hXT3_;
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;

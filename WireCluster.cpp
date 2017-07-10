@@ -126,6 +126,32 @@ TDCHitWPPtr maxTDCWidthHit(const WireClusterCollection& planeClusters) {
 }
 
 //================================================================
+TDCHitWPPtr earliestTimeHit(const WireCluster& cluster) {
+  // this collection is never empty
+  TDCHitWPPtr res = cluster.hits().front();
+  for(unsigned i=1; i<cluster.hits().size(); ++i) {
+    if(cluster.hits()[i]->time() < res->time()) {
+      res = cluster.hits()[i];
+    }
+  }
+  return res;
+}
+
+//const WireCluster& earliestTimeCluster(const WireClusterCollection& planeClusters) {
+unsigned iearliestTimeCluster(const WireClusterCollection& planeClusters) {
+  unsigned res = 0;
+  double tbest = earliestTimeHit(planeClusters[res])->time();
+  for(unsigned i = 1; i < planeClusters.size(); ++i) {
+    TDCHitWPPtr b = earliestTimeHit(planeClusters[i]);
+    if(b->time() < tbest) {
+      res = i;
+      tbest = b->time();
+    }
+  }
+  return res;
+}
+
+//================================================================
 std::ostream& operator<<(std::ostream& os, const WireCluster& cl) {
   return os<<"Cluster(plane="<<cl.plane()<<", hits = "<<cl.hits()<<" )";
 }
