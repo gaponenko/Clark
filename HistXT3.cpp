@@ -36,22 +36,31 @@ void HistXT3TwoCluster::init(const std::string& hdir,
   twocluster_ss_->SetOption("colz");
 
   //----------------
-  hitcluster_dt_all_ =  hf.DefineTH1D(hdir, "hitcluster_dt_all", "hit t(late)- cluster t(early)  for 2-cluster events"+suffix, 200, 0., 1000.);
+  hitcluster_dt_all_ =  hf.DefineTH1D(hdir, "hitcluster_dt_all", "hit t(late)- cluster t(early)  for 2-cluster events, all hits"+suffix, 200, 0., 1000.);
 
-  hitcluster_ww_all_ =  hf.DefineTH2D(hdir, "hitcluster_ww_all", "hit w(late) vs cluster maxw(early)  for 2-cluster events"+suffix, 100, 0., 1000., 100, 0., 1000.);
+  hitcluster_ww_all_ =  hf.DefineTH2D(hdir, "hitcluster_ww_all", "hit w(late) vs cluster maxw(early)  for 2-cluster events, all hits"+suffix, 100, 0., 1000., 100, 0., 1000.);
   hitcluster_ww_all_->SetOption("colz");
 
-  hitcluster_wt_all_ =  hf.DefineTH2D(hdir, "hitcluster_wt_all", "hit w(late) vs hit-cluster dt  for 2-cluster events"+suffix, 200, 0., 1000., 100, 0., 1000.);
+  hitcluster_wt_all_ =  hf.DefineTH2D(hdir, "hitcluster_wt_all", "hit w(late) vs hit-cluster dt  for 2-cluster events, all hits"+suffix, 200, 0., 1000., 100, 0., 1000.);
   hitcluster_wt_all_->SetOption("colz");
 
   //----------------
-  hitcluster_dt_xt_ =  hf.DefineTH1D(hdir, "hitcluster_dt_xt", "hit t(late)- cluster t(early)  for 2-cluster events"+suffix, 200, 0., 1000.);
+  hitcluster_dt_xt_ =  hf.DefineTH1D(hdir, "hitcluster_dt_xt", "hit t(late)- cluster t(early)  for 2-cluster events, xt hits"+suffix, 200, 0., 1000.);
 
-  hitcluster_ww_xt_ =  hf.DefineTH2D(hdir, "hitcluster_ww_xt", "hit w(late) vs cluster maxw(early)  for 2-cluster events"+suffix, 100, 0., 1000., 100, 0., 1000.);
+  hitcluster_ww_xt_ =  hf.DefineTH2D(hdir, "hitcluster_ww_xt", "hit w(late) vs cluster maxw(early)  for 2-cluster events, xt hits"+suffix, 100, 0., 1000., 100, 0., 1000.);
   hitcluster_ww_xt_->SetOption("colz");
 
-  hitcluster_wt_xt_ =  hf.DefineTH2D(hdir, "hitcluster_wt_xt", "hit w(late) vs hit-cluster dt  for 2-cluster events"+suffix, 200, 0., 1000., 100, 0., 1000.);
+  hitcluster_wt_xt_ =  hf.DefineTH2D(hdir, "hitcluster_wt_xt", "hit w(late) vs hit-cluster dt  for 2-cluster events, xt hits"+suffix, 200, 0., 1000., 100, 0., 1000.);
   hitcluster_wt_xt_->SetOption("colz");
+
+  //----------------
+  hitcluster_dt_nxt_ =  hf.DefineTH1D(hdir, "hitcluster_dt_nxt", "hit t(late)- cluster t(early)  for 2-cluster events, nxt hits"+suffix, 200, 0., 1000.);
+
+  hitcluster_ww_nxt_ =  hf.DefineTH2D(hdir, "hitcluster_ww_nxt", "hit w(late) vs cluster maxw(early)  for 2-cluster events, nxt hits"+suffix, 100, 0., 1000., 100, 0., 1000.);
+  hitcluster_ww_nxt_->SetOption("colz");
+
+  hitcluster_wt_nxt_ =  hf.DefineTH2D(hdir, "hitcluster_wt_nxt", "hit w(late) vs hit-cluster dt  for 2-cluster events, nxt hits"+suffix, 200, 0., 1000., 100, 0., 1000.);
+  hitcluster_wt_nxt_->SetOption("colz");
 
 }
 
@@ -83,6 +92,11 @@ void HistXT3TwoCluster::fill(const WireClusterCollection& planeClusters) {
         hitcluster_dt_xt_->Fill(h2.time() - t1);
         hitcluster_ww_xt_->Fill(c1.maxTDCWidth(), h2.width());
         hitcluster_wt_xt_->Fill(h2.time() - t1, h2.width());
+      }
+      else {
+        hitcluster_dt_nxt_->Fill(h2.time() - t1);
+        hitcluster_ww_nxt_->Fill(c1.maxTDCWidth(), h2.width());
+        hitcluster_wt_nxt_->Fill(h2.time() - t1, h2.width());
       }
     }
   }

@@ -42,6 +42,11 @@ private :
   TH1 *hitcluster_dt_xt_;
   TH2 *hitcluster_ww_xt_;
   TH2 *hitcluster_wt_xt_;
+
+  // loop over hits in the second cluster, fill for non-XT hits
+  TH1 *hitcluster_dt_nxt_;
+  TH2 *hitcluster_ww_nxt_;
+  TH2 *hitcluster_wt_nxt_;
 };
 
 //================================================================
