@@ -131,6 +131,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   }
 
   hXT3_.init(hdir+"/hitLevel/xt3", H, Conf);
+  hXT4_.init(hdir+"/hitLevel/xt4", H, Conf);
 
   hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init(hdir+"/hitLevel", "hitMapDCAll", 44, 80, H, Conf);
@@ -675,6 +676,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   if(iPosTrack != -1) {
     hXT3_.fill(evt, iPosTrack, protonGlobalClusters);
+    hXT4_.fill(evt, iPosTrack);
   }
 
   //----------------
