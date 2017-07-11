@@ -57,37 +57,39 @@ void HistXT4WireGap::init(const std::string& hdir,
 
 //================================================================
 void HistXT4WireGap::fill(const TDCHitWPPtrCollection& planeHits) {
-  // Find the widest hits
-  double iwide = 0;
-  double maxw = planeHits[iwide]->width();
-  for(unsigned i=1; i<planeHits.size(); ++i) {
-    if(maxw < planeHits[i]->width()) {
-      iwide = i;
-      maxw = planeHits[iwide]->width();
-    }
-  }
-
-  const TDCHitWPPtr& wideHit = planeHits[iwide];
-
-  // Fill distributions for hits that are "far enough" from the widest hit
-  for(unsigned i=0; i<planeHits.size(); ++i) {
-    if(std::abs(wideHit->cell() - planeHits[i]->cell()) > cutWireGap_) {
-
-      const double dt = planeHits[i]->time() - wideHit->time();
-
-      outwide_dt_all_->Fill(dt);
-      outwide_ww_all_->Fill(wideHit->width(), planeHits[i]->width());
-      outwide_wt_all_->Fill(dt, planeHits[i]->width());
-
-      if(planeHits[i]->xtalk()) {
-        outwide_dt_xt_->Fill(dt);
-        outwide_ww_xt_->Fill(wideHit->width(), planeHits[i]->width());
-        outwide_wt_xt_->Fill(dt, planeHits[i]->width());
+  if(!planeHits.empty()) {
+    // Find the widest hits
+    double iwide = 0;
+    double maxw = planeHits[iwide]->width();
+    for(unsigned i=1; i<planeHits.size(); ++i) {
+      if(maxw < planeHits[i]->width()) {
+        iwide = i;
+        maxw = planeHits[iwide]->width();
       }
-      else {
-        outwide_dt_nxt_->Fill(dt);
-        outwide_ww_nxt_->Fill(wideHit->width(), planeHits[i]->width());
-        outwide_wt_nxt_->Fill(dt, planeHits[i]->width());
+    }
+
+    const TDCHitWPPtr& wideHit = planeHits[iwide];
+
+    // Fill distributions for hits that are "far enough" from the widest hit
+    for(unsigned i=0; i<planeHits.size(); ++i) {
+      if(std::abs(wideHit->cell() - planeHits[i]->cell()) > cutWireGap_) {
+
+        const double dt = planeHits[i]->time() - wideHit->time();
+
+        outwide_dt_all_->Fill(dt);
+        outwide_ww_all_->Fill(wideHit->width(), planeHits[i]->width());
+        outwide_wt_all_->Fill(dt, planeHits[i]->width());
+
+        if(planeHits[i]->xtalk()) {
+          outwide_dt_xt_->Fill(dt);
+          outwide_ww_xt_->Fill(wideHit->width(), planeHits[i]->width());
+          outwide_wt_xt_->Fill(dt, planeHits[i]->width());
+        }
+        else {
+          outwide_dt_nxt_->Fill(dt);
+          outwide_ww_nxt_->Fill(wideHit->width(), planeHits[i]->width());
+          outwide_wt_nxt_->Fill(dt, planeHits[i]->width());
+        }
       }
     }
   }
@@ -138,6 +140,14 @@ void HistXT4::fill(const EventClass& evt, int iTrack) {
     wg2_.fill(dc23hitsAll);
   }
 
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  //test: if(dc23hitsAll.empty()) {
+  //test:   std::cout<<"Got an event with emtpy dc23hitsAll collection.  Dumping all DC hits:\n"
+  //test:            <<evt.dc_hits()
+  //test:            <<std::endl;
+  //test:
+  //test:   std::cout<<"Track time = "<<trackTime<<std::endl;
+  //test: }
 }
 
 //================================================================
