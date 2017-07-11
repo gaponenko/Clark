@@ -61,21 +61,21 @@ private :
   TH1 *trackCosth_;
   TH1 *trackAngle_;
 
-  TH1 *inputHitMultilicity23_;
-  TH1 *inputHitMultilicity23xt_;
-  TH1 *inputHitMultilicity23nxt_;
+  TH1 *inputHitMultiplicity23_;
+  TH1 *inputHitMultiplicity23xt_;
+  TH1 *inputHitMultiplicity23nxt_;
 
   TH1 *hitWidthAll_;
   TH1 *hitWidthXT_;
   TH1 *hitWidthNXT_;
 
-  TH1 *inputWireMultilicity23_;
+  TH1 *inputWireMultiplicity23_;
 
-  TH1 *inputClusterMultilicity23_;
+  TH1 *inputClusterMultiplicity23_;
 
-  TH1 *clusterMultilicity23All_;
-  TH1 *clusterMultilicity23NXT_;
-  TH1 *clusterMultilicity23Clark_;
+  TH1 *clusterMultiplicity23All_;
+  TH1 *clusterMultiplicity23NXT_;
+  TH1 *clusterMultiplicity23Clark_;
 
   //----------------------------------------------------------------
   // Real hit params

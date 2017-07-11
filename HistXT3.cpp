@@ -96,19 +96,19 @@ void HistXT3::init(const std::string& hdir,
   trackCosth_ =  hf.DefineTH1D(hdir, "trackCosth", "track cos(theta)", 100, 0., 1.);
   trackAngle_ =  hf.DefineTH1D(hdir, "trackAngle", "track theta (degrees)", 100, 0., 90.);
 
-  inputHitMultilicity23_ =  hf.DefineTH1D(hdir, "inputHitMultilicity23", "hit multiplicity in DC23", 20, -0.5, 19.5);
-  inputHitMultilicity23xt_ =  hf.DefineTH1D(hdir, "inputHitMultilicity23xt", "xt hit multiplicity in DC23", 20, -0.5, 19.5);
-  inputHitMultilicity23nxt_ =  hf.DefineTH1D(hdir, "inputHitMultilicity23nxt", "nxt hit multiplicity in DC23", 20, -0.5, 19.5);
+  inputHitMultiplicity23_ =  hf.DefineTH1D(hdir, "inputHitMultiplicity23", "hit multiplicity in DC23", 20, -0.5, 19.5);
+  inputHitMultiplicity23xt_ =  hf.DefineTH1D(hdir, "inputHitMultiplicity23xt", "xt hit multiplicity in DC23", 20, -0.5, 19.5);
+  inputHitMultiplicity23nxt_ =  hf.DefineTH1D(hdir, "inputHitMultiplicity23nxt", "nxt hit multiplicity in DC23", 20, -0.5, 19.5);
 
   hitWidthAll_ = hf.DefineTH1D(hdir, "hitWidthAll", "hit width for, all", 150, 0., 1500.);
   hitWidthXT_  = hf.DefineTH1D(hdir, "hitWidthXT",  "hit width, xt", 150, 0., 1500.);
   hitWidthNXT_ = hf.DefineTH1D(hdir, "hitWidthNXT", "hit width, nxt", 150, 0., 1500.);
 
-  inputWireMultilicity23_ =  hf.DefineTH1D(hdir, "inputWireMultilicity23", "wire multiplicity in DC23", 20, -0.5, 19.5);
+  inputWireMultiplicity23_ =  hf.DefineTH1D(hdir, "inputWireMultiplicity23", "wire multiplicity in DC23", 20, -0.5, 19.5);
 
-  clusterMultilicity23All_ =  hf.DefineTH1D(hdir, "clusterMultilicity23All", "cluster multiplicity in DC23, all", 10, -0.5, 9.5);
-  clusterMultilicity23NXT_ =  hf.DefineTH1D(hdir, "clusterMultilicity23NXT", "cluster multiplicity in DC23, nxt", 10, -0.5, 9.5);
-  clusterMultilicity23Clark_ =  hf.DefineTH1D(hdir, "clusterMultilicity23Clark", "cluster multiplicity in DC23, clark", 10, -0.5, 9.5);
+  clusterMultiplicity23All_ =  hf.DefineTH1D(hdir, "clusterMultiplicity23All", "cluster multiplicity in DC23, all", 10, -0.5, 9.5);
+  clusterMultiplicity23NXT_ =  hf.DefineTH1D(hdir, "clusterMultiplicity23NXT", "cluster multiplicity in DC23, nxt", 10, -0.5, 9.5);
+  clusterMultiplicity23Clark_ =  hf.DefineTH1D(hdir, "clusterMultiplicity23Clark", "cluster multiplicity in DC23, clark", 10, -0.5, 9.5);
 
   singleHit23Dt_ =  hf.DefineTH1D(hdir, "dc23onehitdt", "t(hit)-t(track) for single hits in DC23", 240, -100., 1100.);
   singleHit23Width_ =  hf.DefineTH1D(hdir, "dc23onehitwidth", "hit width for single hits in DC23", 150, 0., 1500.);
@@ -166,15 +166,15 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
     }
   }
 
-  inputHitMultilicity23_->Fill(dc23hitsAll.size());
+  inputHitMultiplicity23_->Fill(dc23hitsAll.size());
   int xtmult=0;
   for(unsigned i=0; i<dc23hitsAll.size(); ++i) {
     if(dc23hitsAll[i]->xtalk()) {
       ++xtmult;
     }
   }
-  inputHitMultilicity23xt_->Fill(xtmult);
-  inputHitMultilicity23nxt_->Fill(dc23hitsAll.size() - xtmult);
+  inputHitMultiplicity23xt_->Fill(xtmult);
+  inputHitMultiplicity23nxt_->Fill(dc23hitsAll.size() - xtmult);
 
 
   if(dc23hitsAll.size() == 1) {
@@ -208,13 +208,13 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
   //----------------------------------------------------------------
   ClustersByPlane clustersAll = constructPlaneClusters(44, dc23hitsAll);
   const WireClusterCollection& clusters23all = clustersAll[23];
-  clusterMultilicity23All_->Fill(clusters23all.size());
+  clusterMultiplicity23All_->Fill(clusters23all.size());
 
   int nwires = 0;
   for(unsigned i=0; i<clusters23all.size(); ++i) {
     nwires += clusters23all[i].numCells();
   }
-  inputWireMultilicity23_->Fill(nwires);
+  inputWireMultiplicity23_->Fill(nwires);
 
   if(clusters23all.size()==1) {
     doubleClusterSizeAll_->Fill(clusters23all[0].numCells(), 0.);
@@ -228,7 +228,7 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
   //----------------------------------------------------------------
   ClustersByPlane clustersNXT = constructPlaneClusters(44, dc23hitsNXT);
   const WireClusterCollection& clusters23nxt = clustersNXT[23];
-  clusterMultilicity23NXT_->Fill(clusters23nxt.size());
+  clusterMultiplicity23NXT_->Fill(clusters23nxt.size());
 
   if(clusters23nxt.size()==1) {
     doubleClusterSizeNXT_->Fill(clusters23nxt[0].numCells(), 0.);
@@ -241,7 +241,7 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
 
   //----------------------------------------------------------------
   const WireClusterCollection& clusters23clark = globalProtonClusters[23 + 8];
-  clusterMultilicity23Clark_->Fill(clusters23clark.size());
+  clusterMultiplicity23Clark_->Fill(clusters23clark.size());
 
   if(clusters23clark.size()==1) {
     doubleClusterSizeClark_->Fill(clusters23clark[0].numCells(), 0.);
