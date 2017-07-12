@@ -118,6 +118,8 @@ void HistXT3::init(const std::string& hdir,
   hitWidthXT_  = hf.DefineTH1D(hdir, "hitWidthXT",  "hit width, xt", 150, 0., 1500.);
   hitWidthNXT_ = hf.DefineTH1D(hdir, "hitWidthNXT", "hit width, nxt", 150, 0., 1500.);
 
+  hitTrackTimeAll_ = hf.DefineTH1D(hdir, "hitTrackTimeAll", "hit time - track time, all time window hits", 240, -100., 1100.);
+
   inputWireMultiplicity23_ =  hf.DefineTH1D(hdir, "inputWireMultiplicity23", "wire multiplicity in DC23", 20, -0.5, 19.5);
 
   clusterMultiplicity23All_ =  hf.DefineTH1D(hdir, "clusterMultiplicity23All", "cluster multiplicity in DC23, all", 10, -0.5, 9.5);
@@ -167,6 +169,7 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
       if((winDCStart < dt) && (dt < winDCEnd)) {
         dc23hitsAll.push_back(TDCHitWPPtr(evt.dc_hits(), i));
         hitWidthAll_->Fill(evt.dc_hits()[i].width());
+        hitTrackTimeAll_->Fill(evt.dc_hits()[i].time() - trackTime);
 
         if(!evt.dc_hits()[i].xtalk()) {
           dc23hitsNXT.push_back(TDCHitWPPtr(evt.dc_hits(), i));

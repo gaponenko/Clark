@@ -74,6 +74,8 @@ private :
   TH1 *hitWidthXT_;
   TH1 *hitWidthNXT_;
 
+  TH1 *hitTrackTimeAll_;
+
   TH1 *inputWireMultiplicity23_;
 
   TH1 *inputClusterMultiplicity23_;
