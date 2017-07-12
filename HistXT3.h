@@ -65,6 +65,7 @@ private :
   // preliminaries
   TH1 *trackCosth_;
   TH1 *trackAngle_;
+  TH1 *trackMomentum_;
 
   TH1 *inputHitMultiplicity23_;
   TH1 *inputHitMultiplicity23xt_;

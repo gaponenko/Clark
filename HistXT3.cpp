@@ -109,6 +109,7 @@ void HistXT3::init(const std::string& hdir,
 {
   trackCosth_ =  hf.DefineTH1D(hdir, "trackCosth", "track cos(theta)", 100, 0., 1.);
   trackAngle_ =  hf.DefineTH1D(hdir, "trackAngle", "track theta (degrees)", 100, 0., 90.);
+  trackMomentum_ =  hf.DefineTH1D(hdir, "trackMomentum", "track momentum", 400, 0., 400.);
 
   inputHitMultiplicity23_ =  hf.DefineTH1D(hdir, "inputHitMultiplicity23", "hit multiplicity in DC23", 20, -0.5, 19.5);
   inputHitMultiplicity23xt_ =  hf.DefineTH1D(hdir, "inputHitMultiplicity23xt", "xt hit multiplicity in DC23", 20, -0.5, 19.5);
@@ -158,6 +159,7 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
 
   trackCosth_->Fill(costh);
   trackAngle_->Fill(angle);
+  trackMomentum_->Fill(evt.ptot[iTrack]);
 
   const double trackTime = evt.hefit_time[iTrack];
 
