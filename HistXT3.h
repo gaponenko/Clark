@@ -94,6 +94,9 @@ private :
   TH1 *hits23MaxWidth_; // max width(hits in plane)
   TH1 *hits23FirstWidth_; // width(earliest hit in plane)
 
+  TH2 *hits23MaxWidthVsTrackAngle_; // are maxw=200 ns hits *really* protons?
+  TH2 *hits23MaxWidthVsTrackMomentum_; // are maxw=200 ns hits *really* protons?
+
   //----------------------------------------------------------------
   // multicluster preliminaries
 

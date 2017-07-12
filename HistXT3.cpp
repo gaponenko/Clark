@@ -133,6 +133,11 @@ void HistXT3::init(const std::string& hdir,
   hits23MaxWidth_ =  hf.DefineTH1D(hdir, "dc23maxhitwidth", "max hit width in DC23", 150, 0., 1500.);
   hits23FirstWidth_ =  hf.DefineTH1D(hdir, "dc23firsthitwidth", "hit width for the earliest hit in DC23", 150, 0., 1500.);
 
+  hits23MaxWidthVsTrackAngle_ =  hf.DefineTH2D(hdir, "dc23maxhitwidthVsAngle", "max hit width in DC23 vs track angle", 9, 0., 90., 150, 0., 1500.);
+  hits23MaxWidthVsTrackAngle_->SetOption("colz");
+  hits23MaxWidthVsTrackMomentum_ = hf.DefineTH2D(hdir, "dc23maxhitwidthVsMomentum", "max hit width in DC23 vs track momentum", 8, 0., 400., 150, 0., 1500.);
+  hits23MaxWidthVsTrackMomentum_->SetOption("colz");
+
   doubleClusterSizeAll_ =  hf.DefineTH2D(hdir, "doubleClusterSizeAll", "min vs max cluster size, all", 20, 0.5, 19.5, 5, -0.5, 4.5);
   doubleClusterSizeAll_->SetOption("colz");
 
@@ -156,10 +161,11 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
 
   const double costh= evt.costh[iTrack];
   const double angle = atan2(evt.sinth[iTrack], evt.costh[iTrack]) * 180/(4.*atan(1.));
+  const double momentum = evt.ptot[iTrack];
 
   trackCosth_->Fill(costh);
   trackAngle_->Fill(angle);
-  trackMomentum_->Fill(evt.ptot[iTrack]);
+  trackMomentum_->Fill(momentum);
 
   const double trackTime = evt.hefit_time[iTrack];
 
@@ -222,6 +228,9 @@ void HistXT3::fill(const EventClass& evt, int iTrack, const ClustersByPlane& glo
 
     hits23MaxWidth_->Fill(maxw);
     hits23FirstWidth_->Fill(dc23hitsAll[ifirst]->width());
+
+    hits23MaxWidthVsTrackAngle_->Fill(angle, maxw);
+    hits23MaxWidthVsTrackMomentum_->Fill(momentum, maxw);
   }
 
   //----------------------------------------------------------------
