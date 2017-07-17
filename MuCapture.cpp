@@ -132,6 +132,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hXT3_.init(hdir+"/hitLevel/xt3", H, Conf);
   hXT4_.init(hdir+"/hitLevel/xt4", H, Conf);
+  h200ns_.init(hdir+"/hitLevel/peak200ns", H, *E.geo, Conf);
 
   hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init(hdir+"/hitLevel", "hitMapDCAll", 44, 80, H, Conf);
@@ -677,6 +678,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if(iPosTrack != -1) {
     hXT3_.fill(evt, iPosTrack, protonGlobalClusters);
     hXT4_.fill(evt, iPosTrack);
+    h200ns_.fill(evt, iPosTrack, protonGlobalClusters);
   }
 
   //----------------
