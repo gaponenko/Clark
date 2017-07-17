@@ -256,6 +256,7 @@ private :
   HistXT3   hXT3_;
   HistXT4   hXT4_;
   Hist200nsStudy h200ns_;
+  Hist200nsStudy h200nsDIO_;
 
   HistOccupancy hOccupancyPCAll_;
   HistOccupancy hOccupancyDCAll_;

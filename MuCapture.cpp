@@ -133,6 +133,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hXT3_.init(hdir+"/hitLevel/xt3", H, Conf);
   hXT4_.init(hdir+"/hitLevel/xt4", H, Conf);
   h200ns_.init(hdir+"/hitLevel/peak200ns", H, *E.geo, Conf);
+  h200nsDIO_.init(hdir+"/hitLevel/peak200nsDIO", H, *E.geo, Conf);
 
   hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init(hdir+"/hitLevel", "hitMapDCAll", 44, 80, H, Conf);
@@ -644,6 +645,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hwidthMuHits_.fill(evt, muonGlobalClusters);
   if(iDIONorm != -1) {
     hwidthDIOHits_.fill(evt, protonGlobalClusters);
+    h200nsDIO_.fill(evt, iDIONorm, protonGlobalClusters);
   }
 
   // Do we have any ambiguous events (both "DIO" and "proton")?
