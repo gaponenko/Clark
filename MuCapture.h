@@ -24,6 +24,7 @@
 #include "HistXT2.h"
 #include "HistXT3.h"
 #include "HistXT4.h"
+#include "HistXT5.h"
 #include "Hist200nsStudy.h"
 #include "HistMuStopTruth.h"
 #include "HistMuCapMuonRange.h"
@@ -255,6 +256,7 @@ private :
   HistXT2   hXT2PlaneDC_;
   HistXT3   hXT3_;
   HistXT4   hXT4_;
+  HistXT5   hXT5_;
   Hist200nsStudy h200ns_;
   Hist200nsStudy h200nsDIO_;
 
