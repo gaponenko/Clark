@@ -35,6 +35,7 @@ public:
     , hptot_triton_()
     , hptot_alpha_()
     , hek_()
+    , hbeta_()
     , hphi_()
     , hpcos_()
     , hVUend_()
@@ -55,6 +56,7 @@ private :
   TH1 *hptot_triton_;
   TH1 *hptot_alpha_;
   TH1 *hek_;
+  TH1 *hbeta_;
   TH1 *hphi_;
   TH2 *hpcos_;
   TH2 *hVUend_;

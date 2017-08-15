@@ -29,6 +29,7 @@ void HistMuCapTruth::init(HistogramFactory &hf,
   hptot_triton_ = hf.DefineTH1D(hdir, "ptot_triton", "MC ptot triton", 650, 0., 650.);
   hptot_alpha_ = hf.DefineTH1D(hdir, "ptot_alpha", "MC ptot alpha", 650, 0., 650.);
   hek_ = hf.DefineTH1D(hdir, "ek", "MC Ek", 500, 0., 50.);
+  hbeta_ = hf.DefineTH1D(hdir, "beta", "MC beta", 600, 0., 0.6);
   hphi_ = hf.DefineTH1D(hdir, "phi", "MC momentum phi", 100, -PI, +PI);
   hpcos_ = hf.DefineTH2D(hdir, "cosVsPtos", "MC cosTheta vs ptot", 650, 0., 650., 100, -1., 1.);
   hpcos_->SetOption("colz");
@@ -84,7 +85,12 @@ void HistMuCapTruth::fill(const EventClass& evt) {
       throw std::runtime_error(os.str());
     }
 
-    hek_->Fill(MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtxStart], evt));
+    const double Ek = MuCapUtilities::kineticEnergy(evt.mctrack_pid[imctrk], evt.mcvertex_ptot[imcvtxStart], evt);
+    const double mass = MuCapUtilities::mass(evt.mctrack_pid[imctrk], evt);
+    const double beta = evt.mcvertex_ptot[imcvtxStart] / (Ek + mass);
+
+    hek_->Fill(Ek);
+    hbeta_->Fill(beta);
     hphi_->Fill(evt.mcvertex_phimuv[imcvtxStart]);
     hpcos_->Fill(evt.mcvertex_ptot[imcvtxStart], evt.mcvertex_costh[imcvtxStart]);
 
