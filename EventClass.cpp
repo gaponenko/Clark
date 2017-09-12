@@ -67,6 +67,21 @@ void EventClass::Init( ConfigFile &C, log4cpp::Category *L )
 	// Energy calibration mode
 	EcalibMode	= C.read<int>("EnergyCalibration/Mode");
 
+        // A.Gaponenko, 2017: an option to modify capture track reco spectrum "by hand", without
+        // an actual Michel edge calibration
+        if(C.read<bool>("MuCapture/DoEcalib", false)) {
+          if(DoEcalib) {
+            throw std::runtime_error("Error: Both MuCapture/DoEcalib in config file and -e on command line are requested.\n");
+          }
+
+          DoEcalib = true;
+          Ecal_au = 0.;
+          Ecal_bu = 0.;
+          Ecal_ad = C.read<double>("MuCapture/Ecalib/ad");
+          Ecal_bd = C.read<double>("MuCapture/Ecalib/bd");
+          Log->info("MuCapture Energy calibration parameters: mode = %d, \nDownstream slope     = %+e MeV/c\nDownstream intercept = %+e MeV/c",EcalibMode,Ecal_ad,Ecal_bd);
+        }
+
 	// Momentum and angle smearing
 	MomAngSmearingDo	= C.read<bool>("MomAngSmearing/Do");
 	MomSmearingMean		= C.read<double>("MomAngSmearing/MomMean");
