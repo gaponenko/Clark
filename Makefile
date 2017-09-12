@@ -9,8 +9,10 @@ ROOTLIBS      := -L$(shell root-config --libdir) -lGenVector $(shell root-config
 # includes and libs
 # On detsim we use products from the UPS areas
 ifeq ($(UPS_DIR),)
-	INCLUDE = -I/twist/local/include -I/twist/datap/muminus/mu2esoft/RooUnfold/trunk
-	LIBS += $(ROOTLIBS) -L/twist/local/lib -L/twist/datap/muminus/mu2esoft/RooUnfold/trunk -lRooUnfold -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
+        #mu2esoft gone: INCLUDE = -I/twist/local/include -I/twist/datap/muminus/mu2esoft/RooUnfold/trunk
+        #mu2esoft gone: LIBS += $(ROOTLIBS) -L/twist/local/lib -L/twist/datap/muminus/mu2esoft/RooUnfold/trunk -lRooUnfold -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
+	INCLUDE = -I/twist/local/include
+	LIBS += $(ROOTLIBS) -L/twist/local/lib -llog4cpp -lgsl -lgslcblas -lm -lboost_regex
 else
 	INCLUDE =  $(shell log4cpp-config --cflags) $(shell gsl-config --cflags) -I$(BOOST_INC)
 	LIBS += $(ROOTLIBS) $(shell log4cpp-config --libs) $(shell gsl-config --libs) -L$(BOOST_LIB) -lboost_regex
@@ -22,7 +24,8 @@ CXXFLAGS := -g $(OPTFLAGS) $(ROOTCFLAGS) -Wall -Wno-parentheses -Wno-sign-compar
 
 # Flags for the linker
 LINKER = g++
-LDFLAGS := -g $(OPTFLAGS) $(ROOTLDFLAGS) -Xlinker -rpath=/twist/local/lib -Xlinker -rpath=$(shell root-config --libdir)  -Xlinker -rpath=/twist/datap/muminus/mu2esoft/RooUnfold/trunk
+#mu2esoft gone: LDFLAGS := -g $(OPTFLAGS) $(ROOTLDFLAGS) -Xlinker -rpath=/twist/local/lib -Xlinker -rpath=$(shell root-config --libdir)  -Xlinker -rpath=/twist/datap/muminus/mu2esoft/RooUnfold/trunk
+LDFLAGS := -g $(OPTFLAGS) $(ROOTLDFLAGS) -Xlinker -rpath=/twist/local/lib -Xlinker -rpath=$(shell root-config --libdir)
 
 #
 HEADERS := $(shell ls *.h)
