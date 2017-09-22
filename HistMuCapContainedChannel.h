@@ -4,6 +4,7 @@
 #define HistMuCapContainedChannel_h
 
 #include <string>
+#include <vector>
 
 #include "MuCapContainedVars.h"
 #include "WireCluster.h"
@@ -79,6 +80,8 @@ private :
   TH3* contamination_mcdeuteron_;
   TH3* contamination_mctriton_;
   TH3* contamination_mcalpha_;
+
+  std::vector<TH2*> pcosrange_;
 
   CutNumber analyzeEvent(const EventClass& evt,
                          bool referenceSampleAccepted,

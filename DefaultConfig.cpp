@@ -476,6 +476,9 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cplanesmin", 0.5);
         SetKey(Conf, "MuCapture/channels/rcp1/hitbased/cplanesmax", 25.5);
 
+        // histogram (costh vs p) in slices of range
+        SetKey(Conf, "MuCapture/channels/rcp1/doPCosthSlices", true);
+
         //----------------
         // range vs p set of vars
         SetKey(Conf, "MuCapture/channels/rp1/contained/vars", "RangeVsP");

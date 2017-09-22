@@ -103,6 +103,20 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     SETUP_RESPONSE_HIST_CONTAINTED(contamination, _mcalpha);
   }
 
+  //----------------------------------------------------------------
+  if(conf.read<bool>("MuCapture/channels/"+channelsetname+"/doPCosthSlices", false)) {
+    pcosrange_.resize(yvarnbins);
+    for(unsigned i=0; i<yvarnbins; ++i) {
+      std::ostringstream os;
+      os<<"ptotVsCosth_rangebin"<<1+i;
+      pcosrange_[i] = hf.DefineTH2D(hdir, os.str(), os.str(), 650, 0., 650., 100, -1., +1.);
+      pcosrange_[i]->SetOption("colz");
+      pcosrange_[i]->GetXaxis()->SetTitle("ptot, MeV/c");
+      pcosrange_[i]->GetYaxis()->SetTitle("cos(theta)");
+    }
+  }
+  //----------------------------------------------------------------
+
 }
 
 //================================================================
@@ -143,6 +157,10 @@ HistMuCapContainedChannel::analyzeEvent(const EventClass& evt,
   }
 
   reco_->Fill(cv.xvar, cv.yvar);
+  if(!pcosrange_.empty()) {
+    int bin = reco_->GetYaxis()->FindFixBin(cv.yvar);
+    pcosrange_[bin-1]->Fill(evt.ptot[iPosTrack], evt.costh[iPosTrack]);
+  }
 
   if(doMCTruth_) {
 
