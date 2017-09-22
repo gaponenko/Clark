@@ -132,6 +132,11 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
 
   final_costhVsPtot_->SetOption("colz");
 
+
+  pfine_ = hf.DefineTH1D(hdir, "ptotFine", "ptot fine binnned for DIO Ecalib", 7000, 0., 70.);
+  final_pfine_ = hf.DefineTH1D(hdir, "final_ptotFine", "final ptot fine binnned for DIO Ecalib", 7000, 0., 70.);
+
+
   final_u0v0_ = hf.DefineTH2D(hdir,
                               "final_u0v0",
                               "final_u0v0",
@@ -343,6 +348,7 @@ analyzeTrack(int i, const EventClass& evt,
   // Make sure the tracks are fully contained in the transverse direction
   trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
+  pfine_->Fill(evt.ptot[i]);
   if(evt.radius[i] > cutTrackRmax_) {
     return CUT_RADIUS;
   }
@@ -401,6 +407,7 @@ analyzeTrack(int i, const EventClass& evt,
   final_trackz_->Fill(evt.hefit_z[i]);
   final_trackROut_->Fill(rout);
   final_costhVsPtot_->Fill(evt.ptot[i], evt.costh[i]);
+  final_pfine_->Fill(evt.ptot[i]);
   final_trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
   final_trackTime_->Fill(evt.hefit_time[i]);

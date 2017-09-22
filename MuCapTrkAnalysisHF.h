@@ -98,6 +98,7 @@ public:
     , trackWinTime_()
     , trackRL_()
     , costhVsPtot_()
+    , pfine_()
 
     , hStartStop_()
 
@@ -108,6 +109,7 @@ public:
     , final_trackz_()
     , final_trackRL_()
     , final_costhVsPtot_()
+    , final_pfine_()
     , final_u0v0_()
     , final_trackROut_()
     , final_trackTime_()
@@ -146,6 +148,7 @@ private :
 
   TH2 *trackRL_;
   TH2 *costhVsPtot_;
+  TH1 *pfine_;
 
   TH2 *hStartStop_;
   TH1 *trackChi2_;
@@ -157,6 +160,7 @@ private :
   TH1 *final_trackz_;
   TH2 *final_trackRL_; // radius and wavelength
   TH2 *final_costhVsPtot_;
+  TH1 *final_pfine_;
   TH2 *final_u0v0_;
   TH1 *final_trackROut_;
   TH1 *final_trackTime_;
