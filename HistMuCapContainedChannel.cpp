@@ -159,7 +159,9 @@ HistMuCapContainedChannel::analyzeEvent(const EventClass& evt,
   reco_->Fill(cv.xvar, cv.yvar);
   if(!pcosrange_.empty()) {
     int bin = reco_->GetYaxis()->FindFixBin(cv.yvar);
-    pcosrange_[bin-1]->Fill(evt.ptot[iPosTrack], evt.costh[iPosTrack]);
+    if((0 < bin) && (bin <= pcosrange_.size() )) {
+      pcosrange_[bin-1]->Fill(evt.ptot[iPosTrack], evt.costh[iPosTrack]);
+    }
   }
 
   if(doMCTruth_) {
