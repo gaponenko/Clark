@@ -89,16 +89,6 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
 }
 
 //================================================================
-namespace {
-  int getFirstMCVertexIndexForTrack(const EventClass& evt, int imctrk) {
-    int res = 0;
-    for(unsigned i = 0; i < imctrk; ++i) {
-      res += evt.mctrack_nv[i];
-    }
-    return res;
-  }
-}
-
 void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
   referenceSampleAccepted_ = false;
   if(doMCTruth_) {
@@ -119,7 +109,7 @@ void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
         ++numInputMuons;
 
         // Look at the end vertex of the muon track
-        const int itmpvtxstart = getFirstMCVertexIndexForTrack(evt, i);
+        const int itmpvtxstart = evt.getFirstMCVertexIndexForTrack(i);
         const int itmpvtxend = itmpvtxstart + evt.mctrack_nv[i] - 1;
         const double stoptime = evt.mcvertex_time[itmpvtxend];
         refsample_endvtx_time_->Fill(stoptime);
@@ -133,7 +123,7 @@ void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
     }
     if(iMuStopTrack != -1) {
       // Set vertex indexes
-      iMuStopVtxStart = getFirstMCVertexIndexForTrack(evt, iMuStopTrack);
+      iMuStopVtxStart = evt.getFirstMCVertexIndexForTrack(iMuStopTrack);
       iMuStopVtxEnd = iMuStopVtxStart + evt.mctrack_nv[iMuStopTrack] - 1;
     }
 
