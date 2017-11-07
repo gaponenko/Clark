@@ -44,6 +44,10 @@ public:
     , hZendVsPstart_()
     , hZStart1_()
     , hZStart2_()
+    , hZStop1_()
+    , hZStop2_()
+    , hZStop3_()
+    , hZStop4_()
   {}
 
 private :
@@ -65,6 +69,10 @@ private :
   TH2 *hZendVsPstart_;
   TH1 *hZStart1_;
   TH1 *hZStart2_;
+  TH1 *hZStop1_;
+  TH1 *hZStop2_;
+  TH1 *hZStop3_;
+  TH1 *hZStop4_;
 };
 
 #endif/*HistMuCapTruth_h*/
