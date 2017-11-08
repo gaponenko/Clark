@@ -95,7 +95,7 @@ public:
   unsigned maxCellNumber(WirePlane::DetType d) const;
 
   double zTargetCenter() const { return zTargetCenter_; }
-  double targetHalfThickness() const { return targetHalfThickness_; }
+  double targetThickness() const { return targ_thick; }
 
 private:
   // (1) DC variables
@@ -163,7 +163,6 @@ private :
   std::vector<WirePlane> dcplanes_;
   std::vector<WirePlane> globalplanes_;
   double zTargetCenter_;
-  double targetHalfThickness_;
 
   bool ReadGeometry(const ConfigFile& conf, log4cpp::Category *L);
   void  ReadDRFT(std::ifstream &file);

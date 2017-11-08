@@ -78,7 +78,6 @@ namespace {
 
 DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger)
   : zTargetCenter_(conf.read<double>("Detector/Geometry/zTargetCenter"))
-  , targetHalfThickness_(conf.read<double>("Detector/Geometry/zTargetCenter")/2.)
 {
   if(!ReadGeometry(conf, &logger)) {
     throw std::runtime_error("DetectorGeo: error reading geometry.");
