@@ -77,7 +77,6 @@ namespace {
 }
 
 DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger)
-  : zTargetCenter_(conf.read<double>("Detector/Geometry/zTargetCenter"))
 {
   if(!ReadGeometry(conf, &logger)) {
     throw std::runtime_error("DetectorGeo: error reading geometry.");
@@ -94,6 +93,19 @@ DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger)
   std::copy(pcplanes_.begin(), pcplanes_.end(), std::back_inserter(globalplanes_));
   std::copy(dcplanes_.begin(), dcplanes_.end(), std::back_inserter(globalplanes_));
   std::sort(globalplanes_.begin(), globalplanes_.end(), WirePlaneZSorter());
+
+  // The target is glued on the "-z" side of the supporting foil.
+  // The foil center is stored in the PC foils array.
+  if(npfoils == 15) {
+    const int iTargetFoil = (npfoils-1)/2; // the center
+    const double zfoil = zpfoil[iTargetFoil];
+    zTargetCenter_ = zfoil - tfoil_thick/2. - targ_thick/2.;
+  }
+  else {
+    std::ostringstream os;
+    os<<"DetectorGeo(): expect npfoils==15, got "<<npfoils;
+    throw std::runtime_error(os.str());
+  }
 }
 
 //================================================================
