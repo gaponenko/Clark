@@ -287,9 +287,6 @@ private :
   HistDriftTime hdriftDCAll_;
   HistDriftTime hdriftDCFiltered_;
 
-  HistMuStopTruth hmuStopTruthAll_;
-  HistMuStopTruth hmuStopTruthAfterGaps_;
-
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthMuStop_;
   HistMuCapTruth hTruthDnCandidate_;
