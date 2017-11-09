@@ -77,10 +77,10 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   }
 
   if(doMCTruth_) {
-    hTruthContained_.init(hf, hdir+"/contained/MCTruth", conf);
-    hTruthUncontained_.init(hf, hdir+"/uncontained/MCTruth", conf);
-    hTruthHitbased_.init(hf, hdir+"/hitbased/MCTruth", conf);
-    hTruthNone_.init(hf, hdir+"/nochannel/MCTruth", conf);
+    hTruthContained_.init(hf, hdir+"/contained/MCTruth", geom, conf);
+    hTruthUncontained_.init(hf, hdir+"/uncontained/MCTruth", geom, conf);
+    hTruthHitbased_.init(hf, hdir+"/hitbased/MCTruth", geom, conf);
+    hTruthNone_.init(hf, hdir+"/nochannel/MCTruth", geom, conf);
 
     hResolutionContained_.init(hf, hdir+"/contained/resolution", conf);
     hResolutionUncontained_.init(hf, hdir+"/uncontained/resolution", conf);

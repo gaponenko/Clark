@@ -15,11 +15,13 @@
 //================================================================
 void HistMuCapTruth::init(HistogramFactory &hf,
                           const std::string& hdir,
+                          const DetectorGeo& geom,
                           const ConfigFile &conf)
 {
   static const double PI = 4.*atan(1.);
 
   helectrons_.init(hf, hdir+"/electrons", conf);
+  hmustops_.init(hf, hdir+"/mustops", geom, conf);
 
   hNumMCCaptureTracks_ = hf.DefineTH1D(hdir, "numCaptureMcTrkCandidates", "numCaptureMcTrkCandidates", 10, -0.5, 9.5);
   hCaptureTime_ = hf.DefineTH1D(hdir, "time", "MC time", 640, -100., 1500.);
@@ -48,23 +50,16 @@ void HistMuCapTruth::init(HistogramFactory &hf,
 
   // Same binning as G3 H4
   hZStart1_ = hf.DefineTH1D(hdir, "zstart1", "Capture track start Z, coarse", 100, -50., 50.);
-  hZStop1_ = hf.DefineTH1D(hdir, "zstop1", "Muon stop Z, coarse", 100, -50., 50.);
 
   // Same bin size as G3 H5, but different range because of the target shift
   hZStart2_ = hf.DefineTH1D(hdir, "zstart2", "Capture track start Z", 300, -0.030, 0.030);
-  hZStop2_ = hf.DefineTH1D(hdir, "zstop2", "Muon stop Z", 300, -0.030, 0.030);
-
-  // Same binning as in_zstop in the reference sample handling
-  hZStop3_ = hf.DefineTH1D(hdir, "zstop3", "Muon stop Z", 120, -0.0200, -0.0080);
-
-  // dt_geo.00061: foil positions around the center: -0.41318 -0.00904 0.38671
-  // foil thickness: 0.0005960 cm
-  hZStop4_ = hf.DefineTH1D(hdir, "zstop4", "Muon stop Z", 1000, -0.5, +0.5);
 }
 
 //================================================================
 void HistMuCapTruth::fill(const EventClass& evt) {
   helectrons_.fill(evt);
+  hmustops_.fill(evt);
+
   hNumMCCaptureTracks_->Fill(evt.numCaptureMcTrkCandidates);
   if(evt.iCaptureMcTrk != -1) {
     const unsigned imcvtxStart = evt.iCaptureMcVtxStart;
@@ -116,39 +111,6 @@ void HistMuCapTruth::fill(const EventClass& evt) {
     hZStart1_->Fill(evt.mcvertex_vz[imcvtxStart]);
     hZStart2_->Fill(evt.mcvertex_vz[imcvtxStart]);
   }
-
-  // Muon stop z is filled regardless of the presence of a capture track
-  if(true) {
-    // This code is stolen from HistMuCapAnalysisChannels::fillReferenceSample()
-    // Look for the trigger muon stop
-    int iMuStopTrack = -1;
-    for(unsigned i=0; i<evt.nmctr; ++i) {
-      if((evt.mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) ||
-         (evt.mctrack_pid[i] == MuCapUtilities::PID_G4_MUMINUS)) {
-
-        // Look at the end vertex of the muon track
-        const int itmpvtxstart = evt.getFirstMCVertexIndexForTrack(i);
-        const int itmpvtxend = itmpvtxstart + evt.mctrack_nv[i] - 1;
-        const double stoptime = evt.mcvertex_time[itmpvtxend];
-        if(std::abs(stoptime) < 100.) {
-          if(iMuStopTrack == -1) {
-            iMuStopTrack = i;
-          }
-        }
-      }
-    }
-    if(iMuStopTrack != -1) {
-      // Set vertex indexes
-      const int iMuStopVtxStart = evt.getFirstMCVertexIndexForTrack(iMuStopTrack);
-      const int iMuStopVtxEnd = iMuStopVtxStart + evt.mctrack_nv[iMuStopTrack] - 1;
-      const double zstop = evt.mcvertex_vz[iMuStopVtxEnd];
-      hZStop1_->Fill(zstop);
-      hZStop2_->Fill(zstop);
-      hZStop3_->Fill(zstop);
-      hZStop4_->Fill(zstop);
-    }
-  }
-
 }
 
 //================================================================

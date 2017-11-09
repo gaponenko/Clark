@@ -22,6 +22,7 @@ class TH2;
 
 class HistogramFactory;
 class ConfigFile;
+class DetectorGeo;
 class EventClass;
 
 //================================================================
@@ -66,6 +67,7 @@ public:
 
   void init(const std::string& hdir,
             HistogramFactory &hf,
+            const DetectorGeo& geom,
             const ConfigFile &conf,
             const std::string& cutSet,
             TimeWindow::StreamType cutStream,

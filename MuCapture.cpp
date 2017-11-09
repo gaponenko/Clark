@@ -86,9 +86,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   rooUnfHits_.init(H, "MuCapture", Conf);
 
   //----------------------------------------------------------------
-  dnPosTracks_.init(hdir+"/dnPosTracks", H, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
-  dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
-  dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
+  dnPosTracks_.init(hdir+"/dnPosTracks", H, *E.geo, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
+  dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, *E.geo, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
+  dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, *E.geo, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
   dnPosTrkRangeStudies_.init(H, hdir+"/dnPosTrkRangeStudies", *E.geo, Conf);
@@ -252,9 +252,9 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
                          Conf);
 
   if(doMCTruth_) {
-    hTruthAll_.init(H, hdir+"/MCTruthAll", Conf);
-    hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", Conf);
-    hTruthDnCandidate_.init(H, hdir+"/MCTruthDnCandidate", Conf);
+    hTruthAll_.init(H, hdir+"/MCTruthAll", *E.geo, Conf);
+    hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", *E.geo, Conf);
+    hTruthDnCandidate_.init(H, hdir+"/MCTruthDnCandidate", *E.geo, Conf);
 
     hMcMuStopsAll_.init(H, hdir+"/mcMuStop/all", *E.geo, Conf);
     hMcMuStopsLastPlane_.init(H, hdir+"/mcMuStop/lastPlane", *E.geo, Conf);

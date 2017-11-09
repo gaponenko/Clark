@@ -46,6 +46,7 @@ namespace {
 //================================================================
 void MuCapTrkAnalysisHF::init(const std::string& hdir,
                               HistogramFactory &hf,
+                              const DetectorGeo& geom,
                               const ConfigFile& conf,
                               const std::string& cutSet,
                               TimeWindow::StreamType cutStream,
@@ -201,7 +202,7 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   hSelectordrmu_->SetOption("colz");
 
   if(doMCTruth_) {
-    htruthAccepted_.init(hf, hdir+"/truthAccepted", conf);
+    htruthAccepted_.init(hf, hdir+"/truthAccepted", geom, conf);
     hSelectedTrkResolution_.init(hf, hdir+"/SelectedTrackResolution", conf);
   }
 }

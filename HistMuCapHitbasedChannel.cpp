@@ -149,8 +149,8 @@ void HistMuCapHitbasedChannel::init(HistogramFactory& hf,
     contamination_mcdeuteron_->GetZaxis()->SetTitle("cplane");
 
     //----------------
-    hTruth_in_.init(hf, hdir+"/MCTruth_in", conf);
-    hTruth_accepted_.init(hf, hdir+"/MCTruth_accepted", conf);
+    hTruth_in_.init(hf, hdir+"/MCTruth_in", geom, conf);
+    hTruth_accepted_.init(hf, hdir+"/MCTruth_accepted", geom, conf);
   }
 
   hOuterVetoNumHitPlanes_ = hf.DefineTH1D(hdir, "outerVetoNumHitPlanes", "outerVetoNumHitPlanes", 6, -0.5, 5.5);
