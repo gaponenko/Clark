@@ -26,7 +26,6 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
 }
 
 int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster) {
-  int res = 0;
 
   const double pc5width = pc5cluster.totalTDCWidth();
   const double pc6width = pc6cluster.totalTDCWidth();
@@ -35,10 +34,9 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster, const WireCluster
   const double linea = intercepta_ + slopea_ * pc5width;
   const double lineb = interceptb_ + slopeb_ * pc5width;
 
-  if (pc6width > linea && pc6width > lineb) res = 2;
-  if (pc6width > linea && pc6width < lineb) res = 1;
-  if (pc6width < linea && pc6width > lineb) res = 3;
-  if (pc6width < linea && pc6width < lineb) res = 4;
+  int res = (pc6width < linea) ?
+    ((pc6width < lineb)? 4 : 3):
+    ((pc6width < lineb)? 1 : 2);
 
   if(res == 1) {
     hpc6vs5widthQ1_->Fill(pc5width, pc6width);
