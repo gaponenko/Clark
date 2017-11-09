@@ -219,66 +219,53 @@ void EventClass::LoadMuCapture() {
       break;
 
     case G3:
-      iCaptureMcTrk = -1;
-      numCaptureMcTrkCandidates = 0;
-      for(unsigned i=0; i<nmctr; ++i) {
-
-        if((mctrack_pid[i] == MuCapUtilities::PID_G3_PROTON)  ||
-           (mctrack_pid[i] == MuCapUtilities::PID_G3_DEUTERON)||
-           (mctrack_pid[i] == MuCapUtilities::PID_G3_TRITON)  ||
-           (mctrack_pid[i] == MuCapUtilities::PID_G3_ALPHA)      ) {
-
-          ++numCaptureMcTrkCandidates;
-          if(iCaptureMcTrk == -1) {
-            iCaptureMcTrk = i;
-
-          }
-          else {
-            // throw std::runtime_error("EventClass::LoadMuCapture() G3 truth: multiple protons cases are not handled");
-          }
-        }
-      }
-
-      iCaptureMcVtxStart = -1;
-      iCaptureMcVtxEnd = -1;
-      if(iCaptureMcTrk != -1) {
-        // Set vertex indexes
-        iCaptureMcVtxStart = getFirstMCVertexIndexForTrack(iCaptureMcTrk);
-        iCaptureMcVtxEnd = iCaptureMcVtxStart + mctrack_nv[iCaptureMcTrk] - 1;
-      }
-
-      iMuStopMcTrk = -1;
-      iMuStopMcVtxStart = -1;
-      iMuStopMcVtxEnd = -1;
-      mcMuonTotalMultiplicity = 0;
-      mcMuonTrigCandidateMultiplicity = 0;
-
-      for(int i=0; i<nmctr; ++i) {
-        const int ivtx = getFirstMCVertexIndexForTrack(i);
-        if((mctrack_nv[i] > 0) /*&& (mcvertex_istop[ivtx] == MuCapUtilities::PROC_G3_PRIMARY)*/) {
-
+      {
+        iMuStopMcTrk = -1;
+        iMuStopMcVtxStart = -1;
+        iMuStopMcVtxEnd = -1;
+        mcMuonTotalMultiplicity = 0;
+        mcMuonTrigCandidateMultiplicity = 0;
+        for(int i=0; i<nmctr; ++i) {
           if(mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) {
-
             ++mcMuonTotalMultiplicity;
 
-            // Look at the end vertex of the muon track
-            const int itmpvtxstart = getFirstMCVertexIndexForTrack(i);
-            const int itmpvtxend = itmpvtxstart + mctrack_nv[i] - 1;
-            const double stoptime = mcvertex_time[itmpvtxend];
-
-            if(stoptime > 0.) { // MC trigger muon starts at t==0.
+            if(i==0) { // the trigger particle is muon
               ++mcMuonTrigCandidateMultiplicity;
-              if((iMuStopMcTrk == -1) || (stoptime < mcvertex_time[iMuStopMcVtxEnd])) {
-                iMuStopMcTrk = i;
-                iMuStopMcVtxStart = itmpvtxstart;
-                iMuStopMcVtxEnd = itmpvtxend;
-              }
+              iMuStopMcTrk = i;
+              iMuStopMcVtxStart = getFirstMCVertexIndexForTrack(i);
+              iMuStopMcVtxEnd = iMuStopMcVtxStart + mctrack_nv[i] - 1;
             }
+          }
+        }
 
-          } // if(muon)
-        } // if(primary)
-      }
+        iCaptureMcTrk = -1;
+        numCaptureMcTrkCandidates = 0;
+        for(unsigned i=0; i<nmctr; ++i) {
 
+          if((mctrack_pid[i] == MuCapUtilities::PID_G3_PROTON)  ||
+             (mctrack_pid[i] == MuCapUtilities::PID_G3_DEUTERON)||
+             (mctrack_pid[i] == MuCapUtilities::PID_G3_TRITON)  ||
+             (mctrack_pid[i] == MuCapUtilities::PID_G3_ALPHA)      ) {
+
+            ++numCaptureMcTrkCandidates;
+            if(iCaptureMcTrk == -1) {
+              iCaptureMcTrk = i;
+
+            }
+            else {
+              // throw std::runtime_error("EventClass::LoadMuCapture() G3 truth: multiple protons cases are not handled");
+            }
+          }
+        }
+
+        iCaptureMcVtxStart = -1;
+        iCaptureMcVtxEnd = -1;
+        if(iCaptureMcTrk != -1) {
+          // Set vertex indexes
+          iCaptureMcVtxStart = getFirstMCVertexIndexForTrack(iCaptureMcTrk);
+          iCaptureMcVtxEnd = iCaptureMcVtxStart + mctrack_nv[iCaptureMcTrk] - 1;
+        }
+      } // G3
       break;
 
     default:
