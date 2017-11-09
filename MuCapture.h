@@ -26,7 +26,7 @@
 #include "HistXT4.h"
 #include "HistXT5.h"
 #include "Hist200nsStudy.h"
-#include "HistMuStopTruth.h"
+#include "HistMuCapTruth.h"
 #include "HistMuCapMuonRange.h"
 #include "HistAccidentals.h"
 #include "HistWinDCUnassigned.h"
@@ -288,13 +288,10 @@ private :
   HistDriftTime hdriftDCFiltered_;
 
   HistMuCapTruth hTruthAll_;
-  HistMuCapTruth hTruthMuStop_;
+  HistMuCapTruth hTruthLastPlane_;
+  HistMuCapTruth hTruthPACT_;
+  HistMuCapTruth hTruthDnPC_;
   HistMuCapTruth hTruthDnCandidate_;
-
-  HistMuStopTruth hMcMuStopsAll_;
-  HistMuStopTruth hMcMuStopsLastPlane_;
-  HistMuStopTruth hMcMuStopsPACT_;
-  HistMuStopTruth hMcMuStopsDnPC_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 

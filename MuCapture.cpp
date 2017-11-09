@@ -252,14 +252,11 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
                          Conf);
 
   if(doMCTruth_) {
-    hTruthAll_.init(H, hdir+"/MCTruthAll", *E.geo, Conf);
-    hTruthMuStop_.init(H, hdir+"/MCTruthMuStop", *E.geo, Conf);
-    hTruthDnCandidate_.init(H, hdir+"/MCTruthDnCandidate", *E.geo, Conf);
-
-    hMcMuStopsAll_.init(H, hdir+"/mcMuStop/all", *E.geo, Conf);
-    hMcMuStopsLastPlane_.init(H, hdir+"/mcMuStop/lastPlane", *E.geo, Conf);
-    hMcMuStopsPACT_.init(H, hdir+"/mcMuStop/pact", *E.geo, Conf);
-    hMcMuStopsDnPC_.init(H, hdir+"/mcMuStop/dnPC", *E.geo, Conf);
+    hTruthAll_.init(H, hdir+"/MCTruth/all", *E.geo, Conf);
+    hTruthLastPlane_.init(H, hdir+"/MCTruth/lastPlane", *E.geo, Conf);
+    hTruthPACT_.init(H, hdir+"/MCTruth/pact", *E.geo, Conf);
+    hTruthDnPC_.init(H, hdir+"/MCTruth/dnPC", *E.geo, Conf);
+    hTruthDnCandidate_.init(H, hdir+"/MCTruth/dnCandidate", *E.geo, Conf);
   }
 
   //----------------------------------------------------------------
@@ -372,7 +369,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   if(doMCTruth_) {
     hTruthAll_.fill(evt);
-    hMcMuStopsAll_.fill(evt);
   }
 
   //----------------------------------------------------------------
@@ -436,7 +432,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   if(doMCTruth_) {
-    hMcMuStopsLastPlane_.fill(evt);
+    hTruthLastPlane_.fill(evt);
   }
 
   //----------------------------------------------------------------
@@ -477,7 +473,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   if(doMCTruth_) {
-    hMcMuStopsPACT_.fill(evt);
+    hTruthPACT_.fill(evt);
   }
 
   //----------------------------------------------------------------
@@ -517,10 +513,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
-  if(doMCTruth_) {
-    hTruthMuStop_.fill(evt);
-  }
-
   //  ----------------
   // More stopped muon histos
   for(int i = 0; i + 1 < muonRange.segments().size(); ++i) {
@@ -555,7 +547,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_DOWNSTREAM_PCHITS;
   }
   if(doMCTruth_) {
-    hMcMuStopsDnPC_.fill(evt);
+    hTruthDnPC_.fill(evt);
   }
 
   const unsigned iDecayWin = 1 + wres.iTrigWin;
