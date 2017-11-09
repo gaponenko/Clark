@@ -14,45 +14,47 @@
 
 //================================================================
 void HistMuCapTruth::init(HistogramFactory &hf,
-                          const std::string& hdir,
+                          const std::string& topdir,
                           const DetectorGeo& geom,
                           const ConfigFile &conf)
 {
   static const double PI = 4.*atan(1.);
 
-  helectrons_.init(hf, hdir+"/electrons", conf);
-  hmustops_.init(hf, hdir+"/mustops", geom, conf);
+  helectrons_.init(hf, topdir+"/electrons", conf);
+  hmustops_.init(hf, topdir+"/mustops", geom, conf);
 
-  hNumMCCaptureTracks_ = hf.DefineTH1D(hdir, "numCaptureMcTrkCandidates", "numCaptureMcTrkCandidates", 10, -0.5, 9.5);
-  hCaptureTime_ = hf.DefineTH1D(hdir, "time", "MC time", 640, -100., 1500.);
-  hptot_ = hf.DefineTH1D(hdir, "ptot", "MC ptot", 650, 0., 650.);
-  hptot_proton_ = hf.DefineTH1D(hdir, "ptot_proton", "MC ptot proton", 650, 0., 650.);
-  hptot_deuteron_ = hf.DefineTH1D(hdir, "ptot_deuteron", "MC ptot deuteron", 650, 0., 650.);
-  hptot_triton_ = hf.DefineTH1D(hdir, "ptot_triton", "MC ptot triton", 650, 0., 650.);
-  hptot_alpha_ = hf.DefineTH1D(hdir, "ptot_alpha", "MC ptot alpha", 650, 0., 650.);
-  hek_ = hf.DefineTH1D(hdir, "ek", "MC Ek", 500, 0., 50.);
-  hbeta_ = hf.DefineTH1D(hdir, "beta", "MC beta", 600, 0., 0.6);
-  hphi_ = hf.DefineTH1D(hdir, "phi", "MC momentum phi", 100, -PI, +PI);
-  hpcos_ = hf.DefineTH2D(hdir, "cosVsPtos", "MC cosTheta vs ptot", 650, 0., 650., 100, -1., 1.);
+  const std::string capdir = topdir + "/capture";
+
+  hNumMCCaptureTracks_ = hf.DefineTH1D(capdir, "numCaptureMcTrkCandidates", "numCaptureMcTrkCandidates", 10, -0.5, 9.5);
+  hCaptureTime_ = hf.DefineTH1D(capdir, "time", "MC time", 640, -100., 1500.);
+  hptot_ = hf.DefineTH1D(capdir, "ptot", "MC ptot", 650, 0., 650.);
+  hptot_proton_ = hf.DefineTH1D(capdir, "ptot_proton", "MC ptot proton", 650, 0., 650.);
+  hptot_deuteron_ = hf.DefineTH1D(capdir, "ptot_deuteron", "MC ptot deuteron", 650, 0., 650.);
+  hptot_triton_ = hf.DefineTH1D(capdir, "ptot_triton", "MC ptot triton", 650, 0., 650.);
+  hptot_alpha_ = hf.DefineTH1D(capdir, "ptot_alpha", "MC ptot alpha", 650, 0., 650.);
+  hek_ = hf.DefineTH1D(capdir, "ek", "MC Ek", 500, 0., 50.);
+  hbeta_ = hf.DefineTH1D(capdir, "beta", "MC beta", 600, 0., 0.6);
+  hphi_ = hf.DefineTH1D(capdir, "phi", "MC momentum phi", 100, -PI, +PI);
+  hpcos_ = hf.DefineTH2D(capdir, "cosVsPtos", "MC cosTheta vs ptot", 650, 0., 650., 100, -1., 1.);
   hpcos_->SetOption("colz");
 
-  hVUend_ = hf.DefineTH2D(hdir, "uvend", "V vs U primary end vtx for |Zend|<60 cm", 600, -30., 30., 600, -30., 30.);
+  hVUend_ = hf.DefineTH2D(capdir, "uvend", "V vs U primary end vtx for |Zend|<60 cm", 600, -30., 30., 600, -30., 30.);
   hVUend_->SetOption("box");
 
-  hRZend_ = hf.DefineTH2D(hdir, "rzend", "Primary end vtx R vs Z", 1200, -60., 60., 300, 0., 30.);
+  hRZend_ = hf.DefineTH2D(capdir, "rzend", "Primary end vtx R vs Z", 1200, -60., 60., 300, 0., 30.);
   hRZend_->SetOption("colz");
 
-  hRendVsPstart_ = hf.DefineTH2D(hdir, "rpstart", "End R vs start ptot for |Zend|<60 cm", 650, 0., 650., 300, 0., 30.);
+  hRendVsPstart_ = hf.DefineTH2D(capdir, "rpstart", "End R vs start ptot for |Zend|<60 cm", 650, 0., 650., 300, 0., 30.);
   hRendVsPstart_->SetOption("colz");
 
-  hZendVsPstart_ = hf.DefineTH2D(hdir, "zpstart", "End Z vs start ptot", 650, 0., 650., 1200, -60., 60.);
+  hZendVsPstart_ = hf.DefineTH2D(capdir, "zpstart", "End Z vs start ptot", 650, 0., 650., 1200, -60., 60.);
   hZendVsPstart_->SetOption("colz");
 
   // Same binning as G3 H4
-  hZStart1_ = hf.DefineTH1D(hdir, "zstart1", "Capture track start Z, coarse", 100, -50., 50.);
+  hZStart1_ = hf.DefineTH1D(capdir, "zstart1", "Capture track start Z, coarse", 100, -50., 50.);
 
   // Same bin size as G3 H5, but different range because of the target shift
-  hZStart2_ = hf.DefineTH1D(hdir, "zstart2", "Capture track start Z", 300, -0.030, 0.030);
+  hZStart2_ = hf.DefineTH1D(capdir, "zstart2", "Capture track start Z", 300, -0.030, 0.030);
 }
 
 //================================================================
