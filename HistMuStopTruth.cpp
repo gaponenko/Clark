@@ -20,20 +20,41 @@ void HistMuStopTruth::init(HistogramFactory &hf,
                            const ConfigFile &conf)
 {
   zTargetCenter_ = geom.zTargetCenter();
-  hnumPrimaries_ = hf.DefineTH1D(hdir, "numPrimaries", "number of primary tracks", 10, -0.5, 9.5);
+
+  hMcMuonTotalMultiplicity_ = hf.DefineTH1D(hdir, "mcMuonTotalMultiplicity", "MC mu- total multiplicity", 10, -0.5, 9.5);
+  hMcMuonTrigCandidateMultiplicity_ = hf.DefineTH1D(hdir, "mcMuonTrigCandidateMultiplicity", "MC mu- trig candidate multiplicity", 10, -0.5, 9.5);
+
+  hMcMuonStopTime_ = hf.DefineTH1D(hdir, "mcMuonStopTime", "MC muon stop time", 300, -50., 2950.);
+
   hstopZ1_ = hf.DefineTH1D(hdir, "stopz1", "true Z stop", 1200, -60., 60.);
-  hstopZ2_ = hf.DefineTH1D(hdir, "stopz2", "true Z stop", 200, -1., 1.);
-  hstopZ3_ = hf.DefineTH1D(hdir, "stopz3", "true Z stop - Z tgt", 100, -0.01, 0.01);
+
+  // Same binning as in_zstop in the reference sample handling
+  hstopZ2_ = hf.DefineTH1D(hdir, "stopz2", "MC muon Z stop position", 120, -0.0200, -0.0080);
+
+  // Align bin boundaries with the target.
+  const int numBinsInTarget = 35; // in the 71um target
+  const double binSize = geom.targetThickness()/numBinsInTarget;
+
+  const double approximateHalfRange = 0.5; // cm, half histo scale
+  const int numBins =  1 + 2*int(approximateHalfRange/binSize);
+  const double fullRange = binSize * numBins;
+  hstopdz_ = hf.DefineTH1D(hdir, "stopdz", "true Z stop - Z tgt", numBins, -0.5*fullRange, +0.5*fullRange);
 }
 
 //================================================================
 void HistMuStopTruth::fill(const EventClass& evt) {
-  hnumPrimaries_->Fill(evt.numPrimaryMcTrkCandidates);
-  if(evt.iPrimaryMcTrk != -1) {
-    const double zstop = evt.mcvertex_vz[evt.iPrimaryMcVtxEnd];
+  hMcMuonTotalMultiplicity_->Fill(evt.mcMuonTotalMultiplicity);
+  hMcMuonTrigCandidateMultiplicity_->Fill(evt.mcMuonTrigCandidateMultiplicity);
+
+  if(evt.iMuStopMcVtxEnd != -1) {
+    hMcMuonStopTime_->Fill(evt.mcvertex_time[evt.iMuStopMcVtxEnd]);
+    const double zstop = evt.mcvertex_vz[evt.iMuStopMcVtxEnd];
+
     hstopZ1_->Fill(zstop);
     hstopZ2_->Fill(zstop);
-    hstopZ3_->Fill(zstop - zTargetCenter_);
+
+    const double dz = zstop - zTargetCenter_;
+    hstopdz_->Fill(dz);
   }
 }
 

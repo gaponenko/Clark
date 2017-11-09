@@ -28,17 +28,24 @@ public:
 
   HistMuStopTruth()
     : zTargetCenter_()
+    , hMcMuonTotalMultiplicity_()
+    , hMcMuonTrigCandidateMultiplicity_()
+    , hMcMuonStopTime_()
     , hstopZ1_()
     , hstopZ2_()
-    , hstopZ3_()
+    , hstopdz_()
   {}
 
 private :
   double zTargetCenter_;
-  TH1 *hnumPrimaries_;
+
+  TH1* hMcMuonTotalMultiplicity_;
+  TH1* hMcMuonTrigCandidateMultiplicity_;
+  TH1* hMcMuonStopTime_;
+
   TH1 *hstopZ1_;
   TH1 *hstopZ2_;
-  TH1 *hstopZ3_;
+  TH1 *hstopdz_;
 };
 
 #endif/*HistMuStopTruth_h*/

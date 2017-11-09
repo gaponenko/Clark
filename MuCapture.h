@@ -40,7 +40,6 @@
 #include "MuCapTrkContainmentCut.h"
 #include "HistRangeStudies.h"
 #include "HistTrkClass.h"
-#include "HistMuCapMCTgtStops.h"
 
 //#include "RooUnfold/RooUnfoldResponse.h"
 #include "RooUnfoldDummy.h"
@@ -295,10 +294,10 @@ private :
   HistMuCapTruth hTruthMuStop_;
   HistMuCapTruth hTruthDnCandidate_;
 
-  HistMuCapMCTgtStops hMcMuStopsAll_;
-  HistMuCapMCTgtStops hMcMuStopsLastPlane_;
-  HistMuCapMCTgtStops hMcMuStopsPACT_;
-  HistMuCapMCTgtStops hMcMuStopsDnPC_;
+  HistMuStopTruth hMcMuStopsAll_;
+  HistMuStopTruth hMcMuStopsLastPlane_;
+  HistMuStopTruth hMcMuStopsPACT_;
+  HistMuStopTruth hMcMuStopsDnPC_;
 
   EventCutNumber analyze(EventClass &E, HistogramFactory &H);
 
