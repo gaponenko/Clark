@@ -23,13 +23,12 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   const std::string hdir = htopdir + "/" + channelsetname;
 
   doMCTruth_ = conf.read<bool>("TruthBank/Do");
+  targetCenterZ_ = geom.zTargetCenter();
+  targetThickness_ = geom.targetThickness();
+
   fillExtras_TDC_ = conf.read<bool>(hdir+"/fillExtras_TDC", false);
 
   if(doMCTruth_) {
-    refsample_muminus_multiplicity_ = hf.DefineTH1D(hdir+"/refsample", "muminus_multiplicity", "Mu- multiplicity, input", 10, -0.5, 9.5);
-    refsample_endvtx_time_ = hf.DefineTH1D(hdir+"/refsample", "endvtx_time", "Candidate vtx time", 400, -500., 3500.);
-    refsample_num_stops_ = hf.DefineTH1D(hdir+"/refsample", "num_stops", "Num selected stops per event", 10, -0.5, 9.5);
-
     refsample_in_zstop_ = hf.DefineTH1D(hdir+"/refsample", "in_zstop", "Z stop position, input events", 120, -0.0200, -0.0080);
     refsample_accepted_count_ = hf.DefineTH1D(hdir+"/refsample", "acc_count", "Count of accepted ref sample events", 1, -0.5, 0.5);
   }
@@ -85,7 +84,6 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
     hResolutionContained_.init(hf, hdir+"/contained/resolution", conf);
     hResolutionUncontained_.init(hf, hdir+"/uncontained/resolution", conf);
   }
-
 }
 
 //================================================================
@@ -95,51 +93,13 @@ void HistMuCapAnalysisChannels::fillReferenceSample(const EventClass& evt) {
     referenceSample_nrun_ = evt.nrun;
     referenceSample_nevt_ = evt.nevt;
 
-    // Look for the trigger muon stop
-    int numInputMuons = 0;
-    int numMuStopCandidates = 0;
-    int iMuStopTrack = -1;
-    int iMuStopVtxEnd = -1;
-    int iMuStopVtxStart = -1;
-
-    for(unsigned i=0; i<evt.nmctr; ++i) {
-      if((evt.mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) ||
-         (evt.mctrack_pid[i] == MuCapUtilities::PID_G4_MUMINUS)) {
-
-        ++numInputMuons;
-
-        // Look at the end vertex of the muon track
-        const int itmpvtxstart = evt.getFirstMCVertexIndexForTrack(i);
-        const int itmpvtxend = itmpvtxstart + evt.mctrack_nv[i] - 1;
-        const double stoptime = evt.mcvertex_time[itmpvtxend];
-        refsample_endvtx_time_->Fill(stoptime);
-        if(std::abs(stoptime) < 100.) {
-          ++numMuStopCandidates;
-          if(iMuStopTrack == -1) {
-            iMuStopTrack = i;
-          }
-        }
-      }
-    }
-    if(iMuStopTrack != -1) {
-      // Set vertex indexes
-      iMuStopVtxStart = evt.getFirstMCVertexIndexForTrack(iMuStopTrack);
-      iMuStopVtxEnd = iMuStopVtxStart + evt.mctrack_nv[iMuStopTrack] - 1;
-    }
-
-    refsample_muminus_multiplicity_->Fill(numInputMuons);
-    refsample_num_stops_->Fill(numMuStopCandidates);
-
-    // Apply reference sample cuts
-    if(iMuStopVtxEnd != -1) {
-      const double zstop = evt.mcvertex_vz[iMuStopVtxEnd];
+    if(evt.iMuStopMcVtxEnd != -1) {
+      const double zstop = evt.mcvertex_vz[evt.iMuStopMcVtxEnd];
       refsample_in_zstop_->Fill(zstop);
-      // From dt_geo.00066:
-      // tgt mylar foil at -0.00904 cm, thickness 0.0025 cm
-      // tgt Al  0.0071 cm thick
-      static const double zmax = -0.00904 - 0.0025/2;
-      static const double zmin = zmax - 0.0071;
-      referenceSampleAccepted_ = (zmin<=zstop) && (zstop<=zmax);
+
+      const double dz = zstop - targetCenterZ_;
+      // Include both boundaries
+      referenceSampleAccepted_ = (std::abs(dz) <= targetThickness_/2.);
 
       if(referenceSampleAccepted_) {
         refsample_accepted_count_->Fill(0.);

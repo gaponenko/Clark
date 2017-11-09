@@ -43,18 +43,23 @@ public:
             int iNegTrack,
             const ClustersByPlane& globalPlaneClusters);
 
-  HistMuCapAnalysisChannels() : doMCTruth_(false), referenceSample_nrun_(0), referenceSample_nevt_(0) {}
+  HistMuCapAnalysisChannels()
+    : doMCTruth_(false)
+    , targetCenterZ_(0.)
+    , targetThickness_(0.)
+    , referenceSample_nrun_(0)
+    , referenceSample_nevt_(0)
+  {}
 
 private :
   bool doMCTruth_;
 
+  double targetCenterZ_;
+  double targetThickness_;
+
   int referenceSample_nrun_;
   int referenceSample_nevt_;
   bool referenceSampleAccepted_;
-
-  TH1* refsample_muminus_multiplicity_;
-  TH1* refsample_endvtx_time_;
-  TH1* refsample_num_stops_;
 
   TH1* refsample_in_zstop_;
   TH1* refsample_accepted_count_;
