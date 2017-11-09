@@ -455,12 +455,6 @@ class EventClass{
   unsigned iCaptureMcVtxStart;
   unsigned iCaptureMcVtxEnd;
 
-  // Indexes for the beam particle
-  unsigned iPrimaryMcTrk;
-  int numPrimaryMcTrkCandidates;
-  unsigned iPrimaryMcVtxStart;
-  unsigned iPrimaryMcVtxEnd;
-
   // A guess at the MC particle that is the trigger muon
   int iMuStopMcTrk;  // the closest to t==0 among those with t>0.
   int iMuStopMcVtxStart;

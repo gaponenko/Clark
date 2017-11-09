@@ -162,11 +162,6 @@ void EventClass::LoadMuCapture() {
   if(AnalyseTruthBank) {
     switch(mctype) {
     case G4:
-      iPrimaryMcTrk = -1;
-      numPrimaryMcTrkCandidates = 0;
-      iPrimaryMcVtxStart = -1;
-      iPrimaryMcVtxEnd = -1;
-
       iMuStopMcTrk = -1;
       iMuStopMcVtxStart = -1;
       iMuStopMcVtxEnd = -1;
@@ -177,11 +172,6 @@ void EventClass::LoadMuCapture() {
         const int ivtx = getFirstMCVertexIndexForTrack(i);
         if((mctrack_nv[i] > 0) && (mcvertex_istop[ivtx] == MuCapUtilities::PROC_G4_PRIMARY))
           {
-            ++numPrimaryMcTrkCandidates;
-            iPrimaryMcTrk = i;
-            iPrimaryMcVtxStart = ivtx;
-            iPrimaryMcVtxEnd = iPrimaryMcVtxStart + mctrack_nv[i] - 1;
-
             if(mctrack_pid[i] == MuCapUtilities::PID_G4_MUMINUS) {
 
               ++mcMuonTotalMultiplicity;
@@ -257,11 +247,6 @@ void EventClass::LoadMuCapture() {
         iCaptureMcVtxEnd = iCaptureMcVtxStart + mctrack_nv[iCaptureMcTrk] - 1;
       }
 
-      iPrimaryMcTrk = -1;
-      numPrimaryMcTrkCandidates = 0;
-      iPrimaryMcVtxStart = -1;
-      iPrimaryMcVtxEnd = -1;
-
       iMuStopMcTrk = -1;
       iMuStopMcVtxStart = -1;
       iMuStopMcVtxEnd = -1;
@@ -271,10 +256,6 @@ void EventClass::LoadMuCapture() {
       for(int i=0; i<nmctr; ++i) {
         const int ivtx = getFirstMCVertexIndexForTrack(i);
         if((mctrack_nv[i] > 0) /*&& (mcvertex_istop[ivtx] == MuCapUtilities::PROC_G3_PRIMARY)*/) {
-          ++numPrimaryMcTrkCandidates;
-          iPrimaryMcTrk = i;
-          iPrimaryMcVtxStart = ivtx;
-          iPrimaryMcVtxEnd = iPrimaryMcVtxStart + mctrack_nv[i] - 1;
 
           if(mctrack_pid[i] == MuCapUtilities::PID_G3_MUMINUS) {
 
