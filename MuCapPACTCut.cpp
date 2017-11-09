@@ -12,10 +12,10 @@ void MuCapPACTCut::init(HistogramFactory &hf, const ConfigFile& conf) {
 
   qq_.resize(2);
 
-  qq_[0].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT", "_11"));
-  qq_[0].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT", "_12"));
-  qq_[1].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT", "_21"));
-  qq_[1].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT", "_22"));
+  qq_[0].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT/q11", "_11"));
+  qq_[0].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT/q12", "_12"));
+  qq_[1].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT/q21", "_21"));
+  qq_[1].push_back(MuCapPACTQuadrant(hf, conf, "MuCapture/PACT/q22", "_22"));
 }
 
 int MuCapPACTCut::quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster) {
