@@ -5,10 +5,11 @@
 #include "TH2.h"
 
 #include "HistogramFactory.h"
+#include "DetectorGeo.h"
 #include "ConfigFile.h"
 #include "WireCluster.h"
 
-MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const ConfigFile& conf,
+MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf,
                                      const std::string& hdir, const std::string& suffix)
   : slopea_(conf.read<double>("MuCapture/PACT/slopea"+suffix))
   , intercepta_(conf.read<double>("MuCapture/PACT/intercepta"+suffix))

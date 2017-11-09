@@ -9,6 +9,7 @@ class TH1;
 class TH2;
 
 class HistogramFactory;
+class DetectorGeo;
 class ConfigFile;
 class WireCluster;
 
@@ -34,7 +35,7 @@ public:
   // can't determine (e.g. too many hit wires per plane).
   int quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster);
 
-  MuCapPACTQuadrant(HistogramFactory &hf, const ConfigFile& conf,
+  MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf,
                     const std::string& hdir, const std::string& suffix);
 
 private :

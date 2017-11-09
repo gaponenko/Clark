@@ -191,7 +191,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hMuStopUVPos_->SetOption("colz");
   hMuStopRadius_ = H.DefineTH1D(hdir, "MuStopRadius", "Muon stop R (cm)", 80, 0., 8.);
 
-  pactCut_.init(H, Conf);
+  pactCut_.init(H, *E.geo, Conf);
 
   hStoppedMuonRangeGaps_ = H.DefineTH2D(hdir+"/AcceptedMuStop", "muStopRangeGaps", "Stopped muon range gap end vs start", 57, -0.5, 56.5, 57, -0.5, 56.5);
   hStoppedMuonRangeGaps_->SetOption("colz");

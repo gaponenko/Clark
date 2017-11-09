@@ -10,6 +10,7 @@ class TH1;
 class TH2;
 
 class HistogramFactory;
+class DetectorGeo;
 class ConfigFile;
 class WireCluster;
 
@@ -18,7 +19,7 @@ class MuCapPACTCut {
 public:
 
   // Does Clark allow book histograms in the constructor?  Perhaps not...
-  void init(HistogramFactory &hf, const ConfigFile &conf);
+  void init(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile &conf);
 
   //----------------------------------------------------------------
   // Useful plot for understanding the PACT quadrants
