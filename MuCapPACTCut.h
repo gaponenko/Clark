@@ -13,6 +13,7 @@ class HistogramFactory;
 class DetectorGeo;
 class ConfigFile;
 class WireCluster;
+class EventClass;
 
 //================================================================
 class MuCapPACTCut {
@@ -38,7 +39,7 @@ public:
   // This method returns a quadrant 1-4 as defined above, or 0 if
   // can't determine (e.g. too many hit wires per plane).
 
-  int quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster);
+  int quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster, const EventClass& evt);
 
   MuCapPACTCut() : hClusterSize_() {}
 

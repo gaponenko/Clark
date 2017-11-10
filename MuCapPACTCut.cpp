@@ -18,13 +18,13 @@ void MuCapPACTCut::init(HistogramFactory &hf, const DetectorGeo& geom, const Con
   qq_[1].push_back(MuCapPACTQuadrant(hf, geom, conf, "MuCapture/PACT/q22", "_22"));
 }
 
-int MuCapPACTCut::quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster) {
+int MuCapPACTCut::quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster, const EventClass& evt) {
   int res = 0;
 
   hClusterSize_->Fill(pc5cluster.numCells(), pc6cluster.numCells());
 
   if( (pc5cluster.numCells() <= 2) && (pc6cluster.numCells() <= 2) ) {
-    res = qq_.at(pc5cluster.numCells()-1).at(pc6cluster.numCells()-1).quadrant(pc5cluster, pc6cluster);
+    res = qq_.at(pc5cluster.numCells()-1).at(pc6cluster.numCells()-1).quadrant(pc5cluster, pc6cluster, evt);
   }
 
   return res;

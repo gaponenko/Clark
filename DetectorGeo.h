@@ -97,6 +97,8 @@ public:
   double zTargetCenter() const { return zTargetCenter_; }
   double targetThickness() const { return targ_thick; }
 
+  double wireRadiusPC() const { return pw_rad; }
+
 private:
   // (1) DC variables
   int             ndfoils;                 // Total number of foils in drift chambers

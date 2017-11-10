@@ -12,6 +12,7 @@ class HistogramFactory;
 class DetectorGeo;
 class ConfigFile;
 class WireCluster;
+class EventClass;
 
 //================================================================
 class MuCapPACTQuadrant {
@@ -33,7 +34,7 @@ public:
   //
   // This method returns a quadrant 1-4 as defined above, or 0 if
   // can't determine (e.g. too many hit wires per plane).
-  int quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster);
+  int quadrant(const WireCluster& pc5cluster, const WireCluster& pc6cluster, const EventClass& evt);
 
   MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& geom, const ConfigFile& conf,
                     const std::string& hdir, const std::string& suffix);
@@ -46,6 +47,23 @@ private :
 
   TH2 *hpc6vs5widthAll_;
   TH2 *hpc6vs5widthQ1_;
+
+  //----------------------------------------------------------------
+  // Extra stuff  not essential for implementing the cut
+  bool doMCTruth_;
+  double targetCenterZ_;
+  double targetThickness_;
+  double pc6CenterZ_;
+  double pc6wireRadius_;
+
+  TH2 *mctruthTargetStops_;
+  TH2 *mctruthWireStops_;
+  TH2 *mctruthOtherStops_;
+
+  enum class MuStopRegion { TARGET, PC6WIRE, OTHER };
+  MuStopRegion muStopKind(const EventClass& evt) const;
+
+  //----------------------------------------------------------------
 };
 
 #endif/*MuCapPACTQuadrant_h*/
