@@ -48,8 +48,13 @@ private :
   TH2 *hpc6vs5widthAll_;
   TH2 *hpc6vs5widthQ1_;
 
+  // transformed coordinates:
+  // (x,y) => (dib, dia) == (y - sb*x - ib, y - sa*x - ia)
+
+  TH2 *dia_vs_dib_all_;
+  TH2 *dia_vs_dib_q1_;
+
   //----------------------------------------------------------------
-  // Extra stuff  not essential for implementing the cut
   bool doMCTruth_;
   double targetCenterZ_;
   double targetThickness_;

@@ -18,8 +18,10 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
   , intercepta_(conf.read<double>("MuCapture/PACT/intercepta"+suffix))
   , slopeb_(conf.read<double>("MuCapture/PACT/slopeb"+suffix))
   , interceptb_(conf.read<double>("MuCapture/PACT/interceptb"+suffix))
-  , hpc6vs5widthAll_()
-  , hpc6vs5widthQ1_()
+  , hpc6vs5widthAll_(hf.DefineTH2D(hdir, "pc6vs5widthAll"+suffix, "PC6 vs 5 TDC width, all"+suffix, 500, 0., 500.,  500, 0., 500.))
+  , hpc6vs5widthQ1_(hf.DefineTH2D(hdir, "pc6vs5widthQ1"+suffix, "PC6 vs 5 TDC width, quadrant 1"+suffix, 500, 0., 500.,  500, 0., 500.))
+  , dia_vs_dib_all_(hf.DefineTH2D(hdir, "dia_vs_dib_all", "Delta(ia) vs Delta(ib)", 1200, -600., 600.,  800, -300., 500.))
+  , dia_vs_dib_q1_(hf.DefineTH2D(hdir, "dia_vs_dib_q1", "Delta(ia) vs Delta(ib)", 1200, -600., 600.,  800, -300., 500.))
 
   , doMCTruth_(conf.read<bool>("TruthBank/Do"))
   , targetCenterZ_(geom.zTargetCenter())
@@ -31,11 +33,10 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
   , mctruthWireStops_()
   , mctruthOtherStops_()
 {
-  hpc6vs5widthAll_ = hf.DefineTH2D(hdir, "pc6vs5widthAll"+suffix, "PC6 vs 5 TDC width, all"+suffix, 500, 0., 500.,  500, 0., 500.);
   hpc6vs5widthAll_->SetOption("colz");
-
-  hpc6vs5widthQ1_ = hf.DefineTH2D(hdir, "pc6vs5widthQ1"+suffix, "PC6 vs 5 TDC width, quadrant 1"+suffix, 500, 0., 500.,  500, 0., 500.);
   hpc6vs5widthQ1_->SetOption("colz");
+  dia_vs_dib_all_->SetOption("colz");
+  dia_vs_dib_q1_->SetOption("colz");
 
 
   if(doMCTruth_) {
@@ -58,6 +59,7 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster,
   const double pc5width = pc5cluster.totalTDCWidth();
   const double pc6width = pc6cluster.totalTDCWidth();
 
+
   hpc6vs5widthAll_->Fill(pc5width, pc6width);
 
   const double linea = intercepta_ + slopea_ * pc5width;
@@ -70,6 +72,14 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster,
   if(res == 1) {
     hpc6vs5widthQ1_->Fill(pc5width, pc6width);
   }
+
+  const double dia = pc6width - slopea_ * pc5width - intercepta_;
+  const double dib = pc6width - slopeb_ * pc5width - interceptb_;
+  dia_vs_dib_all_->Fill(dib, dia);
+  if(res==1) {
+    dia_vs_dib_q1_->Fill(dib, dia);
+  }
+
 
   if(doMCTruth_) {
     switch(muStopKind(evt)) {
