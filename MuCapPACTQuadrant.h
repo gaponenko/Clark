@@ -4,6 +4,7 @@
 #define MuCapPACTQuadrant_h
 
 #include <string>
+#include <random>
 
 class TH1;
 class TH2;
@@ -45,6 +46,8 @@ private :
   double slopeb_;
   double interceptb_;
 
+  double extrasmearing_; // for systematic studies
+
   TH2 *hpc6vs5widthAll_;
   TH2 *hpc6vs5widthQ1_;
 
@@ -68,6 +71,12 @@ private :
   enum class MuStopRegion { TARGET, PC6WIRE, OTHER };
   MuStopRegion muStopKind(const EventClass& evt) const;
 
+  //----------------------------------------------------------------
+  int    lastSeededRun_; // for reproducibility of random numbers
+  std::mt19937 eng_;
+  std::normal_distribution<double> gaus_;
+
+  double smearPCWidth(const EventClass& evt, double origWidth);
   //----------------------------------------------------------------
 };
 

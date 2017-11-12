@@ -164,7 +164,12 @@ void SetDefault(ConfigFile &Conf)
 	SetKey(Conf, "PACTCut/region_12", "1.634, -5.428, -61.26, 642.3");
 	SetKey(Conf, "PACTCut/region_21", "1.634, -5.428, -61.26, 642.3");
 	SetKey(Conf, "PACTCut/region_22", "1.634, -5.428, -61.26, 642.3");
-	
+
+        SetKey(Conf, "MuCapture/PACT/smearing_11", 0.);
+        SetKey(Conf, "MuCapture/PACT/smearing_12", 0.);
+        SetKey(Conf, "MuCapture/PACT/smearing_21", 0.);
+        SetKey(Conf, "MuCapture/PACT/smearing_22", 0.);
+
 	// Fiducial Cut
 	SetKey(Conf, "FiducialCut/MinAbsCosTheta", 0.54);
 	SetKey(Conf, "FiducialCut/MaxAbsCosTheta", 0.96);

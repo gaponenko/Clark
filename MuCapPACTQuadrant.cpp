@@ -18,6 +18,9 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
   , intercepta_(conf.read<double>("MuCapture/PACT/intercepta"+suffix))
   , slopeb_(conf.read<double>("MuCapture/PACT/slopeb"+suffix))
   , interceptb_(conf.read<double>("MuCapture/PACT/interceptb"+suffix))
+
+  , extrasmearing_(conf.read<double>("MuCapture/PACT/smearing"+suffix))
+
   , hpc6vs5widthAll_(hf.DefineTH2D(hdir, "pc6vs5widthAll"+suffix, "PC6 vs 5 TDC width, all"+suffix, 500, 0., 500.,  500, 0., 500.))
   , hpc6vs5widthQ1_(hf.DefineTH2D(hdir, "pc6vs5widthQ1"+suffix, "PC6 vs 5 TDC width, quadrant 1"+suffix, 500, 0., 500.,  500, 0., 500.))
   , dia_vs_dib_all_(hf.DefineTH2D(hdir, "dia_vs_dib_all", "Delta(ia) vs Delta(ib)", 1200, -600., 600.,  800, -300., 500.))
@@ -32,12 +35,15 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
   , mctruthTargetStops_()
   , mctruthWireStops_()
   , mctruthOtherStops_()
+
+  , lastSeededRun_(0)
+  , eng_()
+  , gaus_(0., 1.)
 {
   hpc6vs5widthAll_->SetOption("colz");
   hpc6vs5widthQ1_->SetOption("colz");
   dia_vs_dib_all_->SetOption("colz");
   dia_vs_dib_q1_->SetOption("colz");
-
 
   if(doMCTruth_) {
     mctruthTargetStops_   = hf.DefineTH2D(hdir, "mcTargetStops", "PC6 vs 5 TDC width, MC target stops", 500, 0., 500.,  500, 0., 500.);
@@ -56,9 +62,13 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster,
                                 const WireCluster& pc6cluster,
                                 const EventClass& evt)
 {
-  const double pc5width = pc5cluster.totalTDCWidth();
-  const double pc6width = pc6cluster.totalTDCWidth();
+  double pc5width = pc5cluster.totalTDCWidth();
+  double pc6width = pc6cluster.totalTDCWidth();
 
+  if(extrasmearing_ > 0.) {
+    pc5width = smearPCWidth(evt, pc5width);
+    pc6width = smearPCWidth(evt, pc6width);
+  }
 
   hpc6vs5widthAll_->Fill(pc5width, pc6width);
 
@@ -108,6 +118,19 @@ MuCapPACTQuadrant::muStopKind(const EventClass& evt) const {
       res = MuStopRegion::PC6WIRE;
     }
   }
+
+  return res;
+}
+
+
+//================================================================
+double MuCapPACTQuadrant::smearPCWidth(const EventClass& evt, double  origwidth) {
+  if(evt.nrun != lastSeededRun_) {
+    lastSeededRun_ = evt.nrun;
+    eng_.seed(lastSeededRun_);
+  }
+
+  double res = origwidth + extrasmearing_ * gaus_(eng_);
 
   return res;
 }
