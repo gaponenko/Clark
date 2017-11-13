@@ -54,6 +54,15 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
 
     mctruthOtherStops_   = hf.DefineTH2D(hdir, "mcOtherStops", "PC6 vs 5 TDC width, MC other stops", 500, 0., 500.,  500, 0., 500.);
     mctruthOtherStops_->SetOption("colz");
+
+    mctruthTargetStopsi_ = hf.DefineTH2D(hdir, "mcTargetStopsi", "Delta(ia) vs Delta(ib), MC target stops", 1200, -600., 600.,  800, -300., 500.);
+    mctruthTargetStopsi_->SetOption("colz");
+
+    mctruthWireStopsi_ = hf.DefineTH2D(hdir, "mcWireStopsi", "Delta(ia) vs Delta(ib), MC PC6 wire stops", 1200, -600., 600.,  800, -300., 500.);
+    mctruthWireStopsi_->SetOption("colz");
+
+    mctruthOtherStopsi_ = hf.DefineTH2D(hdir, "mcOtherStopsi", "Delta(ia) vs Delta(ib), MC other stops", 1200, -600., 600.,  800, -300., 500.);
+    mctruthOtherStopsi_->SetOption("colz");
   }
 }
 
@@ -93,9 +102,21 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster,
 
   if(doMCTruth_) {
     switch(muStopKind(evt)) {
-    case MuStopRegion::TARGET: mctruthTargetStops_->Fill(pc5width, pc6width); break;
-    case MuStopRegion::PC6WIRE: mctruthWireStops_->Fill(pc5width, pc6width); break;
-    case MuStopRegion::OTHER: mctruthOtherStops_->Fill(pc5width, pc6width); break;
+    case MuStopRegion::TARGET:
+      mctruthTargetStops_->Fill(pc5width, pc6width);
+      mctruthTargetStopsi_->Fill(dib, dia);
+      break;
+
+    case MuStopRegion::PC6WIRE:
+      mctruthWireStops_->Fill(pc5width, pc6width);
+      mctruthWireStopsi_->Fill(dib, dia);
+      break;
+
+    case MuStopRegion::OTHER:
+      mctruthOtherStops_->Fill(pc5width, pc6width);
+      mctruthOtherStopsi_->Fill(dib, dia);
+      break;
+
     default:
       throw std::runtime_error("MuCapPACTQuadrant: internal errror interpreting muStopKind() return value");
     }
