@@ -70,6 +70,20 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
 
     mctruthUnknownStopsi_ = hf.DefineTH2D(hdir, "mcUnknownStopsi", "Delta(ia) vs Delta(ib), MC unknown stops", 1200, -600., 600.,  800, -300., 500.);
     mctruthUnknownStopsi_->SetOption("colz");
+
+    //----------------------------------------------------------------
+    // This code is picked from HistMuStopTruth
+
+    // Align bin boundaries with the target.
+    const int numBinsInTarget = 35; // in the 71um target
+    const double binSize = geom.targetThickness()/numBinsInTarget;
+
+    const double approximateHalfRange = 0.5; // cm, half histo scale
+    const int numBins =  1 + 2*int(approximateHalfRange/binSize);
+    const double fullRange = binSize * numBins;
+    mctruthTargetStopdz_ = hf.DefineTH1D(hdir, "mcTargetStopdz", "true Z stop - Z tgt, MC target stops", numBins, -0.5*fullRange, +0.5*fullRange);
+    mctruthWireStopdz_ = hf.DefineTH1D(hdir, "mcWireStopdz", "true Z stop - Z tgt, MC wire stops", numBins, -0.5*fullRange, +0.5*fullRange);
+    mctruthOtherStopdz_ = hf.DefineTH1D(hdir, "mcOtherStopdz", "true Z stop - Z tgt, MC other stops", numBins, -0.5*fullRange, +0.5*fullRange);
   }
 }
 
@@ -131,6 +145,22 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster,
 
     default:
       throw std::runtime_error("MuCapPACTQuadrant: internal errror interpreting muStopKind() return value");
+    }
+
+    if(evt.iMuStopMcVtxEnd != -1) {
+      const double zstop = evt.mcvertex_vz[evt.iMuStopMcVtxEnd];
+      const double dz = zstop - targetCenterZ_;
+
+      switch(muStopKind(evt)) {
+      case MuStopRegion::TARGET: mctruthTargetStopdz_->Fill(dz); break;
+      case MuStopRegion::PC6WIRE: mctruthWireStopdz_->Fill(dz); break;
+      case MuStopRegion::OTHER: mctruthOtherStopdz_->Fill(dz); break;
+
+      case MuStopRegion::UNKNOWN: // no true stop vtx - then how did we get here?
+      default:
+        throw std::runtime_error("MuCapPACTQuadrant: internal errror interpreting muStopKind() return value");
+      }
+
     }
   }
 

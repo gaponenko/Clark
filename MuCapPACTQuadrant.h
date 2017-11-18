@@ -74,6 +74,10 @@ private :
   TH2 *mctruthOtherStopsi_;
   TH2 *mctruthUnknownStopsi_;
 
+  TH1 *mctruthTargetStopdz_;
+  TH1 *mctruthWireStopdz_;
+  TH1 *mctruthOtherStopdz_;
+
   enum class MuStopRegion { TARGET, PC6WIRE, OTHER, UNKNOWN };
   MuStopRegion muStopKind(const EventClass& evt) const;
 
