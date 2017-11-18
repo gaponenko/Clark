@@ -55,6 +55,10 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
     mctruthOtherStops_   = hf.DefineTH2D(hdir, "mcOtherStops", "PC6 vs 5 TDC width, MC other stops", 500, 0., 500.,  500, 0., 500.);
     mctruthOtherStops_->SetOption("colz");
 
+    mctruthUnknownStops_   = hf.DefineTH2D(hdir, "mcUnknownStops", "PC6 vs 5 TDC width, MC unknown stops", 500, 0., 500.,  500, 0., 500.);
+    mctruthUnknownStops_->SetOption("colz");
+
+    //----------------
     mctruthTargetStopsi_ = hf.DefineTH2D(hdir, "mcTargetStopsi", "Delta(ia) vs Delta(ib), MC target stops", 1200, -600., 600.,  800, -300., 500.);
     mctruthTargetStopsi_->SetOption("colz");
 
@@ -63,6 +67,9 @@ MuCapPACTQuadrant::MuCapPACTQuadrant(HistogramFactory &hf, const DetectorGeo& ge
 
     mctruthOtherStopsi_ = hf.DefineTH2D(hdir, "mcOtherStopsi", "Delta(ia) vs Delta(ib), MC other stops", 1200, -600., 600.,  800, -300., 500.);
     mctruthOtherStopsi_->SetOption("colz");
+
+    mctruthUnknownStopsi_ = hf.DefineTH2D(hdir, "mcUnknownStopsi", "Delta(ia) vs Delta(ib), MC unknown stops", 1200, -600., 600.,  800, -300., 500.);
+    mctruthUnknownStopsi_->SetOption("colz");
   }
 }
 
@@ -117,6 +124,11 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster,
       mctruthOtherStopsi_->Fill(dib, dia);
       break;
 
+    case MuStopRegion::UNKNOWN:
+      mctruthUnknownStops_->Fill(pc5width, pc6width);
+      mctruthUnknownStopsi_->Fill(dib, dia);
+      break;
+
     default:
       throw std::runtime_error("MuCapPACTQuadrant: internal errror interpreting muStopKind() return value");
     }
@@ -128,7 +140,7 @@ int MuCapPACTQuadrant::quadrant(const WireCluster& pc5cluster,
 //================================================================
 MuCapPACTQuadrant::MuStopRegion
 MuCapPACTQuadrant::muStopKind(const EventClass& evt) const {
-  MuStopRegion res = MuStopRegion::OTHER;
+  MuStopRegion res = MuStopRegion::UNKNOWN;
 
   if(evt.iMuStopMcVtxEnd != -1) {
     const double zstop = evt.mcvertex_vz[evt.iMuStopMcVtxEnd];
@@ -137,6 +149,9 @@ MuCapPACTQuadrant::muStopKind(const EventClass& evt) const {
     }
     else if(std::abs(zstop - pc6CenterZ_) <= pc6wireRadius_) {
       res = MuStopRegion::PC6WIRE;
+    }
+    else {
+      res = MuStopRegion::OTHER;
     }
   }
 
