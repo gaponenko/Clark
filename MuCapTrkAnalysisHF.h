@@ -29,9 +29,9 @@ class EventClass;
 class MuCapTrkAnalysisHF {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_IERROR, "ierror");
+    ax->SetBinLabel(1+CUT_CHARGE, "charge");
     ax->SetBinLabel(1+CUT_TRKWINTIME, "trkwintime");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
-    ax->SetBinLabel(1+CUT_CHARGE, "charge");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
     ax->SetBinLabel(1+CUT_COSTHETAMIN, "cos(theta) min");
@@ -49,9 +49,9 @@ class MuCapTrkAnalysisHF {
 public:
   enum CutNumber {
     CUT_IERROR,
+    CUT_CHARGE,
     CUT_TRKWINTIME,
     CUT_STREAM,
-    CUT_CHARGE,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
     CUT_COSTHETAMAX,

@@ -312,6 +312,12 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
+  hCharge_->Fill(evt.hefit_q[i]);
+  if(evt.hefit_q[i] != cutCharge_) {
+    return CUT_CHARGE;
+  }
+
+  //----------------------------------------------------------------
   trackTime_->Fill(evt.hefit_time[i]);
   trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
   if(std::abs(evt.hefit_time[i]  - protonWin.tstart) > cutTrackWinTimedt_) {
@@ -337,12 +343,6 @@ analyzeTrack(int i, const EventClass& evt,
              <<": run = "<<evt.nrun
              <<" event "<<evt.nevt
              <<std::endl;
-  }
-
-  //----------------------------------------------------------------
-  hCharge_->Fill(evt.hefit_q[i]);
-  if(evt.hefit_q[i] != cutCharge_) {
-    return CUT_CHARGE;
   }
 
   //----------------------------------------------------------------
