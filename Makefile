@@ -20,7 +20,7 @@ endif
 
 # Flags for the compiler
 CXX = g++
-CXXFLAGS := -g $(OPTFLAGS) $(ROOTCFLAGS) -Wall -Wno-parentheses -Wno-sign-compare
+CXXFLAGS := -g $(OPTFLAGS) $(ROOTCFLAGS) -Wall -Wno-parentheses -Wno-sign-compare -std=c++0x
 
 # Flags for the linker
 LINKER = g++
