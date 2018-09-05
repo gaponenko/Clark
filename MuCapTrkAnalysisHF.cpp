@@ -191,6 +191,10 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                                      "selected track momentum",
                                      300, 0., 300.);
 
+  hPerEventTime_ = hf.DefineTH1D(hdir, "perEventTime",
+                                 "selected track time",
+                                 1100, -1000., 10000.);
+
   hSelectorPlane_ = hf.DefineTH2D(hdir, "selectorPlane", "track to target dplane max vs min",
                                   30, -0.5, 29.5, 30, -0.5, 29.5);
 
@@ -257,6 +261,7 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
     }
 
     hPerEventMomentum_->Fill(evt.ptot[selected]);
+    hPerEventTime_->Fill(evt.hefit_time[selected]);
     hSelectedTrackQuality_.fill(evt, selected, distanceToMuon(evt, selected, muStopUV));
 
     if(doMCTruth_) {

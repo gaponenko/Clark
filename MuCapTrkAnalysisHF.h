@@ -120,6 +120,7 @@ public:
 
     , hNumTracks_()
     , hPerEventMomentum_()
+    , hPerEventTime_()
 
     , hSelectorPlane_()
     , hSelectordrmu_()
@@ -173,6 +174,7 @@ private :
   // the following distributions are filled once per event,
   TH1 *hNumTracks_;
   TH1 *hPerEventMomentum_;
+  TH1 *hPerEventTime_;
   HistMuCapTruth htruthAccepted_;
   HistTrkQuality hSelectedTrackQuality_;
   HistMuCapTrkResolution hSelectedTrkResolution_;
