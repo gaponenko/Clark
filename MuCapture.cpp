@@ -203,6 +203,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hWindowTimeBefore_ = H.DefineTH1D(hdir, "windowTimeBeforeCut", "Decay window start time, before time cut", 1000, 0., 10000.);
   hWindowTimeAfter_ = H.DefineTH1D(hdir, "windowTimeAfterCut", "Decay window start time, after time cut", 1000, 0., 10000.);
+  hBestTrackWindDt_ = H.DefineTH1D(hdir, "bestTrackWinDt", "Best track-win time", 501, -250.5, 250.5);
 
   hNumAfterTrigWindows_ = H.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
   hWindow2Time_ = H.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
@@ -556,11 +557,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Veto accidental beam particles (also upstream DIOs and some protons)
 
-  const ClustersByPlane& protonGlobalClusters = afterTrigClusters[0];
+  const ClustersByPlane& afterTrig0GlobalCl = afterTrigClusters[0];
 
   int numBeamVetoHitPlanes(0);
   for(int i=1; i<=4; ++i) {
-    if(!protonGlobalClusters[i].empty()) {
+    if(!afterTrig0GlobalCl[i].empty()) {
       ++numBeamVetoHitPlanes;
     }
   }
@@ -571,7 +572,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   for(int i=1; i<=4; ++i) {
-    if(!protonGlobalClusters[i].empty()) {
+    if(!afterTrig0GlobalCl[i].empty()) {
       hHitPCsAterBeamVeto_->Fill(i);
     }
   }
@@ -609,6 +610,13 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   const int iPosTrack = dnPosTracks_.process(evt, muStop);
 
+  const int iWinPosTrack = findTrackWindow(evt, iPosTrack, wres.windows);
+  if((iPosTrack > -1 ) && (iWinPosTrack - wres.iTrigWin < 1)) {
+    throw std::runtime_error("MuCapture: iWinPosTrack - wres.iTrigWin < 1");
+  }
+  const ClustersByPlane& protonGlobalClusters =
+    (iPosTrack > -1) ? afterTrigClusters[iWinPosTrack - wres.iTrigWin - 1] : ClustersByPlane();
+
   const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
   const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 
@@ -637,8 +645,13 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   hwidthMuHits_.fill(evt, muonGlobalClusters);
   if(iDIONorm != -1) {
-    hwidthDIOHits_.fill(evt, protonGlobalClusters);
-    h200nsDIO_.fill(evt, iDIONorm, protonGlobalClusters);
+    const int iWinDIONorm = findTrackWindow(evt, iDIONorm, wres.windows);
+    if(iWinDIONorm - wres.iTrigWin < 1) {
+      throw std::runtime_error("MuCapture: iWinDIONorm - wres.iTrigWin < 1");
+    }
+    const ClustersByPlane& dioGlobalClusters = afterTrigClusters[iWinDIONorm - wres.iTrigWin - 1];
+    hwidthDIOHits_.fill(evt, dioGlobalClusters);
+    h200nsDIO_.fill(evt, iDIONorm, dioGlobalClusters);
   }
 
   // Do we have any ambiguous events (both "DIO" and "proton")?
@@ -683,6 +696,28 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   }
 
   return CUTS_DOWNSTREAM_ACCEPTED;
+}
+
+//================================================================
+int MuCapture::findTrackWindow(const EventClass& evt,
+                               int itrack,
+                               const TimeWindowCollection& windows)
+{
+  int iwin = -1;
+
+  if(itrack > -1) {
+    double best_dt = std::numeric_limits<double>::max();
+    for(int i=0; i<windows.size(); ++i) {
+      double dt = evt.hefit_time[itrack] -  windows[i].tstart;
+      if(std::abs(dt) < best_dt) {
+        best_dt = dt;
+        iwin = i;
+      }
+    }
+    hBestTrackWindDt_->Fill(best_dt);
+  }
+
+  return iwin;
 }
 
 //================================================================

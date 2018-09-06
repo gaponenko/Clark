@@ -148,6 +148,7 @@ public :
 
     , hWindowTimeBefore_()
     , hWindowTimeAfter_()
+    , hBestTrackWindDt_()
     , hNumAfterTrigWindows_()
     , hWindow2Time_()
     , hWindow2dt_()
@@ -221,6 +222,7 @@ private :
 
   TH1 *hWindowTimeBefore_;
   TH1 *hWindowTimeAfter_;
+  TH1 *hBestTrackWindDt_;
 
   TH1 *hNumAfterTrigWindows_;
   TH1 *hWindow2Time_;
@@ -300,6 +302,8 @@ private :
 
   static TDCHitPreprocessing::IProcessor*
   makeTDCHitPreprocessor(const std::string& topdir, WirePlane::DetType d, HistogramFactory& hf, const DetectorGeo& geom, ConfigFile& conf);
+
+  int findTrackWindow(const EventClass& evt, int itrack, const TimeWindowCollection& windows);
 };
 
 #endif/*MuCapture_h*/
