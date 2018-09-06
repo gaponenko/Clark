@@ -66,17 +66,17 @@ class MuCapture : public ModuleClass {
 
     ax->SetBinLabel(1+CUT_MUSTOP_PACT, "Mu stop PACT");
 
-    //ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "Accepted stop");
+    ax->SetBinLabel(1+CUTS_MUSTOP_ACCEPTED, "Accepted stop");
 
-    ax->SetBinLabel(1+CUT_DOWNSTREAM_PCHITS, "Dn PC");
-
-    ax->SetBinLabel(1+CUT_BEAM_VETO, "Beam veto");
-
-    ax->SetBinLabel(1+CUT_WIN_TIME, "Win time");
-
-    ax->SetBinLabel(1+CUT_MULTIWIN_NEXTDT, "Multiwin time");
-
-    ax->SetBinLabel(1+CUTS_DOWNSTREAM_ACCEPTED, "Dn candidate");
+//mincuts:    ax->SetBinLabel(1+CUT_DOWNSTREAM_PCHITS, "Dn PC");
+//mincuts:
+//mincuts:    ax->SetBinLabel(1+CUT_BEAM_VETO, "Beam veto");
+//mincuts:
+//mincuts:    ax->SetBinLabel(1+CUT_WIN_TIME, "Win time");
+//mincuts:
+//mincuts:    ax->SetBinLabel(1+CUT_MULTIWIN_NEXTDT, "Multiwin time");
+//mincuts:
+//mincuts:    ax->SetBinLabel(1+CUTS_DOWNSTREAM_ACCEPTED, "Dn candidate");
   }
 
 public :
@@ -93,19 +93,19 @@ public :
     CUT_MUSTOP_UV,
 
     CUT_MUSTOP_PACT,
-    // CUTS_MUSTOP_ACCEPTED,
+    CUTS_MUSTOP_ACCEPTED,
 
-    CUT_DOWNSTREAM_PCHITS,
-
-    CUT_BEAM_VETO,
-
-    // cut on the same var for DIO and protons
-    // avoid norm systematic due to time resolution
-    CUT_WIN_TIME,
-
-    CUT_MULTIWIN_NEXTDT,
-
-    CUTS_DOWNSTREAM_ACCEPTED,
+//mincuts:    CUT_DOWNSTREAM_PCHITS,
+//mincuts:
+//mincuts:    CUT_BEAM_VETO,
+//mincuts:
+//mincuts:    // cut on the same var for DIO and protons
+//mincuts:    // avoid norm systematic due to time resolution
+//mincuts:    CUT_WIN_TIME,
+//mincuts:
+//mincuts:    CUT_MULTIWIN_NEXTDT,
+//mincuts:
+//mincuts:    CUTS_DOWNSTREAM_ACCEPTED,
 
     CUTS_END
   };
@@ -146,8 +146,8 @@ public :
     , hBeamVetoNumHitPlanes_()
     , hHitPCsAterBeamVeto_()
 
-    , hWindowTimeBefore_()
-    , hWindowTimeAfter_()
+    , hWindowTimeFirst_()
+    , hWindowTimeAll_()
     , hBestTrackWindDt_()
     , hNumAfterTrigWindows_()
     , hWindow2Time_()
@@ -220,8 +220,8 @@ private :
   TH1 *hBeamVetoNumHitPlanes_;
   TH1 *hHitPCsAterBeamVeto_; // occupancy after the cut
 
-  TH1 *hWindowTimeBefore_;
-  TH1 *hWindowTimeAfter_;
+  TH1 *hWindowTimeFirst_;
+  TH1 *hWindowTimeAll_;
   TH1 *hBestTrackWindDt_;
 
   TH1 *hNumAfterTrigWindows_;

@@ -198,29 +198,30 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hStoppedMuonMissingPlanes_ = H.DefineTH1D(hdir+"/AcceptedMuStop", "muStopMissingPlanes", "Stopped muon missing planes", 56, 0.5, 56.5);
 
-  hBeamVetoNumHitPlanes_ = H.DefineTH1D(hdir, "beamVetoNumHitPlanes", "beamVetoNumHitPlanes", 6, -0.5, 5.5);
-  hHitPCsAterBeamVeto_ = H.DefineTH1D(hdir, "hitUpsteamPCsAfterBeamVeto", "hitUpsteamPCsAfterBeamVeto", 6, -0.5, 5.5);
+//mincuts:  hBeamVetoNumHitPlanes_ = H.DefineTH1D(hdir, "beamVetoNumHitPlanes", "beamVetoNumHitPlanes", 6, -0.5, 5.5);
+//mincuts:  hHitPCsAterBeamVeto_ = H.DefineTH1D(hdir, "hitUpsteamPCsAfterBeamVeto", "hitUpsteamPCsAfterBeamVeto", 6, -0.5, 5.5);
 
-  hWindowTimeBefore_ = H.DefineTH1D(hdir, "windowTimeBeforeCut", "Decay window start time, before time cut", 1000, 0., 10000.);
-  hWindowTimeAfter_ = H.DefineTH1D(hdir, "windowTimeAfterCut", "Decay window start time, after time cut", 1000, 0., 10000.);
+  hWindowTimeFirst_ = H.DefineTH1D(hdir, "windowTimeFirst", "Window start time, first after-trig window", 1000, 0., 10000.);
+  hWindowTimeAll_ = H.DefineTH1D(hdir, "windowTimeAll", "Window start time, all non-trig windows", 16000, -6000, 10000.);
+
   hBestTrackWindDt_ = H.DefineTH1D(hdir, "bestTrackWinDt", "Best track-win time", 501, -250.5, 250.5);
 
   hNumAfterTrigWindows_ = H.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
-  hWindow2Time_ = H.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
-  hWindow2dt_ = H.DefineTH1D(hdir, "window2dt", "Second window time - proton win time", 1000, 0., 10000.);
+//mincuts:  hWindow2Time_ = H.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
+//mincuts:  hWindow2dt_ = H.DefineTH1D(hdir, "window2dt", "Second window time - proton win time", 1000, 0., 10000.);
 
 
-  hPosNegMom_ = H.DefineTH2D(hdir, "posnegmom", "p(-) vs p(+)", 300, 0., 300., 300, 0., 300.);
-  hPosNegMom_->SetOption("colz");
-
-  hPosNegCosth_ = H.DefineTH2D(hdir, "posnegcosth", "cos(-) vs cos(+)", 100, -1., 1., 100, -1., 1.);
-  hPosNegCosth_->SetOption("colz");
-
-  hVetoedPCosth_ = H.DefineTH2D(hdir, "vetoedpcosth", "cos(theta) vs p of vetoed tracks", 300, 0., 300., 100, -1., 1.);
-  hVetoedPCosth_->SetOption("colz");
-
-  hVetoingPCosth_ = H.DefineTH2D(hdir, "vetoingpcosth", "cos(theta) vs p of veto tracks", 300, 0., 300., 100, -1., 1.);
-  hVetoingPCosth_->SetOption("colz");
+//mincuts:  hPosNegMom_ = H.DefineTH2D(hdir, "posnegmom", "p(-) vs p(+)", 300, 0., 300., 300, 0., 300.);
+//mincuts:  hPosNegMom_->SetOption("colz");
+//mincuts:
+//mincuts:  hPosNegCosth_ = H.DefineTH2D(hdir, "posnegcosth", "cos(-) vs cos(+)", 100, -1., 1., 100, -1., 1.);
+//mincuts:  hPosNegCosth_->SetOption("colz");
+//mincuts:
+//mincuts:  hVetoedPCosth_ = H.DefineTH2D(hdir, "vetoedpcosth", "cos(theta) vs p of vetoed tracks", 300, 0., 300., 100, -1., 1.);
+//mincuts:  hVetoedPCosth_->SetOption("colz");
+//mincuts:
+//mincuts:  hVetoingPCosth_ = H.DefineTH2D(hdir, "vetoingpcosth", "cos(theta) vs p of veto tracks", 300, 0., 300., 100, -1., 1.);
+//mincuts:  hVetoingPCosth_->SetOption("colz");
 
   //----------------------------------------------------------------
   haccidentalsTrig_.init(hdir+"/accidentals/trig", H, Conf);
@@ -256,7 +257,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthAll_.init(H, hdir+"/MCTruth/all", *E.geo, Conf);
     hTruthLastPlane_.init(H, hdir+"/MCTruth/lastPlane", *E.geo, Conf);
     hTruthPACT_.init(H, hdir+"/MCTruth/pact", *E.geo, Conf);
-    hTruthDnPC_.init(H, hdir+"/MCTruth/dnPC", *E.geo, Conf);
+//mincuts:    hTruthDnPC_.init(H, hdir+"/MCTruth/dnPC", *E.geo, Conf);
     hTruthDnCandidate_.init(H, hdir+"/MCTruth/dnCandidate", *E.geo, Conf);
   }
 
@@ -396,6 +397,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     const double dt = wres.windows[wres.iTrigWin - 1].tstart;
     hPCPreTrigSeparation_->Fill(dt);
     if(std::abs(dt) < winPCPreTrigSeparation_) {
+      // Without this cut a pre-trigger particle can create a time
+      // window that would "eat" hits belonging to a capture proton in
+      // our windowing procedure.  Then the proton containment cut
+      // would produce a wrong result.
       return CUT_PCWIN_TRIGSEPPAST;
     }
   }
@@ -480,15 +485,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   // Here we have an accepted muon stop
 
-  // Compute clusters for after-trigger windows
-  std::vector<ClustersByPlane> afterTrigClusters;
-  for(int iwin = 1 + wres.iTrigWin; iwin < wres.windows.size(); ++iwin) {
-    const TimeWindow& win = wres.windows[iwin];
-    const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
-    const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
-    afterTrigClusters.push_back(globalPlaneClusters(pcClusters, dcClusters));
-  }
-
   // Call the subanalyses
   winDCUnassignedMuStop_.fill(wres);
   haccidentalsStop_.fill(wres);
@@ -527,78 +523,82 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   // return CUTS_MUSTOP_ACCEPTED;
 
-  //----------------------------------------------------------------
-  bool have_downstream_pchits = false;
-
-  if(1 + wres.iTrigWin < wres.windows.size()) {
-    // Look for PC hits in the first after-trig time window.
-    const TimeWindow& win = wres.windows[1+wres.iTrigWin];
-    for(unsigned i=0; i < win.pcHits.size(); ++i) {
-      if(win.pcHits[i]->plane() > 6) {
-        have_downstream_pchits = true;
-        break;
-      }
-    }
-  }
-  // FIXME: histo of #dn PC, all PC, all DC hits in the window
-  // For now after-trig window: num unassigned after-trig DC hits.
-
-
-  if(!have_downstream_pchits) {
-    return CUT_DOWNSTREAM_PCHITS;
-  }
-  if(doMCTruth_) {
-    hTruthDnPC_.fill(evt);
-  }
-
-  const unsigned iDecayWin = 1 + wres.iTrigWin;
-  const TimeWindow& decayWindow = wres.windows[iDecayWin];
-
-  //----------------------------------------------------------------
-  // Veto accidental beam particles (also upstream DIOs and some protons)
-
-  const ClustersByPlane& afterTrig0GlobalCl = afterTrigClusters[0];
-
-  int numBeamVetoHitPlanes(0);
-  for(int i=1; i<=4; ++i) {
-    if(!afterTrig0GlobalCl[i].empty()) {
-      ++numBeamVetoHitPlanes;
-    }
-  }
-
-  hBeamVetoNumHitPlanes_->Fill(numBeamVetoHitPlanes);
-  if(numBeamVetoHitPlanes > cutBeamVetoMaxPCplanes_) {
-    return CUT_BEAM_VETO;
-  }
-
-  for(int i=1; i<=4; ++i) {
-    if(!afterTrig0GlobalCl[i].empty()) {
-      hHitPCsAterBeamVeto_->Fill(i);
-    }
-  }
+//mincuts:  //----------------------------------------------------------------
+//mincuts:  bool have_downstream_pchits = false;
+//mincuts:
+//mincuts:  if(1 + wres.iTrigWin < wres.windows.size()) {
+//mincuts:    // Look for PC hits in the first after-trig time window.
+//mincuts:    const TimeWindow& win = wres.windows[1+wres.iTrigWin];
+//mincuts:    for(unsigned i=0; i < win.pcHits.size(); ++i) {
+//mincuts:      if(win.pcHits[i]->plane() > 6) {
+//mincuts:        have_downstream_pchits = true;
+//mincuts:        break;
+//mincuts:      }
+//mincuts:    }
+//mincuts:  }
+//mincuts:  // FIXME: histo of #dn PC, all PC, all DC hits in the window
+//mincuts:  // For now after-trig window: num unassigned after-trig DC hits.
+//mincuts:
+//mincuts:
+//mincuts:  if(!have_downstream_pchits) {
+//mincuts:    return CUT_DOWNSTREAM_PCHITS;
+//mincuts:  }
+//mincuts:  if(doMCTruth_) {
+//mincuts:    hTruthDnPC_.fill(evt);
+//mincuts:  }
+//mincuts:
+//mincuts:  const unsigned iDecayWin = 1 + wres.iTrigWin;
+//mincuts:  const TimeWindow& decayWindow = wres.windows[iDecayWin];
+//mincuts:
+//mincuts:  //----------------------------------------------------------------
+//mincuts:  // Veto accidental beam particles (also upstream DIOs and some protons)
+//mincuts:
+//mincuts:  const ClustersByPlane& afterTrig0GlobalCl = afterTrigClusters[0];
+//mincuts:
+//mincuts:  int numBeamVetoHitPlanes(0);
+//mincuts:  for(int i=1; i<=4; ++i) {
+//mincuts:    if(!afterTrig0GlobalCl[i].empty()) {
+//mincuts:      ++numBeamVetoHitPlanes;
+//mincuts:    }
+//mincuts:  }
+//mincuts:
+//mincuts:  hBeamVetoNumHitPlanes_->Fill(numBeamVetoHitPlanes);
+//mincuts:  if(numBeamVetoHitPlanes > cutBeamVetoMaxPCplanes_) {
+//mincuts:    return CUT_BEAM_VETO;
+//mincuts:  }
+//mincuts:
+//mincuts:  for(int i=1; i<=4; ++i) {
+//mincuts:    if(!afterTrig0GlobalCl[i].empty()) {
+//mincuts:      hHitPCsAterBeamVeto_->Fill(i);
+//mincuts:    }
+//mincuts:  }
+//mincuts:
 
   //----------------------------------------------------------------
   // Trig time is 0, dt from that rather than from less precise trigWin time
 
-  hWindowTimeBefore_->Fill(decayWindow.tstart);
-  if( (decayWindow.tstart < cutWinTimeMin_) || (cutWinTimeMax_ < decayWindow.tstart)) {
-    return CUT_WIN_TIME;
+  for(int i=0; i < wres.windows.size(); ++i) {
+    if(i != wres.iTrigWin) {
+      hWindowTimeAll_->Fill(wres.windows[i].tstart);
+    }
   }
-  hWindowTimeAfter_->Fill(decayWindow.tstart);
+  if(wres.iTrigWin + 1 < wres.windows.size()) {
+    hWindowTimeFirst_->Fill(wres.windows[1 + wres.iTrigWin].tstart);
+  }
 
   //----------------------------------------------------------------
   // Deal with multiple after-trigger time windows
-  hNumAfterTrigWindows_->Fill(afterTrigClusters.size());
-  if(afterTrigClusters.size() > 1) {
-    const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
-    const TimeWindow& win2 = wres.windows[wres.iTrigWin + 2];
-    const double dt2 = win2.tstart - win1.tstart;
-    hWindow2Time_->Fill(win2.tstart);
-    hWindow2dt_->Fill(dt2);
-    if(dt2 < cutMultiwinNextdt_) {
-      return CUT_MULTIWIN_NEXTDT;
-    }
-  }
+  hNumAfterTrigWindows_->Fill(wres.windows.size() - wres.iTrigWin - 1);
+//mincuts:  if(afterTrigClusters.size() > 1) {
+//mincuts:    const TimeWindow& win1 = wres.windows[wres.iTrigWin + 1];
+//mincuts:    const TimeWindow& win2 = wres.windows[wres.iTrigWin + 2];
+//mincuts:    const double dt2 = win2.tstart - win1.tstart;
+//mincuts:    hWindow2Time_->Fill(win2.tstart);
+//mincuts:    hWindow2dt_->Fill(dt2);
+//mincuts:    if(dt2 < cutMultiwinNextdt_) {
+//mincuts:      return CUT_MULTIWIN_NEXTDT;
+//mincuts:    }
+//mincuts:  }
 
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
@@ -614,8 +614,14 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if((iPosTrack > -1 ) && (iWinPosTrack - wres.iTrigWin < 1)) {
     throw std::runtime_error("MuCapture: iWinPosTrack - wres.iTrigWin < 1");
   }
-  const ClustersByPlane& protonGlobalClusters =
-    (iPosTrack > -1) ? afterTrigClusters[iWinPosTrack - wres.iTrigWin - 1] : ClustersByPlane();
+
+  ClustersByPlane protonGlobalClusters;
+  if(iPosTrack > -1) {
+    const TimeWindow& win = wres.windows[iWinPosTrack];
+    const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
+    const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
+    protonGlobalClusters = globalPlaneClusters(pcClusters, dcClusters);
+  }
 
   const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
   const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
@@ -649,7 +655,13 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     if(iWinDIONorm - wres.iTrigWin < 1) {
       throw std::runtime_error("MuCapture: iWinDIONorm - wres.iTrigWin < 1");
     }
-    const ClustersByPlane& dioGlobalClusters = afterTrigClusters[iWinDIONorm - wres.iTrigWin - 1];
+
+    ClustersByPlane dioGlobalClusters;
+    const TimeWindow& win = wres.windows[iWinDIONorm];
+    const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
+    const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
+    dioGlobalClusters = globalPlaneClusters(pcClusters, dcClusters);
+
     hwidthDIOHits_.fill(evt, dioGlobalClusters);
     h200nsDIO_.fill(evt, iDIONorm, dioGlobalClusters);
   }
@@ -695,7 +707,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     commonSkimOutFile_<<evt.nrun<<" "<<evt.nevt<<std::endl;
   }
 
-  return CUTS_DOWNSTREAM_ACCEPTED;
+  return CUTS_MUSTOP_ACCEPTED; // CUTS_DOWNSTREAM_ACCEPTED
 }
 
 //================================================================
