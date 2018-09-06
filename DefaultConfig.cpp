@@ -311,7 +311,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winTrigMaxdt", 30.);
         SetKey(Conf, "MuCapture/winPCPreTrigSeparation", 1050.);
 
-        SetKey(Conf, "MuCapture/cutMuonFirstPlane", 1);
+        SetKey(Conf, "MuCapture/cutMuonFirstPlane", 4);
 
         SetKey(Conf, "MuCapture/Accidentals/tmax", -1100.);
         // Cyclotron RF=23.058 MHz [Glen Marshall in the 2013-06-12 muminus meeting]
@@ -383,7 +383,6 @@ void SetDefault(ConfigFile &Conf)
         // Here we use ptot rather than E.  But the biggest difference
         // is our use of the wire center fit.
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCharge", -1);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackWinTimedt", 100.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackTimeMin", 200.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackTimeMax", 10000. - 1050.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackRmax",6.34);//cm = 38.0 MeV/c pt
