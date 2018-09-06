@@ -87,7 +87,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   //----------------------------------------------------------------
   dnPosTracks_.init(hdir+"/dnPosTracks", H, *E.geo, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
-  dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, *E.geo, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
+  //dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, *E.geo, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
   dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, *E.geo, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
   dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
@@ -604,7 +604,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // select the normalization sample
   const int iDIONorm = dnDIONormTracks_.process(evt, muStop);
 
-  const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop);
+  //const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop);
+  const int iNegTrack = -1; // disable the veto
+
   const int iPosTrack = dnPosTracks_.process(evt, muStop);
 
   const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);

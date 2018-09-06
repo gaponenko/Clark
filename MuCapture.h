@@ -272,7 +272,7 @@ private :
   MuCapUVAnalysis dioDn_;
 
   MuCapTrkAnalysisHF dnPosTracks_;
-  MuCapTrkAnalysisHF dnDIOVetoTracks_;
+  //MuCapTrkAnalysisHF dnDIOVetoTracks_;
   MuCapTrkAnalysisHF dnDIONormTracks_;
 
   MuCapTrkContainmentCut dnPosTrkContainment_;
