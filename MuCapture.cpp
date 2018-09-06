@@ -602,10 +602,11 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
   // select the normalization sample
-  const int iDIONorm = dnDIONormTracks_.process(evt, muStop, decayWindow);
+  const int iDIONorm = dnDIONormTracks_.process(evt, muStop);
 
-  const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop, decayWindow);
-  const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
+  const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop);
+  const int iPosTrack = dnPosTracks_.process(evt, muStop);
+
   const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
   const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 

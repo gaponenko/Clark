@@ -30,7 +30,7 @@ class MuCapTrkAnalysisHF {
   void set_cut_bin_labels(TAxis* ax) {
     ax->SetBinLabel(1+CUT_IERROR, "ierror");
     ax->SetBinLabel(1+CUT_CHARGE, "charge");
-    ax->SetBinLabel(1+CUT_TRKWINTIME, "trkwintime");
+    ax->SetBinLabel(1+CUT_TRACKTIME, "trk time");
     ax->SetBinLabel(1+CUT_STREAM, "stream");
     ax->SetBinLabel(1+CUT_RADIUS, "radius");
 
@@ -50,7 +50,7 @@ public:
   enum CutNumber {
     CUT_IERROR,
     CUT_CHARGE,
-    CUT_TRKWINTIME,
+    CUT_TRACKTIME,
     CUT_STREAM,
     CUT_RADIUS,
     CUT_COSTHETAMIN,
@@ -75,14 +75,14 @@ public:
 
   // Returns the index of an accepted track in the event, or -1
   int process(const EventClass& evt,
-              const ROOT::Math::XYPoint& muStopUV,
-              const TimeWindow& protonWin);
+              const ROOT::Math::XYPoint& muStopUV);
 
   MuCapTrkAnalysisHF()
     : doMCTruth_(false)
     , result_(nullptr)
     , cutCharge_()
-    , cutTrackWinTimedt_()
+    , cutTrackTimeMin_()
+    , cutTrackTimeMax_()
     , cutTrackRmax_()
     , cutCosThetaMin_()
     , cutCosThetaMax_()
@@ -96,8 +96,8 @@ public:
     , h_cuts_r()
     , h_cuts_p()
 
-    , trackTime_()
-    , trackWinTime_()
+    , trackTimeBefore_()
+    , trackTimeAfter_()
     , trackRL_()
     , costhVsPtot_()
     , pfine_()
@@ -115,7 +115,6 @@ public:
     , final_u0v0_()
     , final_trackROut_()
     , final_trackTime_()
-    , final_trackWinTime_()
     , final_StartStop_()
 
     , hNumTracks_()
@@ -131,7 +130,8 @@ private :
   RecoResMuCapTrk *result_;
   int cutCharge_;
   TimeWindow::StreamType cutStream_;
-  double cutTrackWinTimedt_;
+  double cutTrackTimeMin_;
+  double cutTrackTimeMax_;
   double cutTrackRmax_;
   double cutCosThetaMin_;
   double cutCosThetaMax_;
@@ -146,8 +146,8 @@ private :
   TH1 *h_cuts_p;
 
   TH1 *hCharge_;
-  TH1 *trackTime_;
-  TH1 *trackWinTime_;
+  TH1 *trackTimeBefore_;
+  TH1 *trackTimeAfter_;
 
   TH2 *trackRL_;
   TH2 *costhVsPtot_;
@@ -167,7 +167,6 @@ private :
   TH2 *final_u0v0_;
   TH1 *final_trackROut_;
   TH1 *final_trackTime_;
-  TH1 *final_trackWinTime_;
   TH2 *final_StartStop_;
 
   // Unlike the histos above, which are per track,
@@ -186,13 +185,11 @@ private :
   // true iff the track passed the cuts
   bool processTrack(int itrack,
                     const EventClass& evt,
-                    const ROOT::Math::XYPoint& muStopUV,
-                    const TimeWindow& protonWin);
+                    const ROOT::Math::XYPoint& muStopUV);
 
   CutNumber analyzeTrack(int itrack,
                          const EventClass& evt,
-                         const ROOT::Math::XYPoint& muStopUV,
-                         const TimeWindow& protonWin);
+                         const ROOT::Math::XYPoint& muStopUV);
 };
 
 #endif/*MuCapTrkAnalysisHF_h*/

@@ -365,7 +365,8 @@ void SetDefault(ConfigFile &Conf)
 
         //----------------
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCharge", +1);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackTimeMin", 200.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackTimeMax", 10000. - 1050.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackRmax", 99999.);//cm
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCosThetaMin", 0.5);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCosThetaMax", 0.98);
@@ -383,6 +384,8 @@ void SetDefault(ConfigFile &Conf)
         // is our use of the wire center fit.
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCharge", -1);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackTimeMin", 200.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackTimeMax", 10000. - 1050.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutTrackRmax",6.34);//cm = 38.0 MeV/c pt
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCosThetaMin", 0.54);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioNorm/cutCosThetaMax", 0.92);
@@ -395,7 +398,8 @@ void SetDefault(ConfigFile &Conf)
         //----------------
         // A loose set of cuts to get more DIOs for vetoing capture events
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCharge", -1);
-        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackWinTimedt", 100.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackTimeMin", 200.);//ns
+        SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackTimeMax", 10000. - 1050.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutTrackRmax",81.7);//cm, approx 49 MeV/c pt
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCosThetaMin", 0.0);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/dioVeto/cutCosThetaMax", 0.98);

@@ -57,7 +57,8 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   cutStream_ = cutStream;
 
   cutCharge_ = conf.read<int>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutCharge");
-  cutTrackWinTimedt_ = conf.read<int>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutTrackWinTimedt");
+  cutTrackTimeMin_ = conf.read<int>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutTrackTimeMin");
+  cutTrackTimeMax_ = conf.read<int>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutTrackTimeMax");
   cutTrackRmax_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutTrackRmax");
   cutCosThetaMin_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutCosThetaMin");
   cutCosThetaMax_ = conf.read<double>("MuCapture/TrkAnalysisHF/"+cutSet+"/cutCosThetaMax");
@@ -80,9 +81,6 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
   h_cuts_p->SetOption("hist text");
 
   //----------------------------------------------------------------
-  trackWinTime_ = hf.DefineTH1D(hdir, "trackWinTime", "track time - win time",
-                                201, -100.5, 100.5);
-
   hCharge_ = hf.DefineTH1D(hdir, "charge", "track charge", 3, -1.5, 1.5);
 
   hStartStop_ = hf.DefineTH2D(hdir,
@@ -171,15 +169,15 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
                                    "max track distance from the Z axis",
                                    400, 0, 40.);
 
-  trackTime_ = hf.DefineTH1D(hdir, "trackTime", "track time",
-                             1100, -1000., 10000.);
+  trackTimeBefore_ = hf.DefineTH1D(hdir, "trackTimeBefore", "track time before cut",
+                                   1100, -1000., 10000.);
+
+  trackTimeAfter_ = hf.DefineTH1D(hdir, "trackTimeAfter", "track time after cut",
+                                  1100, -1000., 10000.);
 
   final_trackTime_ = hf.DefineTH1D(hdir, "final_trackTime",
                                    "final track time",
                                    1100, -1000., 10000.);
-
-  final_trackWinTime_ = hf.DefineTH1D(hdir, "final_trackWinTime", "final track time - win time",
-                                      201, -100.5, 100.5);
 
   hNumTracks_ = hf.DefineTH1D(hdir, "numAcceptedTracks",
                               "numAcceptedTracks",
@@ -213,12 +211,11 @@ void MuCapTrkAnalysisHF::init(const std::string& hdir,
 
 //================================================================
 int MuCapTrkAnalysisHF::process(const EventClass& evt,
-                                const ROOT::Math::XYPoint& muStopUV,
-                                const TimeWindow& protonWin)
+                                const ROOT::Math::XYPoint& muStopUV)
 {
   std::vector<unsigned> accepted;
   for(int i = 0; i < evt.ntr; ++i) {
-    if(processTrack(i, evt, muStopUV, protonWin)) {
+    if(processTrack(i, evt, muStopUV)) {
       accepted.push_back(i);
     }
   }
@@ -294,10 +291,9 @@ int MuCapTrkAnalysisHF::process(const EventClass& evt,
 //================================================================
 bool MuCapTrkAnalysisHF::processTrack(int itrack,
                                       const EventClass& evt,
-                                      const ROOT::Math::XYPoint& muStopUV,
-                                      const TimeWindow& protonWin)
+                                      const ROOT::Math::XYPoint& muStopUV)
 {
-  CutNumber c = analyzeTrack(itrack, evt, muStopUV, protonWin);
+  CutNumber c = analyzeTrack(itrack, evt, muStopUV);
   h_cuts_r->Fill(c);
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
@@ -308,8 +304,7 @@ bool MuCapTrkAnalysisHF::processTrack(int itrack,
 //================================================================
 MuCapTrkAnalysisHF::CutNumber MuCapTrkAnalysisHF::
 analyzeTrack(int i, const EventClass& evt,
-             const ROOT::Math::XYPoint& muStopUV,
-             const TimeWindow& protonWin)
+             const ROOT::Math::XYPoint& muStopUV)
 {
   //----------------------------------------------------------------
   if(evt.hefit_ierror[i] != 0) {
@@ -323,11 +318,12 @@ analyzeTrack(int i, const EventClass& evt,
   }
 
   //----------------------------------------------------------------
-  trackTime_->Fill(evt.hefit_time[i]);
-  trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
-  if(std::abs(evt.hefit_time[i]  - protonWin.tstart) > cutTrackWinTimedt_) {
-    return CUT_TRKWINTIME;
+  trackTimeBefore_->Fill(evt.hefit_time[i]);
+  if( (evt.hefit_time[i] <  cutTrackTimeMin_) ||
+      (cutTrackTimeMax_ < evt.hefit_time[i]) ) {
+    return CUT_TRACKTIME;
   }
+  trackTimeAfter_->Fill(evt.hefit_time[i]);
 
   //----------------------------------------------------------------
   hStartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
@@ -417,7 +413,6 @@ analyzeTrack(int i, const EventClass& evt,
   final_trackRL_->Fill(evt.radius[i], evt.wavelen[i]);
   final_u0v0_->Fill(evt.hefit_u0[i], evt.hefit_v0[i]);
   final_trackTime_->Fill(evt.hefit_time[i]);
-  final_trackWinTime_->Fill(evt.hefit_time[i] - protonWin.tstart);
   final_StartStop_->Fill(evt.hefit_pstart[i], evt.hefit_pstop[i]);
 
   return CUTS_ACCEPTED;
