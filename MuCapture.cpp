@@ -237,17 +237,17 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
               TimeWindow::DOWNSTREAM,
               Conf.read<double>(hdir+"/DIODn/cutMinTime"));
 
-  hdriftPCAll_.init(hdir+"/chamberEff/driftTimePCAll", H, 12, 1000./*ns*/,
+  hdriftPCAll_.init(hdir+"/chamberEff/driftTimePCAll", H, 12, 200./*ns*/,
                     Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtPC"),
                     Conf);
-  hdriftPCFiltered_.init(hdir+"/chamberEff/driftTimePCFiltered", H, 12, 1000./*ns*/,
+  hdriftPCFiltered_.init(hdir+"/chamberEff/driftTimePCFiltered", H, 12, 200./*ns*/,
                          Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtPC"),
                          Conf);
 
-  hdriftDCAll_.init(hdir+"/chamberEff/driftTimeDCAll", H, 44, 5000./*ns*/,
+  hdriftDCAll_.init(hdir+"/chamberEff/driftTimeDCAll", H, 44, 4000./*ns*/,
                     Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtDC"),
                     Conf);
-  hdriftDCFiltered_.init(hdir+"/chamberEff/driftTimeDCFiltered", H, 44, 5000./*ns*/,
+  hdriftDCFiltered_.init(hdir+"/chamberEff/driftTimeDCFiltered", H, 44, 4000./*ns*/,
                          Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtDC"),
                          Conf);
 
