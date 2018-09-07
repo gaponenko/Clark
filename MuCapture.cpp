@@ -83,19 +83,19 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     channels_.back().init(H, "MuCapture/channels", channelNames[i], *E.geo, Conf);
   }
 
-  rooUnfHits_.init(H, "MuCapture", Conf);
+//minhist:  rooUnfHits_.init(H, "MuCapture", Conf);
 
   //----------------------------------------------------------------
   dnPosTracks_.init(hdir+"/dnPosTracks", H, *E.geo, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
   //dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, *E.geo, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
   dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, *E.geo, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
-  dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
-  dnPosTrkRangeStudies_.init(H, hdir+"/dnPosTrkRangeStudies", *E.geo, Conf);
-  dnPosTrkClassification_.init(H, hdir+"/dnPosTrkClassification", *E.geo, Conf);
-
-  hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
-  hContainedProtonPID_.init(hdir+"/posContainedTrackPID", H, Conf);
+//minhist:  dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
+//minhist:  dnPosTrkRangeStudies_.init(H, hdir+"/dnPosTrkRangeStudies", *E.geo, Conf);
+//minhist:  dnPosTrkClassification_.init(H, hdir+"/dnPosTrkClassification", *E.geo, Conf);
+//minhist:
+//minhist:  hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
+//minhist:  hContainedProtonPID_.init(hdir+"/posContainedTrackPID", H, Conf);
 
   //----------------------------------------------------------------
   pcXTalkProcessor_ = makeXTalkPreprocessor(hdir+"/hitLevel/XTalk", WirePlane::PC, H, *E.geo, Conf);
@@ -104,13 +104,13 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   pcHitProcessor_ = makeTDCHitPreprocessor(hdir+"/hitLevel/HitPreProc", WirePlane::PC, H, *E.geo, Conf);
   dcHitProcessor_ = makeTDCHitPreprocessor(hdir+"/hitLevel/HitPreProc", WirePlane::DC, H, *E.geo, Conf);
 
-  hwidthPCall_.init(hdir+"/hitLevel/pcWidthAll", "pcwidth", 12, H, Conf);
-  hwidthPCfiltered_.init(hdir+"/hitLevel/pcWidthFiltered", "pcwidth", 12, H, Conf);
-  hwidthDCall_.init(hdir+"/hitLevel/dcWidthAll", "dcwidth", 44, H, Conf);
-  hwidthDCfiltered_.init(hdir+"/hitLevel/dcWidthFiltered", "dcwidth", 44, H, Conf);
-
-  hwidthMuHits_.init(H, hdir+"/hitLevel/muonHitWidth", *E.geo, Conf);
-  hwidthDIOHits_.init(H, hdir+"/hitLevel/dioHitWidth", *E.geo, Conf);
+//minhist:  hwidthPCall_.init(hdir+"/hitLevel/pcWidthAll", "pcwidth", 12, H, Conf);
+//minhist:  hwidthPCfiltered_.init(hdir+"/hitLevel/pcWidthFiltered", "pcwidth", 12, H, Conf);
+//minhist:  hwidthDCall_.init(hdir+"/hitLevel/dcWidthAll", "dcwidth", 44, H, Conf);
+//minhist:  hwidthDCfiltered_.init(hdir+"/hitLevel/dcWidthFiltered", "dcwidth", 44, H, Conf);
+//minhist:
+//minhist:  hwidthMuHits_.init(H, hdir+"/hitLevel/muonHitWidth", *E.geo, Conf);
+//minhist:  hwidthDIOHits_.init(H, hdir+"/hitLevel/dioHitWidth", *E.geo, Conf);
 
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.init(hdir+"/hitLevel/afterPulsingPCAll", 12, 160, H, Conf);
@@ -133,8 +133,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hXT3_.init(hdir+"/hitLevel/xt3", H, Conf);
   hXT4_.init(hdir+"/hitLevel/xt4", H, Conf);
   hXT5_.init(hdir+"/hitLevel/xt5", H, *E.geo, Conf);
-  h200ns_.init(hdir+"/hitLevel/peak200ns", H, *E.geo, Conf);
-  h200nsDIO_.init(hdir+"/hitLevel/peak200nsDIO", H, *E.geo, Conf);
+//minhist:  h200ns_.init(hdir+"/hitLevel/peak200ns", H, *E.geo, Conf);
+//minhist:  h200nsDIO_.init(hdir+"/hitLevel/peak200nsDIO", H, *E.geo, Conf);
 
   hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init(hdir+"/hitLevel", "hitMapDCAll", 44, 80, H, Conf);
@@ -224,20 +224,20 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 //mincuts:  hVetoingPCosth_->SetOption("colz");
 
   //----------------------------------------------------------------
-  haccidentalsTrig_.init(hdir+"/accidentals/trig", H, Conf);
-  haccidentalsStop_.init(hdir+"/accidentals/stop", H, Conf);
-
-  winDCUnassignedAfterWindowing_.init(hdir+"/unassignedDC/windowing", H, Conf);
-  winDCUnassignedMuStop_.init(hdir+"/unassignedDC/mustop", H, Conf);
-  winDCUnassignedDnDecay_.init(hdir+"/unassignedDC/dndecay", H, Conf);
-
-  dioUp_.init(hdir+"/chamberEff/DIOUp", H, Conf,
-              TimeWindow::UPSTREAM,
-              Conf.read<double>(hdir+"/DIOUp/cutMinTime"));
-
-  dioDn_.init(hdir+"/chamberEff/DIODn", H, Conf,
-              TimeWindow::DOWNSTREAM,
-              Conf.read<double>(hdir+"/DIODn/cutMinTime"));
+//minhist:  haccidentalsTrig_.init(hdir+"/accidentals/trig", H, Conf);
+//minhist:  haccidentalsStop_.init(hdir+"/accidentals/stop", H, Conf);
+//minhist:
+//minhist:  winDCUnassignedAfterWindowing_.init(hdir+"/unassignedDC/windowing", H, Conf);
+//minhist:  winDCUnassignedMuStop_.init(hdir+"/unassignedDC/mustop", H, Conf);
+//minhist:  winDCUnassignedDnDecay_.init(hdir+"/unassignedDC/dndecay", H, Conf);
+//minhist:
+//minhist:  dioUp_.init(hdir+"/chamberEff/DIOUp", H, Conf,
+//minhist:              TimeWindow::UPSTREAM,
+//minhist:              Conf.read<double>(hdir+"/DIOUp/cutMinTime"));
+//minhist:
+//minhist:  dioDn_.init(hdir+"/chamberEff/DIODn", H, Conf,
+//minhist:              TimeWindow::DOWNSTREAM,
+//minhist:              Conf.read<double>(hdir+"/DIODn/cutMinTime"));
 
   hdriftPCAll_.init(hdir+"/chamberEff/driftTimePCAll", H, 12, 1000./*ns*/,
                     Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtPC"),
@@ -258,7 +258,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     hTruthLastPlane_.init(H, hdir+"/MCTruth/lastPlane", *E.geo, Conf);
     hTruthPACT_.init(H, hdir+"/MCTruth/pact", *E.geo, Conf);
 //mincuts:    hTruthDnPC_.init(H, hdir+"/MCTruth/dnPC", *E.geo, Conf);
-    hTruthDnCandidate_.init(H, hdir+"/MCTruth/dnCandidate", *E.geo, Conf);
+//minhist:    hTruthDnCandidate_.init(H, hdir+"/MCTruth/dnCandidate", *E.geo, Conf);
   }
 
   //----------------------------------------------------------------
@@ -275,9 +275,9 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
   }
-  if(doMCTruth_ && c > CUT_EVENT_NUMBER) {
-    rooUnfHits_.FillAndMiss();
-  }
+//minhist:  if(doMCTruth_ && c > CUT_EVENT_NUMBER) {
+//minhist:    rooUnfHits_.FillAndMiss();
+//minhist:  }
 
   if(gEventList.requested(evt)) {
     const int cbin = h_cuts_p->GetXaxis()->FindFixBin(c);
@@ -302,7 +302,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     channels_[i].fillReferenceSample(evt);
   }
 
-  rooUnfHits_.SaveEventVariables(evt);
+//minhist:  rooUnfHits_.SaveEventVariables(evt);
 
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits());
   const TDCHitWPPtrCollection& allPCHits = allPCHitsBuf.get();
@@ -323,8 +323,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   TDCHitWPPtrCollection filteredPCHits;
   pcHitProcessor_->process(&filteredPCHits, nxtPCHits);
 
-  hwidthPCall_.fill(allPCHits);
-  hwidthPCfiltered_.fill(filteredPCHits);
+//minhist:  hwidthPCall_.fill(allPCHits);
+//minhist:  hwidthPCfiltered_.fill(filteredPCHits);
 
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.fill(allPCHits);
@@ -354,8 +354,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   TDCHitWPPtrCollection filteredDCHits;
   dcHitProcessor_->process(&filteredDCHits, nxtDCHits);
 
-  hwidthDCall_.fill(allDCHits);
-  hwidthDCfiltered_.fill(filteredDCHits);
+//minhist:  hwidthDCall_.fill(allDCHits);
+//minhist:  hwidthDCfiltered_.fill(filteredDCHits);
 
   if(fillXtalkDC_) {
     hAfterPulsingDCAll_.fill(allDCHits);
@@ -390,7 +390,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     return CUT_NOTRIGWIN;
   }
 
-  haccidentalsTrig_.fill(wres);
+//minhist:  haccidentalsTrig_.fill(wres);
 
   if(wres.iTrigWin > 0) {
     // Trig time is 0, dt from that rather than from less precise trigWin time
@@ -410,7 +410,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------
   // Process DC hits
   dcWindowing_.assignDCHits(filteredDCHits, &wres);
-  winDCUnassignedAfterWindowing_.fill(wres);
+//minhist:  winDCUnassignedAfterWindowing_.fill(wres);
 
   //----------------
   const ClustersByPlane muonPCtmp = constructPlaneClusters(12, trigWin.pcHits);
@@ -486,29 +486,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // Here we have an accepted muon stop
 
   // Call the subanalyses
-  winDCUnassignedMuStop_.fill(wres);
-  haccidentalsStop_.fill(wres);
 
-  int idio = dioUp_.process(evt, muStop);
-  if(idio >= 0) {
-    hdriftPCAll_.fill(evt, idio, allPCHits);
-    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
-    hdriftDCAll_.fill(evt, idio, allDCHits);
-    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
-    if(uvOutFile_) {
-      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
-    }
-  }
-  idio = dioDn_.process(evt, muStop);
-  if(idio >= 0) {
-    hdriftPCAll_.fill(evt, idio, allPCHits);
-    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
-    hdriftDCAll_.fill(evt, idio, allDCHits);
-    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
-    if(uvOutFile_) {
-      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
-    }
-  }
+//minhist:  winDCUnassignedMuStop_.fill(wres);
+//minhist:  haccidentalsStop_.fill(wres);
 
   //  ----------------
   // More stopped muon histos
@@ -623,83 +603,106 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     protonGlobalClusters = globalPlaneClusters(pcClusters, dcClusters);
   }
 
-  const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
-  const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
+//minhist:  const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
+//minhist:  const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 
   for(unsigned i=0; i<channels_.size(); i++) {
     channels_[i].fill(evt, iPosTrack, iNegTrack, protonGlobalClusters);
   }
 
-  rooUnfHits_.FillMeasured(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
-  if(channels_[0].referenceSampleAccepted()) {
-    rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
-  }
-
+//minhist:  rooUnfHits_.FillMeasured(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
+//minhist:  if(channels_[0].referenceSampleAccepted()) {
+//minhist:    rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
+//minhist:  }
 
   //----------------------------------------------------------------
   // Fill extra distributions
 
-  if(iNegTrack == -1) { // Veto DIO events
-    if(iPosTrack != -1) { // Got a reconstructed capture track
-      hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:  if(iNegTrack == -1) { // Veto DIO events
+//minhist:    if(iPosTrack != -1) { // Got a reconstructed capture track
+//minhist:      hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:    }
+//minhist:  }
+//minhist:
+//minhist:  if(doMCTruth_) {
+//minhist:    hTruthDnCandidate_.fill(evt);
+//minhist:  }
+//minhist:
+//minhist:  hwidthMuHits_.fill(evt, muonGlobalClusters);
+//minhist:  if(iDIONorm != -1) {
+//minhist:    const int iWinDIONorm = findTrackWindow(evt, iDIONorm, wres.windows);
+//minhist:    if(iWinDIONorm - wres.iTrigWin < 1) {
+//minhist:      throw std::runtime_error("MuCapture: iWinDIONorm - wres.iTrigWin < 1");
+//minhist:    }
+//minhist:
+//minhist:    ClustersByPlane dioGlobalClusters;
+//minhist:    const TimeWindow& win = wres.windows[iWinDIONorm];
+//minhist:    const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
+//minhist:    const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
+//minhist:    dioGlobalClusters = globalPlaneClusters(pcClusters, dcClusters);
+//minhist:
+//minhist:    hwidthDIOHits_.fill(evt, dioGlobalClusters);
+//minhist:    h200nsDIO_.fill(evt, iDIONorm, dioGlobalClusters);
+//minhist:  }
+//minhist:
+//minhist:  // Do we have any ambiguous events (both "DIO" and "proton")?
+//minhist:  if((iNegTrack != -1)&&(iPosTrack != -1)) {
+//minhist:    hPosNegMom_->Fill(evt.ptot[iPosTrack], evt.ptot[iNegTrack]);
+//minhist:    hPosNegCosth_->Fill(evt.costh[iPosTrack], evt.costh[iNegTrack]);
+//minhist:    hVetoedPCosth_->Fill(evt.ptot[iPosTrack], evt.costh[iPosTrack]);
+//minhist:    hVetoingPCosth_->Fill(evt.ptot[iNegTrack], evt.costh[iNegTrack]);
+//minhist:  }
+//minhist:
+//minhist:  winDCUnassignedDnDecay_.fill(wres);
+//minhist:  // What do events with many unassigned hits look like?
+//minhist:  if(false && (wres.unassignedDCHits.size()>10) ) {
+//minhist:    std::cout<<"Unassigned DC hits debug: run "<<evt.nrun<<" event "<<evt.nevt<<std::endl;
+//minhist:    std::cout<<"unassigned  ("<<wres.unassignedDCHits.size()<<"): ";
+//minhist:    for(unsigned i=0; i<wres.unassignedDCHits.size(); ++i) {
+//minhist:      std::cout<<*wres.unassignedDCHits[i]<<" ";
+//minhist:    }
+//minhist:    std::cout<<"\nwindows:\n";
+//minhist:    for(unsigned iwin=0; iwin<wres.windows.size(); ++iwin) {
+//minhist:      std::cout<<"iwin="<<iwin<<" tstart "<<wres.windows[iwin].tstart<<": PC = "<<wres.windows[iwin].pcHits<<std::endl;
+//minhist:      std::cout<<"iwin="<<iwin<<" tstartDC "<<wres.windows[iwin].tstartDC<<": DC = "<<wres.windows[iwin].dcHits<<std::endl;
+//minhist:    }
+//minhist:  }
+//minhist:
+//minhist:  if(isPosTrackContained) {
+//minhist:    dnPosTrkRangeStudies_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:  }
+//minhist:
+//minhist:  dnPosTrkClassification_.fill(evt, iPosTrack, protonGlobalClusters);
+
+//minhist:
+//minhist:  int idio = dioUp_.process(evt, muStop); // NOTE: upstream fit disabled in  MOFIA
+//minhist:  if(idio >= 0) {
+//minhist:    hdriftPCAll_.fill(evt, idio, allPCHits);
+//minhist:    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
+//minhist:    hdriftDCAll_.fill(evt, idio, allDCHits);
+//minhist:    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
+//minhist:    if(uvOutFile_) {
+//minhist:      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+//minhist:    }
+//minhist:  }
+//minhist: idio = dioDn_.process(evt, muStop);
+
+  int idio = iDIONorm;
+  if(idio >= 0) {
+    hdriftPCAll_.fill(evt, idio, allPCHits);
+    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
+    hdriftDCAll_.fill(evt, idio, allDCHits);
+    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
+    if(uvOutFile_) {
+      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
     }
   }
-
-  if(doMCTruth_) {
-    hTruthDnCandidate_.fill(evt);
-  }
-
-  hwidthMuHits_.fill(evt, muonGlobalClusters);
-  if(iDIONorm != -1) {
-    const int iWinDIONorm = findTrackWindow(evt, iDIONorm, wres.windows);
-    if(iWinDIONorm - wres.iTrigWin < 1) {
-      throw std::runtime_error("MuCapture: iWinDIONorm - wres.iTrigWin < 1");
-    }
-
-    ClustersByPlane dioGlobalClusters;
-    const TimeWindow& win = wres.windows[iWinDIONorm];
-    const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
-    const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
-    dioGlobalClusters = globalPlaneClusters(pcClusters, dcClusters);
-
-    hwidthDIOHits_.fill(evt, dioGlobalClusters);
-    h200nsDIO_.fill(evt, iDIONorm, dioGlobalClusters);
-  }
-
-  // Do we have any ambiguous events (both "DIO" and "proton")?
-  if((iNegTrack != -1)&&(iPosTrack != -1)) {
-    hPosNegMom_->Fill(evt.ptot[iPosTrack], evt.ptot[iNegTrack]);
-    hPosNegCosth_->Fill(evt.costh[iPosTrack], evt.costh[iNegTrack]);
-    hVetoedPCosth_->Fill(evt.ptot[iPosTrack], evt.costh[iPosTrack]);
-    hVetoingPCosth_->Fill(evt.ptot[iNegTrack], evt.costh[iNegTrack]);
-  }
-
-  winDCUnassignedDnDecay_.fill(wres);
-  // What do events with many unassigned hits look like?
-  if(false && (wres.unassignedDCHits.size()>10) ) {
-    std::cout<<"Unassigned DC hits debug: run "<<evt.nrun<<" event "<<evt.nevt<<std::endl;
-    std::cout<<"unassigned  ("<<wres.unassignedDCHits.size()<<"): ";
-    for(unsigned i=0; i<wres.unassignedDCHits.size(); ++i) {
-      std::cout<<*wres.unassignedDCHits[i]<<" ";
-    }
-    std::cout<<"\nwindows:\n";
-    for(unsigned iwin=0; iwin<wres.windows.size(); ++iwin) {
-      std::cout<<"iwin="<<iwin<<" tstart "<<wres.windows[iwin].tstart<<": PC = "<<wres.windows[iwin].pcHits<<std::endl;
-      std::cout<<"iwin="<<iwin<<" tstartDC "<<wres.windows[iwin].tstartDC<<": DC = "<<wres.windows[iwin].dcHits<<std::endl;
-    }
-  }
-
-  if(isPosTrackContained) {
-    dnPosTrkRangeStudies_.fill(evt, iPosTrack, protonGlobalClusters);
-  }
-
-  dnPosTrkClassification_.fill(evt, iPosTrack, protonGlobalClusters);
 
   if(iPosTrack != -1) {
     hXT3_.fill(evt, iPosTrack, protonGlobalClusters);
     hXT4_.fill(evt, iPosTrack);
     hXT5_.fill(evt, iPosTrack);
-    h200ns_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:    h200ns_.fill(evt, iPosTrack, protonGlobalClusters);
   }
 
   //----------------
