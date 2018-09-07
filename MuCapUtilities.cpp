@@ -166,7 +166,7 @@ namespace MuCapUtilities {
     double rmax = 0.;
     for(unsigned ihit = 0; ihit < hits.size(); ++ihit) {
       const TDCHitWPPtr& hit = hits[ihit];
-      const double rhit = std::abs(geo.planes(pt)[hit->plane()].measurement(hit->cell()).coordinate);
+      const double rhit = std::abs(geo.plane(pt, hit->plane()).measurement(hit->cell()).coordinate);
       if(rmax < rhit) {
         rmax = rhit;
       }

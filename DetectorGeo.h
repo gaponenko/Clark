@@ -89,8 +89,9 @@ public:
   const WirePlane& dc(unsigned idc) const { return dcplanes_.at(idc - 1); }
   const WirePlane& global(unsigned iglobal) const { return globalplanes_.at(iglobal - 1); }
 
-  // vector of PCs or DCs (zero based!)
-  const std::vector<WirePlane>& planes(WirePlane::DetType d) const;
+  // iplane is 1 to 12 for PCs, 1 to 44 for DCs
+  const WirePlane& plane(WirePlane::DetType d, unsigned iplane) const;
+  unsigned numPlanes(WirePlane::DetType d) const;
 
   unsigned maxCellNumber(WirePlane::DetType d) const;
 
