@@ -592,11 +592,19 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   const int iWinPosTrack = findTrackWindow(evt, iPosTrack, wres.windows);
   if((iPosTrack > -1 ) && (iWinPosTrack - wres.iTrigWin < 1)) {
-    throw std::runtime_error("MuCapture: iWinPosTrack - wres.iTrigWin < 1");
+    //throw std::runtime_error("MuCapture: iWinPosTrack - wres.iTrigWin < 1");
+    std::cerr<<"MuCapture: iWinPosTrack - wres.iTrigWin < 1: iWinPosTrack="<<iWinPosTrack
+             <<", iTrigWin = "<<wres.iTrigWin
+             <<", numWindows = "<<wres.windows.size()
+             <<std::endl;
+
+    std::cerr<<"track time = "<<evt.hefit_time[iPosTrack] <<std::endl;
+    std::cerr<<"wres = "<<wres<<std::endl;
+
   }
 
   ClustersByPlane protonGlobalClusters;
-  if(iPosTrack > -1) {
+  if(iWinPosTrack > -1) {
     const TimeWindow& win = wres.windows[iWinPosTrack];
     const ClustersByPlane pcClusters = constructPlaneClusters(12, win.pcHits);
     const ClustersByPlane dcClusters = constructPlaneClusters(44, win.dcHits);
