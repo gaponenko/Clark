@@ -109,11 +109,20 @@ DetectorGeo::DetectorGeo(const ConfigFile& conf, log4cpp::Category& logger)
 }
 
 //================================================================
-const std::vector<WirePlane>& DetectorGeo::planes(WirePlane::DetType d) const {
+const WirePlane& DetectorGeo::plane(WirePlane::DetType d, unsigned iplane) const {
   switch(d) {
-  case WirePlane::PC: return pcplanes_;
-  case WirePlane::DC: return dcplanes_;
+  case WirePlane::PC: return pc(iplane);
+  case WirePlane::DC: return dc(iplane);
   default: throw std::runtime_error("DetectorGeo::planes(DetType d): invalid input");
+  }
+}
+
+//================================================================
+unsigned DetectorGeo::numPlanes(WirePlane::DetType d) const {
+  switch(d) {
+  case WirePlane::PC: return pcplanes_.size();
+  case WirePlane::DC: return dcplanes_.size();
+  default: throw std::runtime_error("DetectorGeo::numPlanes(DetType d): invalid input");
   }
 }
 

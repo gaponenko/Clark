@@ -135,7 +135,7 @@ namespace TDCHitPreprocessing {
     : cutSameWireDt_(conf.read<float>("MuCapture/HitPreproc/"+WirePlane::detName(det)+"/SameWireHitDiscarder/cutSameWireDt"))
   {
     const std::string hdir = topdir + "/" + WirePlane::detName(det)+"_SameWireHitDiscarder";
-    const unsigned maxPlaneNumber = geom.planes(det).size();
+    const unsigned maxPlaneNumber = geom.numPlanes(det);
     const unsigned maxCellNumber = geom.maxCellNumber(det);
 
     const double dtHistoUpperLimit = 2000;
