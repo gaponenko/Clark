@@ -395,6 +395,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     const double dt = wres.windows[wres.iTrigWin - 1].tstart;
     hPCPreTrigSeparation_->Fill(dt);
     if(std::abs(dt) < winPCPreTrigSeparation_) {
+      // Without this cut a pre-trigger particle can create a time
+      // window that would "eat" hits belonging to a capture proton in
+      // our windowing procedure.  Then the proton containment cut
+      // would produce a wrong result.
       return CUT_PCWIN_TRIGSEPPAST;
     }
   }
