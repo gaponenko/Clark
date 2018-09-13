@@ -283,7 +283,7 @@ void SetDefault(ConfigFile &Conf)
 
         // ================== MuCapture analysis ======================== //
         SetKey(Conf, "MuCapture/loadDefaultTWISTVars", true);
-        SetKey(Conf, "MuCapture/fillXtalkPC", true);
+        SetKey(Conf, "MuCapture/fillXtalkPC", false);
         SetKey(Conf, "MuCapture/fillXtalkDC", false);
         SetKey(Conf, "MuCapture/debugEventList", "");
         SetKey(Conf, "Detector/Geometry/dc_ppc", 25);
@@ -413,36 +413,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/dnPosTrkContainment/useExtendedRange", true);
 
         //================================================================
-        SetKey(Conf, "MuCapture/channels/versions", "legacy,rcp1,rp1,rpz1");
-
-        //----------------
-        SetKey(Conf, "MuCapture/channels/legacy/contained/vars", "RangeCosVsP");
-
-        SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxPlane", 55);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/cutMaxRout", 15.);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/ccut/useExtendedRange", true);
-
-        SetKey(Conf, "MuCapture/channels/legacy/numGeneratorBins", 650);
-        SetKey(Conf, "MuCapture/channels/legacy/genpmin", 0.);
-        SetKey(Conf, "MuCapture/channels/legacy/genpmax", 650.);
-
-        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarnbins", 250);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmin", 25.);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/xvarmax", 650.);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/yvarnbins", 6);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmin", 8.);
-        SetKey(Conf, "MuCapture/channels/legacy/contained/yvarmax", 32.);
-
-        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopnbins", 250);
-        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmin", 25.);
-        SetKey(Conf, "MuCapture/channels/legacy/uncontained/recopmax", 650.);
-
-        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresnbins", 60);
-        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresmin", 0.5);
-        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cwiresmax", 60.5);
-        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cplanesnbins", 25);
-        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cplanesmin", 0.5);
-        SetKey(Conf, "MuCapture/channels/legacy/hitbased/cplanesmax", 25.5);
+        SetKey(Conf, "MuCapture/channels/versions", "rcp1,rp1,rpz1");
 
         //----------------
         // rangecos vs p: like legacy, but exclude outer PCs from contained tracks
