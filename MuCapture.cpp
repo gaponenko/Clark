@@ -229,14 +229,6 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   winDCUnassignedMuStop_.init(hdir+"/unassignedDC/mustop", H, Conf);
   winDCUnassignedDnDecay_.init(hdir+"/unassignedDC/dndecay", H, Conf);
 
-  dioUp_.init(hdir+"/chamberEff/DIOUp", H, Conf,
-              TimeWindow::UPSTREAM,
-              Conf.read<double>(hdir+"/DIOUp/cutMinTime"));
-
-  dioDn_.init(hdir+"/chamberEff/DIODn", H, Conf,
-              TimeWindow::DOWNSTREAM,
-              Conf.read<double>(hdir+"/DIODn/cutMinTime"));
-
   hdriftPCAll_.init(hdir+"/chamberEff/driftTimePCAll", H, 12, 200./*ns*/,
                     Conf.read<double>(hdir+"/HistDriftTime/cutEffTrackHitDtPC"),
                     Conf);
@@ -496,27 +488,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   winDCUnassignedMuStop_.fill(wres);
   haccidentalsStop_.fill(wres);
 
-  int idio = dioUp_.process(evt, muStop);
-  if(idio >= 0) {
-    hdriftPCAll_.fill(evt, idio, allPCHits);
-    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
-    hdriftDCAll_.fill(evt, idio, allDCHits);
-    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
-    if(uvOutFile_) {
-      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
-    }
-  }
-  idio = dioDn_.process(evt, muStop);
-  if(idio >= 0) {
-    hdriftPCAll_.fill(evt, idio, allPCHits);
-    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
-    hdriftDCAll_.fill(evt, idio, allDCHits);
-    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
-    if(uvOutFile_) {
-      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
-    }
-  }
-
   //  ----------------
   // More stopped muon histos
   for(int i = 0; i + 1 < muonRange.segments().size(); ++i) {
@@ -607,7 +578,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //  The pre-selection for downstream decays/captures is passed here
   // select the normalization sample
 
-//minhist:  const int iDIONorm =
+  const int iDIONorm =
     dnDIONormTracks_.process(evt, muStop, decayWindow);
 
   const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop, decayWindow);
@@ -678,6 +649,18 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     hXT4_.fill(evt, iPosTrack);
     hXT5_.fill(evt, iPosTrack);
 //minhist:    h200ns_.fill(evt, iPosTrack, protonGlobalClusters);
+  }
+
+  //----------------------------------------------------------------
+  int idio = iDIONorm;
+  if(idio >= 0) {
+    hdriftPCAll_.fill(evt, idio, allPCHits);
+    hdriftPCFiltered_.fill(evt, idio, filteredPCHits);
+    hdriftDCAll_.fill(evt, idio, allDCHits);
+    hdriftDCFiltered_.fill(evt, idio, filteredDCHits);
+    if(uvOutFile_) {
+      uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
+    }
   }
 
   //----------------
