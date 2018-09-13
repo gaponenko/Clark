@@ -9,7 +9,7 @@
 
 #include "HistMuCapContainedChannel.h"
 #include "HistMuCapUncontainedChannel.h"
-#include "HistMuCapHitbasedChannel.h"
+//nohitb: #include "HistMuCapHitbasedChannel.h"
 
 #include "HistTDCBCSWidth.h"
 #include "HistMuCapTruth.h"
@@ -68,7 +68,7 @@ private :
   // Essential "channel" analysis histograms
   HistMuCapContainedChannel contained_;
   HistMuCapUncontainedChannel uncontained_;
-  HistMuCapHitbasedChannel hitbased_;
+//nohitb:  HistMuCapHitbasedChannel hitbased_;
 
   // Reference sample spectrum: common for all reco channels
   // Essential for normalization of the unfolding
@@ -83,12 +83,12 @@ private :
   bool fillExtras_TDC_;
   HistTDCBCSWidth hTDCWidthContained_;
   HistTDCBCSWidth hTDCWidthUncontained_;
-  HistTDCBCSWidth hTDCWidthHitbased_;
+//nohitb:  HistTDCBCSWidth hTDCWidthHitbased_;
   HistTDCBCSWidth hTDCWidthNone_;
 
   HistMuCapTruth hTruthContained_;
   HistMuCapTruth hTruthUncontained_;
-  HistMuCapTruth hTruthHitbased_;
+//nohitb:  HistMuCapTruth hTruthHitbased_;
   HistMuCapTruth hTruthNone_;
 
   HistMuCapTrkResolution hResolutionContained_;

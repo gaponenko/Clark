@@ -51,7 +51,7 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
 
   uncontained_.init(hf, htopdir, channelsetname, geom, conf);
 
-  hitbased_.init(hf, htopdir, channelsetname, geom, conf);
+//nohitb:  hitbased_.init(hf, htopdir, channelsetname, geom, conf);
 
   if(doMCTruth_) {
     const int gen1nbins = conf.read<int>(hdir+"/numGeneratorBins");
@@ -71,14 +71,14 @@ void HistMuCapAnalysisChannels::init(HistogramFactory& hf,
   if(fillExtras_TDC_) {
     hTDCWidthContained_.init(hf, hdir+"/contained/tdcwidth", geom, conf);
     hTDCWidthUncontained_.init(hf, hdir+"/uncontained/tdcwidth", geom, conf);
-    hTDCWidthHitbased_.init(hf, hdir+"/hitbased/tdcwidth", geom, conf);
+//nohitb:    hTDCWidthHitbased_.init(hf, hdir+"/hitbased/tdcwidth", geom, conf);
     hTDCWidthNone_.init(hf, hdir+"/nochannel/tdcwidth", geom, conf);
   }
 
   if(doMCTruth_) {
     hTruthContained_.init(hf, hdir+"/contained/MCTruth", geom, conf);
     hTruthUncontained_.init(hf, hdir+"/uncontained/MCTruth", geom, conf);
-    hTruthHitbased_.init(hf, hdir+"/hitbased/MCTruth", geom, conf);
+//nohitb:    hTruthHitbased_.init(hf, hdir+"/hitbased/MCTruth", geom, conf);
     hTruthNone_.init(hf, hdir+"/nochannel/MCTruth", geom, conf);
 
     hResolutionContained_.init(hf, hdir+"/contained/resolution", conf);
@@ -153,16 +153,16 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
   //----------------------------------------------------------------
   // Figure out an exclusive analysis channel for this event
 
-  enum Channel { CONTAINED, UNCONTAINED, HITBASED, NONE};
+  enum Channel { CONTAINED, UNCONTAINED, /*HITBASED,*/ NONE};
   const Channel ch =
     contained_.accepted(evt, referenceSampleAccepted_, iPosTrack, iNegTrack, globalPlaneClusters) ?
     CONTAINED
     : ( uncontained_.accepted(evt, referenceSampleAccepted_, iPosTrack, iNegTrack) ?
         UNCONTAINED
-        : ( hitbased_.accepted(evt, globalPlaneClusters, iNegTrack, referenceSampleAccepted_) ?
-            HITBASED
+//nohitb:        : ( hitbased_.accepted(evt, globalPlaneClusters, iNegTrack, referenceSampleAccepted_) ?
+//nohitb:            HITBASED
             : NONE
-            )
+//nohitb:            )
         );
 
   // Fill extra distributions
@@ -173,8 +173,8 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
   case UNCONTAINED: if(fillExtras_TDC_) { hTDCWidthUncontained_.fill(evt, globalPlaneClusters); }
     break;
 
-  case HITBASED: if(fillExtras_TDC_) { hTDCWidthHitbased_.fill(evt, globalPlaneClusters); }
-    break;
+//nohitb:  case HITBASED: if(fillExtras_TDC_) { hTDCWidthHitbased_.fill(evt, globalPlaneClusters); }
+//nohitb:    break;
 
   case NONE: if(fillExtras_TDC_) { hTDCWidthNone_.fill(evt, globalPlaneClusters); }
     break;
@@ -192,9 +192,9 @@ void HistMuCapAnalysisChannels::fill(const EventClass& evt,
       hResolutionUncontained_.fill(evt, iPosTrack);
       break;
 
-    case HITBASED:
-      hTruthHitbased_.fill(evt);
-      break;
+//nohitb:    case HITBASED:
+//nohitb:      hTruthHitbased_.fill(evt);
+//nohitb:      break;
 
     case NONE:
       hTruthNone_.fill(evt);
