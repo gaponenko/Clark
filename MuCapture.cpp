@@ -576,10 +576,9 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
-  // select the normalization sample
 
-  const int iDIONorm =
-    dnDIONormTracks_.process(evt, muStop, decayWindow);
+  // select the normalization sample
+  const int iDIONorm = dnDIONormTracks_.process(evt, muStop, decayWindow);
 
   const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop, decayWindow);
   const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
@@ -594,7 +593,6 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
 //minhist:  if(channels_[0].referenceSampleAccepted()) {
 //minhist:    rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
 //minhist:  }
-
 
   //----------------------------------------------------------------
   // Fill extra distributions

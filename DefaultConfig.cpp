@@ -350,20 +350,6 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/commonSkimOutFileName", "");
 
         //----------------
-        SetKey(Conf, "MuCapture/UVAnalysis/cutTrackRmax", 6.3);//cm
-        // Use kinematic cuts from the DIO analysis (2009), execpt PtMax superseded by Rmax above
-        SetKey(Conf, "MuCapture/UVAnalysis/cutCosThetaMin", 0.54);
-        SetKey(Conf, "MuCapture/UVAnalysis/cutCosThetaMax", 0.92);
-        SetKey(Conf, "MuCapture/UVAnalysis/cutPtMin", 11.); // MeV/c
-        SetKey(Conf, "MuCapture/UVAnalysis/cutPzMin", 14.); // MeV/c
-        SetKey(Conf, "MuCapture/UVAnalysis/cutPtotMin", 17.5); // MeV/c
-        SetKey(Conf, "MuCapture/UVAnalysis/cutPtotMax", 73.5); // MeV/c
-        //
-        SetKey(Conf, "MuCapture/UVAnalysis/cutTrackMuonOffset", 0.4);//cm
-        // Empty file name disables the output
-        //        SetKey(Conf, "MuCapture/UVAnalysis/uvOutFileName", "");
-
-        //----------------
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutCharge", +1);
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackWinTimedt", 100.);//ns
         SetKey(Conf, "MuCapture/TrkAnalysisHF/pos/cutTrackRmax", 99999.);//cm

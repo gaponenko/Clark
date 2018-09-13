@@ -12,7 +12,6 @@
 #include "WireCluster.h"
 
 #include "MuCapPACTCut.h"
-#include "MuCapUVAnalysis.h"
 #include "MuCapTrkAnalysisHF.h"
 #include "HistMuCapAnalysisChannels.h"
 #include "HistDriftTime.h"
@@ -267,9 +266,6 @@ private :
   HistWinDCUnassigned winDCUnassignedAfterWindowing_;
   HistWinDCUnassigned winDCUnassignedMuStop_;
   HistWinDCUnassigned winDCUnassignedDnDecay_;
-
-  MuCapUVAnalysis dioUp_;
-  MuCapUVAnalysis dioDn_;
 
   MuCapTrkAnalysisHF dnPosTracks_;
   MuCapTrkAnalysisHF dnDIOVetoTracks_;
