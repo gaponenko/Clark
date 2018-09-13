@@ -41,6 +41,14 @@ namespace {
                            numDCHits + w.dcHits.size());
     }
   };
+
+  void fillwintime(TH1 *hh, const TimeWindowingResults& wres) {
+    for(unsigned i=0; i<wres.windows.size(); ++i) {
+      if(i!=wres.iTrigWin) {
+        hh->Fill(wres.windows[i].tstart);
+      }
+    }
+  }
 }
 
 //================================================================
@@ -203,6 +211,10 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
 
   hWindowTimeBefore_ = H.DefineTH1D(hdir, "windowTimeBeforeCut", "Decay window start time, before time cut", 1000, 0., 10000.);
   hWindowTimeAfter_ = H.DefineTH1D(hdir, "windowTimeAfterCut", "Decay window start time, after time cut", 1000, 0., 10000.);
+
+  hAllWinTimePACT_ = H.DefineTH1D(hdir+"/winTimeAll", "allWinTimePACT", "All non-trig windows start time, after PACT cut", 16000, -6000., 10000.);
+  hAllWinTimeDnPC_ = H.DefineTH1D(hdir+"/winTimeAll", "allWinTimeDnPC", "All non-trig windows start time, after Dn PC cut", 16000, -6000., 10000.);
+  hAllWinTimeDnCandidate_ = H.DefineTH1D(hdir+"/winTimeAll", "allWinTimeDnCandidate", "All non-trig windows start time, Dn candidate events", 16000, -6000., 10000.);
 
   hNumAfterTrigWindows_ = H.DefineTH1D(hdir, "numAfterTrigTimeWindows", "numAfterTrigTimeWindows", 10, -0.5, 9.5);
   hWindow2Time_ = H.DefineTH1D(hdir, "window2Time", "Second window start time", 1000, 0., 10000.);
@@ -487,6 +499,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   // Call the subanalyses
   winDCUnassignedMuStop_.fill(wres);
   haccidentalsStop_.fill(wres);
+  fillwintime(hAllWinTimePACT_, wres);
 
   //  ----------------
   // More stopped muon histos
@@ -524,6 +537,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   if(doMCTruth_) {
     hTruthDnPC_.fill(evt);
   }
+
+  fillwintime(hAllWinTimeDnPC_, wres);
 
   const unsigned iDecayWin = 1 + wres.iTrigWin;
   const TimeWindow& decayWindow = wres.windows[iDecayWin];
@@ -660,6 +675,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
       uvOutFile_<<std::fixed<<std::showpos<<evt.hefit_u0[idio]<<"\t"<<evt.hefit_v0[idio]<<std::endl;
     }
   }
+
+  fillwintime(hAllWinTimeDnCandidate_, wres);
 
   //----------------
   if(commonSkimOutFile_) {

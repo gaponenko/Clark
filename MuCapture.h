@@ -147,6 +147,11 @@ public :
 
     , hWindowTimeBefore_()
     , hWindowTimeAfter_()
+
+    , hAllWinTimePACT_()
+    , hAllWinTimeDnPC_()
+    , hAllWinTimeDnCandidate_()
+
     , hNumAfterTrigWindows_()
     , hWindow2Time_()
     , hWindow2dt_()
@@ -220,6 +225,10 @@ private :
 
   TH1 *hWindowTimeBefore_;
   TH1 *hWindowTimeAfter_;
+
+  TH1 *hAllWinTimePACT_;
+  TH1 *hAllWinTimeDnPC_;
+  TH1 *hAllWinTimeDnCandidate_;
 
   TH1 *hNumAfterTrigWindows_;
   TH1 *hWindow2Time_;
