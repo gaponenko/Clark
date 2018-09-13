@@ -83,19 +83,19 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
     channels_.back().init(H, "MuCapture/channels", channelNames[i], *E.geo, Conf);
   }
 
-  rooUnfHits_.init(H, "MuCapture", Conf);
+//minhist:  rooUnfHits_.init(H, "MuCapture", Conf);
 
   //----------------------------------------------------------------
   dnPosTracks_.init(hdir+"/dnPosTracks", H, *E.geo, Conf, "pos", TimeWindow::DOWNSTREAM, &anDnLateRes_);
   dnDIOVetoTracks_.init(hdir+"/dnDIOVetoTracks", H, *E.geo, Conf, "dioVeto", TimeWindow::DOWNSTREAM);
   dnDIONormTracks_.init(hdir+"/dnDIONormTracks", H, *E.geo, Conf, "dioNorm", TimeWindow::DOWNSTREAM);
 
-  dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
-  dnPosTrkRangeStudies_.init(H, hdir+"/dnPosTrkRangeStudies", *E.geo, Conf);
-  dnPosTrkClassification_.init(H, hdir+"/dnPosTrkClassification", *E.geo, Conf);
-
-  hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
-  hContainedProtonPID_.init(hdir+"/posContainedTrackPID", H, Conf);
+//minhist:  dnPosTrkContainment_.init(hdir+"/dnPosTrkContainment", H, *E.geo, Conf);
+//minhist:  dnPosTrkRangeStudies_.init(H, hdir+"/dnPosTrkRangeStudies", *E.geo, Conf);
+//minhist:  dnPosTrkClassification_.init(H, hdir+"/dnPosTrkClassification", *E.geo, Conf);
+//minhist:
+//minhist:  hProtonPID_.init(hdir+"/posTrackPID", H, Conf);
+//minhist:  hContainedProtonPID_.init(hdir+"/posContainedTrackPID", H, Conf);
 
   //----------------------------------------------------------------
   pcXTalkProcessor_ = makeXTalkPreprocessor(hdir+"/hitLevel/XTalk", WirePlane::PC, H, *E.geo, Conf);
@@ -104,13 +104,13 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   pcHitProcessor_ = makeTDCHitPreprocessor(hdir+"/hitLevel/HitPreProc", WirePlane::PC, H, *E.geo, Conf);
   dcHitProcessor_ = makeTDCHitPreprocessor(hdir+"/hitLevel/HitPreProc", WirePlane::DC, H, *E.geo, Conf);
 
-  hwidthPCall_.init(hdir+"/hitLevel/pcWidthAll", "pcwidth", 12, H, Conf);
-  hwidthPCfiltered_.init(hdir+"/hitLevel/pcWidthFiltered", "pcwidth", 12, H, Conf);
-  hwidthDCall_.init(hdir+"/hitLevel/dcWidthAll", "dcwidth", 44, H, Conf);
-  hwidthDCfiltered_.init(hdir+"/hitLevel/dcWidthFiltered", "dcwidth", 44, H, Conf);
-
-  hwidthMuHits_.init(H, hdir+"/hitLevel/muonHitWidth", *E.geo, Conf);
-  hwidthDIOHits_.init(H, hdir+"/hitLevel/dioHitWidth", *E.geo, Conf);
+//minhist:  hwidthPCall_.init(hdir+"/hitLevel/pcWidthAll", "pcwidth", 12, H, Conf);
+//minhist:  hwidthPCfiltered_.init(hdir+"/hitLevel/pcWidthFiltered", "pcwidth", 12, H, Conf);
+//minhist:  hwidthDCall_.init(hdir+"/hitLevel/dcWidthAll", "dcwidth", 44, H, Conf);
+//minhist:  hwidthDCfiltered_.init(hdir+"/hitLevel/dcWidthFiltered", "dcwidth", 44, H, Conf);
+//minhist:
+//minhist:  hwidthMuHits_.init(H, hdir+"/hitLevel/muonHitWidth", *E.geo, Conf);
+//minhist:  hwidthDIOHits_.init(H, hdir+"/hitLevel/dioHitWidth", *E.geo, Conf);
 
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.init(hdir+"/hitLevel/afterPulsingPCAll", 12, 160, H, Conf);
@@ -133,8 +133,8 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   hXT3_.init(hdir+"/hitLevel/xt3", H, Conf);
   hXT4_.init(hdir+"/hitLevel/xt4", H, Conf);
   hXT5_.init(hdir+"/hitLevel/xt5", H, *E.geo, Conf);
-  h200ns_.init(hdir+"/hitLevel/peak200ns", H, *E.geo, Conf);
-  h200nsDIO_.init(hdir+"/hitLevel/peak200nsDIO", H, *E.geo, Conf);
+//minhist:  h200ns_.init(hdir+"/hitLevel/peak200ns", H, *E.geo, Conf);
+//minhist:  h200nsDIO_.init(hdir+"/hitLevel/peak200nsDIO", H, *E.geo, Conf);
 
   hOccupancyPCAll_.init(hdir+"/hitLevel", "hitMapPCAll", 12, 160, H, Conf);
   hOccupancyDCAll_.init(hdir+"/hitLevel", "hitMapDCAll", 44, 80, H, Conf);
@@ -273,9 +273,9 @@ bool MuCapture::Process(EventClass &evt, HistogramFactory &hist) {
   for(int cut=0; cut<=c; cut++) {
     h_cuts_p->Fill(cut);
   }
-  if(doMCTruth_ && c > CUT_EVENT_NUMBER) {
-    rooUnfHits_.FillAndMiss();
-  }
+//minhist:  if(doMCTruth_ && c > CUT_EVENT_NUMBER) {
+//minhist:    rooUnfHits_.FillAndMiss();
+//minhist:  }
 
   if(gEventList.requested(evt)) {
     const int cbin = h_cuts_p->GetXaxis()->FindFixBin(c);
@@ -300,7 +300,7 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     channels_[i].fillReferenceSample(evt);
   }
 
-  rooUnfHits_.SaveEventVariables(evt);
+//minhist:  rooUnfHits_.SaveEventVariables(evt);
 
   TDCHitPreprocessing::Hits allPCHitsBuf(evt.pc_hits());
   const TDCHitWPPtrCollection& allPCHits = allPCHitsBuf.get();
@@ -321,8 +321,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   TDCHitWPPtrCollection filteredPCHits;
   pcHitProcessor_->process(&filteredPCHits, nxtPCHits);
 
-  hwidthPCall_.fill(allPCHits);
-  hwidthPCfiltered_.fill(filteredPCHits);
+//minhist:  hwidthPCall_.fill(allPCHits);
+//minhist:  hwidthPCfiltered_.fill(filteredPCHits);
 
   if(fillXtalkPC_) {
     hAfterPulsingPCAll_.fill(allPCHits);
@@ -352,8 +352,8 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   TDCHitWPPtrCollection filteredDCHits;
   dcHitProcessor_->process(&filteredDCHits, nxtDCHits);
 
-  hwidthDCall_.fill(allDCHits);
-  hwidthDCfiltered_.fill(filteredDCHits);
+//minhist:  hwidthDCall_.fill(allDCHits);
+//minhist:  hwidthDCfiltered_.fill(filteredDCHits);
 
   if(fillXtalkDC_) {
     hAfterPulsingDCAll_.fill(allDCHits);
@@ -606,41 +606,43 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   //----------------------------------------------------------------
   //  The pre-selection for downstream decays/captures is passed here
   // select the normalization sample
-  const int iDIONorm = dnDIONormTracks_.process(evt, muStop, decayWindow);
+
+//minhist:  const int iDIONorm =
+    dnDIONormTracks_.process(evt, muStop, decayWindow);
 
   const int iNegTrack = dnDIOVetoTracks_.process(evt, muStop, decayWindow);
   const int iPosTrack = dnPosTracks_.process(evt, muStop, decayWindow);
-  const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
-  const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
+//minhist:  const bool isPosTrackContained = dnPosTrkContainment_.contained(evt, iPosTrack, protonGlobalClusters);
+//minhist:  const double rangePIDVar = ((iPosTrack != -1)&& isPosTrackContained) ? hContainedProtonPID_.fill(evt, iPosTrack, protonGlobalClusters) : 0.;
 
   for(unsigned i=0; i<channels_.size(); i++) {
     channels_[i].fill(evt, iPosTrack, iNegTrack, protonGlobalClusters);
   }
 
-  rooUnfHits_.FillMeasured(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
-  if(channels_[0].referenceSampleAccepted()) {
-    rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
-  }
+//minhist:  rooUnfHits_.FillMeasured(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
+//minhist:  if(channels_[0].referenceSampleAccepted()) {
+//minhist:    rooUnfHits_.Fill(evt, iPosTrack, iNegTrack, isPosTrackContained, rangePIDVar);
+//minhist:  }
 
 
   //----------------------------------------------------------------
   // Fill extra distributions
 
-  if(iNegTrack == -1) { // Veto DIO events
-    if(iPosTrack != -1) { // Got a reconstructed capture track
-      hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
-    }
-  }
+//minhist:  if(iNegTrack == -1) { // Veto DIO events
+//minhist:    if(iPosTrack != -1) { // Got a reconstructed capture track
+//minhist:      hProtonPID_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:    }
+//minhist:  }
 
   if(doMCTruth_) {
     hTruthDnCandidate_.fill(evt);
   }
 
-  hwidthMuHits_.fill(evt, muonGlobalClusters);
-  if(iDIONorm != -1) {
-    hwidthDIOHits_.fill(evt, protonGlobalClusters);
-    h200nsDIO_.fill(evt, iDIONorm, protonGlobalClusters);
-  }
+//minhist:  hwidthMuHits_.fill(evt, muonGlobalClusters);
+//minhist:  if(iDIONorm != -1) {
+//minhist:    hwidthDIOHits_.fill(evt, protonGlobalClusters);
+//minhist:    h200nsDIO_.fill(evt, iDIONorm, protonGlobalClusters);
+//minhist:  }
 
   // Do we have any ambiguous events (both "DIO" and "proton")?
   if((iNegTrack != -1)&&(iPosTrack != -1)) {
@@ -665,17 +667,17 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
     }
   }
 
-  if(isPosTrackContained) {
-    dnPosTrkRangeStudies_.fill(evt, iPosTrack, protonGlobalClusters);
-  }
-
-  dnPosTrkClassification_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:  if(isPosTrackContained) {
+//minhist:    dnPosTrkRangeStudies_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:  }
+//minhist:
+//minhist:  dnPosTrkClassification_.fill(evt, iPosTrack, protonGlobalClusters);
 
   if(iPosTrack != -1) {
     hXT3_.fill(evt, iPosTrack, protonGlobalClusters);
     hXT4_.fill(evt, iPosTrack);
     hXT5_.fill(evt, iPosTrack);
-    h200ns_.fill(evt, iPosTrack, protonGlobalClusters);
+//minhist:    h200ns_.fill(evt, iPosTrack, protonGlobalClusters);
   }
 
   //----------------
