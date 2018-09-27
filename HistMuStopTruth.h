@@ -28,16 +28,20 @@ public:
 
   HistMuStopTruth()
     : zTargetCenter_()
+    , targetHalfThickness_()
     , hMcMuonTotalMultiplicity_()
     , hMcMuonTrigCandidateMultiplicity_()
     , hMcMuonStopTime_()
     , hstopZ1_()
     , hstopZ2_()
     , hstopdz_()
+    , hpastTargetdz_()
+    , hpastTargetUV_()
   {}
 
 private :
   double zTargetCenter_;
+  double targetHalfThickness_;
 
   TH1* hMcMuonTotalMultiplicity_;
   TH1* hMcMuonTrigCandidateMultiplicity_;
@@ -46,6 +50,9 @@ private :
   TH1 *hstopZ1_;
   TH1 *hstopZ2_;
   TH1 *hstopdz_;
+
+  TH1 *hpastTargetdz_; // control
+  TH2 *hpastTargetUV_;
 };
 
 #endif/*HistMuStopTruth_h*/
