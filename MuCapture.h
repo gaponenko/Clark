@@ -294,6 +294,7 @@ private :
 
   HistMuCapTruth hTruthAll_;
   HistMuCapTruth hTruthLastPlane_;
+  HistMuCapTruth hTruthMuStopUV_;
   HistMuCapTruth hTruthPACT_;
   HistMuCapTruth hTruthDnPC_;
   HistMuCapTruth hTruthDnCandidate_;

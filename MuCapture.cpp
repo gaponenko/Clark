@@ -258,6 +258,7 @@ bool MuCapture::Init(EventClass &E, HistogramFactory &H, ConfigFile &Conf, log4c
   if(doMCTruth_) {
     hTruthAll_.init(H, hdir+"/MCTruth/all", *E.geo, Conf);
     hTruthLastPlane_.init(H, hdir+"/MCTruth/lastPlane", *E.geo, Conf);
+    hTruthMuStopUV_.init(H, hdir+"/MCTruth/muStopUV", *E.geo, Conf);
     hTruthPACT_.init(H, hdir+"/MCTruth/pact", *E.geo, Conf);
     hTruthDnPC_.init(H, hdir+"/MCTruth/dnPC", *E.geo, Conf);
     hTruthDnCandidate_.init(H, hdir+"/MCTruth/dnCandidate", *E.geo, Conf);
@@ -473,6 +474,10 @@ MuCapture::EventCutNumber MuCapture::analyze(EventClass &evt, HistogramFactory &
   hMuonRMaxVsRStop_->Fill(muStopRadius, muonRMax);
   if(muStopRadius > muStopRMax_) {
     return CUT_MUSTOP_UV;
+  }
+
+  if(doMCTruth_) {
+    hTruthMuStopUV_.fill(evt);
   }
 
   //----------------------------------------------------------------
