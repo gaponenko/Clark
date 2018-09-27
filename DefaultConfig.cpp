@@ -330,7 +330,7 @@ void SetDefault(ConfigFile &Conf)
         SetKey(Conf, "MuCapture/winDCDoHistos", true);
         SetKey(Conf, "MuCapture/muStopRMax", 2.5); // in cm
 
-        SetKey(Conf, "MuCapture/cutWinTimeMin", 150.); // ns
+        SetKey(Conf, "MuCapture/cutWinTimeMin", 400.); // ns
         SetKey(Conf, "MuCapture/cutWinTimeMax", 10000. - 1050.); // ns, make sure DC window ends.
 
         // PACT cuts have been moved to config files: different settings for data and MC
