@@ -433,6 +433,8 @@ void SetDefault(ConfigFile &Conf)
 
         // histogram (costh vs p) in slices of range
         SetKey(Conf, "MuCapture/channels/rcp1/doPCosthSlices", true);
+        // Make a PID plot for the paper with a nicer binning
+        SetKey(Conf, "MuCapture/channels/rcp1/doExtraHistos", true);
 
         //----------------
         // range vs p set of vars

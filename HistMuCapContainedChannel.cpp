@@ -116,6 +116,14 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     }
   }
   //----------------------------------------------------------------
+  if(conf.read<bool>("MuCapture/channels/"+channelsetname+"/doExtraHistos", false)) {
+    // hardcoded binning for the one-off plot for the paper
+    pidplot_ = hf.DefineTH2D(hdir, "pidplot", "pidplot", 300, 0., 300., 30, 0.5, 30.5);
+    pidplot_->SetOption("colz");
+    pidplot_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
+    pidplot_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
+  }
+  //----------------------------------------------------------------
 
 }
 
@@ -162,6 +170,9 @@ HistMuCapContainedChannel::analyzeEvent(const EventClass& evt,
     if((0 < bin) && (bin <= pcosrange_.size() )) {
       pcosrange_[bin-1]->Fill(evt.ptot[iPosTrack], evt.costh[iPosTrack]);
     }
+  }
+  if(pidplot_) {
+    pidplot_->Fill(cv.xvar, cv.yvar);
   }
 
   if(doMCTruth_) {

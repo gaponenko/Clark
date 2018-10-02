@@ -51,7 +51,7 @@ public:
                 int iNegTrack,
                 const ClustersByPlane& globalPlaneClusters );
 
-  HistMuCapContainedChannel() : doMCTruth_(false), cvp_(0) {}
+  HistMuCapContainedChannel() : doMCTruth_(false), cvp_(0), pidplot_(0) {}
 
 private :
   bool doMCTruth_;
@@ -82,6 +82,7 @@ private :
   TH3* contamination_mcalpha_;
 
   std::vector<TH2*> pcosrange_;
+  TH2* pidplot_; // like reco but a different binning
 
   CutNumber analyzeEvent(const EventClass& evt,
                          bool referenceSampleAccepted,
