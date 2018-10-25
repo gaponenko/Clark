@@ -18,7 +18,7 @@ void HistMuCapTrkResolution::init(HistogramFactory& hf,
   hGlobalResolution_ = hf.DefineTH1D(hdir, "globalRes", "Momentum resolution in the fiducial region", 300, -100., 50.);
   hGlobalResolution_->GetXaxis()->SetTitle("pmc [MeV/c]");
 
-  hMomResVsMom_ = hf.DefineTProfile(hdir, "momResVsMom", "Momentum resolution vs MC momentum", 300, 0., 300., "s");
+  hMomResVsMom_ = hf.DefineTProfile(hdir, "momResVsMom", "Momentum resolution vs MC momentum", 450, 0., 450., "s");
   hMomResVsMom_->GetXaxis()->SetTitle("pmc [MeV/c]");
   hMomResVsMom_->GetYaxis()->SetTitle("prec-pmc [MeV/c]");
 
@@ -26,12 +26,12 @@ void HistMuCapTrkResolution::init(HistogramFactory& hf,
   hMomResVsCosth_->GetXaxis()->SetTitle("cos(theta) MC");
   hMomResVsCosth_->GetYaxis()->SetTitle("prec-pmc [MeV/c]");
 
-  hMomBias2DMC_ = hf.DefineTProfile2D(hdir, "momBias2DMC", "Momentum bias in MC (p,costh)", 300, 0., 300., 100, -1., 1., "s");
+  hMomBias2DMC_ = hf.DefineTProfile2D(hdir, "momBias2DMC", "Momentum bias in MC (p,costh)", 450, 0., 450., 100, -1., 1., "s");
   hMomBias2DMC_->GetXaxis()->SetTitle("pmc [MeV/c]");
   hMomBias2DMC_->GetYaxis()->SetTitle("cos(theta) MC");
   hMomBias2DMC_->SetOption("colz");
 
-  hMomBias2DReco_ = hf.DefineTProfile2D(hdir, "momBias2DReco", "Momentum bias in reco (p,costh)", 300, 0., 300., 100, -1., 1., "s");
+  hMomBias2DReco_ = hf.DefineTProfile2D(hdir, "momBias2DReco", "Momentum bias in reco (p,costh)", 450, 0., 450., 100, -1., 1., "s");
   hMomBias2DReco_->GetXaxis()->SetTitle("prec [MeV/c]");
   hMomBias2DReco_->GetYaxis()->SetTitle("cos(theta) rec");
   hMomBias2DReco_->SetOption("colz");
