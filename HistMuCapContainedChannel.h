@@ -51,7 +51,13 @@ public:
                 int iNegTrack,
                 const ClustersByPlane& globalPlaneClusters );
 
-  HistMuCapContainedChannel() : doMCTruth_(false), cvp_(0), pidplot_(0) {}
+  HistMuCapContainedChannel()
+    : doMCTruth_(false)
+    , cvp_(0)
+    , pidplot_(0)
+    , pidplotFine_(0)
+    , pplaneFine_(0)
+  {}
 
 private :
   bool doMCTruth_;
@@ -83,6 +89,8 @@ private :
 
   std::vector<TH2*> pcosrange_;
   TH2* pidplot_; // like reco but a different binning
+  TH2* pidplotFine_; // like reco but a different binning
+  TH2* pplaneFine_; // last plane vs fine ptot
 
   CutNumber analyzeEvent(const EventClass& evt,
                          bool referenceSampleAccepted,
