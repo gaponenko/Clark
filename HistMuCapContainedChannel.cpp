@@ -124,7 +124,7 @@ void HistMuCapContainedChannel::init(HistogramFactory& hf,
     pidplot_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
 
     // fine binned ptot to extract peak position number for the paper
-    pidplotFine_ = hf.DefineTH2D(hdir, "pidplotfine", "pidplotfine", 6000, 0., 300., 25, 5.5, 30.5);
+    pidplotFine_ = hf.DefineTH2D(hdir, "pidplotfine", "pidplotfine", 6000, 0., 300., 25, 5., 30.);
     pidplotFine_->SetOption("colz");
     pidplotFine_->GetXaxis()->SetTitle(cvp_->xtitle().c_str());
     pidplotFine_->GetYaxis()->SetTitle(cvp_->ytitle().c_str());
